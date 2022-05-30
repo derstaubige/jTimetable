@@ -1,6 +1,6 @@
 package de.bremen.jTimetable.Classes.SQLConnectionManagerValues;
 
-public class Date implements SQLConnectionManagerValues{
+public class SQLValueDate implements SQLConnectionManagerValues{
     java.lang.String type = "Date";
-    Date value;
+    public SQLValueDate value;
 }

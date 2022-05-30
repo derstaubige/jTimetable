@@ -1,6 +1,6 @@
 package de.bremen.jTimetable.Classes.SQLConnectionManagerValues;
 
-public class Long implements SQLConnectionManagerValues{
+public class SQLValueLong implements SQLConnectionManagerValues{
     java.lang.String type ="Long";
-    Long value;
+    public SQLValueLong value;
 }

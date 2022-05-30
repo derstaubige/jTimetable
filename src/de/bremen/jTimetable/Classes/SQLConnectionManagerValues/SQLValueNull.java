@@ -1,6 +1,6 @@
 package de.bremen.jTimetable.Classes.SQLConnectionManagerValues;
 
-public class Null implements SQLConnectionManagerValues{
+public class SQLValueNull implements SQLConnectionManagerValues{
     java.lang.String type = "Null";
-    Null value;
+    public SQLValueNull value;
 }

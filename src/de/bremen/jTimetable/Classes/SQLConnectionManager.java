@@ -19,8 +19,8 @@ public class SQLConnectionManager {
     public  void insert(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws  SQLException{
         //used for inserting into the database
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
-        pstmt.executeUpdate();
-
+        pstmt.execute();
+        System.out.println(pstmt);
     }
 
     private PreparedStatement prepareStatement(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws SQLException{

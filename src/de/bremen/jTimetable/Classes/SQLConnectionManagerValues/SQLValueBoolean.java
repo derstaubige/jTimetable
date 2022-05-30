@@ -1,6 +1,6 @@
 package de.bremen.jTimetable.Classes.SQLConnectionManagerValues;
 
-public class Boolean implements SQLConnectionManagerValues {
+public class SQLValueBoolean implements SQLConnectionManagerValues {
     java.lang.String type = "Boolean";
-    Boolean value;
+    public SQLValueBoolean value;
 }
