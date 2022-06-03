@@ -2,6 +2,7 @@ package de.bremen.jTimetable.Classes;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
 
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -10,18 +11,30 @@ import static java.sql.Types.NULL;
 public class SQLConnectionManager {
     Connection conn;
 
+    public SQLConnectionManager() throws SQLException {
+        this("jdbc:h2:./h2","sa","");
+    }
+
+    public SQLConnectionManager(String jdbcString, String username, String password) throws SQLException {
+        this.connect(jdbcString,username,password);
+    }
+
     public ResultSet select(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws SQLException{
         // select from database
-        // select * from kunde where name = loreen; select passwort from kunde where name = loreen;
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
-        return pstmt.executeQuery();
+        ResultSet rs = pstmt.executeQuery();
+        while (rs.next()) {
+            System.out.println(rs.getLong("id"));
+
+        }
+        return rs;
     }
 
     public  void insert(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws  SQLException{
         //used for inserting into the database
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
         pstmt.execute();
-        System.out.println(pstmt);
+        //System.out.println(pstmt);
     }
 
     private PreparedStatement prepareStatement(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws SQLException{
@@ -57,9 +70,9 @@ public class SQLConnectionManager {
         return pstmt;
     }
 
-    public void connect(String jdbcstring) throws SQLException{
+    public void connect(String jdbcstring, String username, String password) throws SQLException{
         Connection conn = null;
-        conn = DriverManager.getConnection(jdbcstring);
+        conn = DriverManager.getConnection(jdbcstring, username, password);
         this.conn = conn;
     }
 
