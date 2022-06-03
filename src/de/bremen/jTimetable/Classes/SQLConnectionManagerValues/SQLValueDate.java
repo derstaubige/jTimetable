@@ -1,6 +1,23 @@
 package de.bremen.jTimetable.Classes.SQLConnectionManagerValues;
 
-public class SQLValueDate implements SQLConnectionManagerValues{
-    java.lang.String type = "Date";
-    public SQLValueDate value;
+import java.util.Date;
+
+public class SQLValueDate extends SQLConnectionManagerValues{
+    private final String type;
+    private final Date value;
+
+    public SQLValueDate(Date value1) {
+        this.value = value1;
+        this.type = "Date";
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public Date getValue() {
+        return value;
+    }
 }

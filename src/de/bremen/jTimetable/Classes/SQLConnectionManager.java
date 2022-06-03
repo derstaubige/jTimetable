@@ -12,6 +12,7 @@ public class SQLConnectionManager {
 
     public ResultSet select(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws SQLException{
         // select from database
+        // select * from kunde where name = loreen; select passwort from kunde where name = loreen;
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
         return pstmt.executeQuery();
     }
@@ -26,29 +27,32 @@ public class SQLConnectionManager {
     private PreparedStatement prepareStatement(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws SQLException{
         PreparedStatement pstmt = this.conn.prepareStatement(SQLString);
         //use prepared statements, iterate over the TypeValues object boolean, Date, int, long, null, string
-        int i = 1;
-        for(final SQLConnectionManagerValues typevalue : SQLValues){
-            switch (typevalue.type){
+        int parameterindex = 1;
+        for(SQLConnectionManagerValues typevalue : SQLValues){
+            System.out.println(typevalue.getType());
+            System.out.println(typevalue.getClass());
+
+            switch (typevalue.getType()){
                 case "Boolean":
-                    pstmt.setBoolean(i, (Boolean) typevalue.value);
+                    pstmt.setBoolean(parameterindex, (Boolean) typevalue.getValue());
                     break;
                 case "Date":
-                    pstmt.setDate(i, (Date) typevalue.value);
+                    pstmt.setDate(parameterindex, (Date) typevalue.getValue());
                     break;
                 case "Int":
-                    pstmt.setInt(i, (Integer) typevalue.value);
+                    pstmt.setInt(parameterindex, (Integer) typevalue.getValue());
                     break;
                 case "Long":
-                    pstmt.setLong(i, (Long) typevalue.value);
+                    pstmt.setLong(parameterindex, (Long) typevalue.getValue());
                     break;
                 case "Null":
-                    pstmt.setNull(i, NULL);
+                    pstmt.setNull(parameterindex, NULL);
                     break;
                 case "String":
-                    pstmt.setString(i, (String) typevalue.value);
+                    pstmt.setString(parameterindex, (String) typevalue.getValue());
                     break;
             }
-            i++;
+            parameterindex++;
         }
         return pstmt;
     }

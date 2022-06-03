@@ -18,11 +18,10 @@ public class Main {
             ArrayList<SQLConnectionManagerValues>  SQLValues = new ArrayList<SQLConnectionManagerValues>();
             ResultSet rs = sqlmanager.select("Select * from tmp_testtabelle", SQLValues);
             System.out.println(rs);
-            SQLValueString name = new SQLValueString();
-            name.value = "hi";
 
-            SQLValueInt zahl = new SQLValueInt();
-            zahl.value = 123;
+            SQLValueString name = new SQLValueString("hi");
+            SQLValueInt zahl = new SQLValueInt(123);
+
             SQLValues.add(name);
             SQLValues.add(zahl);
             sqlmanager.insert("Insert into tmp_testtabelle (name, zahl) values (?, ?)", SQLValues);
