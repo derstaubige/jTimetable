@@ -23,27 +23,26 @@ public class SQLConnectionManager {
         // select from database
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
         ResultSet rs = pstmt.executeQuery();
-        while (rs.next()) {
-            System.out.println(rs.getLong("id"));
 
-        }
         return rs;
     }
 
-    public  void insert(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws  SQLException{
+    public ResultSet insert(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws  SQLException{
         //used for inserting into the database
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
         pstmt.execute();
-        //System.out.println(pstmt);
+        return pstmt.getGeneratedKeys();
+        //if (generatedKeys.next()) {
+        //    System.out.println((generatedKeys.getLong(1)));
+        //}
+        //System.out.println();
     }
 
     private PreparedStatement prepareStatement(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws SQLException{
-        PreparedStatement pstmt = this.conn.prepareStatement(SQLString);
+        PreparedStatement pstmt = this.conn.prepareStatement(SQLString, Statement.RETURN_GENERATED_KEYS);
         //use prepared statements, iterate over the TypeValues object boolean, Date, int, long, null, string
         int parameterindex = 1;
         for(SQLConnectionManagerValues typevalue : SQLValues){
-            System.out.println(typevalue.getType());
-            System.out.println(typevalue.getClass());
 
             switch (typevalue.getType()){
                 case "Boolean":

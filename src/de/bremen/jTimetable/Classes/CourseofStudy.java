@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class CourseofStudy {
     long id;
     String caption;
-    LocalDate begin;
+    public LocalDate begin;
     LocalDate end;
     boolean active;
 
@@ -27,18 +27,21 @@ public class CourseofStudy {
 
         if (this.id == 0){
             // create new courseofstudy object
-            sqlConnectionManager.insert("Insert Into `T_CoursesofStudy` (`caption`, `begin`, `end`, `active`) values ('', '1990-01-01', '1990-01-01', True)",SQLValues);
-            ResultSet rs = sqlConnectionManager.select("select max(id) as id from T_CoursesofStudy",SQLValues);
-            this.id = rs.getLong("id");
+            ResultSet rs = sqlConnectionManager.insert("Insert Into `T_CoursesofStudy` (`caption`, `begin`, `end`, `active`) values ('', '1990-01-01', '1990-01-01', True)",SQLValues);
+            //ResultSet rs = sqlConnectionManager.select("select max(id) as id from T_CoursesofStudy",SQLValues);
+            rs.first();
+            this.id = rs.getLong(1);
         }
         SQLValues.add(new SQLValueLong(id));
 
-        ResultSet rs = sqlConnectionManager.select("Select * from T_CoursesofStudy where id = ?",SQLValues);
-        this.id = rs.getLong("id");
-        this.caption = rs.getString("caption");
-        this.begin = rs.getDate("begin").toLocalDate();
-        this.end = rs.getDate("end").toLocalDate();
-        this.active = rs.getBoolean("active");
+        ResultSet rs = sqlConnectionManager.select("Select * from T_CoursesofStudy where id = ?;",SQLValues);
+        while(rs.next()){
+            this.id = rs.getLong("id");
+            this.caption = rs.getString("caption");
+            this.begin = rs.getDate("begin").toLocalDate();
+            this.end = rs.getDate("end").toLocalDate();
+            this.active = rs.getBoolean("active");
+        }
 
 
     }
