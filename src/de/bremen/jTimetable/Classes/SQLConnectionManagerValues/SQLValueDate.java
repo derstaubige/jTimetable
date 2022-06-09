@@ -1,13 +1,14 @@
 package de.bremen.jTimetable.Classes.SQLConnectionManagerValues;
 
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
 
 public class SQLValueDate extends SQLConnectionManagerValues{
     private final String type;
     private final Date value;
 
-    public SQLValueDate(Date value1) {
-        this.value = value1;
+    public SQLValueDate(LocalDate value1) {
+        this.value = Date.valueOf(value1);
         this.type = "Date";
     }
 
@@ -17,7 +18,7 @@ public class SQLValueDate extends SQLConnectionManagerValues{
     }
 
     @Override
-    public Date getValue() {
-        return value;
+    public LocalDate getValue() {
+        return value.toLocalDate();
     }
 }

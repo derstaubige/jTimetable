@@ -16,6 +16,6 @@ public class SQLValueBoolean extends SQLConnectionManagerValues {
 
     public SQLValueBoolean( Boolean value1) {
         this.value = value1;
-        this.type = "Boolen";
+        this.type = "Boolean";
     }
 }

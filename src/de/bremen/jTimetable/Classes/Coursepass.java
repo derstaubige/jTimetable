@@ -1,9 +1,7 @@
 package de.bremen.jTimetable.Classes;
-import de.bremen.jTimetable.Classes.SQLConnectionManager;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
 
-import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -28,7 +26,7 @@ public class Coursepass {
 
         if (this.id == 0){
             // create new coursepass object
-            ResultSet rs = sqlConnectionManager.insert("Insert Into `T_Coursepasses` (`refCourseofStudyID`, `refStudySectionID`, `START`, `END`, `ACTIVE`, `DESCRIPTION`, `refRommID`) values (0, 0, '1990-01-01', '1990-01-01', True, '', 0)",SQLValues);
+            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Coursepasses` (`refCourseofStudyID`, `refStudySectionID`, `START`, `END`, `ACTIVE`, `DESCRIPTION`, `refRommID`) values (0, 0, '1990-01-01', '1990-01-01', True, '', 0)",SQLValues);
             //ResultSet rs = sqlConnectionManager.select("select max(id) as id from T_Coursepasses",SQLValues);
             rs.first();
             this.id = rs.getLong(1);

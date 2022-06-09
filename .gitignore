@@ -25,3 +25,6 @@ hs_err_pid*
 /workspace.xml
 
 jTimetable.sqlite
+h2.mv.db
+h2.trace.db
+H2 starten.lnk

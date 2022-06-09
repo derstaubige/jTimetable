@@ -2,7 +2,6 @@ package de.bremen.jTimetable.Classes;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
 
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -27,10 +26,11 @@ public class SQLConnectionManager {
         return rs;
     }
 
-    public ResultSet insert(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws  SQLException{
+    public ResultSet execute(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws  SQLException{
         //used for inserting into the database
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
         pstmt.execute();
+        System.out.println(pstmt);
         return pstmt.getGeneratedKeys();
         //if (generatedKeys.next()) {
         //    System.out.println((generatedKeys.getLong(1)));
