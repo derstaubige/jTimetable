@@ -49,7 +49,8 @@ public class SQLConnectionManager {
                     pstmt.setBoolean(parameterindex, (Boolean) typevalue.getValue());
                     break;
                 case "Date":
-                    pstmt.setDate(parameterindex, (Date) typevalue.getValue());
+                    //pstmt.setDate(parameterindex, (Date) (typevalue.getValue());
+                    pstmt.setObject(parameterindex, typevalue.getValue());
                     break;
                 case "Int":
                     pstmt.setInt(parameterindex, (Integer) typevalue.getValue());

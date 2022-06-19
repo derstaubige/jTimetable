@@ -1,11 +1,9 @@
 package de.bremen.jTimetable.Classes;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.time.LocalDate;
 
 public class Resourcemanager {
-    public void generateInitialTimetable(@NotNull Coursepass coursepass){
+    public void generateInitialTimetable( Coursepass coursepass){
         LocalDate startdate = coursepass.start;
         LocalDate enddate = coursepass.end;
 

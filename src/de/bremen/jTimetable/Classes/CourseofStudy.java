@@ -11,7 +11,7 @@ import java.util.Date;
 // CREATE TABLE IF NOT EXISTS  `T_CoursesofStudy` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `caption` char(60), `begin` Date, `end` Date, `active` Boolean );
 public class CourseofStudy {
     long id;
-    String caption;
+    public String caption;
     public LocalDate begin;
     public LocalDate end;
     boolean active;

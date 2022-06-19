@@ -44,9 +44,15 @@ public class Main {
 //            coursepassLecturerSubject.shouldhours = 20L;
 //            coursepassLecturerSubject.save();
 
-            CourseofStudy courseofStudy = new CourseofStudy(0L);
-            courseofStudy.begin = LocalDate.of(2022,6,8);
-            courseofStudy.save();
+//            CourseofStudy courseofStudy = new CourseofStudy(1L);
+//            courseofStudy.begin = LocalDate.of(2022,6,8);
+//            courseofStudy.caption = "hallo";
+//            courseofStudy.save();
+
+            Coursepass coursepass = new Coursepass(1L);
+            coursepass.description = "Buja";
+            coursepass.start = LocalDate.of(2022,6,8);
+            coursepass.save();
 
             System.out.println("hi");
         } catch (SQLException e) {

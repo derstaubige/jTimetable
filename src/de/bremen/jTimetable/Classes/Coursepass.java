@@ -1,6 +1,5 @@
 package de.bremen.jTimetable.Classes;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,13 +8,13 @@ import java.util.ArrayList;
 
 // CREATE TABLE IF NOT EXISTS  `T_Coursepasses` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `refCourseofStudyID` long, `refStudySectionID` long, `start` Date, `end` Date, `active` Boolean,  `description` Char(200), `refRommID` long );
 public class Coursepass {
-    Long id;
+    public Long id;
     CourseofStudy courseofstudy;
     StudySection studysection;
-    LocalDate start;
-    LocalDate end;
-    Boolean active;
-    String description;
+    public LocalDate start;
+    public LocalDate end;
+    public Boolean active;
+    public String description;
     Room room;
     CoursepassLecturerSubject[] arraycoursepasslecturersubject;
 
@@ -25,24 +24,54 @@ public class Coursepass {
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
         if (this.id == 0){
-            // create new coursepass object
-            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Coursepasses` (`refCourseofStudyID`, `refStudySectionID`, `START`, `END`, `ACTIVE`, `DESCRIPTION`, `refRommID`) values (0, 0, '1990-01-01', '1990-01-01', True, '', 0)",SQLValues);
-            //ResultSet rs = sqlConnectionManager.select("select max(id) as id from T_Coursepasses",SQLValues);
-            rs.first();
-            this.id = rs.getLong(1);
-        }
-        SQLValues.add(new SQLValueLong(id));
+            //load dummy object
+            this.courseofstudy = new CourseofStudy(0L);
+            this.studysection = new StudySection(0L);
+            this.start = LocalDate.of(1990,1,1);;
+            this.end = LocalDate.of(1990,1,1);;
+            this.active = Boolean.TRUE;
+            this.description = "";
+            this.room = new Room(0L);
+        }else {
+            //load object from db
+            SQLValues.add(new SQLValueLong(id));
 
-        ResultSet rs = sqlConnectionManager.select("Select * from T_Coursepasses where id = ?;",SQLValues);
-        while(rs.next()){
+            ResultSet rs = sqlConnectionManager.select("Select * from T_Coursepasses where id = ?;", SQLValues);
+            rs.first();
             this.id = rs.getLong("id");
             this.courseofstudy = new CourseofStudy(rs.getLong("REFCOURSEOFSTUDYID"));
             this.studysection = new StudySection(rs.getLong("REFSTUDYSECTIONID"));
             this.start = rs.getDate("start").toLocalDate();
             this.end = rs.getDate("end").toLocalDate();
             this.active = rs.getBoolean("active");
-            this.description = "";
+            this.description = rs.getString("description");
             this.room = new Room(rs.getLong("refRommID"));
+
+        }
+    }
+
+
+    public void save() throws SQLException{
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+
+        SQLValues.add(new SQLValueLong(this.courseofstudy.id));
+        SQLValues.add(new SQLValueLong(this.studysection.id));
+        SQLValues.add(new SQLValueDate(this.start));
+        SQLValues.add(new SQLValueDate(this.end));
+        SQLValues.add(new SQLValueBoolean(this.active));
+        SQLValues.add(new SQLValueString(this.description));
+        SQLValues.add(new SQLValueLong(this.room.id));
+
+        if (this.id == 0) {
+            // its a new object, we have to insert it
+            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Coursepasses` (`refCourseofStudyID`, `refStudySectionID`, `start`, `end`, `active`,  `description`, `refRommID` ) values (?, ?, ?, ?, ?,? ,?)",SQLValues);
+            rs.first();
+            this.id = rs.getLong(1);
+        }else{
+            // we only have to update an existing entry
+            SQLValues.add(new SQLValueLong(this.id));
+            ResultSet rs = sqlConnectionManager.execute("update `T_Coursepasses` set `refCourseofStudyID` = ?, `refStudySectionID` = ?, `start` = ?, `end` = ?, `active` = ?, `description` = ?, `refRommID` = ? where `id` = ?;",SQLValues);
         }
     }
 }
