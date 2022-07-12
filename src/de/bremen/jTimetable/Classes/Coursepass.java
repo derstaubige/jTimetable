@@ -5,8 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 
-// CREATE TABLE IF NOT EXISTS  `T_Coursepasses` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `refCourseofStudyID` long, `refStudySectionID` long, `start` Date, `end` Date, `active` Boolean,  `description` Char(200), `refRommID` long );
+// CREATE TABLE IF NOT EXISTS  `T_Coursepasses` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `refCourseofStudyID` long, `refStudySectionID` long, `start` Date, `end` Date, `active` Boolean,  `description` Char(200), `refRoomID` long );
 public class Coursepass {
     public Long id;
     CourseofStudy courseofstudy;
@@ -16,7 +17,7 @@ public class Coursepass {
     public Boolean active;
     public String description;
     Room room;
-    ArrayList<CoursepassLecturerSubject> arraycoursepasslecturersubject = new ArrayList<CoursepassLecturerSubject>();
+    public ArrayList<CoursepassLecturerSubject> arraycoursepasslecturersubject = new ArrayList<CoursepassLecturerSubject>();
 
     public Coursepass(long id) throws SQLException {
         this.id = id;
@@ -45,12 +46,16 @@ public class Coursepass {
             this.end = rs.getDate("end").toLocalDate();
             this.active = rs.getBoolean("active");
             this.description = rs.getString("description");
-            this.room = new Room(rs.getLong("refRommID"));
+            this.room = new Room(rs.getLong("refRoomID"));
         }
     }
 
     public void getCoursepassLecturerSubjects() throws SQLException{
         // load CoursepassLecturerSubjects
+
+        // empty arraylist and reload everything
+        this.arraycoursepasslecturersubject.removeAll(this.arraycoursepasslecturersubject);
+
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
@@ -61,6 +66,10 @@ public class Coursepass {
         while (rsCoursepassLecturerSubjects.next()){
             arraycoursepasslecturersubject.add(new CoursepassLecturerSubject(rsCoursepassLecturerSubjects.getLong("id")));
         }
+
+        //sort the array after shouldhours descending
+        Collections.sort(this.arraycoursepasslecturersubject);
+        Collections.reverse(this.arraycoursepasslecturersubject);
     }
 
 
@@ -78,13 +87,13 @@ public class Coursepass {
 
         if (this.id == 0) {
             // its a new object, we have to insert it
-            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Coursepasses` (`refCourseofStudyID`, `refStudySectionID`, `start`, `end`, `active`,  `description`, `refRommID` ) values (?, ?, ?, ?, ?,? ,?)",SQLValues);
+            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Coursepasses` (`refCourseofStudyID`, `refStudySectionID`, `start`, `end`, `active`,  `description`, `refRoomID` ) values (?, ?, ?, ?, ?,? ,?)",SQLValues);
             rs.first();
             this.id = rs.getLong(1);
         }else{
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            ResultSet rs = sqlConnectionManager.execute("update `T_Coursepasses` set `refCourseofStudyID` = ?, `refStudySectionID` = ?, `start` = ?, `end` = ?, `active` = ?, `description` = ?, `refRommID` = ? where `id` = ?;",SQLValues);
+            ResultSet rs = sqlConnectionManager.execute("update `T_Coursepasses` set `refCourseofStudyID` = ?, `refStudySectionID` = ?, `start` = ?, `end` = ?, `active` = ?, `description` = ?, `refRoomID` = ? where `id` = ?;",SQLValues);
         }
     }
 }

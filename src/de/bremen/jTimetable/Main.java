@@ -7,8 +7,12 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 
 public class Main {
     public static void main(String[] args){
@@ -50,11 +54,29 @@ public class Main {
 //            courseofStudy.save();
 
             Coursepass coursepass = new Coursepass(134L);
-            coursepass.description = "Buja";
-            coursepass.getCoursepassLecturerSubjects();
-            //coursepass.start = LocalDate.of(2022,6,8);
-            coursepass.save();
+//            coursepass.description = "Buja";
+//            coursepass.getCoursepassLecturerSubjects();
+//            for(CoursepassLecturerSubject str: coursepass.arraycoursepasslecturersubject){
+//                System.out.println(str.shouldhours);
+//            }
+//            Collections.sort(coursepass.arraycoursepasslecturersubject);
+//            for(CoursepassLecturerSubject str: coursepass.arraycoursepasslecturersubject){
+//                System.out.println(str.shouldhours);
+//            }
+//            coursepass.start = LocalDate.of(2022,6,8);
+//            coursepass.end = LocalDate.of(2022,9,30);
+//            coursepass.save();
 
+//            CoursepassLecturerSubject c1 = new CoursepassLecturerSubject(1L);
+//            CoursepassLecturerSubject c2 = new CoursepassLecturerSubject(2L);
+
+            Resourcemanager resourcemanager = new Resourcemanager();
+            resourcemanager.generateInitialTimetable(coursepass);
+
+//            TimetableDay timetableDay = new TimetableDay(LocalDate.now(), 3);
+//            System.out.println(timetableDay.arrayTimetableDay.get(0).isEmpty());
+//            timetableDay.addToSlot(0, new CoursepassLecturerSubject(0L));
+//            System.out.println(timetableDay.arrayTimetableDay.get(0).isEmpty());
             System.out.println("hi");
         } catch (SQLException e) {
             throw new RuntimeException(e);

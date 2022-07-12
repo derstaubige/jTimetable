@@ -11,15 +11,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class CoursepassLecturerSubject {
+public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerSubject> {
     Long id;
     Coursepass coursepass;
     Lecturer lecturer;
     Subject subject;
     public Long shouldhours;
+    public Long ishours;
+    public Long planedHours;
     Boolean active;
 
-    public CoursepassLecturerSubject(Long id) throws SQLException {
+    public CoursepassLecturerSubject(Long id) throws SQLException  {
         this.id = id;
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
@@ -67,6 +69,17 @@ public class CoursepassLecturerSubject {
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
             ResultSet rs = sqlConnectionManager.execute("update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, shouldhours` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
+        }
+    }
+
+    @Override
+    public int compareTo(CoursepassLecturerSubject o) {
+        if (this.shouldhours < o.shouldhours) {
+            return -1;
+        } else if (this.shouldhours == o.shouldhours) {
+            return 0;
+        } else {
+            return 1;
         }
     }
 }
