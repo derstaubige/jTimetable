@@ -16,7 +16,7 @@ public class Coursepass {
     public Boolean active;
     public String description;
     Room room;
-    CoursepassLecturerSubject[] arraycoursepasslecturersubject;
+    ArrayList<CoursepassLecturerSubject> arraycoursepasslecturersubject = new ArrayList<CoursepassLecturerSubject>();
 
     public Coursepass(long id) throws SQLException {
         this.id = id;
@@ -46,7 +46,20 @@ public class Coursepass {
             this.active = rs.getBoolean("active");
             this.description = rs.getString("description");
             this.room = new Room(rs.getLong("refRommID"));
+        }
+    }
 
+    public void getCoursepassLecturerSubjects() throws SQLException{
+        // load CoursepassLecturerSubjects
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+
+        SQLValues.add(new SQLValueLong(this.id));
+
+        ResultSet rsCoursepassLecturerSubjects = sqlConnectionManager.select("Select id from T_COURSEPASSESLECTURERSUBJECT where REFCOURSEPASSID = ?", SQLValues);
+
+        while (rsCoursepassLecturerSubjects.next()){
+            arraycoursepasslecturersubject.add(new CoursepassLecturerSubject(rsCoursepassLecturerSubjects.getLong("id")));
         }
     }
 

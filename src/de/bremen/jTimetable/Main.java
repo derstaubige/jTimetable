@@ -49,9 +49,10 @@ public class Main {
 //            courseofStudy.caption = "hallo";
 //            courseofStudy.save();
 
-            Coursepass coursepass = new Coursepass(1L);
+            Coursepass coursepass = new Coursepass(134L);
             coursepass.description = "Buja";
-            coursepass.start = LocalDate.of(2022,6,8);
+            coursepass.getCoursepassLecturerSubjects();
+            //coursepass.start = LocalDate.of(2022,6,8);
             coursepass.save();
 
             System.out.println("hi");
