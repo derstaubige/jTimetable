@@ -21,6 +21,7 @@ public class SQLConnectionManager {
     public ResultSet select(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws SQLException{
         // select from database
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
+        // System.out.println(pstmt);
         ResultSet rs = pstmt.executeQuery();
 
         return rs;
@@ -67,6 +68,7 @@ public class SQLConnectionManager {
             }
             parameterindex++;
         }
+        // System.out.println(pstmt);
         return pstmt;
     }
 

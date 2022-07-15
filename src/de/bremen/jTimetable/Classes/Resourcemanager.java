@@ -1,6 +1,7 @@
 package de.bremen.jTimetable.Classes;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueDate;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
 
 import java.sql.ResultSet;
@@ -14,14 +15,18 @@ import java.util.Date;
 
 public class Resourcemanager {
     public ArrayList<TimetableDay> arrayTimetabledays ;
-    public void generateInitialTimetable( Coursepass coursepass){
+    ArrayList<CoursepassLecturerSubject> arraycoursepasslecturersubject;
+    int positionInCoursepassLecturerSubjectStack;
+    int tmppositionInCoursepassLecturerSubjectStack;
+    int maxCoursepassLecturerSubjectStack;
+    public void generateInitialTimetable( Coursepass coursepass) throws SQLException{
         LocalDate startdate = coursepass.start;
         LocalDate enddate = coursepass.end;
         int Coursepasshours = 0;
         int WorkingDays = 0;
         int WorkingHours = 0;
 
-
+        coursepass.getCoursepassLecturerSubjects();
         // order subjects by should hours descending, count total hours, build stack of hours
         for(int i = 0; i < coursepass.arraycoursepasslecturersubject.size(); i++){
             Coursepasshours += coursepass.arraycoursepasslecturersubject.get(i).shouldhours;
@@ -40,40 +45,96 @@ public class Resourcemanager {
             System.out.println("Oh oh there are to many Hours for this.");
         }
 //        System.out.println(WorkingDays);
-        int positionInCoursepassLecturerSubjectStack = 0;
-        int maxCoursepassLecturerSubjectStack = coursepass.arraycoursepasslecturersubject.size();
+        this.positionInCoursepassLecturerSubjectStack = 0;
+        this.arraycoursepasslecturersubject = coursepass.arraycoursepasslecturersubject;
+        this.maxCoursepassLecturerSubjectStack = this.arraycoursepasslecturersubject.size();
+        if(this.maxCoursepassLecturerSubjectStack > 0){
+            this.maxCoursepassLecturerSubjectStack--;
+        }
         // try to place subject, check if the lecturer and the room is free for this date / hour. if not try next subject
         for(int idxDay = 0; idxDay < arrayTimetabledays.size(); idxDay++){
-
-
-
-            // a subject should only occupie a day. the next day would be nice to have another subject
-
-            if(positionInCoursepassLecturerSubjectStack < maxCoursepassLecturerSubjectStack) {
-                positionInCoursepassLecturerSubjectStack++;
+            // loop through all timeslots of this day
+            for(int idxTimeslot = 0; idxTimeslot < arrayTimetabledays.get(idxDay).arrayTimetableDay.size(); idxTimeslot++){
+                this.tmppositionInCoursepassLecturerSubjectStack = this.positionInCoursepassLecturerSubjectStack;
+                if(EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot)){
+                    //we found a matching coursepasslecturersubject object
+                    System.out.printf("%s, %s, %s\n", this.arrayTimetabledays.get(idxDay).date ,idxTimeslot, this.arraycoursepasslecturersubject.get(this.positionInCoursepassLecturerSubjectStack).subject.caption);
+                }else{
+                    //we didnt find a matching coursepasslecturersubject, freetime?!
+                    System.out.println("FREETIME!");
+                }
+            }
+//             a subject should only occupie a day. the next day would be nice to have another subject
+            if(this.positionInCoursepassLecturerSubjectStack < this.maxCoursepassLecturerSubjectStack) {
+                this.positionInCoursepassLecturerSubjectStack++;
             }else{
-                positionInCoursepassLecturerSubjectStack = 0;
+                this.positionInCoursepassLecturerSubjectStack = 0;
             }
         }
         // if placing is possible, remove hour from stack of hours
 
     }
-    private boolean checkLecturerAvailability(long lecturerID) throws SQLException {
+    private boolean EvaluateCoursepassLecturerSubject(int idxDay, int idxTimeslot) throws SQLException{
+        if(checkLecturerAvailability(this.arraycoursepasslecturersubject.get(positionInCoursepassLecturerSubjectStack).lecturer.id, arrayTimetabledays.get(idxDay).date, idxTimeslot)  ){
+            return true;
+        }
+
+        if(this.positionInCoursepassLecturerSubjectStack < this.maxCoursepassLecturerSubjectStack) {
+            this.positionInCoursepassLecturerSubjectStack++;
+        }else{
+            this.positionInCoursepassLecturerSubjectStack = 0;
+        }
+
+        if(this.tmppositionInCoursepassLecturerSubjectStack == this.positionInCoursepassLecturerSubjectStack){
+            // we rolled over and tryed every coursepasslecturersubject in the stack and nothing fitted... that means freetime
+            return false;
+        }
+
+        EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot);
+        return false;
+    }
+    public boolean checkLecturerAvailability(long lecturerID, LocalDate date, int timeslot) throws SQLException {
+        LocalDate startdate;
+        LocalDate enddate;
+        Integer starttimeslot;
+        Integer endtimeslot;
+
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
         SQLValues.add(new SQLValueLong(lecturerID));
+        SQLValues.add(new SQLValueDate(date));
+        SQLValues.add(new SQLValueDate(date));
 
-        ResultSet rs = sqlConnectionManager.select("Select * from T_RESOURCESBLOCKED where Resourcename = `Lecturer` and refresourceid = ?;", SQLValues);
-        rs.first();
+        ResultSet rs = sqlConnectionManager.select("Select * from T_RESOURCESBLOCKED where Resourcename = 'Lecturer' and refresourceid = ? and STARTDATE <= ? and ENDDATE >= ?;", SQLValues);
+        while(rs.next()){
+            startdate = rs.getDate("startdate").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            enddate = rs.getDate("enddate").toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            starttimeslot = rs.getInt("starttimeslot");
+            endtimeslot = rs.getInt("endtimeslot");
 
-        this.id = rs.getLong("id");
-        this.courseofstudy = new CourseofStudy(rs.getLong("REFCOURSEOFSTUDYID"));
-        this.studysection = new StudySection(rs.getLong("REFSTUDYSECTIONID"));
-        this.start = rs.getDate("start").toLocalDate();
-        this.end = rs.getDate("end").toLocalDate();
-        this.active = rs.getBoolean("active");
-        this.description = rs.getString("description");
-        this.room = new Room(rs.getLong("refRoomID"));
+            // if the date we want to check is the same date as the start of the blocked date range, we can check if the blocking starts after the timestamp we want to reserve
+            if(startdate == date ){
+                if( timeslot >= starttimeslot){
+                    return false;
+                }else{
+                    continue;
+                }
+            }
+
+            // if the date we want to check is the same date as the end of the blocked date range, we can check if the blocking ends before the timestamp we want to reserve
+            if(enddate == date){
+                if(timeslot <= endtimeslot){
+                    return false;
+                }else {
+                    continue;
+                }
+
+            }
+
+            return false;
+        }
+        // there is no blocking
+        return true;
     }
     public ArrayList<TimetableDay> getWorkingDaysBetweenTwoDates(LocalDate localstartDate, LocalDate localendDate) {
 //        https://stackoverflow.com/questions/4600034/calculate-number-of-weekdays-between-two-dates-in-java

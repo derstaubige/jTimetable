@@ -77,9 +77,11 @@ public class Main {
 //            System.out.println(timetableDay.arrayTimetableDay.get(0).isEmpty());
 //            timetableDay.addToSlot(0, new CoursepassLecturerSubject(0L));
 //            System.out.println(timetableDay.arrayTimetableDay.get(0).isEmpty());
+
             System.out.println("hi");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 }
