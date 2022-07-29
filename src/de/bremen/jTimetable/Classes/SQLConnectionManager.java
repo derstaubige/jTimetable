@@ -31,7 +31,7 @@ public class SQLConnectionManager {
         //used for inserting into the database
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
         pstmt.execute();
-        System.out.println(pstmt);
+        //System.out.println(pstmt);
         return pstmt.getGeneratedKeys();
         //if (generatedKeys.next()) {
         //    System.out.println((generatedKeys.getLong(1)));

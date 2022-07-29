@@ -70,13 +70,24 @@ public class Main {
 //            CoursepassLecturerSubject c1 = new CoursepassLecturerSubject(1L);
 //            CoursepassLecturerSubject c2 = new CoursepassLecturerSubject(2L);
 
-            Resourcemanager resourcemanager = new Resourcemanager();
-            resourcemanager.generateInitialTimetable(coursepass);
+
 
 //            TimetableDay timetableDay = new TimetableDay(LocalDate.now(), 3);
 //            System.out.println(timetableDay.arrayTimetableDay.get(0).isEmpty());
 //            timetableDay.addToSlot(0, new CoursepassLecturerSubject(0L));
 //            System.out.println(timetableDay.arrayTimetableDay.get(0).isEmpty());
+
+            //truncate resourcesblocked and t_timetables
+
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            sqlConnectionManager.execute("TRUNCATE table T_resourcesblocked",SQLValues);
+            sqlConnectionManager.execute("TRUNCATE table T_timetables",SQLValues);
+
+            Resourcemanager resourcemanager = new Resourcemanager();
+            resourcemanager.setResourcesBlocked(1L,"Lecturer","Urlaub",LocalDate.of(2022,9,5), LocalDate.of(2022,9,7),0,99);
+            resourcemanager.setResourcesBlocked(2L,"Lecturer","Urlaub",LocalDate.of(2022,9,6), LocalDate.of(2022,9,6),0,99);
+            resourcemanager.generateInitialTimetable(coursepass);
 
             System.out.println("hi");
         } catch (SQLException e) {

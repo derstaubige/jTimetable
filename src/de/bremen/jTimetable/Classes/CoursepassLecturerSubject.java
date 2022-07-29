@@ -2,14 +2,13 @@ package de.bremen.jTimetable.Classes;
 
 // CREATE TABLE IF NOT EXISTS  `T_CoursepassesLecturerSubject` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `refcoursepassID` long, `reflecturerID` long,`refSubjectID` long, `shouldhours` long, `active` Boolean);
 
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueBoolean;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerSubject> {
     Long id;
@@ -17,8 +16,8 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     Lecturer lecturer;
     Subject subject;
     public Long shouldhours;
-    public Long ishours;
-    public Long planedHours;
+    public Long ishours; // hours that have actually been given
+    public Long planedHours; //hours that are planed but not been given
     Boolean active;
 
     public CoursepassLecturerSubject(Long id) throws SQLException  {
@@ -32,6 +31,8 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             this.lecturer = new Lecturer(0L);
             this.subject = new Subject(0L);
             this.shouldhours = 0L;
+            this.ishours = 0L;
+            this.planedHours = 0L;
             this.active = Boolean.TRUE;
         }else{
             //load object from db
@@ -45,8 +46,26 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             this.subject = new Subject(rs.getLong("refSubjectID"));
             this.shouldhours = rs.getLong("shouldhours");
             this.active = rs.getBoolean("active");
+
+            //query the is hours
+            SQLValues.clear();
+            LocalDate today = LocalDate.now();
+            SQLValues.add(new SQLValueLong(this.coursepass.id));
+            SQLValues.add(new SQLValueLong(this.subject.id));
+            SQLValues.add(new SQLValueDate(today));
+            rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday < ?;",SQLValues);
+            rs.first();
+            this.ishours = rs.getLong(1);
+
+            //query the planed hours
+            SQLValues.clear();
+            SQLValues.add(new SQLValueLong(this.coursepass.id));
+            SQLValues.add(new SQLValueLong(this.subject.id));
+            SQLValues.add(new SQLValueDate(today));
+            rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday > ?;",SQLValues);
+            rs.first();
+            this.planedHours = rs.getLong(1);
         }
-        SQLValues.add(new SQLValueLong(id));
 
 
     }
