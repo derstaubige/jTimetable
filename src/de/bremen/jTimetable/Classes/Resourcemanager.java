@@ -176,8 +176,12 @@ public class Resourcemanager {
 
             // if the date we want to check is the same date as the start of the blocked date range, we can check if the blocking starts after the timestamp we want to reserve
             if(startdate.compareTo(date) == 0 ){
-                if( timeslot >= starttimeslot && enddate.compareTo(date) > 0 ){
-                    return false;
+                if( starttimeslot <= timeslot ){
+                    if (enddate.compareTo(date) == 0 && endtimeslot < timeslot) { //when a lecturer just cant make it to the 2nd timeslot he should be able to teach at 3rd timeslot
+                        continue;
+                    }else{
+                        return false;
+                    }
                 }else{
                     continue;
                 }
@@ -229,12 +233,13 @@ public class Resourcemanager {
 
         do {
             //excluding start date
-            startCal.add(Calendar.DAY_OF_MONTH, 1);
+
             if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
                 arrayTimetabledays.add(new TimetableDay(LocalDateTime.ofInstant(startCal.toInstant(), defaultZoneId).toLocalDate()));
                 //                ++workDays;
             }
-        } while (startCal.getTimeInMillis() < endCal.getTimeInMillis()); //excluding end date
+            startCal.add(Calendar.DAY_OF_MONTH, 1);
+        } while (startCal.getTimeInMillis() <= endCal.getTimeInMillis()); //excluding end date
 
         return arrayTimetabledays;
     }

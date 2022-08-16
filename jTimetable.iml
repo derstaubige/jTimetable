@@ -17,6 +17,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="h2-2.1.212" level="project" />
+    <orderEntry type="library" exported="" name="h2-2.1.212" level="project" />
+    <orderEntry type="library" name="javafx.18.0.2" level="application" />
   </component>
 </module>

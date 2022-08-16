@@ -28,3 +28,5 @@ jTimetable.sqlite
 h2.mv.db
 h2.trace.db
 H2 starten.lnk
+
+javafx-sdk*

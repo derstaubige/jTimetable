@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class TimetableDay {
     LocalDate date;
     public int timeslots;
+    //ToDo: Arraylist Arraylist
     public ArrayList<ArrayList<TimetableHour>> arrayTimetableDay;
 
     public TimetableDay(LocalDate date){

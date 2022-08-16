@@ -5,6 +5,9 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueInt;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -13,10 +16,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.MenuBar;
+import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-public class Main {
+
+public class Main extends Application {
     public static void main(String[] args){
-        try {
+        //try {
             //CourseofStudy cos = new CourseofStudy(8);
             //System.out.println(cos);
 
@@ -53,7 +64,7 @@ public class Main {
 //            courseofStudy.caption = "hallo";
 //            courseofStudy.save();
 
-            Coursepass coursepass = new Coursepass(134L);
+            //Coursepass coursepass = new Coursepass(134L);
 //            coursepass.description = "Buja";
 //            coursepass.getCoursepassLecturerSubjects();
 //            for(CoursepassLecturerSubject str: coursepass.arraycoursepasslecturersubject){
@@ -79,20 +90,46 @@ public class Main {
 
             //truncate resourcesblocked and t_timetables
 
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-            sqlConnectionManager.execute("TRUNCATE table T_resourcesblocked",SQLValues);
-            sqlConnectionManager.execute("TRUNCATE table T_timetables",SQLValues);
 
-            Resourcemanager resourcemanager = new Resourcemanager();
-            resourcemanager.setResourcesBlocked(1L,"Lecturer","Urlaub",LocalDate.of(2022,9,5), LocalDate.of(2022,9,7),0,99);
-            resourcemanager.setResourcesBlocked(2L,"Lecturer","Urlaub",LocalDate.of(2022,9,6), LocalDate.of(2022,9,6),0,99);
-            resourcemanager.generateInitialTimetable(coursepass);
+//            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+//            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+//            sqlConnectionManager.execute("TRUNCATE table T_resourcesblocked",SQLValues);
+//            sqlConnectionManager.execute("TRUNCATE table T_timetables",SQLValues);
+//
+//            Coursepass coursepass1 = new Coursepass(134L);
+//            Coursepass coursepass2 = new Coursepass(135L);
+//
+//            Resourcemanager resourcemanager = new Resourcemanager();
+//            resourcemanager.setResourcesBlocked(1L,"Lecturer","Urlaub",LocalDate.of(2022,9,5), LocalDate.of(2022,9,7),0,99);
+//            resourcemanager.setResourcesBlocked(2L,"Lecturer","Urlaub",LocalDate.of(2022,9,6), LocalDate.of(2022,9,6),0,99);
+//            resourcemanager.generateInitialTimetable(coursepass1);
+//            resourcemanager.generateInitialTimetable(coursepass2);
+//
+//            System.out.println("hi");
 
-            System.out.println("hi");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        // https://jenkov.com/tutorials/javafx/your-first-javafx-application.html
+            Application.launch(args);
+            //launch(args);
+
+
+
+        // } catch (SQLException e) {
+        //    throw new RuntimeException(e);
+        //}
     }
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        FXMLLoader loader = new FXMLLoader();
+        URL url = Main.class.getResource("fxml/Startseite.fxml");
+        loader.setLocation(url);
+        VBox vbox = loader.<VBox>load();
+
+        Scene scene = new Scene(vbox);
+        primaryStage.getIcons().add(new Image("/de/bremen/jTimetable/img/icon.png"));
+        primaryStage.setWidth(1024);
+        primaryStage.setHeight(768);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
 }
