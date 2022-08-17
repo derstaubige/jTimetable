@@ -21,13 +21,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 
 public class Main extends Application {
     public static void main(String[] args){
-        //try {
+//        try {
             //CourseofStudy cos = new CourseofStudy(8);
             //System.out.println(cos);
 
@@ -59,8 +60,9 @@ public class Main extends Application {
 //            coursepassLecturerSubject.shouldhours = 20L;
 //            coursepassLecturerSubject.save();
 
-//            CourseofStudy courseofStudy = new CourseofStudy(1L);
-//            courseofStudy.begin = LocalDate.of(2022,6,8);
+//            CourseofStudy courseofStudy = new CourseofStudy(0L);
+//            courseofStudy.begin = LocalDate.of(2022,9,8);
+//            courseofStudy.end = LocalDate.of(2022,9,30);
 //            courseofStudy.caption = "hallo";
 //            courseofStudy.save();
 
@@ -109,24 +111,27 @@ public class Main extends Application {
 
         // https://jenkov.com/tutorials/javafx/your-first-javafx-application.html
             Application.launch(args);
-            //launch(args);
+//            CourseofStudy c1 = new CourseofStudy(0L);
+//            ArrayList alc1 = c1.getActiveCoursesofStudy();
+//            System.out.println("JO");
 
 
 
-        // } catch (SQLException e) {
-        //    throw new RuntimeException(e);
-        //}
+//         } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader();
-        URL url = Main.class.getResource("fxml/Startseite.fxml");
+        URL url = Main.class.getResource("fxml/Home.fxml");
         loader.setLocation(url);
-        VBox vbox = loader.<VBox>load();
+        VBox vBox = loader.<VBox>load();
 
-        Scene scene = new Scene(vbox);
+        Scene scene = new Scene(vBox);
         primaryStage.getIcons().add(new Image("/de/bremen/jTimetable/img/icon.png"));
+        primaryStage.setTitle("jTimetable");
         primaryStage.setWidth(1024);
         primaryStage.setHeight(768);
         primaryStage.setScene(scene);

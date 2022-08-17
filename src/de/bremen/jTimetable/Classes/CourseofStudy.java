@@ -2,6 +2,7 @@ package de.bremen.jTimetable.Classes;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -14,6 +15,8 @@ public class CourseofStudy {
     public String caption;
     public LocalDate begin;
     public LocalDate end;
+
+
     boolean active;
 
     public CourseofStudy(long id) throws SQLException {
@@ -65,5 +68,61 @@ public class CourseofStudy {
             SQLValues.add(new SQLValueLong(this.id));
             ResultSet rs = sqlConnectionManager.execute("update `T_CoursesofStudy` set `caption` = ?, `begin` = ?, `end` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
+    }
+
+    public ArrayList<CourseofStudy> getActiveCoursesofStudy() throws SQLException{
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+        SQLValues.add(new SQLValueBoolean(true));
+        ResultSet rs = sqlConnectionManager.select("Select * from T_CoursesofStudy where active = ?",SQLValues);
+        ArrayList returnList = new ArrayList();
+//        rs.last();
+//        System.out.println(rs.getRow() + " active Courses of Study");
+//        rs.first();
+        while( rs.next() ){
+            returnList.add(new CourseofStudy(rs.getLong("id")));
+        }
+        return returnList;
+    }
+
+    public void setCaption(String pCaption){
+        this.caption = pCaption;
+    }
+
+    public String getCaption(){
+        return this.caption;
+    }
+
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public LocalDate getBegin() {
+        return begin;
+    }
+
+    public void setBegin(LocalDate begin) {
+        this.begin = begin;
+    }
+
+    public LocalDate getEnd() {
+        return end;
+    }
+
+    public void setEnd(LocalDate end) {
+        this.end = end;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

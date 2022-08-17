@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="vbox"  prefWidth="800"      xmlns:fx="http://javafx.com/fxml"     fx:controller="de.bremen.jTimetable.fxmlController.MenuController" >
+<VBox id="vbox"  prefWidth="1024"      xmlns:fx="http://javafx.com/fxml"     fx:controller="de.bremen.jTimetable.fxmlController.MenuController" >
     <MenuBar fx:id="menuBar" onKeyPressed="#handleKeyInput">
         <menus>
             <Menu text="File">

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.HomeController">
+    <children>
+        <fx:include source="Menu.fxml" fillWidth="true" />
+        <Pane>
+            <children>
+                <ImageView id="boxImage" layoutX="800" layoutY="10">
+                    <image>
+                        <Image url="@/de/bremen/jTimetable/img/icon.png" />
+                    </image>
+                </ImageView>
+                <Label text="jTimetable" />
+            </children>
+        </Pane>
+        <Label text="Active courses of Study"></Label>
+        <HBox>
+            <children>
+                <TableView fx:id="ActiveCoursesofStudyTableview">
+                    <columns>
+                        <TableColumn text="ID" fx:id="COSID" visible="false"></TableColumn>
+                        <TableColumn text="Description" fx:id="COSDescription"></TableColumn>
+                        <TableColumn text="Begin" fx:id="COSBegin"></TableColumn>
+                        <TableColumn text="End" fx:id="COSEnd"></TableColumn>
+                        <TableColumn text="Active" fx:id="COSActive"></TableColumn>
+                    </columns>
+                </TableView>
+
+            </children>
+        </HBox>
+        <HBox>
+            <children>
+                <Label text="Active Coursepasses"></Label>
+            </children>
+        </HBox>
+    </children>
+</VBox>
