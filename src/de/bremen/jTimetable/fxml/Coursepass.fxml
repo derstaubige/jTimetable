@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="de.bremen.jTimetable.fxmlController.CoursepassController"
+            prefHeight="400.0" prefWidth="800.0" minWidth="800">
+    <ScrollPane>
+        <VBox >
+            <children>
+                <HBox>
+                    <Label>Course of Study</Label><TextField fx:id="txtCourseofStudyCaption"></TextField>
+                </HBox>
+                <HBox>
+                    <Label>Study Section</Label><ComboBox fx:id="cmbStudySections" minWidth="400"></ComboBox>
+                </HBox>
+                <HBox>
+                    <Label>Start</Label><DatePicker fx:id="datStart"></DatePicker>
+                </HBox>
+                <HBox>
+                    <Label>End</Label><DatePicker fx:id="datEnd"></DatePicker>
+                </HBox>
+                <HBox>
+                    <Label>Description</Label><TextField fx:id="txtDescription"></TextField>
+                </HBox>
+                <HBox>
+                    <Label>Active</Label><CheckBox fx:id="chkActive"></CheckBox>
+                </HBox>
+                <HBox>
+                    <Button fx:id="btnBack">Back</Button>
+                    <Button fx:id="btnSave">Save</Button>
+                </HBox>
+            </children>
+        </VBox>
+    </ScrollPane>
+
+</AnchorPane>

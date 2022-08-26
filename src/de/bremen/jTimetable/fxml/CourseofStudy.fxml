@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.CourseofStudyController">
+    <VBox>
+        <children>
+            <fx:include source="Menu.fxml" fillWidth="true" />
+            <Label>Course of Study</Label>
+            <HBox>
+                <Label>Id</Label><TextField fx:id="txtID"></TextField>
+            </HBox>
+            <HBox>
+                <Label>Caption</Label><TextField fx:id="txtCaption"></TextField>
+            </HBox>
+            <HBox>
+                <Label>Begin</Label><DatePicker fx:id="datBegin"></DatePicker>
+            </HBox>
+            <HBox>
+                <Label>Begin</Label><DatePicker fx:id="datEnd"></DatePicker>
+            </HBox>
+            <HBox>
+                <Label>Active</Label><CheckBox fx:id="chkActive"></CheckBox>
+            </HBox>
+            <HBox>
+                <Button fx:id="btnBack">Back</Button> <Button fx:id="btnSave">Save</Button>
+            </HBox>
+        </children>
+    </VBox>
+</AnchorPane>

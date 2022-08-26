@@ -6,38 +6,65 @@
 
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
-<VBox xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.HomeController">
-    <children>
-        <fx:include source="Menu.fxml" fillWidth="true" />
-        <Pane>
-            <children>
-                <ImageView id="boxImage" layoutX="800" layoutY="10">
-                    <image>
-                        <Image url="@/de/bremen/jTimetable/img/icon.png" />
-                    </image>
-                </ImageView>
-                <Label text="jTimetable" />
-            </children>
-        </Pane>
-        <Label text="Active courses of Study"></Label>
-        <HBox>
-            <children>
-                <TableView fx:id="ActiveCoursesofStudyTableview">
-                    <columns>
-                        <TableColumn text="ID" fx:id="COSID" visible="false"></TableColumn>
-                        <TableColumn text="Description" fx:id="COSDescription"></TableColumn>
-                        <TableColumn text="Begin" fx:id="COSBegin"></TableColumn>
-                        <TableColumn text="End" fx:id="COSEnd"></TableColumn>
-                        <TableColumn text="Active" fx:id="COSActive"></TableColumn>
-                    </columns>
-                </TableView>
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.HomeController">
+    <ScrollPane>
+        <VBox>
 
-            </children>
-        </HBox>
-        <HBox>
-            <children>
-                <Label text="Active Coursepasses"></Label>
-            </children>
-        </HBox>
-    </children>
-</VBox>
+        <children>
+            <fx:include source="Menu.fxml" fillWidth="true" />
+
+            <Label text="Active courses of Study"></Label>
+            <HBox>
+                <children>
+                    <TableView fx:id="ActiveCoursesofStudyTableview" minWidth="800">
+                        <columns>
+                            <TableColumn text="ID" fx:id="COSID" visible="false"></TableColumn>
+                            <TableColumn text="Description" fx:id="COSDescription"></TableColumn>
+                            <TableColumn text="Begin" fx:id="COSBegin"></TableColumn>
+                            <TableColumn text="End" fx:id="COSEnd"></TableColumn>
+                            <TableColumn text="Active" fx:id="COSActive"></TableColumn>
+                        </columns>
+                    </TableView>
+                    <VBox minWidth="200">
+
+                        <Button fx:id="ActiveCoursesofStudyButton">Edit</Button>
+                        <Button fx:id="ActiveCoursesofStudyButtonNew">New</Button>
+                        <CheckBox fx:id="chkToogleActiveCourseofStudy">Show only inactive Courses of Study</CheckBox>
+                        <ImageView id="boxImage" layoutX="800" layoutY="10">
+                            <image>
+                                <Image url="@/de/bremen/jTimetable/img/icon.png" />
+                            </image>
+                        </ImageView>
+                    </VBox>
+
+                </children>
+            </HBox>
+            <Label text="Active Coursepasses"></Label>
+            <HBox>
+                <children>
+                    <TableView fx:id="CoursepassTableview" minWidth="800">
+                        <columns>
+                            <TableColumn text="ID" fx:id="CPID" visible="false"></TableColumn>
+                            <TableColumn text="CourseofStudy" fx:id="CPCOSCaption"></TableColumn>
+                            <TableColumn text="StudySection" fx:id="CPstudysection"></TableColumn>
+                            <TableColumn text="Description" fx:id="CPDescription"></TableColumn>
+                            <TableColumn text="Start" fx:id="CPStart"></TableColumn>
+                            <TableColumn text="End" fx:id="CPEnd"></TableColumn>
+                            <TableColumn text="Active" fx:id="CPActive"></TableColumn>
+                        </columns>
+                    </TableView>
+                    <VBox minWidth="200">
+
+                        <Button fx:id="btnCoursepassEdit">Edit</Button>
+                        <Button fx:id="btnCoursepassNew">New</Button>
+                        <CheckBox fx:id="chkToogleCoursepass">Show only inactive Coursepass</CheckBox>
+
+                    </VBox>
+                </children>
+            </HBox>
+        </children>
+
+        </VBox>
+    </ScrollPane>
+
+</AnchorPane>

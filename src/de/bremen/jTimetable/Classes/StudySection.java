@@ -31,7 +31,7 @@ public class StudySection {
             ResultSet rs = sqlConnectionManager.select("Select * from T_StudySections where id = ?;",SQLValues);
             rs.first();
             this.id = rs.getLong("id");
-            this.description = "";
+            this.description = rs.getString("description");
             this.active = rs.getBoolean("active");
         }
 
@@ -53,5 +53,42 @@ public class StudySection {
             SQLValues.add(new SQLValueLong(this.id));
             ResultSet rs = sqlConnectionManager.execute("update `T_StudySections` set `description` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
+    }
+
+    public static ArrayList<StudySection> getStudySections(Boolean activeStatus) throws SQLException{
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+        SQLValues.add(new SQLValueBoolean(activeStatus));
+        ResultSet rs = sqlConnectionManager.select("Select * from T_StudySections where active = ? order by Description",SQLValues);
+        ArrayList returnList = new ArrayList();
+
+        while( rs.next() ){
+            returnList.add(new StudySection(rs.getLong("id")));
+        }
+        return returnList;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return this.description.trim();
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

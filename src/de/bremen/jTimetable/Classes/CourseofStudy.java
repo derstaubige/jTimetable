@@ -2,12 +2,10 @@ package de.bremen.jTimetable.Classes;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 // CREATE TABLE IF NOT EXISTS  `T_CoursesofStudy` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `caption` char(60), `begin` Date, `end` Date, `active` Boolean );
 public class CourseofStudy {
@@ -15,8 +13,6 @@ public class CourseofStudy {
     public String caption;
     public LocalDate begin;
     public LocalDate end;
-
-
     boolean active;
 
     public CourseofStudy(long id) throws SQLException {
@@ -70,10 +66,10 @@ public class CourseofStudy {
         }
     }
 
-    public ArrayList<CourseofStudy> getActiveCoursesofStudy() throws SQLException{
+    public ArrayList<CourseofStudy> getCoursesofStudy(Boolean activeStatus) throws SQLException{
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-        SQLValues.add(new SQLValueBoolean(true));
+        SQLValues.add(new SQLValueBoolean(activeStatus));
         ResultSet rs = sqlConnectionManager.select("Select * from T_CoursesofStudy where active = ?",SQLValues);
         ArrayList returnList = new ArrayList();
 //        rs.last();
@@ -86,11 +82,11 @@ public class CourseofStudy {
     }
 
     public void setCaption(String pCaption){
-        this.caption = pCaption;
+        this.caption = pCaption.trim();
     }
 
     public String getCaption(){
-        return this.caption;
+        return this.caption.trim();
     }
 
 

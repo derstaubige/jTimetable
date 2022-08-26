@@ -21,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -112,7 +113,7 @@ public class Main extends Application {
         // https://jenkov.com/tutorials/javafx/your-first-javafx-application.html
             Application.launch(args);
 //            CourseofStudy c1 = new CourseofStudy(0L);
-//            ArrayList alc1 = c1.getActiveCoursesofStudy();
+//            ArrayList alc1 = c1.getCoursesofStudy();
 //            System.out.println("JO");
 
 
@@ -127,9 +128,9 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader();
         URL url = Main.class.getResource("fxml/Home.fxml");
         loader.setLocation(url);
-        VBox vBox = loader.<VBox>load();
+        AnchorPane anchorPane = loader.<AnchorPane>load();
 
-        Scene scene = new Scene(vBox);
+        Scene scene = new Scene(anchorPane);
         primaryStage.getIcons().add(new Image("/de/bremen/jTimetable/img/icon.png"));
         primaryStage.setTitle("jTimetable");
         primaryStage.setWidth(1024);

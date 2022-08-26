@@ -19,6 +19,7 @@ public class Coursepass {
     Room room;
     public ArrayList<CoursepassLecturerSubject> arraycoursepasslecturersubject = new ArrayList<CoursepassLecturerSubject>();
 
+
     public Coursepass(long id) throws SQLException {
         this.id = id;
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
@@ -95,5 +96,98 @@ public class Coursepass {
             SQLValues.add(new SQLValueLong(this.id));
             ResultSet rs = sqlConnectionManager.execute("update `T_Coursepasses` set `refCourseofStudyID` = ?, `refStudySectionID` = ?, `start` = ?, `end` = ?, `active` = ?, `description` = ?, `refRoomID` = ? where `id` = ?;",SQLValues);
         }
+    }
+
+    public static ArrayList<Coursepass> getCoursepasses(Boolean activeStatus) throws SQLException{
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+        SQLValues.add(new SQLValueBoolean(activeStatus));
+        ResultSet rs = sqlConnectionManager.select("Select * from T_Coursepasses where active = ?",SQLValues);
+        ArrayList returnList = new ArrayList();
+
+        while( rs.next() ){
+            returnList.add(new Coursepass(rs.getLong("id")));
+        }
+        return returnList;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public CourseofStudy getCourseofstudy() {
+        return courseofstudy;
+    }
+
+    public void setCourseofstudy(CourseofStudy courseofstudy) {
+        this.courseofstudy = courseofstudy;
+    }
+
+    public StudySection getStudysection() {
+        return studysection;
+    }
+
+    public void setStudysection(StudySection studysection) {
+        this.studysection = studysection;
+    }
+
+    public LocalDate getStart() {
+        return start;
+    }
+
+    public void setStart(LocalDate start) {
+        this.start = start;
+    }
+
+    public LocalDate getEnd() {
+        return end;
+    }
+
+    public void setEnd(LocalDate end) {
+        this.end = end;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public String getDescription() {
+        return description.trim();
+    }
+
+    public void setDescription(String description) {
+        this.description = description.trim();
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public String getCourseofstudycaption(){
+        return this.courseofstudy.getCaption();
+    }
+
+    public void setCourseofstudycaption(String courseofstudyCpation){
+        this.courseofstudy.setCaption(courseofstudyCpation);
+    }
+
+    public String getCPstudysection(){
+        return this.studysection.getDescription().trim();
+    }
+
+    public void setCPstudysection(String CPStudySection){
+        this.studysection.setDescription(CPStudySection);
     }
 }
