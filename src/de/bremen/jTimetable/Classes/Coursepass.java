@@ -1,4 +1,5 @@
 package de.bremen.jTimetable.Classes;
+
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 import java.sql.ResultSet;
@@ -25,16 +26,18 @@ public class Coursepass {
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
-        if (this.id == 0){
+        if (this.id == 0) {
             //load dummy object
             this.courseofstudy = new CourseofStudy(0L);
             this.studysection = new StudySection(0L);
-            this.start = LocalDate.of(1990,1,1);;
-            this.end = LocalDate.of(1990,1,1);;
+            this.start = LocalDate.of(1990, 1, 1);
+            ;
+            this.end = LocalDate.of(1990, 1, 1);
+            ;
             this.active = Boolean.TRUE;
             this.description = "";
             this.room = new Room(0L);
-        }else {
+        } else {
             //load object from db
             SQLValues.add(new SQLValueLong(id));
 
@@ -51,7 +54,7 @@ public class Coursepass {
         }
     }
 
-    public void getCoursepassLecturerSubjects() throws SQLException{
+    public void getCoursepassLecturerSubjects() throws SQLException {
         // load CoursepassLecturerSubjects
 
         // empty arraylist and reload everything
@@ -64,7 +67,7 @@ public class Coursepass {
 
         ResultSet rsCoursepassLecturerSubjects = sqlConnectionManager.select("Select id from T_COURSEPASSESLECTURERSUBJECT where REFCOURSEPASSID = ?", SQLValues);
 
-        while (rsCoursepassLecturerSubjects.next()){
+        while (rsCoursepassLecturerSubjects.next()) {
             arraycoursepasslecturersubject.add(new CoursepassLecturerSubject(rsCoursepassLecturerSubjects.getLong("id")));
         }
 
@@ -73,8 +76,66 @@ public class Coursepass {
         Collections.reverse(this.arraycoursepasslecturersubject);
     }
 
+    /**
+     * Returns all lessons that are already planned and executes generateInitialTimetable so there will always be
+     * a timetable even if non was generated yet.
+     *
+     * @return ResultSet with dates and lessons
+     */
+    public ArrayList<ArrayList<SQLConnectionManagerValues>> getTimetable() throws SQLException {
+        //Generate a Timetable if non exists yet
+        Resourcemanager resourcemanager = new Resourcemanager();
+        resourcemanager.generateInitialTimetable(this);
+        //Create new SQLValues that are used for the following select statement
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
+        SQLValues.add(new SQLValueLong(this.id));
+        //Create new Connection to database
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ResultSet rs = sqlConnectionManager.select("Select * From T_TIMETABLES where REFCOURSEPASS=?;", SQLValues);
+        ArrayList<ArrayList<SQLConnectionManagerValues>> result = new ArrayList<>();
 
-    public void save() throws SQLException{
+        while (rs.next()) {
+            //Add date
+            ArrayList<SQLConnectionManagerValues> row = new ArrayList<>();
+            row.add(new SQLValueDate(rs.getDate("TIMETABLEDAY").toLocalDate()));
+            //Get Room Name
+            ArrayList<SQLConnectionManagerValues> roomId = new ArrayList<>(Collections.singleton(new SQLValueLong(rs.getLong("REFROOMID"))));
+            ResultSet rsRoom = sqlConnectionManager.select("Select * From T_ROOMS where ID=?;", roomId);
+            while (rsRoom.next()) {
+                row.add(new SQLValueString(rsRoom.getString("roomcaption")));
+            }
+            //Get Lecturer Name
+            ArrayList<SQLConnectionManagerValues> lecturerID = new ArrayList<>(Collections.singleton(new SQLValueLong(rs.getLong("REFLECTURER"))));
+            ResultSet rsLecturer = sqlConnectionManager.select("Select * From T_LECTURERS where id=?;", lecturerID);
+            while(rsLecturer.next()){
+                row.add(new SQLValueString(rsLecturer.getString("firstname")));
+                row.add(new SQLValueString(rsLecturer.getString("lastname")));
+
+            }
+            //Get Subject Name
+            ArrayList<SQLConnectionManagerValues> subjectId = new ArrayList<>(Collections.singleton(new SQLValueLong(rs.getLong("REFSUBJECT"))));
+
+            ResultSet rsSubject = sqlConnectionManager.select("Select * From T_SUBJECTS where id=?;", subjectId);
+
+            while(rsSubject.next())
+            {
+                System.out.println(rsSubject.getString("CAPTION"));
+                if(subjectId.get(0).getValue().equals(0L)){
+                    row.add(new SQLValueString("Freetime"));
+                }else{
+
+                    row.add(new SQLValueString(rsSubject.getString("CAPTION")));
+                }
+
+            }
+
+            result.add(row);
+        }
+
+        return result;
+    }
+
+    public void save() throws SQLException {
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
@@ -88,24 +149,24 @@ public class Coursepass {
 
         if (this.id == 0) {
             // its a new object, we have to insert it
-            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Coursepasses` (`refCourseofStudyID`, `refStudySectionID`, `start`, `end`, `active`,  `description`, `refRoomID` ) values (?, ?, ?, ?, ?,? ,?)",SQLValues);
+            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Coursepasses` (`refCourseofStudyID`, `refStudySectionID`, `start`, `end`, `active`,  `description`, `refRoomID` ) values (?, ?, ?, ?, ?,? ,?)", SQLValues);
             rs.first();
             this.id = rs.getLong(1);
-        }else{
+        } else {
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            ResultSet rs = sqlConnectionManager.execute("update `T_Coursepasses` set `refCourseofStudyID` = ?, `refStudySectionID` = ?, `start` = ?, `end` = ?, `active` = ?, `description` = ?, `refRoomID` = ? where `id` = ?;",SQLValues);
+            ResultSet rs = sqlConnectionManager.execute("update `T_Coursepasses` set `refCourseofStudyID` = ?, `refStudySectionID` = ?, `start` = ?, `end` = ?, `active` = ?, `description` = ?, `refRoomID` = ? where `id` = ?;", SQLValues);
         }
     }
 
-    public static ArrayList<Coursepass> getCoursepasses(Boolean activeStatus) throws SQLException{
+    public static ArrayList<Coursepass> getCoursepasses(Boolean activeStatus) throws SQLException {
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
         SQLValues.add(new SQLValueBoolean(activeStatus));
-        ResultSet rs = sqlConnectionManager.select("Select * from T_Coursepasses where active = ?",SQLValues);
-        ArrayList returnList = new ArrayList();
+        ResultSet rs = sqlConnectionManager.select("Select * from T_Coursepasses where active = ?", SQLValues);
+        ArrayList<Coursepass> returnList = new ArrayList<>();
 
-        while( rs.next() ){
+        while (rs.next()) {
             returnList.add(new Coursepass(rs.getLong("id")));
         }
         return returnList;
@@ -175,19 +236,19 @@ public class Coursepass {
         this.room = room;
     }
 
-    public String getCourseofstudycaption(){
+    public String getCourseofstudycaption() {
         return this.courseofstudy.getCaption();
     }
 
-    public void setCourseofstudycaption(String courseofstudyCpation){
+    public void setCourseofstudycaption(String courseofstudyCpation) {
         this.courseofstudy.setCaption(courseofstudyCpation);
     }
 
-    public String getCPstudysection(){
+    public String getCPstudysection() {
         return this.studysection.getDescription().trim();
     }
 
-    public void setCPstudysection(String CPStudySection){
+    public void setCPstudysection(String CPStudySection) {
         this.studysection.setDescription(CPStudySection);
     }
 }

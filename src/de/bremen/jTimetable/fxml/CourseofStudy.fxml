@@ -1,30 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.CourseofStudyController">
-    <VBox>
+<AnchorPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.CourseofStudyController">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <children>
-            <fx:include source="Menu.fxml" fillWidth="true" />
+            <fx:include fillWidth="true" source="Menu.fxml" />
             <Label>Course of Study</Label>
             <HBox>
-                <Label>Id</Label><TextField fx:id="txtID"></TextField>
+                <Label>Id</Label><TextField fx:id="txtID" />
             </HBox>
             <HBox>
-                <Label>Caption</Label><TextField fx:id="txtCaption"></TextField>
+                <Label>Caption</Label><TextField fx:id="txtCaption" />
             </HBox>
             <HBox>
-                <Label>Begin</Label><DatePicker fx:id="datBegin"></DatePicker>
+                <Label>Begin</Label><DatePicker fx:id="datBegin" />
             </HBox>
             <HBox>
-                <Label>Begin</Label><DatePicker fx:id="datEnd"></DatePicker>
+                <Label>Begin</Label><DatePicker fx:id="datEnd" />
             </HBox>
             <HBox>
-                <Label>Active</Label><CheckBox fx:id="chkActive"></CheckBox>
+                <Label>Active</Label><CheckBox fx:id="chkActive" />
             </HBox>
             <HBox>
                 <Button fx:id="btnBack">Back</Button> <Button fx:id="btnSave">Save</Button>

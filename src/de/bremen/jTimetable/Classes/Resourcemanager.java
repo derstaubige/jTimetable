@@ -25,6 +25,10 @@ public class Resourcemanager {
         int WorkingDays = 0;
         int WorkingHours = 0;
 
+        //TODO Check whether there already is a timetable
+       /* SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        sqlConnectionManager.select()*/
+
         coursepass.getCoursepassLecturerSubjects();
         // order subjects by should hours descending, count total hours, build stack of hours
         for(int i = 0; i < coursepass.arraycoursepasslecturersubject.size(); i++){
@@ -39,8 +43,11 @@ public class Resourcemanager {
         //ToDo: Hardcoded default Value for the Slots per Day. Change it.
         WorkingHours = WorkingDays * 3;
 
-        if(WorkingHours > Coursepasshours){
+        //TODO condition should be: WorkingHours < CoursePassHours --> we want to know whether less
+        // timeslots are available than needed
+        if(WorkingHours < Coursepasshours){
             //ToDO: Add Custom Exception.
+            //TODO have 4 hours a day to have enough timeslots
             System.out.println("Oh oh there are to many Hours for this.");
         }
 
@@ -235,6 +242,8 @@ public class Resourcemanager {
             //excluding start date
 
             if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+                //TODO could add a fourth timeslot her by using the constructor of TimetableDay that allows to set the
+                // number of timeslots
                 arrayTimetabledays.add(new TimetableDay(LocalDateTime.ofInstant(startCal.toInstant(), defaultZoneId).toLocalDate()));
                 //                ++workDays;
             }

@@ -68,7 +68,7 @@ public class SQLConnectionManager {
             }
             parameterindex++;
         }
-        // System.out.println(pstmt);
+       // System.out.println(pstmt);
         return pstmt;
     }
 
