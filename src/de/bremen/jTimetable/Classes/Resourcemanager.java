@@ -31,7 +31,7 @@ public class Resourcemanager {
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues =
                 new ArrayList<>(Collections.singleton(new SQLValueLong(coursepass.id)));
-        ResultSet rs = sqlConnectionManager.select("Select * from T_TIMETABLES where id = ?;",
+        ResultSet rs = sqlConnectionManager.select("Select * from T_TIMETABLES where REFCOURSEPASS = ?;",
                 SQLValues);
         //If the ResultSet is empty, the method next will return false, if it returns true (elements
         // for the given id where found it should not generate a new timetable
