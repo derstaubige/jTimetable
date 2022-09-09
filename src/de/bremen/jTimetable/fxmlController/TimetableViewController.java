@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -41,8 +42,12 @@ public class TimetableViewController implements Initializable {
                 int idx = 1;
                 Node date = null;
                 Node room = null;
-                Node lecturer = null;
+                Node firstname = null;
+                Node lastname = null;
                 Node subject = null;
+                Node slot1 = null;
+                Node slot2 = null;
+                Node slot3 = null;
 
                 for (SQLConnectionManagerValues value : row) {
                     //Field, only one Timeslot
@@ -52,15 +57,19 @@ public class TimetableViewController implements Initializable {
                             date = new Label(value.toString());
                             break;
                         }
+//                        case 2: {
+//                            //Room Name
+//                            room = new Label(value.toString());
+//                            break;
+//                        }
                         case 2: {
-                            //Room Name
-                            room = new Label(value.toString());
+                            //Lecturer firstname
+                            firstname = new Label(value.toString());
                             break;
                         }
                         case 3: {
-                            //Lecturer
-                            //TODO lecturer has first and lastname as value
-                            lecturer = new Label(value.toString());
+                            //Lecturer lastname
+                            lastname = new Label(value.toString());
                             break;
                         }
                         case 4: {
@@ -74,16 +83,39 @@ public class TimetableViewController implements Initializable {
                     }
 
                     //TODO doesn't work if day uses four timeslots
-                    //TODO add timeslots next to each other
                     switch (timeslot) {
-                        case -1: {
-
+                        case 0: {
+                            if ((firstname != null) && (lastname != null) && (subject != null)) {
+                                slot1 = new VBox(firstname, lastname, subject);
+                            }
+                            break;
+                        }
+                        case 1: {
+                            if ((firstname != null) && (lastname != null) && (subject != null)) {
+                                slot2 = new VBox(firstname, lastname, subject);
+                            }
+                            break;
+                        }
+                        case 2: {
+                            if ((firstname != null) && (lastname != null) && (subject != null)) {
+                                slot3 = new VBox(firstname, lastname, subject);
+                            }
+                            break;
+                        }
+                        default: {
+                         //   System.out.println("To many timeslots.");
                         }
                     }
                     timeslot++;
                     if (timeslot > 2) {
-                        //Add Row for each day: Date, Slot 1, Slot 2, Slot 3, Slot 4
-                        grdpn_TimetableView.addRow(1, date, room, lecturer, subject);
+                        //Add Row for each day: Date, Slot 1, Slot 2, Slot 3
+                        if ((slot1 != null) && (slot2 != null) &&
+                                (slot3 != null)) {
+                            grdpn_TimetableView.addRow(1, date, slot1, slot2, slot3);
+                        }
+                        slot1 = null;
+                        slot2 = null;
+                        slot3 = null;
                         timeslot = -1;
                     }
 
@@ -91,9 +123,6 @@ public class TimetableViewController implements Initializable {
 
                 }
             }
-            //Create new Element for each Date and Timeslot
-
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
