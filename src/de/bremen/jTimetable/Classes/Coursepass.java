@@ -82,7 +82,7 @@ public class Coursepass {
      *
      * @return ResultSet with dates and lessons
      */
-    public ArrayList<ArrayList<SQLConnectionManagerValues>> getTimetable() throws SQLException {
+    public ArrayList<TimetableDay> getTimetable() throws SQLException {
         //Generate a Timetable if non exists yet
         Resourcemanager resourcemanager = new Resourcemanager();
         resourcemanager.generateInitialTimetable(this);
@@ -92,44 +92,34 @@ public class Coursepass {
         //Create new Connection to database
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ResultSet rs = sqlConnectionManager.select("Select * From T_TIMETABLES where REFCOURSEPASS=?;", SQLValues);
-        ArrayList<ArrayList<SQLConnectionManagerValues>> result = new ArrayList<>();
+        ArrayList<TimetableDay> result = new ArrayList<TimetableDay>();
 
         while (rs.next()) {
-            //Add date
-            ArrayList<SQLConnectionManagerValues> row = new ArrayList<>();
-            row.add(new SQLValueDate(rs.getDate("TIMETABLEDAY").toLocalDate()));
-            //Get Room Name
-            ArrayList<SQLConnectionManagerValues> roomId = new ArrayList<>(Collections.singleton(new SQLValueLong(rs.getLong("REFROOMID"))));
-            ResultSet rsRoom = sqlConnectionManager.select("Select * From T_ROOMS where ID=?;", roomId);
-            while (rsRoom.next()) {
-                row.add(new SQLValueString(rsRoom.getString("roomcaption")));
-            }
-            //Get Lecturer Name
-            ArrayList<SQLConnectionManagerValues> lecturerID = new ArrayList<>(Collections.singleton(new SQLValueLong(rs.getLong("REFLECTURER"))));
-            ResultSet rsLecturer = sqlConnectionManager.select("Select * From T_LECTURERS where id=?;", lecturerID);
-            while(rsLecturer.next()){
-                row.add(new SQLValueString(rsLecturer.getString("firstname")));
-                row.add(new SQLValueString(rsLecturer.getString("lastname")));
-
-            }
-            //Get Subject Name
-            ArrayList<SQLConnectionManagerValues> subjectId = new ArrayList<>(Collections.singleton(new SQLValueLong(rs.getLong("REFSUBJECT"))));
-
-            ResultSet rsSubject = sqlConnectionManager.select("Select * From T_SUBJECTS where id=?;", subjectId);
-
-            while(rsSubject.next())
-            {
-                System.out.println(rsSubject.getString("CAPTION"));
-                if(subjectId.get(0).getValue().equals(0L)){
-                    row.add(new SQLValueString("Freetime"));
-                }else{
-
-                    row.add(new SQLValueString(rsSubject.getString("CAPTION")));
+            //Check if the day of this recordset is allready an timetableday object. if so select the existing object
+            // if not create a new object
+            TimetableDay tmpDayObject = null;
+            Long tmpTimeslot = rs.getLong("Timeslot");
+            for (TimetableDay day : result) {
+                if (day.getDate() == rs.getDate("TIMETABLEDATE").toLocalDate()){
+                    tmpDayObject = day;
+                    break;
                 }
-
+            }
+            if (tmpDayObject != null){
+                tmpDayObject = new TimetableDay(rs.getDate("TIMETABLEDATE").toLocalDate());
             }
 
-            result.add(row);
+            //ToDo: Check if timeslot is already filled?
+
+            //Check if we have to add to the max timeslots per day
+            //ToDo: i guess we will crash here if we dont fill up our array of empty TimetableHours, aka index out of bounds
+            if (tmpDayObject.getTimeslots() < tmpTimeslot){
+                tmpDayObject.setTimeslots(tmpTimeslot.intValue());
+            }
+
+            TimetableHour tmpHour = tmpDayObject.getArrayTimetableDay().get(tmpTimeslot.intValue());
+            tmpHour = new TimetableHour(tmpTimeslot.intValue(), new CoursepassLecturerSubject(rs.getLong("REFCOURSEPASS")), rs.getLong("REFROOMID"));
+
         }
 
         return result;

@@ -62,4 +62,8 @@ public class Lecturer {
             ResultSet rs = sqlConnectionManager.execute("update `T_Lecturers` set `firstname` = ?, `lastname` = ?, `reflocationID` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
     }
+
+    public String getLecturerFullName(){
+        return this.lastname + ", " + this.firstname;
+    }
 }

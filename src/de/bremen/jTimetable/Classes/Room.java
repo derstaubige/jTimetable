@@ -12,9 +12,9 @@ import java.util.ArrayList;
 // CREATE TABLE IF NOT EXISTS  `T_Rooms` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `roomcaption`char(200) , `refLocationID` long,  `active` Boolean );
 public class Room {
     Long id;
-    public String roomcaption;
+    String roomcaption;
     Location location;
-    public Boolean active;
+    Boolean active;
 
     public Room(Long id) throws SQLException {
         this.id = id;
@@ -59,5 +59,37 @@ public class Room {
             SQLValues.add(new SQLValueLong(this.id));
             ResultSet rs = sqlConnectionManager.execute("update `T_Rooms` set `roomcaption` = ?, `refLocationID` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getRoomcaption() {
+        return roomcaption;
+    }
+
+    public void setRoomcaption(String roomcaption) {
+        this.roomcaption = roomcaption;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

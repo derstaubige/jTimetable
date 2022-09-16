@@ -12,8 +12,11 @@ import java.util.ArrayList;
 // CREATE TABLE IF NOT EXISTS  `T_Subjects` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `caption` char(200), `active` Boolean);
 public class Subject {
     Long id;
-    public String caption;
-    public Boolean active;
+    String caption;
+
+
+    Boolean active;
+
 
     public Subject(Long id) throws SQLException {
         this.id = id;
@@ -54,5 +57,30 @@ public class Subject {
             SQLValues.add(new SQLValueLong(this.id));
             ResultSet rs = sqlConnectionManager.execute("update `T_Subjects` set `caption` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

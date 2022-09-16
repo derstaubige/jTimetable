@@ -23,19 +23,25 @@ import java.util.ResourceBundle;
 public class CourseofStudyController implements Initializable {
     CourseofStudy cos;
 
-    @FXML private TextField txtID;
-    @FXML private TextField txtCaption;
-    @FXML private DatePicker datBegin;
-    @FXML private DatePicker datEnd;
-    @FXML private CheckBox chkActive;
-    @FXML private Button btnBack;
-    @FXML private Button btnSave;
-
+    @FXML
+    private TextField txtID;
+    @FXML
+    private TextField txtCaption;
+    @FXML
+    private DatePicker datBegin;
+    @FXML
+    private DatePicker datEnd;
+    @FXML
+    private CheckBox chkActive;
+    @FXML
+    private Button btnBack;
+    @FXML
+    private Button btnSave;
 
 
     @Override
-    public void initialize(URL location, ResourceBundle resources)  {
-        btnSave.setOnAction(event->{
+    public void initialize(URL location, ResourceBundle resources) {
+        btnSave.setOnAction(event -> {
             this.cos.setCaption(txtCaption.getText().trim());
             this.cos.setBegin(datBegin.getValue());
             this.cos.setEnd(datEnd.getValue());
@@ -44,7 +50,7 @@ public class CourseofStudyController implements Initializable {
             //save changes
             try {
                 this.cos.save();
-            }catch (Exception e){
+            } catch (Exception e) {
                 //TODo: Propper Error handling
                 System.out.println(e);
             }
@@ -63,22 +69,22 @@ public class CourseofStudyController implements Initializable {
         });
 
         btnBack.setOnAction(event -> {
-            Stage stageTheEventSourceNodeBelongs = (Stage) ((Node)event.getSource()).getScene().getWindow();
+            Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
             FXMLLoader loader = new FXMLLoader();
             URL url = Main.class.getResource("fxml/Home.fxml");
             loader.setLocation(url);
-            try{
+            try {
                 AnchorPane anchorPane = loader.<AnchorPane>load();
                 Scene scene = new Scene(anchorPane);
                 stageTheEventSourceNodeBelongs.setScene(scene);
-            }catch (Exception e ){
+            } catch (Exception e) {
                 //TODo: Propper Error handling
                 System.out.println(e);
             }
         });
     }
 
-    public void setID(CourseofStudy cos){
-            this.cos = cos;
+    public void setID(CourseofStudy cos) {
+        this.cos = cos;
     }
 }

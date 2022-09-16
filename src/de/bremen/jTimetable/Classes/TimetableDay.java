@@ -8,7 +8,7 @@ public class TimetableDay {
     LocalDate date;
     public int timeslots;
     //ToDo: Arraylist Arraylist
-    public ArrayList<ArrayList<TimetableHour>> arrayTimetableDay;
+    public ArrayList<TimetableHour> arrayTimetableDay;
 
     public TimetableDay(LocalDate date){
         // a default day has 3 timeslots
@@ -20,7 +20,7 @@ public class TimetableDay {
         this.timeslots = timeslots;
         arrayTimetableDay = new ArrayList<>(this.timeslots);
         for(int i=0; i < timeslots;i++){
-            arrayTimetableDay.add(new ArrayList<>());
+            addTimeslot();
         }
     }
 
@@ -29,10 +29,35 @@ public class TimetableDay {
         if(!this.checkIfSlotIsFree(timeslot)){
             return;
         }
-        this.arrayTimetableDay.get(timeslot).add(new TimetableHour(timeslot, coursepassLecturerSubject));
+        this.arrayTimetableDay.get(timeslot) = new TimetableHour(timeslot, coursepassLecturerSubject);
     }
 
     private boolean checkIfSlotIsFree(int timeslot){
         return this.arrayTimetableDay.get(timeslot).isEmpty();
     }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public int getTimeslots() {
+        return timeslots;
+    }
+
+    public void setTimeslots(int timeslots) {
+        this.timeslots = timeslots;
+    }
+
+    public ArrayList<TimetableHour> getArrayTimetableDay() {
+        return arrayTimetableDay;
+    }
+
+    public void setArrayTimetableDay(ArrayList<TimetableHour> arrayTimetableDay) {
+        this.arrayTimetableDay = arrayTimetableDay;
+    }
+
 }

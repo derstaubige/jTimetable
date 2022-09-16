@@ -10,6 +10,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -111,13 +112,15 @@ public class TimetableViewController implements Initializable {
                         //Add Row for each day: Date, Slot 1, Slot 2, Slot 3
                         if ((slot1 != null) && (slot2 != null) &&
                                 (slot3 != null)) {
-                            grdpn_TimetableView.addRow(1, date, slot1, slot2, slot3);
+                            grdpn_TimetableView.addRow(2, date, slot1, slot2, slot3);
+
                         }
                         slot1 = null;
                         slot2 = null;
                         slot3 = null;
                         timeslot = -1;
                     }
+                    System.out.println(grdpn_TimetableView);
 
                     idx++;
 
@@ -131,6 +134,18 @@ public class TimetableViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+    }
+
+    private int getRowCount(GridPane gridPane) {
+        try {
+            Method method = gridPane.getClass().getDeclaredMethod("getNumberOfRows");
+            method.setAccessible(true);
+            Integer rows = (Integer) method.invoke(gridPane);
+            return rows;
+        }catch (Exception e) {
+            System.out.println(e.toString());
+        }
+        return 0;
     }
 
 }
