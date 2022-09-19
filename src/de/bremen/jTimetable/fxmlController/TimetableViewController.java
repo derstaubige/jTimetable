@@ -2,6 +2,8 @@ package de.bremen.jTimetable.fxmlController;
 
 import de.bremen.jTimetable.Classes.Coursepass;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
+import de.bremen.jTimetable.Classes.Timetable;
+import de.bremen.jTimetable.Classes.TimetableDay;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -9,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -35,8 +38,18 @@ public class TimetableViewController implements Initializable {
     public void initData(Coursepass coursepass) {
         this.coursepass = coursepass;
         //Get Timetable for Coursepass
+        Timetable timetable = new Timetable(this.coursepass);
+        Integer inttmpRowIdx = 2;
+        for (TimetableDay day : timetable.getArrayTimetableDays()){
+
+            grdpn_TimetableView.addRow(inttmpRowIdx, new Text(day.getDate().toString()), new Text(day.arrayTimetableDay.get(0).getLecturerName() + day.arrayTimetableDay.get(0).getSubjectCaption()));
+            inttmpRowIdx++;
+        }
+/*
         try {
-            ArrayList<ArrayList<SQLConnectionManagerValues>> rs = this.coursepass.getTimetable();
+
+
+            ArrayList<SQLConnectionManagerValues> rs = this.coursepass.getTimetable();
             //Timeslot -1 == date
             int timeslot = -1;
             for (ArrayList<SQLConnectionManagerValues> row : rs) {
@@ -128,7 +141,7 @@ public class TimetableViewController implements Initializable {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
 
     @Override

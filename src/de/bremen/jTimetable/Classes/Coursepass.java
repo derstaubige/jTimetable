@@ -2,6 +2,7 @@ package de.bremen.jTimetable.Classes;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -91,22 +92,25 @@ public class Coursepass {
         SQLValues.add(new SQLValueLong(this.id));
         //Create new Connection to database
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-        ResultSet rs = sqlConnectionManager.select("Select * From T_TIMETABLES where REFCOURSEPASS=?;", SQLValues);
+        ResultSet rs = sqlConnectionManager.select("Select * From T_TIMETABLES where REFCOURSEPASS=? ORDER BY TIMETABLEDAY ASC;", SQLValues);
         ArrayList<TimetableDay> result = new ArrayList<TimetableDay>();
 
         while (rs.next()) {
             //Check if the day of this recordset is allready an timetableday object. if so select the existing object
-            // if not create a new object
+
             TimetableDay tmpDayObject = null;
             Long tmpTimeslot = rs.getLong("Timeslot");
+            LocalDate tmpDate = rs.getDate("TIMETABLEDAY").toLocalDate();
             for (TimetableDay day : result) {
-                if (day.getDate() == rs.getDate("TIMETABLEDATE").toLocalDate()){
+                if (day.getDate().isEqual(tmpDate)){
                     tmpDayObject = day;
                     break;
                 }
             }
-            if (tmpDayObject != null){
-                tmpDayObject = new TimetableDay(rs.getDate("TIMETABLEDATE").toLocalDate());
+            // if not create a new object
+            if (tmpDayObject == null){
+                tmpDayObject = new TimetableDay(rs.getDate("TIMETABLEDAY").toLocalDate());
+                result.add(tmpDayObject);
             }
 
             //ToDo: Check if timeslot is already filled?
@@ -117,8 +121,8 @@ public class Coursepass {
                 tmpDayObject.setTimeslots(tmpTimeslot.intValue());
             }
 
-            TimetableHour tmpHour = tmpDayObject.getArrayTimetableDay().get(tmpTimeslot.intValue());
-            tmpHour = new TimetableHour(tmpTimeslot.intValue(), new CoursepassLecturerSubject(rs.getLong("REFCOURSEPASS")), rs.getLong("REFROOMID"));
+            //add this timeslot/TimetableHour to our tmpDayObject
+            tmpDayObject.getArrayTimetableDay().set(tmpTimeslot.intValue(), new TimetableHour(tmpTimeslot.intValue(), new CoursepassLecturerSubject(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"))));
 
         }
 

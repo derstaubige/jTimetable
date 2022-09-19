@@ -18,9 +18,9 @@ public class TimetableDay {
     public TimetableDay(LocalDate date, int timeslots){
         this.date = date;
         this.timeslots = timeslots;
-        arrayTimetableDay = new ArrayList<>(this.timeslots);
-        for(int i=0; i < timeslots;i++){
-            addTimeslot();
+        this.arrayTimetableDay = new ArrayList<>(this.timeslots);
+        while (this.arrayTimetableDay.size() < this.timeslots){
+            this.arrayTimetableDay.add(null);
         }
     }
 
@@ -29,11 +29,20 @@ public class TimetableDay {
         if(!this.checkIfSlotIsFree(timeslot)){
             return;
         }
-        this.arrayTimetableDay.get(timeslot) = new TimetableHour(timeslot, coursepassLecturerSubject);
+        this.arrayTimetableDay.add(timeslot, new TimetableHour(timeslot, coursepassLecturerSubject));
     }
 
     private boolean checkIfSlotIsFree(int timeslot){
-        return this.arrayTimetableDay.get(timeslot).isEmpty();
+        try{
+            if(this.arrayTimetableDay.get(timeslot) == null){
+                return true;
+            }else {
+                return false;
+            }
+        }catch (IndexOutOfBoundsException e){
+            return true;
+        }
+
     }
 
     public LocalDate getDate() {
@@ -56,8 +65,5 @@ public class TimetableDay {
         return arrayTimetableDay;
     }
 
-    public void setArrayTimetableDay(ArrayList<TimetableHour> arrayTimetableDay) {
-        this.arrayTimetableDay = arrayTimetableDay;
-    }
 
 }
