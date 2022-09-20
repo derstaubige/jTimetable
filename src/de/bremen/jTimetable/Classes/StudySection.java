@@ -8,8 +8,6 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-// CREATE TABLE IF NOT EXISTS  `T_StudySections` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `description` Char(200), `active` Boolean );
 public class StudySection {
     Long id;
     public String description;

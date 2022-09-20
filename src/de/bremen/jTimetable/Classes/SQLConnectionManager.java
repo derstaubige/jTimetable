@@ -1,7 +1,12 @@
 package de.bremen.jTimetable.Classes;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FileReader;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -85,5 +90,56 @@ public class SQLConnectionManager {
     @Override protected void finalize() throws Throwable{
         //close database when SQLConnectionManager is deleted
         super.finalize();
+    }
+
+    /* The Migrate Function checks if there are new SQL Migrations available and will execute them. It also
+    * checks if the Database is new and fills an empty DB */
+    public void Migrate() throws SQLException{
+
+        File folder = new File("src/de/bremen/jTimetable/SQLMigration");
+        File[] listOfFiles = folder.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                String name = pathname.getAbsolutePath();
+                return name.toLowerCase().endsWith(".sql");
+            }
+        });
+        for (int i = 0; i < listOfFiles.length; i++) {
+            //System.out.println("File " + listOfFiles[i].getName());
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            SQLValues.add(new SQLValueString(listOfFiles[i].getName()));
+
+            try {
+                ResultSet rs = this.select("Select count(*) from T_MIGRATION where MIGRATIONNAME = ?;",SQLValues);
+                rs.next();
+                System.out.println(rs.getLong(0));
+            } catch (SQLNonTransientException e){
+                // This Migration didnt run yet
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(listOfFiles[i].getAbsolutePath()));
+                    StringBuilder sb = new StringBuilder();
+                    String line = br.readLine();
+
+                    while (line != null) {
+                        sb.append(line);
+                        sb.append(System.lineSeparator());
+                        line = br.readLine();
+                    }
+
+                    //contains the whole migration file
+                    String tmpSQLStatement = sb.toString();
+
+                    //execute the migration
+                    this.execute(tmpSQLStatement, new ArrayList<SQLConnectionManagerValues>());
+
+                    //mark the migration as done
+                    this.execute("INSERT INTO T_MIGRATION (MigrationName, MigrationDate) values (?, CURRENT_TIMESTAMP() )", SQLValues);
+                    br.close();
+                } catch (Exception e2){
+                    System.out.println(e2);
+                }
+            }
+        }
+
     }
 }

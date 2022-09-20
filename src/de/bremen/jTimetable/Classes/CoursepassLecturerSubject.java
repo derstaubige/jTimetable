@@ -1,7 +1,5 @@
 package de.bremen.jTimetable.Classes;
 
-// CREATE TABLE IF NOT EXISTS  `T_CoursepassesLecturerSubject` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `refcoursepassID` long, `reflecturerID` long,`refSubjectID` long, `shouldhours` long, `active` Boolean);
-
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 import java.sql.ResultSet;

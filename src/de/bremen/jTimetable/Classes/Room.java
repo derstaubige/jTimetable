@@ -8,8 +8,6 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-// CREATE TABLE IF NOT EXISTS  `T_Rooms` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `roomcaption`char(200) , `refLocationID` long,  `active` Boolean );
 public class Room {
     Long id;
     String roomcaption;

@@ -111,6 +111,14 @@ public class Main extends Application {
 //            System.out.println("hi");
 
         // https://jenkov.com/tutorials/javafx/your-first-javafx-application.html
+        try{
+
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            sqlConnectionManager.Migrate();
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
             Application.launch(args);
 //            CourseofStudy c1 = new CourseofStudy(0L);
 //            ArrayList alc1 = c1.getCoursesofStudy();
