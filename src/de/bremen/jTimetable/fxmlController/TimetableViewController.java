@@ -1,22 +1,17 @@
 package de.bremen.jTimetable.fxmlController;
 
 import de.bremen.jTimetable.Classes.Coursepass;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
 import de.bremen.jTimetable.Classes.Timetable;
 import de.bremen.jTimetable.Classes.TimetableDay;
+import de.bremen.jTimetable.Classes.TimetableHour;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class TimetableViewController implements Initializable {
@@ -41,8 +36,11 @@ public class TimetableViewController implements Initializable {
         Timetable timetable = new Timetable(this.coursepass);
         Integer inttmpRowIdx = 2;
         for (TimetableDay day : timetable.getArrayTimetableDays()){
-
-            grdpn_TimetableView.addRow(inttmpRowIdx, new Text(day.getDate().toString()), new Text(day.arrayTimetableDay.get(0).getLecturerName() + day.arrayTimetableDay.get(0).getSubjectCaption()));
+            grdpn_TimetableView.add(new Text(day.getDate().toString()), 0, inttmpRowIdx);
+            for (TimetableHour timeslot : day.getArrayTimetableDay()){
+                grdpn_TimetableView.add(new Text(timeslot.getLecturerName() + "\r\n" + timeslot.getSubjectCaption() + "\r\n" + timeslot.getRoomCaption()), timeslot.getTimeslot() + 1, inttmpRowIdx);
+            }
+            //grdpn_TimetableView.addRow(inttmpRowIdx, new Text(day.getDate().toString()), new Text(day.arrayTimetableDay.get(0).getLecturerName() + "\r\n" + day.arrayTimetableDay.get(0).getSubjectCaption()));
             inttmpRowIdx++;
         }
 /*

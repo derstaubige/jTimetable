@@ -26,6 +26,14 @@ public class TimetableHour {
         this(timeslot, coursepassLecturerSubject, 0L );
     }
 
+    public int getTimeslot() {
+        return timeslot;
+    }
+
+    public void setTimeslot(int timeslot) {
+        this.timeslot = timeslot;
+    }
+
     public String getLecturerName() {
         return lecturerName;
     }
