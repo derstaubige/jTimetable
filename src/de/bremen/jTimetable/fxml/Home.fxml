@@ -6,14 +6,17 @@
 
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
+<?import javafx.scene.text.Text?>
 <AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.HomeController">
     <ScrollPane>
         <VBox>
 
         <children>
             <fx:include source="Menu.fxml" fillWidth="true" />
-
+            <Text fx:id="dragme">DRAG ME</Text>
             <Label text="Active courses of Study"></Label>
+
+            <Text fx:id="dropme">DROP ME</Text>
             <HBox>
                 <children>
                     <TableView fx:id="ActiveCoursesofStudyTableview" minWidth="800">
