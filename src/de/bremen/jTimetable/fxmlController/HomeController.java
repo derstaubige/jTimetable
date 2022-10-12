@@ -18,9 +18,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -72,6 +74,10 @@ public class HomeController implements Initializable {
     private Button btnCoursepassNew;
     @FXML
     private CheckBox chkToogleCoursepass;
+    @FXML
+    private Text dragme;
+    @FXML
+    private Text dropme;
 
     public HomeController() {
 
@@ -79,6 +85,49 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        dragme.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                /* drag was detected, start a drag-and-drop gesture*/
+                /* allow any transfer mode */
+                Dragboard db = dragme.startDragAndDrop(TransferMode.ANY);
+
+                /* Put a string on a dragboard */
+                ClipboardContent content = new ClipboardContent();
+                content.putString(dragme.getText());
+                db.setContent(content);
+
+                event.consume();
+            }
+        });
+
+        dropme.setOnDragOver(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                /* data is dragged over the target */
+                /* accept it only if it is not dragged from the same node
+                 * and if it has a string data */
+                if (event.getGestureSource() != dropme &&
+                        event.getDragboard().hasString()) {
+                    /* allow for both copying and moving, whatever user chooses */
+                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+
+                event.consume();
+            }
+        });
+
+        dropme.setOnDragEntered(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                /* the drag-and-drop gesture entered the target */
+                /* show to the user that it is an actual gesture target */
+                if (event.getGestureSource() != dropme &&
+                        event.getDragboard().hasString()) {
+                    dropme.setFill(Color.GREEN);
+                }
+
+                event.consume();
+            }
+        });
+
         COSID.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Long>("id"));
         COSDescription.setCellValueFactory(new PropertyValueFactory<CourseofStudy, String>("caption"));
         COSBegin.setCellValueFactory(new PropertyValueFactory<CourseofStudy, LocalDate>("begin"));

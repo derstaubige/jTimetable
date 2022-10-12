@@ -87,7 +87,7 @@ public class TimetableViewController implements Initializable {
 
                 grdpn_TimetableView.add(text, timeslot.getTimeslot() + 1, inttmpRowIdx);
             }
-            //grdpn_TimetableView.addRow(inttmpRowIdx, new Text(day.getDate().toString()), new Text(day.arrayTimetableDay.get(0).getLecturerName() + "\r\n" + day.arrayTimetableDay.get(0).getSubjectCaption()));
+
             inttmpRowIdx++;
         }
         //TODO I removed my code-garbage :)
