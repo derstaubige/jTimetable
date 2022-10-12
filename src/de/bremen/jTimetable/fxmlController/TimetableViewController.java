@@ -4,14 +4,19 @@ import de.bremen.jTimetable.Classes.Coursepass;
 import de.bremen.jTimetable.Classes.Timetable;
 import de.bremen.jTimetable.Classes.TimetableDay;
 import de.bremen.jTimetable.Classes.TimetableHour;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 public class TimetableViewController implements Initializable {
@@ -35,116 +40,83 @@ public class TimetableViewController implements Initializable {
         //Get Timetable for Coursepass
         Timetable timetable = new Timetable(this.coursepass);
         Integer inttmpRowIdx = 2;
-        for (TimetableDay day : timetable.getArrayTimetableDays()){
+        for (TimetableDay day : timetable.getArrayTimetableDays()) {
+
             grdpn_TimetableView.add(new Text(day.getDate().toString()), 0, inttmpRowIdx);
-            for (TimetableHour timeslot : day.getArrayTimetableDay()){
-                grdpn_TimetableView.add(new Text(timeslot.getLecturerName() + "\r\n" + timeslot.getSubjectCaption() + "\r\n" + timeslot.getRoomCaption()), timeslot.getTimeslot() + 1, inttmpRowIdx);
+            //TODO do empty slots contain a text-field? -> yes
+            for (TimetableHour timeslot : day.getArrayTimetableDay()) {
+                //TODO new code starts here :)
+                Text text = new Text(timeslot.getLecturerName() + "\r\n" + timeslot.getSubjectCaption() + "\r\n" + timeslot.getRoomCaption());
+                //TODO EventHandler setOnDragDetected is called if a field is dragged on another and it should:
+                // check if the switch is valid (lecturer is available)
+                // switch the text visually
+                // switch the objects in the database
+
+                //enables the text to be dragged
+                //https://www.youtube.com/watch?v=-TgSIr5IzQ8
+                text.setOnDragDetected(mouseEvent -> {
+                    Dragboard db = text.startDragAndDrop(TransferMode.ANY);
+                    ClipboardContent content = new ClipboardContent();
+                    content.putString(text.getText());
+                    //TODO put row and column in content but clipBoard can only contain one String
+//                    int column = GridPane.getColumnIndex(text);
+//                    int row = GridPane.getRowIndex(text);
+//                    content.putString(String.valueOf(column));
+//                    content.putString(String.valueOf(row));
+
+                    db.setContent(content);
+                });
+
+                //allows this field to take dropped items
+                //https://www.youtube.com/watch?v=yP_UjqnIsCk
+                text.setOnDragOver(dragEvent -> dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE));
+
+                //handles if an element is dropped on this field
+                //https://www.youtube.com/watch?v=yP_UjqnIsCk
+                text.setOnDragDropped(dragEvent -> {
+                    Dragboard db = dragEvent.getDragboard();
+                    //TODO check if field is valid
+                    if (db.hasString()) {
+                        String newText = db.getString();
+                        //TODO oldText is text the field that was dragged on had before the drag and needs to
+                        // be set into the field the dragged element was in before
+                        String oldText = text.getText();
+                        text.setText(newText);
+                    }
+                });
+
+                grdpn_TimetableView.add(text, timeslot.getTimeslot() + 1, inttmpRowIdx);
             }
             //grdpn_TimetableView.addRow(inttmpRowIdx, new Text(day.getDate().toString()), new Text(day.arrayTimetableDay.get(0).getLecturerName() + "\r\n" + day.arrayTimetableDay.get(0).getSubjectCaption()));
             inttmpRowIdx++;
         }
-/*
-        try {
-
-
-            ArrayList<SQLConnectionManagerValues> rs = this.coursepass.getTimetable();
-            //Timeslot -1 == date
-            int timeslot = -1;
-            for (ArrayList<SQLConnectionManagerValues> row : rs) {
-                int idx = 1;
-                Node date = null;
-                Node room = null;
-                Node firstname = null;
-                Node lastname = null;
-                Node subject = null;
-                Node slot1 = null;
-                Node slot2 = null;
-                Node slot3 = null;
-
-                for (SQLConnectionManagerValues value : row) {
-                    //Field, only one Timeslot
-                    switch (idx) {
-                        case 1: {
-                            //Display date
-                            date = new Label(value.toString());
-                            break;
-                        }
-//                        case 2: {
-//                            //Room Name
-//                            room = new Label(value.toString());
-//                            break;
-//                        }
-                        case 2: {
-                            //Lecturer firstname
-                            firstname = new Label(value.toString());
-                            break;
-                        }
-                        case 3: {
-                            //Lecturer lastname
-                            lastname = new Label(value.toString());
-                            break;
-                        }
-                        case 4: {
-                            //Subject
-                            subject = new Label(value.toString());
-                            break;
-                        }
-                        default: {
-                            System.out.println("Something went wrong while displaying timetable.");
-                        }
-                    }
-
-                    //TODO doesn't work if day uses four timeslots
-                    switch (timeslot) {
-                        case 0: {
-                            if ((firstname != null) && (lastname != null) && (subject != null)) {
-                                slot1 = new VBox(firstname, lastname, subject);
-                            }
-                            break;
-                        }
-                        case 1: {
-                            if ((firstname != null) && (lastname != null) && (subject != null)) {
-                                slot2 = new VBox(firstname, lastname, subject);
-                            }
-                            break;
-                        }
-                        case 2: {
-                            if ((firstname != null) && (lastname != null) && (subject != null)) {
-                                slot3 = new VBox(firstname, lastname, subject);
-                            }
-                            break;
-                        }
-                        default: {
-                         //   System.out.println("To many timeslots.");
-                        }
-                    }
-                    timeslot++;
-                    if (timeslot > 2) {
-                        //Add Row for each day: Date, Slot 1, Slot 2, Slot 3
-                        if ((slot1 != null) && (slot2 != null) &&
-                                (slot3 != null)) {
-                            grdpn_TimetableView.addRow(2, date, slot1, slot2, slot3);
-
-                        }
-                        slot1 = null;
-                        slot2 = null;
-                        slot3 = null;
-                        timeslot = -1;
-                    }
-                    System.out.println(grdpn_TimetableView);
-
-                    idx++;
-
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }*/
+        //TODO I removed my code-garbage :)
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+    }
 
+    /**
+     * TODO method is new :)
+     * Returns the node that is in a certain field of a gridPane specified by row and column.
+     * @param row which row is selected
+     * @param column which column is selected
+     * @param gridPane the gridPane that is searched
+     * @return Node at the specified row and column
+     */
+    public Node getNodeByRowColumnIndex (final int row, final int column, GridPane gridPane) {
+        Node result = null;
+        ObservableList<Node> childrens = gridPane.getChildren();
+
+        for (Node node : childrens) {
+            if(GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
+                result = node;
+                break;
+            }
+        }
+
+        return result;
     }
 
     private int getRowCount(GridPane gridPane) {
@@ -153,7 +125,7 @@ public class TimetableViewController implements Initializable {
             method.setAccessible(true);
             Integer rows = (Integer) method.invoke(gridPane);
             return rows;
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
         return 0;
