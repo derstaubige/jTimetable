@@ -18,10 +18,16 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     public Long planedHours; //hours that are planed but not been given
     Boolean active;
 
+    //TODO check if course has time (if a timetable for just the lecturer is shown)
     public static boolean cangetExchanged(CoursepassLecturerSubject source, LocalDate sourceDay, int sourceTimeslot, CoursepassLecturerSubject target, LocalDate targetDay, int targetTimeslot){
         //check if lecturer and room from source are free at target date and timeslot
         long sourceLecturerId = source.lecturer.getId();
         long targetLecturerId = target.lecturer.getId();
+        //TODO rooms not considered
+        //The same lecturer can switch his/her own lessons
+        if (sourceLecturerId == targetLecturerId) {
+            return true;
+        }
         try{
             if(!source.lecturer.checkLecturerAvailability(sourceLecturerId,targetDay,targetTimeslot)){
                 return false;
@@ -30,8 +36,9 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                 return false;
             }
         }catch (SQLException e){
-            //ToDo: better error handling
-            System.out.println(e);
+            //ToDo: better error handling --> check
+            System.out.println("An SQLError occurred while checking if two lessons can be exchanged.");
+            e.printStackTrace();
         }
         return true;
     }

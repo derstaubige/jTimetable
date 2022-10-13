@@ -22,8 +22,6 @@ public class TimetableViewController implements Initializable {
     @FXML
     public GridPane grdpn_TimetableView;
 
-    private Coursepass coursepass;
-
     /**
      * Can be called to hand parameters from the calling class to this controller. Be aware that the initialize method
      * is performed bevor this one and therefore has no access to the data that is set here.
@@ -31,10 +29,9 @@ public class TimetableViewController implements Initializable {
      * @param coursepass the coursepass that was selected and for which the timetable is shown
      */
     public void initData(Coursepass coursepass) {
-        this.coursepass = coursepass;
         //Get Timetable for Coursepass
-        Timetable timetable = new Timetable(this.coursepass);
-        Integer inttmpRowIdx = 2;
+        Timetable timetable = new Timetable(coursepass);
+        int inttmpRowIdx = 2;
         for (TimetableDay day : timetable.getArrayTimetableDays()) {
 
             grdpn_TimetableView.add(new Text(day.getDate().toString()), 0, inttmpRowIdx);
@@ -47,8 +44,7 @@ public class TimetableViewController implements Initializable {
                 //enables the text to be dragged
                 //drag was detected, start a drag-and-drop gesture
                 //https://www.youtube.com/watch?v=-TgSIr5IzQ8
-                //TODO event is a mouseEvent, maybe rename
-                tmpText.setOnDragDetected(event -> {
+                tmpText.setOnDragDetected(mouseEvent -> {
                     //allow any transfer mode
                     Dragboard db = tmpText.startDragAndDrop(TransferMode.ANY);
 
@@ -64,31 +60,37 @@ public class TimetableViewController implements Initializable {
 //                        System.out.println(tmpText.getProperties().get("gridpane-row"));
                     db.setContent(content);
 
-                    //TODO what does this mean?
-                    event.consume();
+                    mouseEvent.consume();
                 });
 
                 //allows this field to take dropped items when they're dragged over the target
                 //https://www.youtube.com/watch?v=yP_UjqnIsCk
-                tmpText.setOnDragOver(event -> {
+                tmpText.setOnDragOver(dragEvent -> {
                     //accept it only if it is not dragged from the same node
-                    if (event.getGestureSource() != event.getSource()) {
+                    if (dragEvent.getGestureSource() != dragEvent.getSource()) {
                         //allow for both copying and moving, whatever user chooses
-                        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                        dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                     }
 
-                    event.consume();
+                    dragEvent.consume();
                 });
 
                 //handles if an element is dropped on this field
                 //https://www.youtube.com/watch?v=yP_UjqnIsCk
-                tmpText.setOnDragDropped(event -> {
-                    JavaFXTimetableHourText source = (JavaFXTimetableHourText) event.getGestureSource();
-                    JavaFXTimetableHourText target = (JavaFXTimetableHourText) event.getGestureTarget();
+                tmpText.setOnDragDropped(dragEvent -> {
+                    JavaFXTimetableHourText source = (JavaFXTimetableHourText) dragEvent.getGestureSource();
+                    JavaFXTimetableHourText target = (JavaFXTimetableHourText) dragEvent.getGestureTarget();
 
-                    System.out.println(source.getCoursepassLecturerSubject().cangetExchanged(source.getCoursepassLecturerSubject(), source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot()));
+                    //Visually switch lessons
+                    JavaFXTimetableHourText temp = new JavaFXTimetableHourText(source.getText(),
+                            source.getCoursepassLecturerSubject(), source.getDay(), source.getTimeslot());
+                    ((Text) dragEvent.getGestureSource()).setText(target.getText());
+                    ((Text) dragEvent.getGestureTarget()).setText(temp.getText());
+
+                    System.out.println(CoursepassLecturerSubject.cangetExchanged(source.getCoursepassLecturerSubject(),
+                            source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
+                            target.getDay(), target.getTimeslot()));
                 });
-
 
                 grdpn_TimetableView.add(tmpText, timeslot.getTimeslot() + 1, inttmpRowIdx);
             }
@@ -112,15 +114,14 @@ public class TimetableViewController implements Initializable {
      */
     public Node getNodeByRowColumnIndex(final int row, final int column, GridPane gridPane) {
         Node result = null;
-        ObservableList<Node> childrens = gridPane.getChildren();
+        ObservableList<Node> children = gridPane.getChildren();
 
-        for (Node node : childrens) {
+        for (Node node : children) {
             if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == column) {
                 result = node;
                 break;
             }
         }
-
         return result;
     }
 
@@ -128,10 +129,9 @@ public class TimetableViewController implements Initializable {
         try {
             Method method = gridPane.getClass().getDeclaredMethod("getNumberOfRows");
             method.setAccessible(true);
-            Integer rows = (Integer) method.invoke(gridPane);
-            return rows;
+            return (Integer) method.invoke(gridPane);
         } catch (Exception e) {
-            System.out.println(e.toString());
+            e.printStackTrace();
         }
         return 0;
     }
