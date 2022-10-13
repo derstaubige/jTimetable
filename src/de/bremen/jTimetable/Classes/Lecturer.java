@@ -1,15 +1,15 @@
 package de.bremen.jTimetable.Classes;
 
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueBoolean;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Lecturer {
+
+
     Long id;
     public String firstname;
     public String lastname;
@@ -34,8 +34,8 @@ public class Lecturer {
             ResultSet rs = sqlConnectionManager.select("Select * from T_Lecturers where id = ?;",SQLValues);
             rs.first();
             this.id = rs.getLong("id");
-            this.firstname = rs.getString("firstname");
-            this.lastname = rs.getString("lastname");
+            this.firstname = rs.getString("firstname").trim();
+            this.lastname = rs.getString("lastname").trim();
             this.location = new Location(rs.getLong("reflocationID"));
             this.active = rs.getBoolean("active");
         }
@@ -62,6 +62,61 @@ public class Lecturer {
         }
     }
 
+    public static boolean checkLecturerAvailability(long lecturerID, LocalDate date, int timeslot)
+            throws SQLException {
+        LocalDate startdate;
+        LocalDate enddate;
+        Integer starttimeslot;
+        Integer endtimeslot;
+
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues =
+                new ArrayList<SQLConnectionManagerValues>();
+        SQLValues.add(new SQLValueLong(lecturerID));
+        SQLValues.add(new SQLValueDate(date));
+        SQLValues.add(new SQLValueDate(date));
+
+        ResultSet rs = sqlConnectionManager.select(
+                "Select * from T_RESOURCESBLOCKED where Resourcename = 'Lecturer' and refresourceid = ? and STARTDATE <= ? and ENDDATE >= ?;",
+                SQLValues);
+        while (rs.next()) {
+            startdate = rs.getDate("startdate").toLocalDate();
+            enddate = rs.getDate("enddate").toLocalDate();
+            starttimeslot = rs.getInt("starttimeslot");
+            endtimeslot = rs.getInt("endtimeslot");
+
+            // if the date we want to check is the same date as the start of the blocked date range, we can check if the blocking starts after the timestamp we want to reserve
+            if (startdate.compareTo(date) == 0) {
+                if (starttimeslot <= timeslot) {
+                    if (enddate.compareTo(date) == 0 && endtimeslot <
+                            timeslot) { //when a lecturer just cant make it to the 2nd timeslot he should be able to teach at 3rd timeslot
+                        continue;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    continue;
+                }
+            }
+
+            // if the date we want to check is the same date as the end of the blocked date range, we can check if the blocking ends before the timestamp we want to reserve
+            if (enddate.compareTo(date) == 0) {
+                if (timeslot <= endtimeslot) {
+                    return false;
+                } else {
+                    continue;
+                }
+
+            }
+
+            return false;
+        }
+        // there is no blocking
+        return true;
+    }
+    public Long getId() {
+        return id;
+    }
     public String getLecturerFullName(){
         return this.lastname + ", " + this.firstname;
     }

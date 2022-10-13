@@ -57,4 +57,8 @@ public class TimetableHour {
     public void setRoomCaption(String roomCaption) {
         this.roomCaption = roomCaption;
     }
+
+    public CoursepassLecturerSubject getCoursepassLecturerSubject() {
+        return coursepassLecturerSubject;
+    }
 }

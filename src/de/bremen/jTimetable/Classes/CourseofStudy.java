@@ -34,7 +34,7 @@ public class CourseofStudy {
             ResultSet rs = sqlConnectionManager.select("Select * from T_CoursesofStudy where id = ?;",SQLValues);
             rs.first();
             this.id = rs.getLong("id");
-            this.caption = rs.getString("caption");
+            this.caption = rs.getString("caption").trim();
             this.begin = rs.getDate("begin").toLocalDate();
             this.end = rs.getDate("end").toLocalDate();
             this.active = rs.getBoolean("active");

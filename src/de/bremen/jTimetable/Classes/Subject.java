@@ -23,7 +23,7 @@ public class Subject {
 
         if (this.id == 0){
             //load dummy object
-            this.caption = "";
+            this.caption = "FREETIME";
             this.active = Boolean.TRUE;
         }else{
             //load object from db

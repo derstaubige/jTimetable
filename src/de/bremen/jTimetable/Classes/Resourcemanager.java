@@ -105,11 +105,8 @@ public class Resourcemanager {
                     } else {
                         //we didnt find a matching coursepasslecturersubject, freetime?!
                         LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).date;
-                        Long refcoursepassID = this.arraycoursepasslecturersubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).coursepass.id;
-                        Long refCoursepassLecturerSubjectId =
-                                this.arraycoursepasslecturersubject.get(
-                                        this.positionInCoursepassLecturerSubjectStack).id;
+                        Long refcoursepassID = 0L;
+                        Long refCoursepassLecturerSubjectId =  0L;
                         //ToDO: if we want to also manage the rooms we could do it here
                         Long refRoomId = 0L;
                         Long refLecturerId = 0L;
@@ -186,7 +183,8 @@ public class Resourcemanager {
         Long tmpishours = this.arraycoursepasslecturersubject.get(
                 this.positionInCoursepassLecturerSubjectStack).ishours;
 
-        if (checkLecturerAvailability(this.arraycoursepasslecturersubject.get(
+        if (this.arraycoursepasslecturersubject.get(
+                positionInCoursepassLecturerSubjectStack).lecturer.checkLecturerAvailability(this.arraycoursepasslecturersubject.get(
                         positionInCoursepassLecturerSubjectStack).lecturer.id,
                 arrayTimetabledays.get(idxDay).date, idxTimeslot) &&
                 tmpshouldhours > (tmpishours + tmpplanedhours)) {
@@ -212,58 +210,7 @@ public class Resourcemanager {
         //return false;
     }
 
-    public boolean checkLecturerAvailability(long lecturerID, LocalDate date, int timeslot)
-            throws SQLException {
-        LocalDate startdate;
-        LocalDate enddate;
-        Integer starttimeslot;
-        Integer endtimeslot;
 
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-        ArrayList<SQLConnectionManagerValues> SQLValues =
-                new ArrayList<SQLConnectionManagerValues>();
-        SQLValues.add(new SQLValueLong(lecturerID));
-        SQLValues.add(new SQLValueDate(date));
-        SQLValues.add(new SQLValueDate(date));
-
-        ResultSet rs = sqlConnectionManager.select(
-                "Select * from T_RESOURCESBLOCKED where Resourcename = 'Lecturer' and refresourceid = ? and STARTDATE <= ? and ENDDATE >= ?;",
-                SQLValues);
-        while (rs.next()) {
-            startdate = rs.getDate("startdate").toLocalDate();
-            enddate = rs.getDate("enddate").toLocalDate();
-            starttimeslot = rs.getInt("starttimeslot");
-            endtimeslot = rs.getInt("endtimeslot");
-
-            // if the date we want to check is the same date as the start of the blocked date range, we can check if the blocking starts after the timestamp we want to reserve
-            if (startdate.compareTo(date) == 0) {
-                if (starttimeslot <= timeslot) {
-                    if (enddate.compareTo(date) == 0 && endtimeslot <
-                            timeslot) { //when a lecturer just cant make it to the 2nd timeslot he should be able to teach at 3rd timeslot
-                        continue;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    continue;
-                }
-            }
-
-            // if the date we want to check is the same date as the end of the blocked date range, we can check if the blocking ends before the timestamp we want to reserve
-            if (enddate.compareTo(date) == 0) {
-                if (timeslot <= endtimeslot) {
-                    return false;
-                } else {
-                    continue;
-                }
-
-            }
-
-            return false;
-        }
-        // there is no blocking
-        return true;
-    }
 
     public ArrayList<TimetableDay> getWorkingDaysBetweenTwoDates(LocalDate localstartDate,
                                                                  LocalDate localendDate) {

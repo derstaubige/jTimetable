@@ -18,6 +18,24 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     public Long planedHours; //hours that are planed but not been given
     Boolean active;
 
+    public static boolean cangetExchanged(CoursepassLecturerSubject source, LocalDate sourceDay, int sourceTimeslot, CoursepassLecturerSubject target, LocalDate targetDay, int targetTimeslot){
+        //check if lecturer and room from source are free at target date and timeslot
+        long sourceLecturerId = source.lecturer.getId();
+        long targetLecturerId = target.lecturer.getId();
+        try{
+            if(!source.lecturer.checkLecturerAvailability(sourceLecturerId,targetDay,targetTimeslot)){
+                return false;
+            }
+            if(!target.lecturer.checkLecturerAvailability(targetLecturerId,sourceDay,sourceTimeslot)){
+                return false;
+            }
+        }catch (SQLException e){
+            //ToDo: better error handling
+            System.out.println(e);
+        }
+        return true;
+    }
+
     public CoursepassLecturerSubject(Long id) throws SQLException  {
         this.id = id;
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();

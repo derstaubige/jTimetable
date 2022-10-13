@@ -90,7 +90,7 @@ public class Coursepass {
         SQLValues.add(new SQLValueLong(this.id));
         //Create new Connection to database
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-        ResultSet rs = sqlConnectionManager.select("Select * From T_TIMETABLES where REFCOURSEPASS=? ORDER BY TIMETABLEDAY ASC;", SQLValues);
+        ResultSet rs = sqlConnectionManager.select("Select * From T_TIMETABLES where REFCOURSEPASS=? ORDER BY TIMETABLEDAY, TIMESLOT ASC;", SQLValues);
         ArrayList<TimetableDay> result = new ArrayList<TimetableDay>();
 
         while (rs.next()) {
@@ -118,7 +118,7 @@ public class Coursepass {
             if (tmpDayObject.getTimeslots() < tmpTimeslot){
                 tmpDayObject.setTimeslots(tmpTimeslot.intValue());
             }
-
+            System.out.println(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"));
             //add this timeslot/TimetableHour to our tmpDayObject
             tmpDayObject.getArrayTimetableDay().set(tmpTimeslot.intValue(), new TimetableHour(tmpTimeslot.intValue(), new CoursepassLecturerSubject(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"))));
 
