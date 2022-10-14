@@ -1,0 +1,16 @@
+create crud gui for
+    [] lecturer
+    [] course of study
+    [] coursepass
+    [] location
+    [] room
+    [] subject
+    [] coursepasslecturersubject
+
+export timetable to file
+
+lecturer on duty days / days of
+
+respect holidays in timetable
+
+[*] add weekday to timetable 2022-10-14

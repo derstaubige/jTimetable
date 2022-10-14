@@ -14,10 +14,9 @@ import javafx.scene.text.Text;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.util.*;
 
 public class TimetableViewController implements Initializable {
 
@@ -37,9 +36,11 @@ public class TimetableViewController implements Initializable {
         //Get Timetable for Coursepass
         Timetable timetable = new Timetable(coursepass);
         int inttmpRowIdx = 2;
+        Calendar cal = Calendar.getInstance();
+        ZoneId defaultZoneId = ZoneId.systemDefault();
         for (TimetableDay day : timetable.getArrayTimetableDays()) {
-
-            grdpn_TimetableView.add(new Text(day.getDate().toString()), 0, inttmpRowIdx);
+            Date tmpDate = Date.from(day.getDate().atStartOfDay(defaultZoneId).toInstant());
+            grdpn_TimetableView.add(new Text(new SimpleDateFormat("EEEE").format(tmpDate) + "\r\n" + day.getDate().toString()), 0, inttmpRowIdx);
 
             for (TimetableHour timeslot : day.getArrayTimetableDay()) {
                 JavaFXTimetableHourText tmpText =
