@@ -105,7 +105,8 @@ public class Resourcemanager {
                     } else {
                         //we didnt find a matching coursepasslecturersubject, freetime?!
                         LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).date;
-                        Long refcoursepassID = 0L;
+                        Long refcoursepassID = this.arraycoursepasslecturersubject.get(
+                                this.positionInCoursepassLecturerSubjectStack).coursepass.id;
                         Long refCoursepassLecturerSubjectId =  0L;
                         //ToDO: if we want to also manage the rooms we could do it here
                         Long refRoomId = 0L;
@@ -115,8 +116,8 @@ public class Resourcemanager {
                         setEntryInTimetable(Timetableday, refcoursepassID,
                                 refCoursepassLecturerSubjectId, refRoomId, refLecturerId,
                                 refSubjectId, idxTimeslot);
-                        System.out.printf("%s, %s, FREETIME!\n",
-                                this.arrayTimetabledays.get(idxDay).date, idxTimeslot);
+//                        System.out.printf("%s, %s, FREETIME!\n",
+//                                this.arrayTimetabledays.get(idxDay).date, idxTimeslot);
                     }
                 }
 //             a subject should only occupie a day. the next day would be nice to have another subject

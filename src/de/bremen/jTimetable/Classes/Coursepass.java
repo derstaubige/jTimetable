@@ -118,7 +118,7 @@ public class Coursepass {
             if (tmpDayObject.getTimeslots() < tmpTimeslot){
                 tmpDayObject.setTimeslots(tmpTimeslot.intValue());
             }
-            System.out.println(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"));
+            //System.out.println(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"));
             //add this timeslot/TimetableHour to our tmpDayObject
             tmpDayObject.getArrayTimetableDay().set(tmpTimeslot.intValue(), new TimetableHour(tmpTimeslot.intValue(), new CoursepassLecturerSubject(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"))));
 

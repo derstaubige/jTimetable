@@ -8,10 +8,15 @@ import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class TimetableViewController implements Initializable {
@@ -50,7 +55,7 @@ public class TimetableViewController implements Initializable {
 
                     //Put a string on a dragboard
                     ClipboardContent content = new ClipboardContent();
-                    content.putString(tmpText.getProperties().get("gridpane-column").toString() + "," + tmpText.getProperties().get("gridpane-row").toString());
+                    content.putString("");
 //                        System.out.println(tmpText.getText());
 //                        System.out.println(tmpText.getDay());
 //                        System.out.println(tmpText.getTimeslot());
@@ -60,6 +65,27 @@ public class TimetableViewController implements Initializable {
 //                        System.out.println(tmpText.getProperties().get("gridpane-row"));
                     db.setContent(content);
 
+                    //check for all JavaFXTimetableHourText if they could be exchanged and color them
+                    List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView, JavaFXTimetableHourText.class);
+                    for(int i = 0; i < timetableHourTexts.size(); i++){
+                        CoursepassLecturerSubject tmpCoursepassLecturerSubject = timetableHourTexts.get(i).getCoursepassLecturerSubject();
+                        try{
+                            if(tmpCoursepassLecturerSubject.cangetExchanged(
+                                    tmpText.getCoursepassLecturerSubject(),
+                                    tmpText.getDay(), tmpText.getTimeslot(), timetableHourTexts.get(i).getCoursepassLecturerSubject(),
+                                    timetableHourTexts.get(i).getDay(), timetableHourTexts.get(i).getTimeslot()
+                            ) == true){
+                                timetableHourTexts.get(i).setFill(Color.GREEN);
+                            }else{
+                                timetableHourTexts.get(i).setFill(Color.RED);
+                            }
+                        }catch(Exception e){
+                            System.out.println("Error while determing if a Lectrurer is availdable at a given date");
+                            e.printStackTrace();
+                        }
+
+
+                    }
                     mouseEvent.consume();
                 });
 
@@ -67,7 +93,7 @@ public class TimetableViewController implements Initializable {
                 //https://www.youtube.com/watch?v=yP_UjqnIsCk
                 tmpText.setOnDragOver(dragEvent -> {
                     //accept it only if it is not dragged from the same node
-                    if (dragEvent.getGestureSource() != dragEvent.getSource()) {
+                    if (dragEvent.getGestureSource() != dragEvent.getGestureTarget()) {
                         //allow for both copying and moving, whatever user chooses
                         dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                     }
@@ -78,18 +104,34 @@ public class TimetableViewController implements Initializable {
                 //handles if an element is dropped on this field
                 //https://www.youtube.com/watch?v=yP_UjqnIsCk
                 tmpText.setOnDragDropped(dragEvent -> {
+
                     JavaFXTimetableHourText source = (JavaFXTimetableHourText) dragEvent.getGestureSource();
                     JavaFXTimetableHourText target = (JavaFXTimetableHourText) dragEvent.getGestureTarget();
 
-                    //Visually switch lessons
-                    JavaFXTimetableHourText temp = new JavaFXTimetableHourText(source.getText(),
-                            source.getCoursepassLecturerSubject(), source.getDay(), source.getTimeslot());
-                    ((Text) dragEvent.getGestureSource()).setText(target.getText());
-                    ((Text) dragEvent.getGestureTarget()).setText(temp.getText());
-
-                    System.out.println(CoursepassLecturerSubject.cangetExchanged(source.getCoursepassLecturerSubject(),
+                    if(CoursepassLecturerSubject.cangetExchanged(source.getCoursepassLecturerSubject(),
                             source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
-                            target.getDay(), target.getTimeslot()));
+                            target.getDay(), target.getTimeslot()) == true){
+                        //Visually switch lessons
+                        JavaFXTimetableHourText temp = new JavaFXTimetableHourText(source.getText(),
+                                source.getCoursepassLecturerSubject(), source.getDay(), source.getTimeslot());
+                        ((Text) dragEvent.getGestureSource()).setText(target.getText());
+                        ((Text) dragEvent.getGestureTarget()).setText(temp.getText());
+
+                        CoursepassLecturerSubject.changeCoursepassLecturerSubject(source.getCoursepassLecturerSubject(),
+                                source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
+                                target.getDay(), target.getTimeslot());
+                    }
+
+                    dragEvent.consume();
+
+                });
+
+                tmpText.setOnDragDone( dragEvent -> {
+                    //check for all JavaFXTimetableHourText if they could be exchanged and color them
+                    List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView, JavaFXTimetableHourText.class);
+                    for(int i = 0; i < timetableHourTexts.size(); i++){
+                        timetableHourTexts.get(i).setFill(Color.BLACK);
+                    }
                 });
 
                 grdpn_TimetableView.add(tmpText, timeslot.getTimeslot() + 1, inttmpRowIdx);
@@ -98,7 +140,18 @@ public class TimetableViewController implements Initializable {
             inttmpRowIdx++;
         }
     }
-
+    private <T> List<T> getNodesOfType(Pane parent, Class<T> type) {
+        List<T> elements = new ArrayList<>();
+        for (Node node : parent.getChildren()) {
+            if (node instanceof Pane) {
+                elements.addAll(getNodesOfType((Pane) node, type));
+            } else if (type.isAssignableFrom(node.getClass())) {
+                //noinspection unchecked
+                elements.add((T) node);
+            }
+        }
+        return Collections.unmodifiableList(elements);
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }

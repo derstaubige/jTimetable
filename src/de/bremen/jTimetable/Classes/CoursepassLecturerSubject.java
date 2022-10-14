@@ -43,6 +43,98 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         return true;
     }
 
+    public static void changeCoursepassLecturerSubject(CoursepassLecturerSubject source, LocalDate sourceDay, int sourceTimeslot, CoursepassLecturerSubject target, LocalDate targetDay, int targetTimeslot){
+
+        try{
+            //change Resourcesblocked, Lecturerer and Room ID
+
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            ResultSet rs;
+
+            //update source lecturer entry if the new lecturer is not 0
+            if(target.lecturer.getId() != 0){
+
+                SQLValues.add(new SQLValueLong(target.lecturer.getId()));
+                SQLValues.add(new SQLValueLong(source.lecturer.getId()));
+                SQLValues.add(new SQLValueDate(sourceDay));
+                SQLValues.add(new SQLValueDate(sourceDay));
+                SQLValues.add(new SQLValueInt(sourceTimeslot));
+                SQLValues.add(new SQLValueInt(sourceTimeslot));
+                rs = sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Lecturer' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
+                SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            }
+
+            //update source room entry if the new room is not 0
+            if(target.coursepass.room.getId() != 0){
+                SQLValues.add(new SQLValueLong(target.coursepass.room.getId()));
+                SQLValues.add(new SQLValueLong(source.coursepass.room.getId()));
+                SQLValues.add(new SQLValueDate(sourceDay));
+                SQLValues.add(new SQLValueDate(sourceDay));
+                SQLValues.add(new SQLValueInt(sourceTimeslot));
+                SQLValues.add(new SQLValueInt(sourceTimeslot));
+                rs = sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Room' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
+                SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            }
+
+            //update target lecturer entry if the source lecturer is not 0
+            if(source.lecturer.getId() != 0){
+                SQLValues.add(new SQLValueLong(source.lecturer.getId()));
+                SQLValues.add(new SQLValueLong(target.lecturer.getId()));
+                SQLValues.add(new SQLValueDate(targetDay));
+                SQLValues.add(new SQLValueDate(targetDay));
+                SQLValues.add(new SQLValueInt(targetTimeslot));
+                SQLValues.add(new SQLValueInt(targetTimeslot));
+                rs = sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Lecturer' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
+                SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            }
+
+            //update target room entry if source room is not 0
+            if(source.coursepass.room.getId() != 0){
+
+                SQLValues.add(new SQLValueLong(source.coursepass.room.getId()));
+                SQLValues.add(new SQLValueLong(target.coursepass.room.getId()));
+                SQLValues.add(new SQLValueDate(targetDay));
+                SQLValues.add(new SQLValueDate(targetDay));
+                SQLValues.add(new SQLValueInt(targetTimeslot));
+                SQLValues.add(new SQLValueInt(targetTimeslot));
+                rs = sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Room' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
+                SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            }
+
+            //change T_Timetables
+            //update source if the target is not 0 / freetime
+//            if(target.id != 0){
+                SQLValues.add(new SQLValueLong(target.id));
+                SQLValues.add(new SQLValueLong(target.coursepass.room.getId()));
+                SQLValues.add(new SQLValueLong(target.lecturer.getId()));
+                SQLValues.add(new SQLValueLong( source.subject.getId() ));
+                SQLValues.add(new SQLValueLong(source.coursepass.getId() != 0 ? source.coursepass.getId() : target.coursepass.getId()));
+                SQLValues.add(new SQLValueDate(sourceDay));
+                SQLValues.add(new SQLValueInt(sourceTimeslot));
+                rs = sqlConnectionManager.execute("update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",SQLValues);
+                SQLValues = new ArrayList<SQLConnectionManagerValues>();
+//            }
+
+            //update target if the source is not 0 / freetime
+//            if(source.id != 0){
+                SQLValues.add(new SQLValueLong(source.id));
+                SQLValues.add(new SQLValueLong(source.coursepass.room.getId()));
+                SQLValues.add(new SQLValueLong(source.lecturer.getId()));
+                SQLValues.add(new SQLValueLong(source.subject.getId()));
+                SQLValues.add(new SQLValueLong( target.coursepass.getId() != 0 ? target.coursepass.getId() : source.coursepass.getId()));
+                SQLValues.add(new SQLValueDate(targetDay));
+                SQLValues.add(new SQLValueInt(targetTimeslot));
+                rs = sqlConnectionManager.execute("update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",SQLValues);
+                SQLValues = new ArrayList<SQLConnectionManagerValues>();
+//            }
+
+        }catch(Exception e){
+            System.out.println("An SQLError occurred while Updating ResourceBlocked an Timetables");
+            e.printStackTrace();
+        }
+    }
+
     public CoursepassLecturerSubject(Long id) throws SQLException  {
         this.id = id;
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
@@ -123,5 +215,9 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         } else {
             return 1;
         }
+    }
+
+    public long getLecturerID(){
+        return this.lecturer.getId();
     }
 }
