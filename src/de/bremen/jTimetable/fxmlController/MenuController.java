@@ -1,14 +1,21 @@
 package de.bremen.jTimetable.fxmlController;
 
+import java.net.URL;
 import java.util.ResourceBundle;
 
+import de.bremen.jTimetable.Classes.CourseofStudy;
+import de.bremen.jTimetable.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 
@@ -69,4 +76,63 @@ public class MenuController implements Initializable
         // do what you have to do
         stage.close();
     }
+
+    @FXML
+    private void openCourseofStudy(){
+        //System.out.println(selectedItems.get(0).getId());
+        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        URL url = Main.class.getResource("fxml/CourseofStudy.fxml");
+
+        try {
+//            loader.load(url);
+            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
+            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+            Scene scene = new Scene(anchorPane);
+            stageTheEventSourceNodeBelongs.setScene(scene);
+        } catch (Exception e) {
+            //TODo: Propper Error handling
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    private void openHome(){
+        //System.out.println(selectedItems.get(0).getId());
+        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        URL url = Main.class.getResource("fxml/Home.fxml");
+
+        try {
+//            loader.load(url);
+            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
+            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+            Scene scene = new Scene(anchorPane);
+            stageTheEventSourceNodeBelongs.setScene(scene);
+        } catch (Exception e) {
+            //TODo: Propper Error handling
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    private void openCoursepass(){
+        //System.out.println(selectedItems.get(0).getId());
+        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        URL url = Main.class.getResource("fxml/Coursepass.fxml");
+
+        try {
+//            loader.load(url);
+            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
+            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+            Scene scene = new Scene(anchorPane);
+            stageTheEventSourceNodeBelongs.setScene(scene);
+        } catch (Exception e) {
+            //TODo: Propper Error handling
+            e.printStackTrace();
+        }
+    }
+
 }

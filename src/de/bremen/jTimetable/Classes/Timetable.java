@@ -1,5 +1,7 @@
 package de.bremen.jTimetable.Classes;
 
+import javafx.stage.FileChooser;
+
 import java.util.ArrayList;
 
 public class Timetable  {
@@ -18,6 +20,13 @@ public class Timetable  {
 
     public ArrayList<TimetableDay> getArrayTimetableDays() {
         return arrayTimetableDays;
+    }
+
+    public void exportTimetableToFile(){
+        //https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+//        fileChooser.showOpenDialog();
     }
 
 }

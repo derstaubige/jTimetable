@@ -5,13 +5,16 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -26,6 +29,9 @@ public class TimetableViewController implements Initializable {
     @FXML
     public GridPane grdpn_TimetableView;
 
+    @FXML
+    public Label savetofile;
+    private Timetable timetable;
     /**
      * Can be called to hand parameters from the calling class to this controller. Be aware that the initialize method
      * is performed bevor this one and therefore has no access to the data that is set here.
@@ -34,7 +40,7 @@ public class TimetableViewController implements Initializable {
      */
     public void initData(Coursepass coursepass) {
         //Get Timetable for Coursepass
-        Timetable timetable = new Timetable(coursepass);
+        timetable = new Timetable(coursepass);
         int inttmpRowIdx = 2;
         Calendar cal = Calendar.getInstance();
         ZoneId defaultZoneId = ZoneId.systemDefault();
@@ -140,7 +146,19 @@ public class TimetableViewController implements Initializable {
 
             inttmpRowIdx++;
         }
+
+
     }
+
+    @FXML
+    private void savetoFileClicked(){
+        final FileChooser fileChooser = new FileChooser();
+        //File file = fileChooser.showOpenDialog(stage);
+
+        timetable.exportTimetableToFile();
+    }
+
+
     private <T> List<T> getNodesOfType(Pane parent, Class<T> type) {
         List<T> elements = new ArrayList<>();
         for (Node node : parent.getChildren()) {

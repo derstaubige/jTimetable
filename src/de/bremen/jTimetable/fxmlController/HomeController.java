@@ -34,24 +34,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
-    @FXML
-    private Button ActiveCoursesofStudyButtonNew;
-    @FXML
-    private Button ActiveCoursesofStudyButton;
-    @FXML
-    private TableView<CourseofStudy> ActiveCoursesofStudyTableview;
-    @FXML
-    private TableColumn<CourseofStudy, Long> COSID;
-    @FXML
-    private TableColumn<CourseofStudy, String> COSDescription;
-    @FXML
-    private TableColumn<CourseofStudy, LocalDate> COSBegin;
-    @FXML
-    private TableColumn<CourseofStudy, LocalDate> COSEnd;
-    @FXML
-    private TableColumn<CourseofStudy, Boolean> COSActive;
-    @FXML
-    private CheckBox chkToogleActiveCourseofStudy;
+
     @FXML
     private TableView<Coursepass> CoursepassTableview;
     @FXML
@@ -74,10 +57,7 @@ public class HomeController implements Initializable {
     private Button btnCoursepassNew;
     @FXML
     private CheckBox chkToogleCoursepass;
-    @FXML
-    private Text dragme;
-    @FXML
-    private Text dropme;
+
 
     public HomeController() {
 
@@ -85,107 +65,7 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        dragme.setOnDragDetected(new EventHandler<MouseEvent>() {
-            public void handle(MouseEvent event) {
-                /* drag was detected, start a drag-and-drop gesture*/
-                /* allow any transfer mode */
-                Dragboard db = dragme.startDragAndDrop(TransferMode.ANY);
 
-                /* Put a string on a dragboard */
-                ClipboardContent content = new ClipboardContent();
-                content.putString(dragme.getText());
-                db.setContent(content);
-
-                event.consume();
-            }
-        });
-
-        dropme.setOnDragOver(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-                /* data is dragged over the target */
-                /* accept it only if it is not dragged from the same node
-                 * and if it has a string data */
-                if (event.getGestureSource() != dropme &&
-                        event.getDragboard().hasString()) {
-                    /* allow for both copying and moving, whatever user chooses */
-                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                }
-
-                event.consume();
-            }
-        });
-
-        dropme.setOnDragEntered(new EventHandler<DragEvent>() {
-            public void handle(DragEvent event) {
-                /* the drag-and-drop gesture entered the target */
-                /* show to the user that it is an actual gesture target */
-                if (event.getGestureSource() != dropme &&
-                        event.getDragboard().hasString()) {
-                    dropme.setFill(Color.GREEN);
-                }
-
-                event.consume();
-            }
-        });
-
-        COSID.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Long>("id"));
-        COSDescription.setCellValueFactory(new PropertyValueFactory<CourseofStudy, String>("caption"));
-        COSBegin.setCellValueFactory(new PropertyValueFactory<CourseofStudy, LocalDate>("begin"));
-        COSEnd.setCellValueFactory(new PropertyValueFactory<CourseofStudy, LocalDate>("end"));
-        COSActive.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Boolean>("active"));
-
-        ActiveCoursesofStudyTableview.getItems().setAll(getCoursesofStudy(true));
-        ActiveCoursesofStudyTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent click) {
-                if (click.getClickCount() == 2) {
-                    ActiveCoursesofStudyButton.fire();
-                }
-            }
-        });
-
-        ActiveCoursesofStudyButton.setOnAction(event -> {
-            TableView.TableViewSelectionModel<CourseofStudy> selectionModel = ActiveCoursesofStudyTableview.getSelectionModel();
-            ObservableList<CourseofStudy> selectedItems = selectionModel.getSelectedItems();
-            if (selectedItems.size() > 0) {
-                //System.out.println(selectedItems.get(0).getId());
-                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                FXMLLoader loader = new FXMLLoader();
-                URL url = Main.class.getResource("fxml/CourseofStudy.fxml");
-                loader.setLocation(url);
-                try {
-                    AnchorPane anchorPane = loader.<AnchorPane>load();
-                    CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
-                    courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
-                    Scene scene = new Scene(anchorPane);
-                    stageTheEventSourceNodeBelongs.setScene(scene);
-                } catch (Exception e) {
-                    //TODo: Propper Error handling
-                    System.out.println(e);
-                }
-            }
-        });
-
-        ActiveCoursesofStudyButtonNew.setOnAction(event -> {
-            Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader();
-            URL url = Main.class.getResource("fxml/CourseofStudy.fxml");
-            loader.setLocation(url);
-            try {
-                AnchorPane anchorPane = loader.<AnchorPane>load();
-                CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
-                courseofStudyController.setID(new CourseofStudy(0L));
-                Scene scene = new Scene(anchorPane);
-                stageTheEventSourceNodeBelongs.setScene(scene);
-            } catch (Exception e) {
-                //TODo: Propper Error handling
-                System.out.println(e);
-            }
-        });
-
-        chkToogleActiveCourseofStudy.setOnAction(event -> {
-            ActiveCoursesofStudyTableview.getItems().setAll(getCoursesofStudy(!chkToogleActiveCourseofStudy.isSelected()));
-        });
 
         CPID.setCellValueFactory(new PropertyValueFactory<Coursepass, Long>("id"));
         CPCOSCaption.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("courseofstudycaption"));
@@ -274,16 +154,7 @@ public class HomeController implements Initializable {
 
     }
 
-    public ArrayList<CourseofStudy> getCoursesofStudy(Boolean activeState) {
-        ArrayList<CourseofStudy> activeCoursesofStudy = new ArrayList();
-        try {
-            activeCoursesofStudy = new CourseofStudy(0L).getCoursesofStudy(activeState);
-        } catch (SQLException e) {
-            //TODo: better error handling
-            System.out.println(e);
-        }
-        return activeCoursesofStudy;
-    }
+
 
     public ArrayList<Coursepass> getCoursepass(Boolean activeState) {
         ArrayList<Coursepass> activeCoursepass = new ArrayList();

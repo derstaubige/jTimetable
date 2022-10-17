@@ -13,34 +13,12 @@
 
         <children>
             <fx:include source="Menu.fxml" fillWidth="true" />
-            <Text fx:id="dragme">DRAG ME</Text>
-            <Label text="Active courses of Study"></Label>
-
-            <Text fx:id="dropme">DROP ME</Text>
             <HBox>
-                <children>
-                    <TableView fx:id="ActiveCoursesofStudyTableview" minWidth="800">
-                        <columns>
-                            <TableColumn text="ID" fx:id="COSID" visible="false"></TableColumn>
-                            <TableColumn text="Description" fx:id="COSDescription"></TableColumn>
-                            <TableColumn text="Begin" fx:id="COSBegin"></TableColumn>
-                            <TableColumn text="End" fx:id="COSEnd"></TableColumn>
-                            <TableColumn text="Active" fx:id="COSActive"></TableColumn>
-                        </columns>
-                    </TableView>
-                    <VBox minWidth="200">
-
-                        <Button fx:id="ActiveCoursesofStudyButton">Edit</Button>
-                        <Button fx:id="ActiveCoursesofStudyButtonNew">New</Button>
-                        <CheckBox fx:id="chkToogleActiveCourseofStudy">Show only inactive Courses of Study</CheckBox>
-                        <ImageView id="boxImage" layoutX="800" layoutY="10">
-                            <image>
-                                <Image url="@/de/bremen/jTimetable/img/icon.png" />
-                            </image>
-                        </ImageView>
-                    </VBox>
-
-                </children>
+                <ImageView id="boxImage" layoutX="800" layoutY="10">
+                    <image>
+                        <Image url="@/de/bremen/jTimetable/img/icon.png" />
+                    </image>
+                </ImageView>
             </HBox>
             <Label text="Active Coursepasses"></Label>
             <HBox>

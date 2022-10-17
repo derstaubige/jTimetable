@@ -12,7 +12,7 @@
         <center>
             <ScrollPane fx:id="scrllpn_TimetableView" BorderPane.alignment="CENTER">
                 <content>
-                    <GridPane fx:id="grdpn_TimetableView" gridLinesVisible="true" prefWidth="469.0">
+                    <GridPane fx:id="grdpn_TimetableView"  gridLinesVisible="true" prefWidth="469.0">
                         <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -23,7 +23,7 @@
                         <rowConstraints>
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         </rowConstraints>
-                        <Label prefHeight="122.0" prefWidth="112.0" textAlignment="CENTER">
+                        <Label fx:id="savetofile" onMouseClicked="#savetoFileClicked" prefHeight="122.0" prefWidth="112.0" textAlignment="CENTER" text="Save Timetable as file">
                             <font>
                                 <Font size="14.0" />
                             </font>

@@ -1,23 +1,19 @@
 package de.bremen.jTimetable.fxmlController;
 
 import de.bremen.jTimetable.Classes.CourseofStudy;
-import de.bremen.jTimetable.Main;
-import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import javafx.scene.control.CheckBox;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class CourseofStudyController implements Initializable {
@@ -34,13 +30,86 @@ public class CourseofStudyController implements Initializable {
     @FXML
     private CheckBox chkActive;
     @FXML
-    private Button btnBack;
-    @FXML
     private Button btnSave;
+    @FXML
+    private Button ActiveCoursesofStudyButtonNew;
+    @FXML
+    private Button ActiveCoursesofStudyButton;
+    @FXML
+    private TableView<CourseofStudy> ActiveCoursesofStudyTableview;
+    @FXML
+    private TableColumn<CourseofStudy, Long> COSID;
+    @FXML
+    private TableColumn<CourseofStudy, String> COSDescription;
+    @FXML
+    private TableColumn<CourseofStudy, LocalDate> COSBegin;
+    @FXML
+    private TableColumn<CourseofStudy, LocalDate> COSEnd;
+    @FXML
+    private TableColumn<CourseofStudy, Boolean> COSActive;
+    @FXML
+    private CheckBox chkToogleActiveCourseofStudy;
+    @FXML
+    private HBox editbox;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        editbox.setVisible(false);
+
+        COSID.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Long>("id"));
+        COSDescription.setCellValueFactory(new PropertyValueFactory<CourseofStudy, String>("caption"));
+        COSBegin.setCellValueFactory(new PropertyValueFactory<CourseofStudy, LocalDate>("begin"));
+        COSEnd.setCellValueFactory(new PropertyValueFactory<CourseofStudy, LocalDate>("end"));
+        COSActive.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Boolean>("active"));
+
+        ActiveCoursesofStudyTableview.getItems().setAll(getCoursesofStudy(true));
+        ActiveCoursesofStudyTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent click) {
+                if (click.getClickCount() == 1) {
+                    ActiveCoursesofStudyButton.fire();
+                }
+            }
+        });
+
+        ActiveCoursesofStudyButton.setOnAction(event -> {
+            TableView.TableViewSelectionModel<CourseofStudy> selectionModel = ActiveCoursesofStudyTableview.getSelectionModel();
+            ObservableList<CourseofStudy> selectedItems = selectionModel.getSelectedItems();
+
+            if (selectedItems.size() > 0) {
+                this.cos = selectedItems.get(0);
+                txtID.setText("" + this.cos.getId());
+                txtCaption.setText(this.cos.getCaption());
+                datBegin.setValue(this.cos.getBegin());
+                datEnd.setValue(this.cos.getEnd());
+                chkActive.setSelected(this.cos.isActive());
+                txtID.setEditable(false);
+                editbox.setVisible(true);
+            }
+        });
+
+        ActiveCoursesofStudyButtonNew.setOnAction(event -> {
+            try{
+                this.cos = new CourseofStudy(0L);
+                txtID.setText("" + this.cos.getId());
+                txtCaption.setText(this.cos.getCaption());
+                datBegin.setValue(this.cos.getBegin());
+                datEnd.setValue(this.cos.getEnd());
+                chkActive.setSelected(this.cos.isActive());
+                txtID.setEditable(false);
+                editbox.setVisible(true);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+        });
+
+        chkToogleActiveCourseofStudy.setOnAction(event -> {
+            ActiveCoursesofStudyTableview.getItems().setAll(getCoursesofStudy(!chkToogleActiveCourseofStudy.isSelected()));
+        });
+
         btnSave.setOnAction(event -> {
             this.cos.setCaption(txtCaption.getText().trim());
             this.cos.setBegin(datBegin.getValue());
@@ -52,39 +121,24 @@ public class CourseofStudyController implements Initializable {
                 this.cos.save();
             } catch (Exception e) {
                 //TODo: Propper Error handling
-                System.out.println(e);
+                e.printStackTrace();
             }
-
-            //redirect to home
-            btnBack.fire();
-        });
-
-        Platform.runLater(() -> {
-            txtID.setText("" + this.cos.getId());
-            txtCaption.setText(this.cos.getCaption());
-            datBegin.setValue(this.cos.getBegin());
-            datEnd.setValue(this.cos.getEnd());
-            chkActive.setSelected(this.cos.isActive());
-            txtID.setEditable(false);
-        });
-
-        btnBack.setOnAction(event -> {
-            Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader();
-            URL url = Main.class.getResource("fxml/Home.fxml");
-            loader.setLocation(url);
-            try {
-                AnchorPane anchorPane = loader.<AnchorPane>load();
-                Scene scene = new Scene(anchorPane);
-                stageTheEventSourceNodeBelongs.setScene(scene);
-            } catch (Exception e) {
-                //TODo: Propper Error handling
-                System.out.println(e);
-            }
+            editbox.setVisible(false);
+            ActiveCoursesofStudyTableview.getItems().setAll(getCoursesofStudy(!chkToogleActiveCourseofStudy.isSelected()));
         });
     }
 
     public void setID(CourseofStudy cos) {
         this.cos = cos;
+    }
+    public ArrayList<CourseofStudy> getCoursesofStudy(Boolean activeState) {
+        ArrayList<CourseofStudy> activeCoursesofStudy = new ArrayList();
+        try {
+            activeCoursesofStudy = new CourseofStudy(0L).getCoursesofStudy(activeState);
+        } catch (SQLException e) {
+            //TODo: better error handling
+            System.out.println(e);
+        }
+        return activeCoursesofStudy;
     }
 }

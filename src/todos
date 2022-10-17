@@ -14,3 +14,11 @@ lecturer on duty days / days of
 respect holidays in timetable
 
 [*] add weekday to timetable 2022-10-14
+
+does loreens visible exchange break JavaFXTimetableHourText because it only updates the Text but not the Object?
+
+translation layer
+
+delete timetablehour
+
+show all subjects in timetable iE EST 10/24, AO 20/20, etc

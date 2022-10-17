@@ -8,29 +8,30 @@
         <menus>
             <Menu text="File">
                 <items>
-                    <MenuItem text="New"/>
-                    <MenuItem text="Open"/>
-                    <MenuItem text="Save"/>
-                    <MenuItem text="Save As"/>
-                    <SeparatorMenuItem  />
+                    <MenuItem text="Home" onAction="#openHome"/>
+<!--                    <MenuItem text="Open"/>-->
+<!--                    <MenuItem text="Save"/>-->
+<!--                    <MenuItem text="Save As"/>-->
+<!--                    <SeparatorMenuItem  />-->
                     <MenuItem text="Exit" onAction="#closeButtonAction"/>
                 </items>
             </Menu>
-            <Menu text="Edit">
-                <items>
-                    <MenuItem text="Copy"/>
-                    <MenuItem text="Cut"/>
-                    <MenuItem text="Paste"/>
-                </items>
+            <Menu text="Entitiys">
+                <MenuItem text="Courses of Study" onAction="#openCourseofStudy"></MenuItem>
+                <MenuItem text="Coursepass" onAction="#openCoursepass"></MenuItem>
+                <MenuItem text="Lecturer"></MenuItem>
+                <MenuItem text="Subjects"></MenuItem>
+                <MenuItem text="Room"></MenuItem>
+                <MenuItem text="Location"></MenuItem>
             </Menu>
-            <Menu text="Help">
-                <items>
-                    <MenuItem text="Search" disable="true"/>
-                    <MenuItem text="Online Manual" visible="false"/>
-                    <SeparatorMenuItem />
-                    <MenuItem text="About"  onAction="#handleAboutAction"/>
-                </items>
-            </Menu>
+<!--            <Menu text="Help">-->
+<!--                <items>-->
+<!--                    <MenuItem text="Search" disable="true"/>-->
+<!--                    <MenuItem text="Online Manual" visible="false"/>-->
+<!--                    <SeparatorMenuItem />-->
+<!--                    <MenuItem text="About"  onAction="#handleAboutAction"/>-->
+<!--                </items>-->
+<!--            </Menu>-->
         </menus>
     </MenuBar>
 </VBox>
