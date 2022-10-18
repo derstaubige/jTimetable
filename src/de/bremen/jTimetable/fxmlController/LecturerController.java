@@ -1,8 +1,6 @@
 package de.bremen.jTimetable.fxmlController;
 
-import de.bremen.jTimetable.Classes.CourseofStudy;
-import de.bremen.jTimetable.Classes.Coursepass;
-import de.bremen.jTimetable.Classes.StudySection;
+import de.bremen.jTimetable.Classes.*;
 import de.bremen.jTimetable.Main;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -10,12 +8,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -30,62 +26,47 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class CoursepassController implements Initializable {
-    Coursepass coursepass;
-    @FXML private ComboBox<CourseofStudy> cmbCourseofStudy;
-    @FXML private ComboBox<StudySection> cmbStudySections;
-    @FXML private DatePicker datStart;
-    @FXML private DatePicker datEnd;
-    @FXML private TextField txtDescription;
+public class LecturerController implements Initializable {
+    Lecturer lecturer;
+
+    @FXML    private TableView<Lecturer> LecturerTableview;
+    @FXML    private TableColumn<Lecturer, Long> ID;
+    @FXML    private TableColumn<Lecturer, String> Firstname;
+    @FXML    private TableColumn<Lecturer, String> Lastname;
+    @FXML    private TableColumn<Lecturer, de.bremen.jTimetable.Classes.Location> Location;
+    @FXML    private TableColumn<Lecturer, Boolean> CPActive;
+    @FXML    private Button btnLecturerEdit;
+    @FXML    private Button btnLecturerNew;
+    @FXML    private CheckBox chkToogleLecturer;
+    @FXML    private VBox editbox;
+    @FXML private TextField txtID;
+    @FXML private TextField txtFirstname;
+    @FXML private TextField txtLastname;
+    @FXML private ComboBox<de.bremen.jTimetable.Classes.Location> cmbLocation;
     @FXML private CheckBox chkActive;
-    @FXML private Button btnBack;
     @FXML private Button btnSave;
-    @FXML
-    private TableView<Coursepass> CoursepassTableview;
-    @FXML
-    private TableColumn<Coursepass, Long> CPID;
-    @FXML
-    private TableColumn<Coursepass, String> CPCOSCaption;
-    @FXML
-    private TableColumn<Coursepass, String> CPstudysection;
-    @FXML
-    private TableColumn<Coursepass, String> CPDescription;
-    @FXML
-    private TableColumn<Coursepass, LocalDate> CPStart;
-    @FXML
-    private TableColumn<Coursepass, LocalDate> CPEnd;
-    @FXML
-    private TableColumn<Coursepass, Boolean> CPActive;
-    @FXML
-    private Button btnCoursepassEdit;
-    @FXML
-    private Button btnCoursepassNew;
-    @FXML
-    private CheckBox chkToogleCoursepass;
-    @FXML
-    private VBox editbox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
         editbox.setVisible(false);
         // We need a StringConverter in order to ensure the selected item is displayed properly
         // For this sample, we only want the Person's name to be displayed
-        cmbStudySections.setConverter(new StringConverter<StudySection>() {
+        cmbLocation.setConverter(new StringConverter<de.bremen.jTimetable.Classes.Location>() {
             @Override
-            public String toString(StudySection studySection) {
-                if (studySection == null) {
+            public String toString(de.bremen.jTimetable.Classes.Location location) {
+                if (location == null) {
                     return "";
                 }else{
-                    return studySection.getDescription();
+                    return location.getCaption();
                 }
             }
 
             @Override
-            public StudySection fromString(String string) {
+            public de.bremen.jTimetable.Classes.Location fromString(String string) {
                 return null;
             }
         });
-        cmbStudySections.setCellFactory(cell -> new ListCell<StudySection>() {
+        cmbLocation.setCellFactory(cell -> new ListCell<de.bremen.jTimetable.Classes.Location>() {
 
             // Create our layout here to be reused for each ListCell
             GridPane gridPane = new GridPane();
@@ -108,14 +89,14 @@ public class CoursepassController implements Initializable {
 
             // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
             @Override
-            protected void updateItem(StudySection studySection, boolean empty) {
-                super.updateItem(studySection, empty);
+            protected void updateItem(de.bremen.jTimetable.Classes.Location location, boolean empty) {
+                super.updateItem(location, empty);
 
-                if (!empty && studySection != null) {
+                if (!empty && location != null) {
 
                     // Update our Labels
                     //lblID.setText(studySection.getId().toString());
-                    lblDescription.setText(studySection.getDescription());
+                    lblDescription.setText(location.getCaption());
 
                     // Set this ListCell's graphicProperty to display our GridPane
                     setGraphic(gridPane);
@@ -126,78 +107,19 @@ public class CoursepassController implements Initializable {
             }
         });
 
-        // We need a StringConverter in order to ensure the selected item is displayed properly
-        // For this sample, we only want the Person's name to be displayed
-        cmbCourseofStudy.setConverter(new StringConverter<CourseofStudy>() {
-            @Override
-            public String toString(CourseofStudy courseofStudy) {
-                if (courseofStudy == null) {
-                    return "";
-                }else{
-                    return courseofStudy.getCaption();
-                }
-            }
-
-            @Override
-            public CourseofStudy fromString(String string) {
-                return null;
-            }
-        });
-        cmbCourseofStudy.setCellFactory(cell -> new ListCell<CourseofStudy>() {
-
-            // Create our layout here to be reused for each ListCell
-            GridPane gridPane = new GridPane();
-            //Label lblID = new Label();
-            Label lblDescription = new Label();
-
-            // Static block to configure our layout
-            {
-                // Ensure all our column widths are constant
-                gridPane.getColumnConstraints().addAll(
-                        // new ColumnConstraints(100, 100, 100),
-                        new ColumnConstraints(200, 200, 200)
-                );
-
-                //gridPane.add(lblID, 0, 1, 1 ,1);
-                gridPane.add(lblDescription, 0, 1,1 ,1);
-
-            }
-
-
-            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
-            @Override
-            protected void updateItem(CourseofStudy courseofStudy, boolean empty) {
-                super.updateItem(courseofStudy, empty);
-
-                if (!empty && courseofStudy != null) {
-
-                    // Update our Labels
-                    //lblID.setText(studySection.getId().toString());
-                    lblDescription.setText(courseofStudy.getCaption());
-
-                    // Set this ListCell's graphicProperty to display our GridPane
-                    setGraphic(gridPane);
-                } else {
-                    // Nothing to display here
-                    setGraphic(null);
-                }
-            }
-        });
 
         btnSave.setOnAction(event ->{
-            this.coursepass.setStudysection(cmbStudySections.getValue());
-            this.coursepass.setStart(datStart.getValue());
-            this.coursepass.setEnd(datEnd.getValue());
-            this.coursepass.setActive(chkActive.isSelected());
-            this.coursepass.setDescription(txtDescription.getText());
-            this.coursepass.setCourseofstudy(cmbCourseofStudy.getValue());
+            this.lecturer.setFirstname(txtFirstname.getText());
+            this.lecturer.setLastname(txtLastname.getText());
+            this.lecturer.setLocation(cmbLocation.getValue());
+            this.lecturer.setActive(chkActive.isSelected());
             try {
-                this.coursepass.save();
+                this.lecturer.save();
             }catch (Exception e){
                 e.printStackTrace();
             }
             editbox.setVisible(false);
-            CoursepassTableview.getItems().setAll(getCoursepass(!chkToogleCoursepass.isSelected()));
+            LecturerTableview.getItems().setAll(getLecturer(!chkToogleLecturer.isSelected()));
         });
 
         Platform.runLater(() -> {
@@ -205,7 +127,7 @@ public class CoursepassController implements Initializable {
         });
 
 
-        CPID.setCellValueFactory(new PropertyValueFactory<Coursepass, Long>("id"));
+        ID.setCellValueFactory(new PropertyValueFactory<Lecturer, Long>("id"));
         CPCOSCaption.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("courseofstudycaption"));
         CPstudysection.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("CPstudysection"));
         CPDescription.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("description"));
@@ -303,22 +225,14 @@ public class CoursepassController implements Initializable {
         });
     }
 
-    public Coursepass getCoursepass() {
-        return coursepass;
-    }
-
-    public void setCoursepass(Coursepass coursepass) {
-        this.coursepass = coursepass;
-    }
-
-    public ArrayList<Coursepass> getCoursepass(Boolean activeState) {
-        ArrayList<Coursepass> activeCoursepass = new ArrayList();
+    public ArrayList<Lecturer> getLecturer(Boolean activeState) {
+        ArrayList<Lecturer> activeLecturer = new ArrayList();
         try {
-            activeCoursepass = new Coursepass(0L).getCoursepasses(activeState);
+            activeLecturer = new Lecturer(0L).getAllLecturer(activeState);
         } catch (SQLException e) {
             //TODo: better error handling
-            System.out.println(e);
+            e.printStackTrace();
         }
-        return activeCoursepass;
+        return activeLecturer;
     }
 }

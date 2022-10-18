@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="de.bremen.jTimetable.fxmlController.LecturerController"
+            prefHeight="400.0" prefWidth="800.0" minWidth="800">
+    <ScrollPane>
+        <VBox >
+            <children>
+                <fx:include source="Menu.fxml" fillWidth="true" />
+                <HBox>
+                    <children>
+                        <TableView fx:id="LecturerTableview" minWidth="800">
+                            <columns>
+                                <TableColumn text="ID" fx:id="ID" visible="false"></TableColumn>
+                                <TableColumn text="Firstname" fx:id="Firstname"></TableColumn>
+                                <TableColumn text="Lastname" fx:id="Lastname"></TableColumn>
+                                <TableColumn text="Location" fx:id="Location"></TableColumn>
+                                <TableColumn text="Active" fx:id="Active"></TableColumn>
+                            </columns>
+                        </TableView>
+                        <VBox minWidth="200">
+
+                            <Button fx:id="btnLecturerEdit">Edit</Button>
+                            <Button fx:id="btnLecturerNew">New</Button>
+                            <CheckBox fx:id="chkToogleLecturer">Show only inactive Lecturer</CheckBox>
+
+                        </VBox>
+                    </children>
+                </HBox>
+                <VBox fx:id="editbox">
+
+                    <HBox>
+                        <Label>ID</Label><TextField fx:id="txtID"></TextField>
+                    </HBox>
+                    <HBox>
+                        <Label>Firstname</Label><TextField fx:id="txtFirstname"></TextField>
+                    </HBox>
+                    <HBox>
+                        <Label>Lastname</Label><TextField fx:id="txtLastname"></TextField>
+                    </HBox>
+                    <HBox>
+                        <Label>Location</Label><ComboBox fx:id="cmbLocation" minWidth="400"></ComboBox>
+                    </HBox>
+                    <HBox>
+                        <Label>Active</Label><CheckBox fx:id="chkActive"></CheckBox>
+                    </HBox>
+                    <HBox>
+                        <Button fx:id="btnSave">Save</Button>
+                    </HBox>
+
+                </VBox>
+            </children>
+        </VBox>
+    </ScrollPane>
+
+</AnchorPane>

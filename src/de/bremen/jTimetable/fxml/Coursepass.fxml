@@ -13,6 +13,7 @@
     <ScrollPane>
         <VBox >
             <children>
+                <fx:include source="Menu.fxml" fillWidth="true" />
                 <HBox>
                     <children>
                         <TableView fx:id="CoursepassTableview" minWidth="800">
@@ -35,28 +36,31 @@
                         </VBox>
                     </children>
                 </HBox>
-                <HBox>
-                    <Label>Course of Study</Label><TextField fx:id="txtCourseofStudyCaption"></TextField>
-                </HBox>
-                <HBox>
-                    <Label>Study Section</Label><ComboBox fx:id="cmbStudySections" minWidth="400"></ComboBox>
-                </HBox>
-                <HBox>
-                    <Label>Start</Label><DatePicker fx:id="datStart"></DatePicker>
-                </HBox>
-                <HBox>
-                    <Label>End</Label><DatePicker fx:id="datEnd"></DatePicker>
-                </HBox>
-                <HBox>
-                    <Label>Description</Label><TextField fx:id="txtDescription"></TextField>
-                </HBox>
-                <HBox>
-                    <Label>Active</Label><CheckBox fx:id="chkActive"></CheckBox>
-                </HBox>
-                <HBox>
-                    <Button fx:id="btnBack">Back</Button>
-                    <Button fx:id="btnSave">Save</Button>
-                </HBox>
+                <VBox fx:id="editbox">
+
+                    <HBox>
+                        <Label>Course of Study</Label><ComboBox fx:id="cmbCourseofStudy"></ComboBox>
+                    </HBox>
+                    <HBox>
+                        <Label>Study Section</Label><ComboBox fx:id="cmbStudySections" minWidth="400"></ComboBox>
+                    </HBox>
+                    <HBox>
+                        <Label>Start</Label><DatePicker fx:id="datStart"></DatePicker>
+                    </HBox>
+                    <HBox>
+                        <Label>End</Label><DatePicker fx:id="datEnd"></DatePicker>
+                    </HBox>
+                    <HBox>
+                        <Label>Description</Label><TextField fx:id="txtDescription"></TextField>
+                    </HBox>
+                    <HBox>
+                        <Label>Active</Label><CheckBox fx:id="chkActive"></CheckBox>
+                    </HBox>
+                    <HBox>
+                        <Button fx:id="btnSave">Save</Button>
+                    </HBox>
+
+                </VBox>
             </children>
         </VBox>
     </ScrollPane>

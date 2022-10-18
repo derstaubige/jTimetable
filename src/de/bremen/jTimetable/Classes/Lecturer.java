@@ -114,10 +114,57 @@ public class Lecturer {
         // there is no blocking
         return true;
     }
+    public static ArrayList<Lecturer> getAllLecturer(Boolean activeStatus) throws SQLException{
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+        SQLValues.add(new SQLValueBoolean(activeStatus));
+        ResultSet rs = sqlConnectionManager.select("Select * from T_Lecturer where active = ?",SQLValues);
+        ArrayList returnList = new ArrayList();
+        while( rs.next() ){
+            returnList.add(new Lecturer(rs.getLong("id")));
+        }
+        return returnList;
+    }
     public Long getId() {
         return id;
     }
     public String getLecturerFullName(){
         return this.lastname + ", " + this.firstname;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
