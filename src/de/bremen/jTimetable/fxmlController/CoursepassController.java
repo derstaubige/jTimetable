@@ -40,33 +40,23 @@ public class CoursepassController implements Initializable {
     @FXML private CheckBox chkActive;
     @FXML private Button btnBack;
     @FXML private Button btnSave;
-    @FXML
-    private TableView<Coursepass> CoursepassTableview;
-    @FXML
-    private TableColumn<Coursepass, Long> CPID;
-    @FXML
-    private TableColumn<Coursepass, String> CPCOSCaption;
-    @FXML
-    private TableColumn<Coursepass, String> CPstudysection;
-    @FXML
-    private TableColumn<Coursepass, String> CPDescription;
-    @FXML
-    private TableColumn<Coursepass, LocalDate> CPStart;
-    @FXML
-    private TableColumn<Coursepass, LocalDate> CPEnd;
-    @FXML
-    private TableColumn<Coursepass, Boolean> CPActive;
-    @FXML
-    private Button btnCoursepassEdit;
-    @FXML
-    private Button btnCoursepassNew;
-    @FXML
-    private CheckBox chkToogleCoursepass;
-    @FXML
-    private VBox editbox;
+    @FXML    private TableView<Coursepass> CoursepassTableview;
+    @FXML    private TableColumn<Coursepass, Long> CPID;
+    @FXML    private TableColumn<Coursepass, String> CPCOSCaption;
+    @FXML    private TableColumn<Coursepass, String> CPstudysection;
+    @FXML    private TableColumn<Coursepass, String> CPDescription;
+    @FXML    private TableColumn<Coursepass, LocalDate> CPStart;
+    @FXML    private TableColumn<Coursepass, LocalDate> CPEnd;
+    @FXML    private TableColumn<Coursepass, Boolean> CPActive;
+    @FXML    private Button btnCoursepassEdit;
+    @FXML    private Button btnCoursepassNew;
+    @FXML    private CheckBox chkToogleCoursepass;
+    @FXML    private VBox editbox;
+    @FXML private Button btnEditCLS;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
+
         editbox.setVisible(false);
         // We need a StringConverter in order to ensure the selected item is displayed properly
         // For this sample, we only want the Person's name to be displayed
@@ -238,6 +228,27 @@ public class CoursepassController implements Initializable {
                     } catch (SQLException | IOException e) {
                         throw new RuntimeException(e);
                     }
+                }
+            }
+        });
+        btnEditCLS.setOnAction(event ->{
+            TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
+            ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
+            if (selectedItems.size() > 0) {
+
+                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                FXMLLoader loader = new FXMLLoader();
+                URL url = Main.class.getResource("fxml/CoursepassLecturerSubject.fxml");
+                loader.setLocation(url);
+                try {
+                    AnchorPane anchorPane = loader.<AnchorPane>load();
+                    CoursepassLecturerSubjectController coursepassLecturerSubject = loader.<CoursepassLecturerSubjectController>getController();
+                    coursepassLecturerSubject.setCoursepass();
+                    Scene scene = new Scene(anchorPane);
+                    stageTheEventSourceNodeBelongs.setScene(scene);
+                } catch (Exception e) {
+                    //TODo: Propper Error handling
+                    System.out.println(e);
                 }
             }
         });

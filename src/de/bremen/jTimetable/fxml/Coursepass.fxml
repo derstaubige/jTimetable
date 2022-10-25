@@ -16,6 +16,7 @@
                 <fx:include source="Menu.fxml" fillWidth="true" />
                 <HBox>
                     <children>
+                        <Label>Coursepass</Label>
                         <TableView fx:id="CoursepassTableview" minWidth="800">
                             <columns>
                                 <TableColumn text="ID" fx:id="CPID" visible="false"></TableColumn>
@@ -32,6 +33,7 @@
                             <Button fx:id="btnCoursepassEdit">Edit</Button>
                             <Button fx:id="btnCoursepassNew">New</Button>
                             <CheckBox fx:id="chkToogleCoursepass">Show only inactive Coursepass</CheckBox>
+                            <Button fx:id="btnEditCLS">Edit Subjects for selected Coursepass</Button>
 
                         </VBox>
                     </children>
