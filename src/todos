@@ -1,11 +1,11 @@
-create crud gui for
-    [\] lecturer -> display location doesnt work
+[*] create crud gui for
+    [x] lecturer
     [x] course of study
-    [x] coursepass
-    [] location
-    [] room
+    [x] coursepass -> shouldHours doesnt show
+    [x] location
+    [x] room
     [x] subject
-    [] coursepasslecturersubject
+    [x] coursepasslecturersubject
 
 export timetable to file
 
