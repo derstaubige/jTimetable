@@ -65,5 +65,7 @@ public class TimetableDay {
         return arrayTimetableDay;
     }
 
-
+    public void setArrayTimetableDay(ArrayList<TimetableHour> arrayTimetableDay) {
+        this.arrayTimetableDay = arrayTimetableDay;
+    }
 }

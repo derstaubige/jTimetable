@@ -2,6 +2,7 @@ package de.bremen.jTimetable.fxmlController;
 
 import de.bremen.jTimetable.Classes.CourseofStudy;
 import de.bremen.jTimetable.Classes.Coursepass;
+import de.bremen.jTimetable.Classes.Resourcemanager;
 import de.bremen.jTimetable.Classes.StudySection;
 import de.bremen.jTimetable.Main;
 import javafx.application.Platform;
@@ -53,7 +54,7 @@ public class CoursepassController implements Initializable {
     @FXML    private CheckBox chkToogleCoursepass;
     @FXML    private VBox editbox;
     @FXML private Button btnEditCLS;
-
+    @FXML private Button btnInitialTimetable;
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
 
@@ -235,20 +236,19 @@ public class CoursepassController implements Initializable {
             TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
             ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
-
                 Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader();
                 URL url = Main.class.getResource("fxml/CoursepassLecturerSubject.fxml");
                 loader.setLocation(url);
                 try {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
-                    CoursepassLecturerSubjectController coursepassLecturerSubject = loader.<CoursepassLecturerSubjectController>getController();
-                    coursepassLecturerSubject.setCoursepass();
+                    CoursepassLecturerSubjectController coursepassLecturerSubjectController = loader.<CoursepassLecturerSubjectController>getController();
+                    coursepassLecturerSubjectController.setCoursepass(new Coursepass(selectedItems.get(0).getId()));
                     Scene scene = new Scene(anchorPane);
                     stageTheEventSourceNodeBelongs.setScene(scene);
                 } catch (Exception e) {
                     //TODo: Propper Error handling
-                    System.out.println(e);
+                    e.printStackTrace();
                 }
             }
         });
@@ -311,6 +311,22 @@ public class CoursepassController implements Initializable {
 
         chkToogleCoursepass.setOnAction(event -> {
             CoursepassTableview.getItems().setAll(getCoursepass(!chkToogleCoursepass.isSelected()));
+        });
+
+        btnInitialTimetable.setOnAction(event -> {
+            TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
+            ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
+            if (selectedItems.size() > 0) {
+                this.coursepass = selectedItems.get(0);
+
+                Resourcemanager resourcemanager = new Resourcemanager();
+                try {
+                    this.coursepass.updateCoursepassLecturerSubjects();
+                    resourcemanager.generateInitialTimetable(this.coursepass);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         });
     }
 

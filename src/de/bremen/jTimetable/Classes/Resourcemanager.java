@@ -36,10 +36,10 @@ public class Resourcemanager {
         //If the ResultSet is empty, the method next will return false, if it returns true (elements
         // for the given id where found it should not generate a new timetable
         if (!rs.next()) {
-            coursepass.getCoursepassLecturerSubjects();
+//            coursepass.getCoursepassLecturerSubjects(); //should be obsolote now
             // order subjects by should hours descending, count total hours, build stack of hours
             for (int i = 0; i < coursepass.arraycoursepasslecturersubject.size(); i++) {
-                Coursepasshours += coursepass.arraycoursepasslecturersubject.get(i).shouldhours;
+                Coursepasshours += coursepass.arraycoursepasslecturersubject.get(i).shouldHours;
             }
 
 //        System.out.println(Coursepasshours);
@@ -178,11 +178,11 @@ public class Resourcemanager {
         // also checks if there is more hours that can be planed (shouldhours < ishours + planedhours)
 
         Long tmpshouldhours = this.arraycoursepasslecturersubject.get(
-                this.positionInCoursepassLecturerSubjectStack).shouldhours;
+                this.positionInCoursepassLecturerSubjectStack).shouldHours;
         Long tmpplanedhours = this.arraycoursepasslecturersubject.get(
                 this.positionInCoursepassLecturerSubjectStack).planedHours;
         Long tmpishours = this.arraycoursepasslecturersubject.get(
-                this.positionInCoursepassLecturerSubjectStack).ishours;
+                this.positionInCoursepassLecturerSubjectStack).isHours;
 
         if (this.arraycoursepasslecturersubject.get(
                 positionInCoursepassLecturerSubjectStack).lecturer.checkLecturerAvailability(this.arraycoursepasslecturersubject.get(

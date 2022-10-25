@@ -3,6 +3,7 @@ package de.bremen.jTimetable.Classes;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -50,10 +51,11 @@ public class Coursepass {
             this.active = rs.getBoolean("active");
             this.description = rs.getString("description");
             this.room = new Room(rs.getLong("refRoomID"));
+
         }
     }
 
-    public void getCoursepassLecturerSubjects() throws SQLException {
+    public void updateCoursepassLecturerSubjects() throws SQLException {
         // load CoursepassLecturerSubjects
 
         // empty arraylist and reload everything
@@ -70,6 +72,11 @@ public class Coursepass {
             arraycoursepasslecturersubject.add(new CoursepassLecturerSubject(rsCoursepassLecturerSubjects.getLong("id")));
         }
 
+        //check if array is empty, then add dummy object
+        if(arraycoursepasslecturersubject.size() == 0){
+            arraycoursepasslecturersubject.add(new CoursepassLecturerSubject(0L));
+        }
+
         //sort the array after shouldhours descending
         Collections.sort(this.arraycoursepasslecturersubject);
         Collections.reverse(this.arraycoursepasslecturersubject);
@@ -84,7 +91,7 @@ public class Coursepass {
     public ArrayList<TimetableDay> getTimetable() throws SQLException {
         //Generate a Timetable if non exists yet
         Resourcemanager resourcemanager = new Resourcemanager();
-        resourcemanager.generateInitialTimetable(this);
+        //resourcemanager.generateInitialTimetable(this);
         //Create new SQLValues that are used for the following select statement
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
         SQLValues.add(new SQLValueLong(this.id));
@@ -121,6 +128,30 @@ public class Coursepass {
             //System.out.println(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"));
             //add this timeslot/TimetableHour to our tmpDayObject
             tmpDayObject.getArrayTimetableDay().set(tmpTimeslot.intValue(), new TimetableHour(tmpTimeslot.intValue(), new CoursepassLecturerSubject(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"))));
+
+        }
+
+        //if we havent add CoursepassLecturerSubjects for this Coursepass yet, we should return an empty array to display
+        if(result.size() == 0){
+            LocalDate tmpDate = start;
+
+            //while the tmpdate is smaler then the end date
+            while(tmpDate.compareTo(end) <= 0){
+
+                TimetableDay tmpTimetableDay = new TimetableDay(tmpDate);
+                ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
+                tmpArrayList.add(new TimetableHour(0, new CoursepassLecturerSubject(0L)));
+                tmpArrayList.add(new TimetableHour(1, new CoursepassLecturerSubject(0L)));
+                tmpArrayList.add(new TimetableHour(2, new CoursepassLecturerSubject(0L)));
+                tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
+                result.add(tmpTimetableDay);
+
+                tmpDate = tmpDate.plusDays(1);
+                //check if we land on a saturday, if so add 2 days to skip the weekend to monday. bosses love this function
+                if(tmpDate.getDayOfWeek().getValue() == 6){
+                    tmpDate = tmpDate.plusDays(2);
+                }
+            }
 
         }
 
@@ -242,5 +273,21 @@ public class Coursepass {
 
     public void setCPstudysection(String CPStudySection) {
         this.studysection.setDescription(CPStudySection);
+    }
+
+    public ArrayList<CoursepassLecturerSubject> getArraycoursepasslecturersubject() {
+        return arraycoursepasslecturersubject;
+    }
+    public ArrayList<CoursepassLecturerSubject> getAllCLS(Boolean activeStatus) throws SQLException{
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+        SQLValues.add(new SQLValueBoolean(activeStatus));
+        SQLValues.add(new SQLValueLong(this.id));
+        ResultSet rs = sqlConnectionManager.select("Select * from  T_COURSEPASSESLECTURERSUBJECT  where active = ? and REFCOURSEPASSID = ?",SQLValues);
+        ArrayList returnList = new ArrayList();
+        while( rs.next() ){
+            returnList.add(new CoursepassLecturerSubject(rs.getLong("id")));
+        }
+        return returnList;
     }
 }

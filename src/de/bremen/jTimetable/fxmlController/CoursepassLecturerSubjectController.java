@@ -1,7 +1,6 @@
 package de.bremen.jTimetable.fxmlController;
 
-import de.bremen.jTimetable.Classes.Coursepass;
-import de.bremen.jTimetable.Classes.Subject;
+import de.bremen.jTimetable.Classes.*;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -10,92 +9,181 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class CoursepassLecturerSubjectController implements Initializable {
     Coursepass coursepass;
+    CoursepassLecturerSubject coursepassLecturerSubject;
 
-    @FXML    private TableView<Subject> SubjectTableview;
-    @FXML    private TableColumn<Subject, Long> ID;
-    @FXML    private TableColumn<Subject, String> Caption;
-    @FXML    private TableColumn<Subject, Boolean> Active;
-    @FXML    private Button btnSubjectEdit;
-    @FXML    private Button btnSubjectNew;
-    @FXML    private CheckBox chkToogleSubject;
-    @FXML    private VBox editbox;
-    @FXML private TextField txtID;
-    @FXML private TextField txtCaption;
-    @FXML private CheckBox chkActive;
-    @FXML private Button btnSave;
+    @FXML    public TableView<CoursepassLecturerSubject> CLSTableview;
+    @FXML    public TableColumn<CoursepassLecturerSubject, Long> TCID;
+    @FXML    public TableColumn<CoursepassLecturerSubject, String> TCLecturer;
+    @FXML    public TableColumn<CoursepassLecturerSubject, String> TCSubject;
+    @FXML    public TableColumn<CoursepassLecturerSubject, Long> TCShouldHours;
+    @FXML    public TableColumn<CoursepassLecturerSubject, Integer> TCisHours;
+    @FXML    public TableColumn<CoursepassLecturerSubject, Integer> TCPlanedHours;
+    @FXML    public TableColumn<CoursepassLecturerSubject, Boolean> CPActive;
+    @FXML    public Button btnCLSEdit;
+    @FXML    public Button btnCLSNew;
+    @FXML    public CheckBox chkToogleCLS;
+    @FXML    public VBox editbox;
+    @FXML public Label lblCoursepassName;
+    @FXML public TextField txtID;
+    @FXML public ComboBox<Lecturer> cmbLecturer;
+    @FXML public ComboBox<Subject> cmbSubject;
+    @FXML public TextField txtShouldHours;
+    @FXML public CheckBox chkActive;
+    @FXML public Button btnSave;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
+        TCID.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("id"));
+        TCLecturer.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("LecturerFullname"));
+        TCSubject.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("SubjectCaption"));
+        TCShouldHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("shouldHours"));
+        TCisHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("isHours"));
+        TCPlanedHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("planedHours"));
+        CPActive.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Boolean>("active"));
+
         editbox.setVisible(false);
-        // We need a StringConverter in order to ensure the selected item is displayed properly
-        // For this sample, we only want the Person's name to be displayed
-       
-        btnSave.setOnAction(event ->{
-            this.subject.setCaption(txtCaption.getText());
-            this.subject.setActive(chkActive.isSelected());
-            try {
-                this.subject.save();
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            editbox.setVisible(false);
-            SubjectTableview.getItems().setAll(getSubject(!chkToogleSubject.isSelected()));
-        });
-
-        Platform.runLater(() -> {
-
-        });
-
-        ID.setCellValueFactory(new PropertyValueFactory<Subject, Long>("id"));
-        Caption.setCellValueFactory(new PropertyValueFactory<Subject, String>("Caption"));
-        Active.setCellValueFactory(new PropertyValueFactory<Subject, Boolean>("active"));
-
-        SubjectTableview.getItems().setAll(getSubject(true));
-        SubjectTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        cmbSubject.setConverter(new StringConverter<Subject>() {
             @Override
-            public void handle(MouseEvent click) {
-                //SingleClick: Editor is opened
-                if (click.getClickCount() == 1) {
-                    btnSubjectEdit.fire();
+            public String toString(Subject subject) {
+                if (subject == null) {
+                    return "";
+                }else{
+                    return subject.getCaption();
+                }
+            }
+
+            @Override
+            public Subject fromString(String string) {
+                return null;
+            }
+        });
+        cmbSubject.setCellFactory(cell -> new ListCell<Subject>() {
+
+            // Create our layout here to be reused for each ListCell
+            GridPane gridPane = new GridPane();
+            //Label lblID = new Label();
+            Label lblDescription = new Label();
+
+            // Static block to configure our layout
+            {
+                // Ensure all our column widths are constant
+                gridPane.getColumnConstraints().addAll(
+                        // new ColumnConstraints(100, 100, 100),
+                        new ColumnConstraints(200, 200, 200)
+                );
+
+                //gridPane.add(lblID, 0, 1, 1 ,1);
+                gridPane.add(lblDescription, 0, 1,1 ,1);
+
+            }
+            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+            @Override
+            protected void updateItem(Subject subject, boolean empty) {
+                super.updateItem(subject, empty);
+
+                if (!empty && subject != null) {
+
+                    // Update our Labels
+                    //lblID.setText(studySection.getId().toString());
+                    lblDescription.setText(subject.getCaption());
+
+                    // Set this ListCell's graphicProperty to display our GridPane
+                    setGraphic(gridPane);
+                } else {
+                    // Nothing to display here
+                    setGraphic(null);
+                }
+            }
+        });
+        cmbLecturer.setConverter(new StringConverter<Lecturer>() {
+            @Override
+            public String toString(Lecturer lecturer) {
+                if (lecturer == null) {
+                    return "";
+                }else{
+                    return lecturer.getLecturerFullName();
+                }
+            }
+
+            @Override
+            public Lecturer fromString(String string) {
+                return null;
+            }
+        });
+        cmbLecturer.setCellFactory(cell -> new ListCell<Lecturer>() {
+
+            // Create our layout here to be reused for each ListCell
+            GridPane gridPane = new GridPane();
+            //Label lblID = new Label();
+            Label lblDescription = new Label();
+
+            // Static block to configure our layout
+            {
+                // Ensure all our column widths are constant
+                gridPane.getColumnConstraints().addAll(
+                        // new ColumnConstraints(100, 100, 100),
+                        new ColumnConstraints(200, 200, 200)
+                );
+
+                //gridPane.add(lblID, 0, 1, 1 ,1);
+                gridPane.add(lblDescription, 0, 1,1 ,1);
+
+            }
+            // We override the updateItem() method in order to provide our own layout for this Cell's graphicProperty
+            @Override
+            protected void updateItem(Lecturer lecturer, boolean empty) {
+                super.updateItem(lecturer, empty);
+
+                if (!empty && lecturer != null) {
+
+                    // Update our Labels
+                    //lblID.setText(studySection.getId().toString());
+                    lblDescription.setText(lecturer.getLecturerFullName());
+
+                    // Set this ListCell's graphicProperty to display our GridPane
+                    setGraphic(gridPane);
+                } else {
+                    // Nothing to display here
+                    setGraphic(null);
                 }
             }
         });
 
-        btnSubjectEdit.setOnAction(event -> {
-            TableView.TableViewSelectionModel<Subject> selectionModel = SubjectTableview.getSelectionModel();
-            ObservableList<Subject> selectedItems = selectionModel.getSelectedItems();
-            if (selectedItems.size() > 0) {
-                this.subject = selectedItems.get(0);
-
-                txtID.setText(this.subject.getId().toString());
-                txtID.setEditable(false);
-                txtCaption.setText(this.subject.getCaption());
-                chkActive.setSelected(this.subject.getActive());
-
-                editbox.setVisible(true);
-            }
-        });
-
-        btnSubjectNew.setOnAction(event -> {
+        btnCLSNew.setOnAction(event -> {
             try{
-                this.subject = new Subject(0L);
+                this.coursepassLecturerSubject = new CoursepassLecturerSubject(0L);
 
-                txtID.setText(this.subject.getId().toString());
+                txtID.setText(this.coursepassLecturerSubject.getId().toString());
                 txtID.setEditable(false);
-                txtCaption.setText(this.subject.getCaption());
-                chkActive.setSelected(this.subject.getActive());
+                try{
+                    cmbLecturer.getItems().setAll(Lecturer.getAllLecturer(Boolean.TRUE));
+                    cmbLecturer.setValue(this.coursepassLecturerSubject.getLecturer());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                try{
+                    cmbSubject.getItems().setAll(Subject.getAllSubjects(Boolean.TRUE));
+                    cmbSubject.setValue(this.coursepassLecturerSubject.getSubject());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                txtShouldHours.setText(this.coursepassLecturerSubject.getShouldhours().toString());
+                chkActive.setSelected(this.coursepass.getActive());
 
                 editbox.setVisible(true);
-
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -103,15 +191,68 @@ public class CoursepassLecturerSubjectController implements Initializable {
 
         });
 
-        chkToogleSubject.setOnAction(event -> {
-            SubjectTableview.getItems().setAll(getSubject(!chkToogleSubject.isSelected()));
+        btnCLSEdit.setOnAction(event -> {
+            TableView.TableViewSelectionModel<CoursepassLecturerSubject> selectionModel = CLSTableview.getSelectionModel();
+            ObservableList<CoursepassLecturerSubject> selectedItems = selectionModel.getSelectedItems();
+            if (selectedItems.size() > 0) {
+                this.coursepassLecturerSubject = selectedItems.get(0);
+
+                txtID.setText(this.coursepassLecturerSubject.getId().toString());
+                txtID.setEditable(false);
+
+                try{
+                    cmbLecturer.getItems().setAll(Lecturer.getAllLecturer(Boolean.TRUE));
+                    cmbLecturer.setValue(this.coursepassLecturerSubject.getLecturer());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                try{
+                    cmbSubject.getItems().setAll(Subject.getAllSubjects(Boolean.TRUE));
+                    cmbSubject.setValue(this.coursepassLecturerSubject.getSubject());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                txtShouldHours.setText(this.coursepassLecturerSubject.getShouldhours().toString());
+                chkActive.setSelected(this.coursepass.getActive());
+
+                editbox.setVisible(true);
+            }
         });
+
+        btnSave.setOnAction(event ->{
+            this.coursepassLecturerSubject.setCoursepass(this.coursepass);
+            this.coursepassLecturerSubject.setLecturer(cmbLecturer.getValue());
+            this.coursepassLecturerSubject.setSubject(cmbSubject.getValue());
+            this.coursepassLecturerSubject.setShouldhours(Long.parseLong(txtShouldHours.getText()));
+            this.coursepassLecturerSubject.setActive(chkActive.isSelected());
+            try {
+                this.coursepassLecturerSubject.save();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            editbox.setVisible(false);
+            CLSTableview.getItems().setAll(getCLS(!chkToogleCLS.isSelected()));
+        });
+
+        Platform.runLater(() -> {
+            lblCoursepassName.setText(this.coursepass.getDescription());
+            try{
+                this.coursepass.updateCoursepassLecturerSubjects();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            CLSTableview.getItems().setAll(this.coursepass.getArraycoursepasslecturersubject());
+        });
+        chkToogleCLS.setOnAction(event -> {
+            CLSTableview.getItems().setAll(getCLS(!chkToogleCLS.isSelected()));
+        });
+
     }
 
-    public ArrayList<Subject> getSubject(Boolean activeState) {
-        ArrayList<Subject> activeSubject = new ArrayList();
+    public ArrayList<CoursepassLecturerSubject> getCLS(Boolean activeState) {
+        ArrayList<CoursepassLecturerSubject> activeSubject = new ArrayList();
         try {
-            activeSubject = new Subject(0L).getAllSubjects(activeState);
+            activeSubject = this.coursepass.getAllCLS(activeState);
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();

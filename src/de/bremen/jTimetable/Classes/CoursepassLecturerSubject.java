@@ -6,15 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerSubject> {
     Long id;
     Coursepass coursepass;
     Lecturer lecturer;
     Subject subject;
-    public Long shouldhours;
-    public Long ishours; // hours that have actually been given
+    public Long shouldHours;
+    public Long isHours; // hours that have actually been given
     public Long planedHours; //hours that are planed but not been given
     Boolean active;
 
@@ -145,8 +144,8 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             this.coursepass = new Coursepass(0L);
             this.lecturer = new Lecturer(0L);
             this.subject = new Subject(0L);
-            this.shouldhours = 0L;
-            this.ishours = 0L;
+            this.shouldHours = 0L;
+            this.isHours = 0L;
             this.planedHours = 0L;
             this.active = Boolean.TRUE;
         }else{
@@ -159,19 +158,22 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             this.coursepass = new Coursepass(rs.getLong("refCoursePassID"));
             this.lecturer = new Lecturer(rs.getLong("refLecturerID"));
             this.subject = new Subject(rs.getLong("refSubjectID"));
-            this.shouldhours = rs.getLong("shouldhours");
+            this.shouldHours = rs.getLong("shouldhours");
             this.active = rs.getBoolean("active");
 
-            //query the is hours
-            SQLValues.clear();
-            LocalDate today = LocalDate.now();
-            SQLValues.add(new SQLValueLong(this.coursepass.id));
-            SQLValues.add(new SQLValueLong(this.subject.id));
-            SQLValues.add(new SQLValueDate(today));
-            rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday < ?;",SQLValues);
-            rs.first();
-            this.ishours = rs.getLong(1);
+            this.updateIsHours();
+            this.updatePlanedHours();
+        }
 
+
+    }
+
+    public void updatePlanedHours(){
+        try{
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            ResultSet rs;
+            LocalDate today = LocalDate.now();
             //query the planed hours
             SQLValues.clear();
             SQLValues.add(new SQLValueLong(this.coursepass.id));
@@ -180,10 +182,32 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday > ?;",SQLValues);
             rs.first();
             this.planedHours = rs.getLong(1);
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
+    }
+
+    public void updateIsHours(){
+        try{
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            ResultSet rs;
+            //query the is hours
+            SQLValues.clear();
+            LocalDate today = LocalDate.now();
+            SQLValues.add(new SQLValueLong(this.coursepass.id));
+            SQLValues.add(new SQLValueLong(this.subject.id));
+            SQLValues.add(new SQLValueDate(today));
+            rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday < ?;",SQLValues);
+            rs.first();
+            this.isHours = rs.getLong(1);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
+
     public void save() throws SQLException{
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
@@ -191,7 +215,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         SQLValues.add(new SQLValueLong(this.coursepass.id));
         SQLValues.add(new SQLValueLong(this.lecturer.id));
         SQLValues.add(new SQLValueLong(this.subject.id));
-        SQLValues.add(new SQLValueLong(this.shouldhours));
+        SQLValues.add(new SQLValueLong(this.shouldHours));
         SQLValues.add(new SQLValueBoolean(this.active));
 
         if (this.id == 0) {
@@ -208,9 +232,9 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     @Override
     public int compareTo(CoursepassLecturerSubject o) {
-        if (this.shouldhours < o.shouldhours) {
+        if (this.shouldHours < o.shouldHours) {
             return -1;
-        } else if (this.shouldhours == o.shouldhours) {
+        } else if (this.shouldHours == o.shouldHours) {
             return 0;
         } else {
             return 1;
@@ -219,5 +243,61 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     public long getLecturerID(){
         return this.lecturer.getId();
+    }
+    public String getLecturerFullname() { return this.lecturer.getLecturerFullName(); }
+    public String getSubjectCaption() { return this.subject.getCaption(); }
+
+    public Lecturer getLecturer() {
+        return lecturer;
+    }
+
+    public void setLecturer(Lecturer lecturer) {
+        this.lecturer = lecturer;
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+
+    public Long getShouldhours() {
+        return shouldHours;
+    }
+
+    public void setShouldhours(Long shouldhours) {
+        this.shouldHours = shouldhours;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Coursepass getCoursepass() {
+        return coursepass;
+    }
+
+    public void setCoursepass(Coursepass coursepass) {
+        this.coursepass = coursepass;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+
+
+    public Long getIsHours() {
+        return isHours;
+    }
+
+    public Long getPlanedHours() {
+        return planedHours;
     }
 }

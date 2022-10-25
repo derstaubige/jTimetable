@@ -34,6 +34,7 @@
                             <Button fx:id="btnCoursepassNew">New</Button>
                             <CheckBox fx:id="chkToogleCoursepass">Show only inactive Coursepass</CheckBox>
                             <Button fx:id="btnEditCLS">Edit Subjects for selected Coursepass</Button>
+                            <Button fx:id="btnInitialTimetable">Create Initial Timetable</Button>
 
                         </VBox>
                     </children>

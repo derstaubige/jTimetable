@@ -121,7 +121,7 @@ public class HomeController implements Initializable {
                     stageTheEventSourceNodeBelongs.setScene(scene);
                 } catch (Exception e) {
                     //TODo: Propper Error handling
-                    System.out.println(e);
+                    e.printStackTrace();
                 }
             }
         });
