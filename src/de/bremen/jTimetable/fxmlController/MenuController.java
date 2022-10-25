@@ -135,4 +135,87 @@ public class MenuController implements Initializable
         }
     }
 
+    @FXML
+    private void openLecturer(){
+        //System.out.println(selectedItems.get(0).getId());
+        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        URL url = Main.class.getResource("fxml/Lecturer.fxml");
+
+        try {
+//            loader.load(url);
+            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
+            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+            Scene scene = new Scene(anchorPane);
+            stageTheEventSourceNodeBelongs.setScene(scene);
+        } catch (Exception e) {
+            //TODo: Propper Error handling
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    private void openSubject(){
+        //System.out.println(selectedItems.get(0).getId());
+        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        URL url = Main.class.getResource("fxml/Subject.fxml");
+
+        try {
+//            loader.load(url);
+            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
+            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+            Scene scene = new Scene(anchorPane);
+            stageTheEventSourceNodeBelongs.setScene(scene);
+        } catch (Exception e) {
+            //TODo: Propper Error handling
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    private void openRoom(){
+        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        URL url = Main.class.getResource("fxml/Room.fxml");
+
+        try {
+            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            Scene scene = new Scene(anchorPane);
+            stageTheEventSourceNodeBelongs.setScene(scene);
+        } catch (Exception e) {
+            //TODo: Propper Error handling
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    private void openLocation(){
+        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        URL url = Main.class.getResource("fxml/Location.fxml");
+
+        try {
+            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            Scene scene = new Scene(anchorPane);
+            stageTheEventSourceNodeBelongs.setScene(scene);
+        } catch (Exception e) {
+            //TODo: Propper Error handling
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    private void openStudySection(){
+        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
+        FXMLLoader loader = new FXMLLoader();
+        URL url = Main.class.getResource("fxml/StudySection.fxml");
+
+        try {
+            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            Scene scene = new Scene(anchorPane);
+            stageTheEventSourceNodeBelongs.setScene(scene);
+        } catch (Exception e) {
+            //TODo: Propper Error handling
+            e.printStackTrace();
+        }
+    }
 }

@@ -118,7 +118,7 @@ public class Lecturer {
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
         SQLValues.add(new SQLValueBoolean(activeStatus));
-        ResultSet rs = sqlConnectionManager.select("Select * from T_Lecturer where active = ?",SQLValues);
+        ResultSet rs = sqlConnectionManager.select("Select * from T_Lecturers where active = ?",SQLValues);
         ArrayList returnList = new ArrayList();
         while( rs.next() ){
             returnList.add(new Lecturer(rs.getLong("id")));
@@ -137,19 +137,19 @@ public class Lecturer {
     }
 
     public String getFirstname() {
-        return firstname;
+        return firstname.trim();
     }
 
     public void setFirstname(String firstname) {
-        this.firstname = firstname;
+        this.firstname = firstname.trim();
     }
 
     public String getLastname() {
-        return lastname;
+        return lastname.trim();
     }
 
     public void setLastname(String lastname) {
-        this.lastname = lastname;
+        this.lastname = lastname.trim();
     }
 
     public Location getLocation() {
@@ -167,4 +167,5 @@ public class Lecturer {
     public void setActive(Boolean active) {
         this.active = active;
     }
+    public String getLocationCaption(){        return location.getCaption();    }
 }

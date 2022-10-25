@@ -10,9 +10,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 public class Room {
     Long id;
-    String roomcaption;
+    String caption;
     Location location;
     Boolean active;
+//    String locationCaption;
 
     public Room(Long id) throws SQLException {
         this.id = id;
@@ -21,7 +22,7 @@ public class Room {
 
         if (this.id == 0){
             //load dummy object
-            this.roomcaption = "";
+            this.caption = "";
             this.location = new Location(0L);
             this.active = Boolean.TRUE;
         }else{
@@ -31,7 +32,7 @@ public class Room {
             ResultSet rs = sqlConnectionManager.select("Select * from T_Rooms where id = ?;",SQLValues);
             rs.first();
             this.id = rs.getLong("id");
-            this.roomcaption = rs.getString("roomcaption");
+            this.caption = rs.getString("roomcaption");
             this.location = new Location(rs.getLong("refLocationID"));
             this.active = rs.getBoolean("active");
 
@@ -43,7 +44,7 @@ public class Room {
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
-        SQLValues.add(new SQLValueString(this.roomcaption));
+        SQLValues.add(new SQLValueString(this.caption));
         SQLValues.add(new SQLValueLong(this.location.id));
         SQLValues.add(new SQLValueBoolean(this.active));
 
@@ -67,12 +68,12 @@ public class Room {
         this.id = id;
     }
 
-    public String getRoomcaption() {
-        return roomcaption;
+    public String getCaption() {
+        return caption.trim();
     }
 
-    public void setRoomcaption(String roomcaption) {
-        this.roomcaption = roomcaption;
+    public void setCaption(String caption) {
+        this.caption = caption.trim();
     }
 
     public Location getLocation() {
@@ -89,5 +90,20 @@ public class Room {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+    public static ArrayList<Room> getAllRooms(Boolean pActivestate) throws  SQLException{
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+
+        SQLValues.add(new SQLValueBoolean(pActivestate));
+        ResultSet rs = sqlConnectionManager.select("Select * from T_Rooms where active = ?",SQLValues);
+        ArrayList returnList = new ArrayList();
+        while( rs.next() ){
+            returnList.add(new Room(rs.getLong("id")));
+        }
+        return returnList;
+    }
+    public String getLocationCaption(){
+        return location.getCaption();
     }
 }

@@ -1,47 +1,40 @@
 package de.bremen.jTimetable.fxmlController;
 
-import de.bremen.jTimetable.Classes.*;
-import de.bremen.jTimetable.Main;
+import de.bremen.jTimetable.Classes.Location;
+import de.bremen.jTimetable.Classes.Room;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class LecturerController implements Initializable {
-    Lecturer lecturer;
+public class RoomController implements Initializable {
+    Room room;
 
-    @FXML    private TableView<Lecturer> LecturerTableview;
-    @FXML    private TableColumn<Lecturer, Long> ID;
-    @FXML    private TableColumn<Lecturer, String> Firstname;
-    @FXML    private TableColumn<Lecturer, String> Lastname;
-    @FXML    private TableColumn<de.bremen.jTimetable.Classes.Location, String> Location;
-    @FXML    private TableColumn<Lecturer, Boolean> Active;
-    @FXML    private Button btnLecturerEdit;
-    @FXML    private Button btnLecturerNew;
-    @FXML    private CheckBox chkToogleLecturer;
+    @FXML    private TableView<Room> RoomTableview;
+    @FXML    private TableColumn<Room, Long> ID;
+    @FXML    private TableColumn<Room, String> Caption;
+    @FXML    private TableColumn<de.bremen.jTimetable.Classes.Location, String> TCLocation;
+    @FXML    private TableColumn<Room, Boolean> Active;
+    @FXML    private Button btnRoomEdit;
+    @FXML    private Button btnRoomNew;
+    @FXML    private CheckBox chkToogleRoom;
     @FXML    private VBox editbox;
     @FXML private TextField txtID;
-    @FXML private TextField txtFirstname;
-    @FXML private TextField txtLastname;
-    @FXML private ComboBox<de.bremen.jTimetable.Classes.Location> cmbLocation;
+    @FXML private TextField txtCaption;
+    @FXML private ComboBox<Location> cmbLocation;
     @FXML private CheckBox chkActive;
     @FXML private Button btnSave;
 
@@ -108,83 +101,74 @@ public class LecturerController implements Initializable {
 
 
         btnSave.setOnAction(event ->{
-            this.lecturer.setFirstname(txtFirstname.getText());
-            this.lecturer.setLastname(txtLastname.getText());
-            this.lecturer.setLocation(cmbLocation.getValue());
-            this.lecturer.setActive(chkActive.isSelected());
+            this.room.setCaption(txtCaption.getText());
+            this.room.setLocation(cmbLocation.getValue());
+            this.room.setActive(chkActive.isSelected());
             try {
-                this.lecturer.save();
+                this.room.save();
             }catch (Exception e){
                 e.printStackTrace();
             }
             editbox.setVisible(false);
-            LecturerTableview.getItems().setAll(getLecturer(!chkToogleLecturer.isSelected()));
+            RoomTableview.getItems().setAll(getRoom(!chkToogleRoom.isSelected()));
         });
 
         Platform.runLater(() -> {
 
         });
 
-//     <TableColumn text="ID" fx:id="ID" visible="false"></TableColumn>
-//                                <TableColumn text="Firstname" fx:id="Firstname"></TableColumn>
-//                                <TableColumn text="Lastname" fx:id="Lastname"></TableColumn>
-//                                <TableColumn text="Location" fx:id="Location"></TableColumn>
-//                                <TableColumn text="Active" fx:id="Active"></TableColumn>
-        ID.setCellValueFactory(new PropertyValueFactory<Lecturer, Long>("id"));
-        Firstname.setCellValueFactory(new PropertyValueFactory<Lecturer, String>("Firstname"));
-        Lastname.setCellValueFactory(new PropertyValueFactory<Lecturer, String>("Lastname"));
-        Location.setCellValueFactory(new PropertyValueFactory<de.bremen.jTimetable.Classes.Location, String>("locationCaption"));
-        Active.setCellValueFactory(new PropertyValueFactory<Lecturer, Boolean>("active"));
+        ID.setCellValueFactory(new PropertyValueFactory<Room, Long>("id"));
+        Caption.setCellValueFactory(new PropertyValueFactory<Room, String>("caption"));
+        TCLocation.setCellValueFactory(new PropertyValueFactory<Location, String>("locationCaption"));
+        Active.setCellValueFactory(new PropertyValueFactory<Room, Boolean>("active"));
 
-        LecturerTableview.getItems().setAll(getLecturer(true));
-        LecturerTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        RoomTableview.getItems().setAll(getRoom(true));
+        RoomTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
                 //SingleClick: Editor is opened
                 if (click.getClickCount() == 1) {
-                    btnLecturerEdit.fire();
+                    btnRoomEdit.fire();
                 }
             }
         });
 
-        btnLecturerEdit.setOnAction(event -> {
-            TableView.TableViewSelectionModel<Lecturer> selectionModel = LecturerTableview.getSelectionModel();
-            ObservableList<Lecturer> selectedItems = selectionModel.getSelectedItems();
+        btnRoomEdit.setOnAction(event -> {
+            TableView.TableViewSelectionModel<Room> selectionModel = RoomTableview.getSelectionModel();
+            ObservableList<Room> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
                 //System.out.println(selectedItems.get(0).getId());
-                this.lecturer = selectedItems.get(0);
+                this.room = selectedItems.get(0);
                 try{
                     cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
-                    cmbLocation.setValue(this.lecturer.getLocation());
+                    cmbLocation.setValue(this.room.getLocation());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                txtID.setText(this.lecturer.getId().toString());
+                txtID.setText(this.room.getId().toString());
                 txtID.setEditable(false);
-                txtFirstname.setText(this.lecturer.getFirstname());
-                txtLastname.setText(this.lecturer.getLastname());
-                cmbLocation.setValue(this.lecturer.getLocation());
-                chkActive.setSelected(this.lecturer.getActive());
+                txtCaption.setText(this.room.getCaption());
+                cmbLocation.setValue(this.room.getLocation());
+                chkActive.setSelected(this.room.getActive());
 
                 editbox.setVisible(true);
             }
         });
 
-        btnLecturerNew.setOnAction(event -> {
+        btnRoomNew.setOnAction(event -> {
             try{
-                this.lecturer = new Lecturer(0L);
+                this.room = new Room(0L);
                 try{
                     cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
-                    cmbLocation.setValue(this.lecturer.getLocation());
+                    cmbLocation.setValue(this.room.getLocation());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                txtID.setText(this.lecturer.getId().toString());
+                txtID.setText(this.room.getId().toString());
                 txtID.setEditable(false);
-                txtFirstname.setText(this.lecturer.getFirstname());
-                txtLastname.setText(this.lecturer.getLastname());
-                cmbLocation.setValue(this.lecturer.getLocation());
-                chkActive.setSelected(this.lecturer.getActive());
+                txtCaption.setText(this.room.getCaption());
+                cmbLocation.setValue(this.room.getLocation());
+                chkActive.setSelected(this.room.getActive());
 
                 editbox.setVisible(true);
 
@@ -195,19 +179,19 @@ public class LecturerController implements Initializable {
 
         });
 
-        chkToogleLecturer.setOnAction(event -> {
-            LecturerTableview.getItems().setAll(getLecturer(!chkToogleLecturer.isSelected()));
+        chkToogleRoom.setOnAction(event -> {
+            RoomTableview.getItems().setAll(getRoom(!chkToogleRoom.isSelected()));
         });
     }
 
-    public ArrayList<Lecturer> getLecturer(Boolean activeState) {
-        ArrayList<Lecturer> activeLecturer = new ArrayList();
+    public ArrayList<Room> getRoom(Boolean activeState) {
+        ArrayList<Room> activeRoom = new ArrayList();
         try {
-            activeLecturer = new Lecturer(0L).getAllLecturer(activeState);
+            activeRoom = new Room(0L).getAllRooms(activeState);
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();
         }
-        return activeLecturer;
+        return activeRoom;
     }
 }

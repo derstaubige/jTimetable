@@ -19,10 +19,11 @@
             <Menu text="Entitiys">
                 <MenuItem text="Courses of Study" onAction="#openCourseofStudy"></MenuItem>
                 <MenuItem text="Coursepass" onAction="#openCoursepass"></MenuItem>
-                <MenuItem text="Lecturer"></MenuItem>
-                <MenuItem text="Subjects"></MenuItem>
-                <MenuItem text="Room"></MenuItem>
-                <MenuItem text="Location"></MenuItem>
+                <MenuItem text="Lecturer" onAction="#openLecturer"></MenuItem>
+                <MenuItem text="Subjects" onAction="#openSubject"></MenuItem>
+                <MenuItem text="Room" onAction="#openRoom"></MenuItem>
+                <MenuItem text="Location" onAction="#openLocation"></MenuItem>
+                <MenuItem text="Study Sections" onAction="#openStudySection"></MenuItem>
             </Menu>
 <!--            <Menu text="Help">-->
 <!--                <items>-->

@@ -1,10 +1,10 @@
 create crud gui for
-    [] lecturer
-    [] course of study
-    [] coursepass
+    [\] lecturer -> display location doesnt work
+    [x] course of study
+    [x] coursepass
     [] location
     [] room
-    [] subject
+    [x] subject
     [] coursepasslecturersubject
 
 export timetable to file
@@ -19,6 +19,6 @@ does loreens visible exchange break JavaFXTimetableHourText because it only upda
 
 translation layer
 
-delete timetablehour
+delete timetablehour button in timetable view
 
 show all subjects in timetable iE EST 10/24, AO 20/20, etc

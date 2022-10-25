@@ -89,4 +89,18 @@ public class StudySection {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    public static ArrayList<StudySection> getAllStudySections(Boolean pActivestate) throws  SQLException{
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+
+        SQLValues.add(new SQLValueBoolean(pActivestate));
+        ResultSet rs = sqlConnectionManager.select("Select * from T_StudySections where active = ?",SQLValues);
+        ArrayList returnList = new ArrayList();
+        while( rs.next() ){
+            returnList.add(new StudySection(rs.getLong("id")));
+        }
+        return returnList;
+    }
+
 }

@@ -67,11 +67,11 @@ public class Subject {
     }
 
     public String getCaption() {
-        return caption;
+        return caption.trim();
     }
 
     public void setCaption(String caption) {
-        this.caption = caption;
+        this.caption = caption.trim();
     }
 
     public Boolean getActive() {
@@ -80,5 +80,17 @@ public class Subject {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+    public static ArrayList<Subject> getAllSubjects(Boolean pActivestate) throws  SQLException{
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+
+        SQLValues.add(new SQLValueBoolean(pActivestate));
+        ResultSet rs = sqlConnectionManager.select("Select * from T_Subjects where active = ?",SQLValues);
+        ArrayList returnList = new ArrayList();
+        while( rs.next() ){
+            returnList.add(new Subject(rs.getLong("id")));
+        }
+        return returnList;
     }
 }
