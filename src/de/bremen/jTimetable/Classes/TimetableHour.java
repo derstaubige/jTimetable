@@ -12,15 +12,7 @@ public class TimetableHour {
         this.coursepassLecturerSubject = coursepassLecturerSubject;
         this.lecturerName = this.coursepassLecturerSubject.lecturer.getLecturerFullName();
         this.subjectCaption = this.coursepassLecturerSubject.subject.getCaption();
-        try {
-            this.roomCaption = new Room(RoomID).getCaption();
-
-        }catch (Exception e) {
-            //ToDo: Real Errorhandling please
-            System.out.println(e);
-        }
-
-
+        this.roomCaption = this.coursepassLecturerSubject.getRoom().getCaption();
     }
     public TimetableHour(int timeslot, CoursepassLecturerSubject coursepassLecturerSubject) {
         this(timeslot, coursepassLecturerSubject, 0L );

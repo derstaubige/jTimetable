@@ -36,7 +36,7 @@ public class SQLConnectionManager {
         //used for inserting into the database
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
         pstmt.execute();
-        //System.out.println(pstmt);
+//        System.out.println(pstmt);
         return pstmt.getGeneratedKeys();
         //if (generatedKeys.next()) {
         //    System.out.println((generatedKeys.getLong(1)));
@@ -105,39 +105,44 @@ public class SQLConnectionManager {
             }
         });
         for (int i = 0; i < listOfFiles.length; i++) {
-            //System.out.println("File " + listOfFiles[i].getName());
+//            System.out.println("File " + listOfFiles[i].getName());
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             SQLValues.add(new SQLValueString(listOfFiles[i].getName()));
-
+//            System.out.println("Migrationname " + listOfFiles[i].getName());
             try {
-                ResultSet rs = this.select("Select count(*) from T_MIGRATION where MIGRATIONNAME = ?;",SQLValues);
+
+                ResultSet rs = this.select("Select count(*) from T_MIGRATION where MIGRATIONNAME = ?",SQLValues);
                 rs.next();
-                System.out.println(rs.getLong(0));
-            } catch (SQLNonTransientException e){
-                // This Migration didnt run yet
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader(listOfFiles[i].getAbsolutePath()));
-                    StringBuilder sb = new StringBuilder();
-                    String line = br.readLine();
+                if(rs.getLong(1) == 0){
+                    // This Migration didnt run yet
+                    System.out.println("Running Migration " + listOfFiles[i].getName());
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader(listOfFiles[i].getAbsolutePath()));
+                        StringBuilder sb = new StringBuilder();
+                        String line = br.readLine();
 
-                    while (line != null) {
-                        sb.append(line);
-                        sb.append(System.lineSeparator());
-                        line = br.readLine();
+                        while (line != null) {
+                            sb.append(line);
+                            sb.append(System.lineSeparator());
+                            line = br.readLine();
+                        }
+
+                        //contains the whole migration file
+                        String tmpSQLStatement = sb.toString();
+
+                        //execute the migration
+                        this.execute(tmpSQLStatement, new ArrayList<SQLConnectionManagerValues>());
+
+                        //mark the migration as done
+                        this.execute("INSERT INTO T_MIGRATION (MigrationName, MigrationDate) values (?, CURRENT_TIMESTAMP() )", SQLValues);
+                        br.close();
+
+                    } catch (Exception e2){
+                        e2.printStackTrace();
                     }
-
-                    //contains the whole migration file
-                    String tmpSQLStatement = sb.toString();
-
-                    //execute the migration
-                    this.execute(tmpSQLStatement, new ArrayList<SQLConnectionManagerValues>());
-
-                    //mark the migration as done
-                    this.execute("INSERT INTO T_MIGRATION (MigrationName, MigrationDate) values (?, CURRENT_TIMESTAMP() )", SQLValues);
-                    br.close();
-                } catch (Exception e2){
-                    System.out.println(e2);
                 }
+            } catch (SQLException e){
+                e.printStackTrace();
             }
         }
 

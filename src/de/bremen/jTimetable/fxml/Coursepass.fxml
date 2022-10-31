@@ -35,7 +35,7 @@
                             <CheckBox fx:id="chkToogleCoursepass">Show only inactive Coursepass</CheckBox>
                             <Button fx:id="btnEditCLS">Edit Subjects for selected Coursepass</Button>
                             <Button fx:id="btnInitialTimetable">Create Initial Timetable</Button>
-
+                            <Button fx:id="btnDeleteTimetable">Delete Timetable</Button>
                         </VBox>
                     </children>
                 </HBox>

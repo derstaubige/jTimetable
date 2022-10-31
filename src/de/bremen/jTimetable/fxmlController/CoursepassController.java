@@ -1,9 +1,6 @@
 package de.bremen.jTimetable.fxmlController;
 
-import de.bremen.jTimetable.Classes.CourseofStudy;
-import de.bremen.jTimetable.Classes.Coursepass;
-import de.bremen.jTimetable.Classes.Resourcemanager;
-import de.bremen.jTimetable.Classes.StudySection;
+import de.bremen.jTimetable.Classes.*;
 import de.bremen.jTimetable.Main;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -55,6 +52,7 @@ public class CoursepassController implements Initializable {
     @FXML    private VBox editbox;
     @FXML private Button btnEditCLS;
     @FXML private Button btnInitialTimetable;
+    @FXML private Button btnDeleteTimetable;
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
 
@@ -326,6 +324,33 @@ public class CoursepassController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        btnDeleteTimetable.setOnAction(event -> {
+            TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
+            ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
+            if (selectedItems.size() > 0) {
+                this.coursepass = selectedItems.get(0);
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Want to delete Timetable for " + coursepass.getDescription());
+                alert.setHeaderText("");
+                alert.setContentText("Realy want to delete the Timetable for " + coursepass.getCourseofstudy().getCaption()
+                + " " + coursepass.getStudysection().getDescription() + "?");
+                alert.showAndWait().ifPresent(rs -> {
+                    if ( rs == ButtonType.OK){
+                        Timetable timetable = new Timetable(coursepass);
+                        timetable.deleteTimetable();
+
+                        alert.setAlertType(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Success");
+                        alert.setContentText("The Timetable for "+ coursepass.getCourseofstudy().getCaption()
+                                + " " + coursepass.getStudysection().getDescription() + " has been deleted.");
+                        alert.show();
+
+                    }
+                });
+
             }
         });
     }

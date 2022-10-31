@@ -12,10 +12,23 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     Coursepass coursepass;
     Lecturer lecturer;
     Subject subject;
+    Room room;
     public Long shouldHours;
     public Long isHours; // hours that have actually been given
     public Long planedHours; //hours that are planed but not been given
     Boolean active;
+
+    public static boolean isFreeTarget(CoursepassLecturerSubject cls, LocalDate targetDay, int targetTimeslot){
+        try{
+            if(!cls.lecturer.checkLecturerAvailability(cls.getLecturerID(), targetDay,targetTimeslot)){
+                return false;
+            }
+            //TODO Check Rooms!
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return true;
+    }
 
     //TODO check if course has time (if a timetable for just the lecturer is shown)
     public static boolean cangetExchanged(CoursepassLecturerSubject source, LocalDate sourceDay, int sourceTimeslot, CoursepassLecturerSubject target, LocalDate targetDay, int targetTimeslot){
@@ -35,8 +48,6 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                 return false;
             }
         }catch (SQLException e){
-            //ToDo: better error handling --> check
-            System.out.println("An SQLError occurred while checking if two lessons can be exchanged.");
             e.printStackTrace();
         }
         return true;
@@ -144,6 +155,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             this.coursepass = new Coursepass(0L);
             this.lecturer = new Lecturer(0L);
             this.subject = new Subject(0L);
+            this.room = new Room(0L);
             this.shouldHours = 0L;
             this.isHours = 0L;
             this.planedHours = 0L;
@@ -158,6 +170,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             this.coursepass = new Coursepass(rs.getLong("refCoursePassID"));
             this.lecturer = new Lecturer(rs.getLong("refLecturerID"));
             this.subject = new Subject(rs.getLong("refSubjectID"));
+            this.room = new Room(rs.getLong("refRoomID"));
             this.shouldHours = rs.getLong("shouldhours");
             this.active = rs.getBoolean("active");
 
@@ -291,13 +304,19 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         this.active = active;
     }
 
-
-
     public Long getIsHours() {
         return isHours;
     }
 
     public Long getPlanedHours() {
         return planedHours;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }

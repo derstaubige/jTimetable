@@ -68,4 +68,19 @@ public class TimetableDay {
     public void setArrayTimetableDay(ArrayList<TimetableHour> arrayTimetableDay) {
         this.arrayTimetableDay = arrayTimetableDay;
     }
+    public TimetableHour getTimetableHourfromarrayTimetableDay(int timeslot){
+        return arrayTimetableDay.get(timeslot);
+    }
+
+    public void removeTimetableHourfromarrayTimetableDay(int timeslot){
+        try{
+            arrayTimetableDay.set(timeslot, new TimetableHour(timeslot, new CoursepassLecturerSubject(0L)));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    public void setTimetableHourfromarrayTimetableDay(int timeslot, TimetableHour timetableHour){
+        arrayTimetableDay.set(timeslot, timetableHour);
+        timetableHour.setTimeslot(timeslot);
+    }
 }

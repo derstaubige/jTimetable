@@ -89,11 +89,12 @@ public class HomeController implements Initializable {
                     ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"));
                     Stage stage = new Stage(StageStyle.DECORATED);
+                    stage.setTitle("Timetable for " + selectedItems.get(0).getCourseofstudy().getCaption() + " " +
+                            selectedItems.get(0).getStudysection().getDescription());
                     URL url = Main.class.getResource("fxml/TimetableView.fxml");
                     loader.setLocation(url);
                     try {
                         stage.setScene(new Scene(loader.load()));
-                        stage.setTitle("Timetable");
                         TimetableViewController controller = loader.getController();
                         controller.initData(new Coursepass((selectedItems.get(0).getId())));
                         stage.show();

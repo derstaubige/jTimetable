@@ -27,7 +27,6 @@ public class Resourcemanager {
         int WorkingDays = 0;
         int WorkingHours = 0;
 
-        //TODO test
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues =
                 new ArrayList<>(Collections.singleton(new SQLValueLong(coursepass.id)));
@@ -87,9 +86,9 @@ public class Resourcemanager {
                         Long refSubjectId = this.arraycoursepasslecturersubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).subject.id;
 
-                        System.out.printf("%s, %s, %s\n", Timetableday, idxTimeslot,
-                                this.arraycoursepasslecturersubject.get(
-                                        this.positionInCoursepassLecturerSubjectStack).subject.caption);
+//                        System.out.printf("%s, %s, %s\n", Timetableday, idxTimeslot,
+//                                this.arraycoursepasslecturersubject.get(
+//                                        this.positionInCoursepassLecturerSubjectStack).subject.caption);
                         //write to timetable
                         setEntryInTimetable(Timetableday, refcoursepassID,
                                 refCoursepassLecturerSubjectId, refRoomId, refLecturerId,
