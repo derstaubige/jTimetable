@@ -73,9 +73,9 @@ public class Coursepass {
         }
 
         //check if array is empty, then add dummy object
-        if(arraycoursepasslecturersubject.size() == 0){
-            arraycoursepasslecturersubject.add(new CoursepassLecturerSubject(0L));
-        }
+//        if(arraycoursepasslecturersubject.size() == 0){
+//            arraycoursepasslecturersubject.add(new CoursepassLecturerSubject(0L));
+//        }
 
         //sort the array after shouldhours descending
         Collections.sort(this.arraycoursepasslecturersubject);

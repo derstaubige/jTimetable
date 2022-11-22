@@ -5,6 +5,8 @@ package de.bremen.jTimetable.fxmlController;
 import de.bremen.jTimetable.Classes.CourseofStudy;
 import de.bremen.jTimetable.Classes.Coursepass;
 import de.bremen.jTimetable.Main;
+import de.bremen.jTimetable.Resources.Config;
+//import de.bremen.jTimetable.Resources.Resources_de;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -13,10 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
@@ -31,41 +30,38 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
 
-    @FXML
-    private TableView<Coursepass> CoursepassTableview;
-    @FXML
-    private TableColumn<Coursepass, Long> CPID;
-    @FXML
-    private TableColumn<Coursepass, String> CPCOSCaption;
-    @FXML
-    private TableColumn<Coursepass, String> CPstudysection;
-    @FXML
-    private TableColumn<Coursepass, String> CPDescription;
-    @FXML
-    private TableColumn<Coursepass, LocalDate> CPStart;
-    @FXML
-    private TableColumn<Coursepass, LocalDate> CPEnd;
-    @FXML
-    private TableColumn<Coursepass, Boolean> CPActive;
-    @FXML
-    private Button btnCoursepassEdit;
-    @FXML
-    private Button btnCoursepassNew;
-    @FXML
-    private CheckBox chkToogleCoursepass;
-
-
-    public HomeController() {
-
-    }
+    @FXML    private TableView<Coursepass> CoursepassTableview;
+    @FXML    private TableColumn<Coursepass, Long> CPID;
+    @FXML    private TableColumn<Coursepass, String> CPCOSCaption;
+    @FXML    private TableColumn<Coursepass, String> CPstudysection;
+    @FXML    private TableColumn<Coursepass, String> CPDescription;
+    @FXML    private TableColumn<Coursepass, LocalDate> CPStart;
+    @FXML    private TableColumn<Coursepass, LocalDate> CPEnd;
+    @FXML    private TableColumn<Coursepass, Boolean> CPActive;
+    @FXML    private Button btnCoursepassEdit;
+    @FXML    private Button btnCoursepassNew;
+    @FXML    private CheckBox chkToogleCoursepass;
+    @FXML private Label lblActiveCoursepasses;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // ToDo: Read prefered language out of config.properties file
 
+//        Config config = new Config();
+//        Locale locale = new Locale(config.getLocalLang(),config.getLocaCountry());
+//        System.out.println(config.getLocaCountry() + config.getLocalLang());
+//        ResourceBundle resourceBundle = ResourceBundle.getBundle("de.bremen.jTimetable.Resources.Resources", locale);
+//        ResourceBundle resourceBundle = ResourceBundle.getBundle("de.bremen.jTimetable.Resources.Resources");
+//
+//        System.out.println(resources.getString("currency"));
+//
+//        // Translate everything
+//        lblActiveCoursepasses.setText(resources.getString("currency"));
 
         CPID.setCellValueFactory(new PropertyValueFactory<Coursepass, Long>("id"));
         CPCOSCaption.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("courseofstudycaption"));

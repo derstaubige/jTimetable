@@ -7,15 +7,15 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -52,7 +52,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         FXMLLoader loader = new FXMLLoader();
+        loader.setResources(ResourceBundle.getBundle("de.bremen.jTimetable.Resources.Resources"));
         URL url = Main.class.getResource("fxml/Home.fxml");
         loader.setLocation(url);
         AnchorPane anchorPane = loader.<AnchorPane>load();
@@ -65,4 +67,6 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+
 }

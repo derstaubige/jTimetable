@@ -6,24 +6,24 @@
 <VBox id="vbox"  prefWidth="1024"      xmlns:fx="http://javafx.com/fxml"     fx:controller="de.bremen.jTimetable.fxmlController.MenuController" >
     <MenuBar fx:id="menuBar" onKeyPressed="#handleKeyInput">
         <menus>
-            <Menu text="File">
+            <Menu text="%menu.file">
                 <items>
-                    <MenuItem text="Home" onAction="#openHome"/>
+                    <MenuItem text="%menu.file.home" onAction="#openHome"/>
 <!--                    <MenuItem text="Open"/>-->
 <!--                    <MenuItem text="Save"/>-->
 <!--                    <MenuItem text="Save As"/>-->
 <!--                    <SeparatorMenuItem  />-->
-                    <MenuItem text="Exit" onAction="#closeButtonAction"/>
+                    <MenuItem text="%menu.file.exit" onAction="#closeButtonAction"/>
                 </items>
             </Menu>
-            <Menu text="Entitiys">
-                <MenuItem text="Courses of Study" onAction="#openCourseofStudy"></MenuItem>
-                <MenuItem text="Coursepass" onAction="#openCoursepass"></MenuItem>
-                <MenuItem text="Lecturer" onAction="#openLecturer"></MenuItem>
-                <MenuItem text="Subjects" onAction="#openSubject"></MenuItem>
-                <MenuItem text="Room" onAction="#openRoom"></MenuItem>
-                <MenuItem text="Location" onAction="#openLocation"></MenuItem>
-                <MenuItem text="Study Sections" onAction="#openStudySection"></MenuItem>
+            <Menu text="%menu.entitiys">
+                <MenuItem text="%menu.entitiys.cos" onAction="#openCourseofStudy"></MenuItem>
+                <MenuItem text="%menu.entitiys.coursepass" onAction="#openCoursepass"></MenuItem>
+                <MenuItem text="%menu.entitiys.lecturer" onAction="#openLecturer"></MenuItem>
+                <MenuItem text="%menu.entitiys.subject" onAction="#openSubject"></MenuItem>
+                <MenuItem text="%menu.entitiys.room" onAction="#openRoom"></MenuItem>
+                <MenuItem text="%menu.entitiys.locations" onAction="#openLocation"></MenuItem>
+                <MenuItem text="%menu.entitiys.StudySections" onAction="#openStudySection"></MenuItem>
             </Menu>
 <!--            <Menu text="Help">-->
 <!--                <items>-->

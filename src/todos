@@ -11,6 +11,10 @@ export timetable to file
 
 lecturer on duty days / days of
 
+timetable for lecturers
+
+change initial timetable so, that there is max 2x the same subject per day
+
 respect holidays in timetable
 
 [*] add weekday to timetable 2022-10-14

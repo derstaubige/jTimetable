@@ -24,6 +24,8 @@ public class MenuController implements Initializable
     @FXML
     private MenuBar menuBar;
 
+    ResourceBundle resourceBundle;
+
     /**
      * Handle action related to "About" menu item.
      *
@@ -66,7 +68,7 @@ public class MenuController implements Initializable
     @Override
     public void initialize(java.net.URL arg0, ResourceBundle arg1) {
         menuBar.setFocusTraversable(true);
-
+        this.resourceBundle = arg1;
     }
 
     @FXML
@@ -82,6 +84,7 @@ public class MenuController implements Initializable
         //System.out.println(selectedItems.get(0).getId());
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
+        loader.setResources(this.resourceBundle);
         URL url = Main.class.getResource("fxml/CourseofStudy.fxml");
 
         try {
@@ -207,6 +210,7 @@ public class MenuController implements Initializable
     private void openStudySection(){
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader();
+        loader.setResources(this.resourceBundle);
         URL url = Main.class.getResource("fxml/StudySection.fxml");
 
         try {
