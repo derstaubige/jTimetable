@@ -83,13 +83,10 @@ public class MenuController implements Initializable
     private void openCourseofStudy(){
         //System.out.println(selectedItems.get(0).getId());
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-        loader.setResources(this.resourceBundle);
-        URL url = Main.class.getResource("fxml/CourseofStudy.fxml");
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/CourseofStudy.fxml"), this.resourceBundle);
 
         try {
-//            loader.load(url);
-            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            AnchorPane anchorPane = loader.<AnchorPane>load();
             CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
             //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
             Scene scene = new Scene(anchorPane);
@@ -101,16 +98,11 @@ public class MenuController implements Initializable
     }
     @FXML
     private void openHome(){
-        //System.out.println(selectedItems.get(0).getId());
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-        URL url = Main.class.getResource("fxml/Home.fxml");
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Home.fxml"), this.resourceBundle);
 
         try {
-//            loader.load(url);
-            AnchorPane anchorPane = loader.<AnchorPane>load(url);
-            CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
-            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+            AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
@@ -120,16 +112,11 @@ public class MenuController implements Initializable
     }
     @FXML
     private void openCoursepass(){
-        //System.out.println(selectedItems.get(0).getId());
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-        URL url = Main.class.getResource("fxml/Coursepass.fxml");
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), this.resourceBundle);
 
         try {
-//            loader.load(url);
-            AnchorPane anchorPane = loader.<AnchorPane>load(url);
-            CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
-            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+            AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
@@ -140,16 +127,11 @@ public class MenuController implements Initializable
 
     @FXML
     private void openLecturer(){
-        //System.out.println(selectedItems.get(0).getId());
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-        URL url = Main.class.getResource("fxml/Lecturer.fxml");
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Lecturer.fxml"), this.resourceBundle);
 
         try {
-//            loader.load(url);
-            AnchorPane anchorPane = loader.<AnchorPane>load(url);
-            CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
-            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+            AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
@@ -159,16 +141,11 @@ public class MenuController implements Initializable
     }
     @FXML
     private void openSubject(){
-        //System.out.println(selectedItems.get(0).getId());
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-        URL url = Main.class.getResource("fxml/Subject.fxml");
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Subject.fxml"), this.resourceBundle);
 
         try {
-//            loader.load(url);
-            AnchorPane anchorPane = loader.<AnchorPane>load(url);
-            CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
-            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+            AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
@@ -179,11 +156,10 @@ public class MenuController implements Initializable
     @FXML
     private void openRoom(){
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-        URL url = Main.class.getResource("fxml/Room.fxml");
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Room.fxml"), this.resourceBundle);
 
         try {
-            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
@@ -194,11 +170,10 @@ public class MenuController implements Initializable
     @FXML
     private void openLocation(){
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-        URL url = Main.class.getResource("fxml/Location.fxml");
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Location.fxml"), this.resourceBundle);
 
         try {
-            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
@@ -209,12 +184,10 @@ public class MenuController implements Initializable
     @FXML
     private void openStudySection(){
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader();
-        loader.setResources(this.resourceBundle);
-        URL url = Main.class.getResource("fxml/StudySection.fxml");
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/StudySection.fxml"), this.resourceBundle);
 
         try {
-            AnchorPane anchorPane = loader.<AnchorPane>load(url);
+            AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {

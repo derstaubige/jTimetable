@@ -25,9 +25,9 @@
                         </TableView>
                         <VBox minWidth="200">
 
-                            <Button fx:id="btnStudySectionEdit">Edit</Button>
-                            <Button fx:id="btnStudySectionNew">New</Button>
-                            <CheckBox fx:id="chkToogleStudySection">Show only inactive StudySection</CheckBox>
+                            <Button fx:id="btnStudySectionEdit" text="%button.edit"></Button>
+                            <Button fx:id="btnStudySectionNew" text="%button.new"></Button>
+                            <CheckBox fx:id="chkToogleStudySection" text="%chkbox.ToogleInactive"></CheckBox>
 
                         </VBox>
                     </children>
