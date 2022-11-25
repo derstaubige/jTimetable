@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -26,6 +27,8 @@ import java.util.*;
 public class TimetableViewController implements Initializable {
 
     @FXML    public GridPane grdpn_TimetableView;
+    @FXML public AnchorPane  anchorpane_TimetableView;
+    @FXML public AnchorPane anchorpane_Editbox;
 
     @FXML public GridPane grdpn_Editbox;
 
@@ -161,6 +164,7 @@ public class TimetableViewController implements Initializable {
                             Integer TargetRow = GridPane.getRowIndex(target);
                             Integer TargetCol = GridPane.getColumnIndex(target);
 
+
                             //Change Source and Target in the GridPane
                             GridPane.setRowIndex(source, TargetRow);
                             GridPane.setColumnIndex(source, TargetCol);
@@ -202,7 +206,7 @@ public class TimetableViewController implements Initializable {
             //https://www.youtube.com/watch?v=-TgSIr5IzQ8
             tmpText.setOnDragDetected(mouseEvent -> {
                 //allow any transfer mode
-                Dragboard db = tmpText.startDragAndDrop(TransferMode.ANY);
+                Dragboard db = tmpText.startDragAndDrop(TransferMode.COPY);
 
                 //Put a string on a dragboard
                 ClipboardContent content = new ClipboardContent();

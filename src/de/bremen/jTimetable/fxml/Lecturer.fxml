@@ -14,22 +14,23 @@
         <VBox >
             <children>
                 <fx:include source="Menu.fxml" fillWidth="true" />
+                <Label text="%lecturer.title"></Label>
                 <HBox>
                     <children>
                         <TableView fx:id="LecturerTableview" minWidth="800">
                             <columns>
-                                <TableColumn text="ID" fx:id="ID" visible="false"></TableColumn>
-                                <TableColumn text="Firstname" fx:id="Firstname"></TableColumn>
-                                <TableColumn text="Lastname" fx:id="Lastname"></TableColumn>
-                                <TableColumn text="Location" fx:id="Location"></TableColumn>
-                                <TableColumn text="Active" fx:id="Active"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerTableview.id" fx:id="ID" visible="false"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerTableview.firstname" fx:id="Firstname"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerTableview.lastname" fx:id="Lastname"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerTableview.location" fx:id="Location"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerTableview.active" fx:id="Active"></TableColumn>
                             </columns>
                         </TableView>
                         <VBox minWidth="200">
 
-                            <Button fx:id="btnLecturerEdit">Edit</Button>
-                            <Button fx:id="btnLecturerNew">New</Button>
-                            <CheckBox fx:id="chkToogleLecturer">Show only inactive Lecturer</CheckBox>
+                            <Button fx:id="btnLecturerEdit" text="%button.edit"></Button>
+                            <Button fx:id="btnLecturerNew" text="%button.new"></Button>
+                            <CheckBox fx:id="chkToogleLecturer" text="%chkbox.ToogleInactive"></CheckBox>
 
                         </VBox>
                     </children>
@@ -37,22 +38,22 @@
                 <VBox fx:id="editbox">
 
                     <HBox>
-                        <Label>ID</Label><TextField fx:id="txtID"></TextField>
+                        <Label text="%lecturer.editbox.id"></Label><TextField fx:id="txtID"></TextField>
                     </HBox>
                     <HBox>
-                        <Label>Firstname</Label><TextField fx:id="txtFirstname"></TextField>
+                        <Label text="%lecturer.editbox.firstname"></Label><TextField fx:id="txtFirstname"></TextField>
                     </HBox>
                     <HBox>
-                        <Label>Lastname</Label><TextField fx:id="txtLastname"></TextField>
+                        <Label text="%lecturer.editbox.lastname"></Label><TextField fx:id="txtLastname"></TextField>
                     </HBox>
                     <HBox>
-                        <Label>Location</Label><ComboBox fx:id="cmbLocation" minWidth="400"></ComboBox>
+                        <Label text="%lecturer.editbox.location"></Label><ComboBox fx:id="cmbLocation" minWidth="400"></ComboBox>
                     </HBox>
                     <HBox>
-                        <Label>Active</Label><CheckBox fx:id="chkActive"></CheckBox>
+                        <Label text="%lecturer.editbox.active"></Label><CheckBox fx:id="chkActive"></CheckBox>
                     </HBox>
                     <HBox>
-                        <Button fx:id="btnSave">Save</Button>
+                        <Button fx:id="btnSave" text="%button.save"></Button>
                     </HBox>
 
                 </VBox>

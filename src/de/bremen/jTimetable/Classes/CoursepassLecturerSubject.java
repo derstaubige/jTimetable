@@ -276,12 +276,12 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         this.subject = subject;
     }
 
-    public Long getShouldhours() {
+    public Long getShouldHours() {
         return shouldHours;
     }
 
-    public void setShouldhours(Long shouldhours) {
-        this.shouldHours = shouldhours;
+    public void setShouldHours(Long shouldHours) {
+        this.shouldHours = shouldHours;
     }
 
     public Long getId() {

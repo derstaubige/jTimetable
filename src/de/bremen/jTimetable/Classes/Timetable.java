@@ -18,7 +18,7 @@ public class Timetable  {
             this.arrayTimetableDays = this.coursepass.getTimetable();
         }catch (Exception e){
             //ToDO: Errorhandling
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 

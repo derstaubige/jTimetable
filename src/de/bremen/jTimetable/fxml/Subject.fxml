@@ -14,20 +14,21 @@
         <VBox >
             <children>
                 <fx:include source="Menu.fxml" fillWidth="true" />
+                <Label text="%subject.title"></Label>
                 <HBox>
                     <children>
                         <TableView fx:id="SubjectTableview" minWidth="800">
                             <columns>
-                                <TableColumn text="ID" fx:id="ID" visible="false"></TableColumn>
-                                <TableColumn text="Caption" fx:id="Caption"></TableColumn>
-                                <TableColumn text="Active" fx:id="Active"></TableColumn>
+                                <TableColumn text="%subject.SubjectTableview.id" fx:id="ID" visible="false"></TableColumn>
+                                <TableColumn text="%subject.SubjectTableview.caption" fx:id="Caption"></TableColumn>
+                                <TableColumn text="%subject.SubjectTableview.active" fx:id="Active"></TableColumn>
                             </columns>
                         </TableView>
                         <VBox minWidth="200">
 
-                            <Button fx:id="btnSubjectEdit">Edit</Button>
-                            <Button fx:id="btnSubjectNew">New</Button>
-                            <CheckBox fx:id="chkToogleSubject">Show only inactive Subject</CheckBox>
+                            <Button fx:id="btnSubjectEdit" text="%button.edit">Edit</Button>
+                            <Button fx:id="btnSubjectNew" text="%button.new">New</Button>
+                            <CheckBox fx:id="chkToogleSubject" text="%chkbox.ToogleInactive"></CheckBox>
 
                         </VBox>
                     </children>
@@ -35,16 +36,16 @@
                 <VBox fx:id="editbox">
 
                     <HBox>
-                        <Label>ID</Label><TextField fx:id="txtID"></TextField>
+                        <Label text="%subject.editbox.id"></Label><TextField fx:id="txtID"></TextField>
                     </HBox>
                     <HBox>
-                        <Label>Firstname</Label><TextField fx:id="txtCaption"></TextField>
+                        <Label text="%subject.editbox.caption"></Label><TextField fx:id="txtCaption"></TextField>
                     </HBox>
                     <HBox>
-                        <Label>Active</Label><CheckBox fx:id="chkActive"></CheckBox>
+                        <Label text="%subject.editbox.active"></Label><CheckBox fx:id="chkActive"></CheckBox>
                     </HBox>
                     <HBox>
-                        <Button fx:id="btnSave">Save</Button>
+                        <Button fx:id="btnSave" text="%button.save"></Button>
                     </HBox>
 
                 </VBox>

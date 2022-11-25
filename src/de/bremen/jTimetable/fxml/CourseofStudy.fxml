@@ -7,23 +7,23 @@
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <children>
             <fx:include fillWidth="true" source="Menu.fxml" />
-            <Label>Course of Study</Label>
+            <Label text="%cos.title"></Label>
             <HBox>
             <children>
                 <TableView fx:id="ActiveCoursesofStudyTableview" minWidth="800">
                     <columns>
-                        <TableColumn text="ID" fx:id="COSID" visible="false"></TableColumn>
-                        <TableColumn text="Description" fx:id="COSDescription"></TableColumn>
-                        <TableColumn text="Begin" fx:id="COSBegin"></TableColumn>
-                        <TableColumn text="End" fx:id="COSEnd"></TableColumn>
-                        <TableColumn text="Active" fx:id="COSActive"></TableColumn>
+                        <TableColumn text="%cos.ActiveCoursesofStudyTableview.id" fx:id="COSID" visible="false"></TableColumn>
+                        <TableColumn text="%cos.ActiveCoursesofStudyTableview.description" fx:id="COSDescription"></TableColumn>
+                        <TableColumn text="%cos.ActiveCoursesofStudyTableview.begin" fx:id="COSBegin"></TableColumn>
+                        <TableColumn text="%cos.ActiveCoursesofStudyTableview.end" fx:id="COSEnd"></TableColumn>
+                        <TableColumn text="%cos.ActiveCoursesofStudyTableview.active" fx:id="COSActive"></TableColumn>
                     </columns>
                 </TableView>
                 <VBox minWidth="200">
 
-                    <Button fx:id="ActiveCoursesofStudyButton">Edit</Button>
-                    <Button fx:id="ActiveCoursesofStudyButtonNew">New</Button>
-                    <CheckBox fx:id="chkToogleActiveCourseofStudy">Show only inactive Courses of Study</CheckBox>
+                    <Button fx:id="ActiveCoursesofStudyButton" text="%button.edit"></Button>
+                    <Button fx:id="ActiveCoursesofStudyButtonNew" text="%button.new"></Button>
+                    <CheckBox fx:id="chkToogleActiveCourseofStudy" text="%chkbox.ToogleInactive"></CheckBox>
 
                 </VBox>
 
@@ -32,22 +32,22 @@
             <HBox fx:id="editbox">
                 <VBox>
                 <HBox>
-                    <Label>Id</Label><TextField fx:id="txtID" />
+                    <Label text="%cos.editbox.id"></Label><TextField fx:id="txtID" />
                 </HBox>
                 <HBox>
-                    <Label>Caption</Label><TextField fx:id="txtCaption" />
+                    <Label text="%cos.editbox.caption"></Label><TextField fx:id="txtCaption" />
                 </HBox>
                 <HBox>
-                    <Label>Begin</Label><DatePicker fx:id="datBegin" />
+                    <Label text="%cos.editbox.begin"></Label><DatePicker fx:id="datBegin" />
                 </HBox>
                 <HBox>
-                    <Label>Begin</Label><DatePicker fx:id="datEnd" />
+                    <Label text="%cos.editbox.end"></Label><DatePicker fx:id="datEnd" />
                 </HBox>
                 <HBox>
-                    <Label>Active</Label><CheckBox fx:id="chkActive" />
+                    <Label text="%cos.editbox.active"></Label><CheckBox fx:id="chkActive" />
                 </HBox>
                 <HBox>
-                    <Button fx:id="btnSave">Save</Button>
+                    <Button fx:id="btnSave" text="%button.save"></Button>
                 </HBox>
                 </VBox>
             </HBox>

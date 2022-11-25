@@ -235,9 +235,7 @@ public class CoursepassController implements Initializable {
             ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
                 Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                FXMLLoader loader = new FXMLLoader();
-                URL url = Main.class.getResource("fxml/CoursepassLecturerSubject.fxml");
-                loader.setLocation(url);
+                FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/CoursepassLecturerSubject.fxml"), resources);
                 try {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
                     CoursepassLecturerSubjectController coursepassLecturerSubjectController = loader.<CoursepassLecturerSubjectController>getController();

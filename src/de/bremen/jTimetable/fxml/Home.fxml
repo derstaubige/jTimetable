@@ -37,7 +37,7 @@
                     <VBox minWidth="200">
 
                         <Button fx:id="btnCoursepassEdit" text="%button.edit"></Button>
-                        <Button fx:id="btnCoursepassNew" text="%button.new"></Button>
+                        <Button fx:id="btnTimetableShow" text="%home.btnShowTimetable"></Button>
                         <CheckBox fx:id="chkToogleCoursepass" text="%chkbox.ToogleInactive"></CheckBox>
 
                     </VBox>

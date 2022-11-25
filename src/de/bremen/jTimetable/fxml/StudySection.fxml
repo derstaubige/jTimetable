@@ -14,13 +14,14 @@
         <VBox >
             <children>
                 <fx:include source="Menu.fxml" fillWidth="true" />
+                <Label text="%studysection.title"></Label>
                 <HBox>
                     <children>
                         <TableView fx:id="StudySectionTableview" minWidth="800">
                             <columns>
-                                <TableColumn text="ID" fx:id="ID" visible="false"></TableColumn>
-                                <TableColumn text="Description" fx:id="Description"></TableColumn>
-                                <TableColumn text="Active" fx:id="Active"></TableColumn>
+                                <TableColumn text="%studysection.StudySectionTableview.ID" fx:id="ID" visible="false"></TableColumn>
+                                <TableColumn text="%studysection.StudySectionTableview.Description" fx:id="Description"></TableColumn>
+                                <TableColumn text="%studysection.StudySectionTableview.Active" fx:id="Active"></TableColumn>
                             </columns>
                         </TableView>
                         <VBox minWidth="200">
@@ -35,16 +36,16 @@
                 <VBox fx:id="editbox">
 
                     <HBox>
-                        <Label>ID</Label><TextField fx:id="txtID"></TextField>
+                        <Label text="%studysection.editbox.ID"></Label><TextField fx:id="txtID"></TextField>
                     </HBox>
                     <HBox>
-                        <Label>Description</Label><TextField fx:id="txtDescription"></TextField>
+                        <Label text="%studysection.editbox.Description"></Label><TextField fx:id="txtDescription"></TextField>
                     </HBox>
                     <HBox>
-                        <Label>Active</Label><CheckBox fx:id="chkActive"></CheckBox>
+                        <Label text="%studysection.editbox.Active"></Label><CheckBox fx:id="chkActive"></CheckBox>
                     </HBox>
                     <HBox>
-                        <Button fx:id="btnSave">Save</Button>
+                        <Button fx:id="btnSave" text="%button.save"></Button>
                     </HBox>
 
                 </VBox>

@@ -21,7 +21,7 @@ public class JavaFXCoursepassLecturerSubjectText extends Text {
     public String getTimetableTexts(){
         String tmp = coursepassLecturerSubject.subject.getCaption() + "\r\n" +
                 coursepassLecturerSubject.lecturer.getLecturerFullName() + "\r\n Shouldhours " +
-                coursepassLecturerSubject.getShouldhours() + "\r\n Is Hours " +
+                coursepassLecturerSubject.getShouldHours() + "\r\n Is Hours " +
                 coursepassLecturerSubject.getIsHours() + "\r\n Planed Hours " +
                 coursepassLecturerSubject.getPlanedHours();
 //        System.out.println(tmp);

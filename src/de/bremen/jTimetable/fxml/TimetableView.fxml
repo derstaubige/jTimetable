@@ -13,7 +13,7 @@
                   <children>
                      <ScrollPane hbarPolicy="NEVER" prefHeight="600.0" prefWidth="1024.0" vbarPolicy="ALWAYS">
                        <content>
-                         <AnchorPane>
+                         <AnchorPane fx:id="anchorpane_TimetableView">
                               <children>
                                       <GridPane fx:id="grdpn_TimetableView" gridLinesVisible="true" prefWidth="469.0">
                                           <columnConstraints>
@@ -26,7 +26,7 @@
                                           <rowConstraints>
                                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           </rowConstraints>
-                                          <Label fx:id="savetofile" onMouseClicked="#savetoFileClicked" prefHeight="122.0" prefWidth="112.0" text="Save Timetable as file" textAlignment="CENTER">
+                                          <Label fx:id="savetofile" onMouseClicked="#savetoFileClicked" prefHeight="122.0" prefWidth="112.0" text="%timetableview.btnsavetofile" textAlignment="CENTER">
                                               <font>
                                                   <Font size="14.0" />
                                               </font>
@@ -58,7 +58,7 @@
                      </ScrollPane>
                   </children>
                </AnchorPane>
-             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0"  fx:id="anchorpane_Editbox">
                   <children>
                      <GridPane fx:id="grdpn_Editbox" gridLinesVisible="true">
 

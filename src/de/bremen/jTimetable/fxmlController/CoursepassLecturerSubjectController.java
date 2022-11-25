@@ -162,6 +162,16 @@ public class CoursepassLecturerSubjectController implements Initializable {
             }
         });
 
+        CLSTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
+           @Override
+           public void handle(MouseEvent click) {
+               //DoubleClick: Editor is opened
+               if (click.getClickCount() == 2) {
+                   btnCLSEdit.fire();
+               }
+           }
+       });
+
         btnCLSNew.setOnAction(event -> {
             try{
                 this.coursepassLecturerSubject = new CoursepassLecturerSubject(0L);
@@ -180,7 +190,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                txtShouldHours.setText(this.coursepassLecturerSubject.getShouldhours().toString());
+                txtShouldHours.setText(this.coursepassLecturerSubject.getShouldHours().toString());
                 chkActive.setSelected(this.coursepass.getActive());
 
                 editbox.setVisible(true);
@@ -212,7 +222,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-                txtShouldHours.setText(this.coursepassLecturerSubject.getShouldhours().toString());
+                txtShouldHours.setText(this.coursepassLecturerSubject.getShouldHours().toString());
                 chkActive.setSelected(this.coursepass.getActive());
 
                 editbox.setVisible(true);
@@ -223,7 +233,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
             this.coursepassLecturerSubject.setCoursepass(this.coursepass);
             this.coursepassLecturerSubject.setLecturer(cmbLecturer.getValue());
             this.coursepassLecturerSubject.setSubject(cmbSubject.getValue());
-            this.coursepassLecturerSubject.setShouldhours(Long.parseLong(txtShouldHours.getText()));
+            this.coursepassLecturerSubject.setShouldHours(Long.parseLong(txtShouldHours.getText()));
             this.coursepassLecturerSubject.setActive(chkActive.isSelected());
             try {
                 this.coursepassLecturerSubject.save();
