@@ -34,6 +34,7 @@ public class TimetableViewController implements Initializable {
 
     @FXML    public Label savetofile;
     private Timetable timetable;
+    private Coursepass coursepass;
     /**
      * Can be called to hand parameters from the calling class to this controller. Be aware that the initialize method
      * is performed bevor this one and therefore has no access to the data that is set here.
@@ -42,7 +43,13 @@ public class TimetableViewController implements Initializable {
      */
     public void initData(Coursepass coursepass) {
         //Get Timetable for Coursepass
-        timetable = new Timetable(coursepass);
+        this.coursepass = coursepass;
+        this.drawTimetable();
+    }
+
+    private void drawTimetable(){
+
+        this.timetable = new Timetable(coursepass);
         int inttmpRowIdx = 2;
         Calendar cal = Calendar.getInstance();
         ZoneId defaultZoneId = ZoneId.systemDefault();
@@ -160,14 +167,15 @@ public class TimetableViewController implements Initializable {
                             timetable.addSingleHour(tmptimetableHour,target.getDay(), target.getTimeslot());
 
                             //update visuals
-                            //ger Row and Column from Source and Target
-                            Integer TargetRow = GridPane.getRowIndex(target);
-                            Integer TargetCol = GridPane.getColumnIndex(target);
-
-
-                            //Change Source and Target in the GridPane
-                            GridPane.setRowIndex(source, TargetRow);
-                            GridPane.setColumnIndex(source, TargetCol);
+//                            //ger Row and Column from Source and Target
+//                            Integer TargetRow = GridPane.getRowIndex(target);
+//                            Integer TargetCol = GridPane.getColumnIndex(target);
+//
+//                            //Change Source and Target in the GridPane
+//                            GridPane.setRowIndex(source, TargetRow);
+//                            GridPane.setColumnIndex(source, TargetCol);
+                            this.emptyGridpanes();
+                            this.drawTimetable();
                         }
                     }
 
@@ -190,7 +198,7 @@ public class TimetableViewController implements Initializable {
             inttmpRowIdx++;
         }
 
-        //Read all CoursepassLecturerSubject Objects from Coursepass and generate die Labels for the Timetableview
+        //Read all CoursepassLecturerSubject Objects from Coursepass and generate the Labels for the Timetableview
         Integer tmpRowIdx = 0;
         Integer tmpColIdx = 0;
         try {
@@ -310,6 +318,22 @@ public class TimetableViewController implements Initializable {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    private void emptyGridpanes(){
+        for (int i = 1 ; i <= getRowCount(grdpn_TimetableView) ; i++){
+            int finalI = i;
+            grdpn_TimetableView.getChildren().removeIf(node -> GridPane.getRowIndex(node) == finalI);
+        }
+        for (int i = 0 ; i <= getRowCount(grdpn_Editbox) ; i++){
+            if(i == 0){
+                grdpn_Editbox.getChildren().removeIf(node -> GridPane.getRowIndex(node) == null);
+            }else{
+                int finalI = i;
+                grdpn_Editbox.getChildren().removeIf(node -> GridPane.getRowIndex(node) == finalI);
+            }
+
+        }
     }
 
 }

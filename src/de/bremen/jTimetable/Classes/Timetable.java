@@ -14,6 +14,10 @@ public class Timetable  {
 
     public Timetable(Coursepass coursepass){
         this.coursepass = coursepass;
+        this.update();
+    }
+
+    public void update(){
         try{
             this.arrayTimetableDays = this.coursepass.getTimetable();
         }catch (Exception e){
