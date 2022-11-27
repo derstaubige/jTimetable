@@ -44,6 +44,7 @@ public class LecturerController implements Initializable {
     @FXML private ComboBox<de.bremen.jTimetable.Classes.Location> cmbLocation;
     @FXML private CheckBox chkActive;
     @FXML private Button btnSave;
+    @FXML private Button btnShowTimetable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
@@ -197,6 +198,23 @@ public class LecturerController implements Initializable {
 
         chkToogleLecturer.setOnAction(event -> {
             LecturerTableview.getItems().setAll(getLecturer(!chkToogleLecturer.isSelected()));
+        });
+
+        btnShowTimetable.setOnAction(event ->{
+            Lecturer lecturer = LecturerTableview.getSelectionModel().getSelectedItem();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
+            Stage stage = new Stage(StageStyle.DECORATED);
+            stage.setTitle("Timetable for " + lecturer.getLecturerFullName());
+            loader.setLocation(Main.class.getResource("fxml/TimetableView.fxml"));
+            try{
+                stage.setScene(new Scene(loader.load()));
+                TimetableViewController controller = loader.getController();
+                controller.initDataTimetable(new Timetable(lecturer));
+                stage.show();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         });
     }
 

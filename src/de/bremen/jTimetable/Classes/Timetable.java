@@ -11,10 +11,20 @@ import java.util.ArrayList;
 public class Timetable  {
     ArrayList<TimetableDay> arrayTimetableDays;
     Coursepass coursepass;
+    Lecturer lecturer;
 
     public Timetable(Coursepass coursepass){
         this.coursepass = coursepass;
         this.update();
+    }
+
+    public Timetable(Lecturer lecturer){
+        this.lecturer = lecturer;
+        try {
+            this.arrayTimetableDays = lecturer.getTimetable();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void update(){

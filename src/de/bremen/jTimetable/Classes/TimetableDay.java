@@ -57,6 +57,13 @@ public class TimetableDay {
     }
 
     public void setTimeslots(int timeslots) {
+        while(this.arrayTimetableDay.size() <= timeslots) {
+            try {
+                this.arrayTimetableDay.add(new TimetableHour(this.arrayTimetableDay.size(), new CoursepassLecturerSubject(0L)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         this.timeslots = timeslots;
     }
 

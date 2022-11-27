@@ -31,7 +31,7 @@
                             <Button fx:id="btnLecturerEdit" text="%button.edit"></Button>
                             <Button fx:id="btnLecturerNew" text="%button.new"></Button>
                             <CheckBox fx:id="chkToogleLecturer" text="%chkbox.ToogleInactive"></CheckBox>
-
+                            <Button fx:id="btnShowTimetable" text="%lecturer.btnShowTimetable"></Button>
                         </VBox>
                     </children>
                 </HBox>

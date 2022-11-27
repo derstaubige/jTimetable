@@ -222,7 +222,7 @@ public class CoursepassController implements Initializable {
                         stage.setScene(new Scene(loader.load()));
                         stage.setTitle("Timetable");
                         TimetableViewController controller = loader.getController();
-                        controller.initData(new Coursepass((selectedItems.get(0).getId())));
+                        controller.initDataCoursepass(new Coursepass((selectedItems.get(0).getId())));
                         stage.show();
                     } catch (SQLException | IOException e) {
                         throw new RuntimeException(e);

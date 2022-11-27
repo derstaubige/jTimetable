@@ -122,7 +122,7 @@ public class Coursepass {
 
             //Check if we have to add to the max timeslots per day
             //ToDo: i guess we will crash here if we dont fill up our array of empty TimetableHours, aka index out of bounds
-            if (tmpDayObject.getTimeslots() < tmpTimeslot){
+            if (tmpDayObject.getTimeslots() <= tmpTimeslot){
                 tmpDayObject.setTimeslots(tmpTimeslot.intValue());
             }
             //System.out.println(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"));

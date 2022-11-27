@@ -15,8 +15,13 @@
                        <content>
                          <AnchorPane fx:id="anchorpane_TimetableView">
                               <children>
-                                      <GridPane fx:id="grdpn_TimetableView" gridLinesVisible="true" prefWidth="469.0">
+                                      <GridPane fx:id="grdpn_TimetableView" gridLinesVisible="true" prefWidth="1000">
                                           <columnConstraints>
+                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -47,6 +52,31 @@
                                               </font>
                                           </Label>
                                           <Label fx:id="lbl_Slot4" prefHeight="122.0" prefWidth="163.0" text="Slot 4" textAlignment="CENTER" GridPane.columnIndex="4">
+                                              <font>
+                                                  <Font size="14.0" />
+                                              </font>
+                                          </Label>
+                                          <Label fx:id="lbl_Slot5" prefHeight="122.0" prefWidth="163.0" text="Slot 5" textAlignment="CENTER" GridPane.columnIndex="5">
+                                              <font>
+                                                  <Font size="14.0" />
+                                              </font>
+                                          </Label>
+                                          <Label fx:id="lbl_Slot6" prefHeight="122.0" prefWidth="163.0" text="Slot 6" textAlignment="CENTER" GridPane.columnIndex="6">
+                                              <font>
+                                                  <Font size="14.0" />
+                                              </font>
+                                          </Label>
+                                          <Label fx:id="lbl_Slot7" prefHeight="122.0" prefWidth="163.0" text="Slot 7" textAlignment="CENTER" GridPane.columnIndex="7">
+                                              <font>
+                                                  <Font size="14.0" />
+                                              </font>
+                                          </Label>
+                                          <Label fx:id="lbl_Slot8" prefHeight="122.0" prefWidth="163.0" text="Slot 8" textAlignment="CENTER" GridPane.columnIndex="8">
+                                              <font>
+                                                  <Font size="14.0" />
+                                              </font>
+                                          </Label>
+                                          <Label fx:id="lbl_Slot9" prefHeight="122.0" prefWidth="163.0" text="Slot 9" textAlignment="CENTER" GridPane.columnIndex="9">
                                               <font>
                                                   <Font size="14.0" />
                                               </font>

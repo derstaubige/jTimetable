@@ -11,12 +11,21 @@ public class JavaFXTimetableHourText extends Text {
     LocalDate day;
     int timeslot;
     public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLexturerSubject, LocalDate pday, int ptimeslot){
+        this(pCoursepassLexturerSubject, pday, ptimeslot, false);
+    }
+    public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLexturerSubject, LocalDate pday, int ptimeslot, Boolean showClassname){
         super();
         this.coursepassLecturerSubject = pCoursepassLexturerSubject;
         this.day = pday;
         this.timeslot = ptimeslot;
-        super.setText(pCoursepassLexturerSubject.getLecturerFullname() + "\r\n" + pCoursepassLexturerSubject.getSubjectCaption()
-                + "\r\n" + pCoursepassLexturerSubject.getRoom().getCaption());
+        if(showClassname == true){
+            super.setText(pCoursepassLexturerSubject.getCoursepass().getDescription() + "\r\n" + pCoursepassLexturerSubject.getSubjectCaption()
+                    + "\r\n" + pCoursepassLexturerSubject.getRoom().getCaption());
+        }else{
+            super.setText(pCoursepassLexturerSubject.getLecturerFullname() + "\r\n" + pCoursepassLexturerSubject.getSubjectCaption()
+                    + "\r\n" + pCoursepassLexturerSubject.getRoom().getCaption());
+        }
+
     }
 
     public LocalDate getDay() {
