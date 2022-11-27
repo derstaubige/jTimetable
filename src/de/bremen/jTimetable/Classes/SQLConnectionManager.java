@@ -95,7 +95,11 @@ public class SQLConnectionManager {
     /* The Migrate Function checks if there are new SQL Migrations available and will execute them. It also
     * checks if the Database is new and fills an empty DB */
     public void Migrate() throws SQLException{
-
+        try{
+            this.execute("CREATE TABLE IF NOT EXISTS `T_MIGRATION` (`id` long not null PRIMARY KEY AUTO_INCREMENT, MigrationName char(200), MigrationDate Date)", new ArrayList<>());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         File folder = new File("src/de/bremen/jTimetable/SQLMigration");
         File[] listOfFiles = folder.listFiles(new FileFilter() {
             @Override

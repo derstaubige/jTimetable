@@ -133,24 +133,14 @@ public class Coursepass {
 
         //if we havent add CoursepassLecturerSubjects for this Coursepass yet, we should return an empty array to display
         if(result.size() == 0){
-            LocalDate tmpDate = start;
+            result = resourcemanager.getWorkingDaysBetweenTwoDates(start, end);
+            for(TimetableDay tmpTimetableDay : result){
 
-            //while the tmpdate is smaler then the end date
-            while(tmpDate.compareTo(end) <= 0){
-
-                TimetableDay tmpTimetableDay = new TimetableDay(tmpDate);
                 ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
                 tmpArrayList.add(new TimetableHour(0, new CoursepassLecturerSubject(0L)));
                 tmpArrayList.add(new TimetableHour(1, new CoursepassLecturerSubject(0L)));
                 tmpArrayList.add(new TimetableHour(2, new CoursepassLecturerSubject(0L)));
                 tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
-                result.add(tmpTimetableDay);
-
-                tmpDate = tmpDate.plusDays(1);
-                //check if we land on a saturday, if so add 2 days to skip the weekend to monday. bosses love this function
-                if(tmpDate.getDayOfWeek().getValue() == 6){
-                    tmpDate = tmpDate.plusDays(2);
-                }
             }
 
         }

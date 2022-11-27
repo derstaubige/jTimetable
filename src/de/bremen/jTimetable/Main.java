@@ -25,6 +25,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.h2.jdbc.JdbcSQLException;
 
 
 public class Main extends Application {

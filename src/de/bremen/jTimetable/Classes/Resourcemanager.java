@@ -2,16 +2,17 @@ package de.bremen.jTimetable.Classes;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
+import java.util.function.Function;
+
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.util.stream.Collectors.toMap;
 
 public class Resourcemanager {
     public ArrayList<TimetableDay> arrayTimetabledays;
@@ -26,6 +27,7 @@ public class Resourcemanager {
         int Coursepasshours = 0;
         int WorkingDays = 0;
         int WorkingHours = 0;
+        int MaxTimeslotsperDay = 3;
 
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues =
@@ -46,15 +48,14 @@ public class Resourcemanager {
             // iterate over every day between startdate and enddate / hour
             arrayTimetabledays = getWorkingDaysBetweenTwoDates(startdate, enddate);
             WorkingDays = arrayTimetabledays.size();
-            //ToDo: Hardcoded default Value for the Slots per Day. Change it.
-            WorkingHours = WorkingDays * 3;
+            WorkingHours = WorkingDays * MaxTimeslotsperDay;
 
             //TODO condition should be: WorkingHours < CoursePassHours --> we want to know whether less
             // timeslots are available than needed
-            if (WorkingHours < Coursepasshours) {
-                //ToDO: Add Custom Exception.
-                //TODO have 4 hours a day to have enough timeslots
-                System.out.println("Oh oh there are to many Hours for this.");
+            while (WorkingHours < Coursepasshours) {
+                // We have to Add Timeslots per Day if we have more shouldhours than timeslots
+                MaxTimeslotsperDay++;
+                WorkingHours = WorkingDays * MaxTimeslotsperDay;
             }
 
             this.positionInCoursepassLecturerSubjectStack = 0;
@@ -67,10 +68,11 @@ public class Resourcemanager {
             for (int idxDay = 0; idxDay < arrayTimetabledays.size(); idxDay++) {
                 // loop through all timeslots of this day
                 for (int idxTimeslot = 0;
-                     idxTimeslot < arrayTimetabledays.get(idxDay).arrayTimetableDay.size();
+                     idxTimeslot < MaxTimeslotsperDay;
                      idxTimeslot++) {
                     this.tmppositionInCoursepassLecturerSubjectStack =
                             this.positionInCoursepassLecturerSubjectStack;
+
                     if (EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot)) {
                         //we found a matching coursepasslecturersubject object
                         LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).date;
@@ -86,9 +88,6 @@ public class Resourcemanager {
                         Long refSubjectId = this.arraycoursepasslecturersubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).subject.id;
 
-//                        System.out.printf("%s, %s, %s\n", Timetableday, idxTimeslot,
-//                                this.arraycoursepasslecturersubject.get(
-//                                        this.positionInCoursepassLecturerSubjectStack).subject.caption);
                         //write to timetable
                         setEntryInTimetable(Timetableday, refcoursepassID,
                                 refCoursepassLecturerSubjectId, refRoomId, refLecturerId,
@@ -101,6 +100,17 @@ public class Resourcemanager {
                         //add to the is hours count
                         this.arraycoursepasslecturersubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).planedHours++;
+
+                        // a subject should only occupie a timeslot. next timeslot would be nice to
+                        // be another subject
+                        if (this.positionInCoursepassLecturerSubjectStack <
+                                this.maxCoursepassLecturerSubjectStack) {
+                            this.positionInCoursepassLecturerSubjectStack++;
+                        } else {
+                            this.positionInCoursepassLecturerSubjectStack = 0;
+                        }
+                        this.tmppositionInCoursepassLecturerSubjectStack =
+                                this.positionInCoursepassLecturerSubjectStack;
                     } else {
                         //we didnt find a matching coursepasslecturersubject, freetime?!
                         LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).date;
@@ -115,17 +125,9 @@ public class Resourcemanager {
                         setEntryInTimetable(Timetableday, refcoursepassID,
                                 refCoursepassLecturerSubjectId, refRoomId, refLecturerId,
                                 refSubjectId, idxTimeslot);
-//                        System.out.printf("%s, %s, FREETIME!\n",
-//                                this.arrayTimetabledays.get(idxDay).date, idxTimeslot);
                     }
                 }
-//             a subject should only occupie a day. the next day would be nice to have another subject
-                if (this.positionInCoursepassLecturerSubjectStack <
-                        this.maxCoursepassLecturerSubjectStack) {
-                    this.positionInCoursepassLecturerSubjectStack++;
-                } else {
-                    this.positionInCoursepassLecturerSubjectStack = 0;
-                }
+
             }
         }
     }
@@ -214,8 +216,9 @@ public class Resourcemanager {
 
     public ArrayList<TimetableDay> getWorkingDaysBetweenTwoDates(LocalDate localstartDate,
                                                                  LocalDate localendDate) {
-//        https://stackoverflow.com/questions/4600034/calculate-number-of-weekdays-between-two-dates-in-java
-        //ToDO: Substract Holidays from Workingdays
+        // https://stackoverflow.com/questions/4600034/calculate-number-of-weekdays-between-two-dates-in-java
+
+        // https://schegge.de/2020/01/kalenderspielereien-mit-java/#:~:text=Feiertage%20mit%20einem%20festen%20Datum,%2D%2D01%2D01%22).
 
         ArrayList<TimetableDay> arrayTimetabledays = new ArrayList<>();
         //default time zone
@@ -242,21 +245,59 @@ public class Resourcemanager {
             endCal.setTime(startDate);
         }
 
+
         do {
             //excluding start date
 
             if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY &&
-                    startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-                //TODO could add a fourth timeslot her by using the constructor of TimetableDay that allows to set the
-                // number of timeslots
+                    startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY &&
+                this.isHoliday(LocalDateTime.ofInstant(startCal.toInstant(), defaultZoneId)
+                        .toLocalDate()) == false) {
+
                 arrayTimetabledays.add(new TimetableDay(
                         LocalDateTime.ofInstant(startCal.toInstant(), defaultZoneId)
-                                .toLocalDate()));
+                                .toLocalDate(),4 ));
                 //                ++workDays;
             }
             startCal.add(Calendar.DAY_OF_MONTH, 1);
         } while (startCal.getTimeInMillis() <= endCal.getTimeInMillis()); //excluding end date
 
         return arrayTimetabledays;
+    }
+
+    private LocalDate getEasterDate(int year) {
+        int a = year % 19;
+        int b = year % 4;
+        int c = year % 7;
+        int H1 = year / 100;
+        int H2 = year / 400;
+        int N = 4 + H1 - H2;
+        int M = 15 + H1 - H2 - (8 * H1 + 13) / 25;
+        int d = (19 * a + M) % 30;
+        int e = (2 * b + 4 * c + 6 * d + N) % 7;
+        int f = (c + 11 * d + 22 * e) / 451;
+        int tage = 22 + d + e - 7 * f;
+        return LocalDate.of(year, 3, 1).plus(tage - 1, DAYS);
+    }
+
+    private Map<LocalDate, String> getHolydaysMap(int year) {
+        Map<LocalDate, String> holidays = new HashMap<>();
+        holidays.put(MonthDay.parse("--01-01").atYear(year), "Neujahr");
+        holidays.put(getEasterDate(year).plus(-2, DAYS), "Karfreitag");
+        holidays.put(getEasterDate(year).plus(0, DAYS), "Ostersonntag");
+        holidays.put(getEasterDate(year).plus(1, DAYS), "Ostermonntag");
+        holidays.put(getEasterDate(year).plus(39, DAYS), "Himmelfahrt");
+        holidays.put(getEasterDate(year).plus(49, DAYS), "Pfingsten");
+        holidays.put(MonthDay.parse("--05-01").atYear(year), "Tag der Arbeit");
+        holidays.put(MonthDay.parse("--08-03").atYear(year), "Tag der Einheit");
+        holidays.put(MonthDay.parse("--08-31").atYear(year), "Reformationstag");
+        holidays.put(MonthDay.parse("--12-24").atYear(year), "Heiligabend");
+        holidays.put(MonthDay.parse("--12-25").atYear(year), "1. Weihnachtstag");
+        holidays.put(MonthDay.parse("--12-26").atYear(year), "2. Weihnachtstag");
+        holidays.put(MonthDay.parse("--12-31").atYear(year), "Sylvester");
+        return holidays;
+    }
+    public boolean isHoliday(LocalDate date) {
+        return getHolydaysMap(date.getYear()).containsKey(date);
     }
 }
