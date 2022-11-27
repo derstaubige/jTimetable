@@ -14,8 +14,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 
+import java.awt.*;
 import java.io.File;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.SQLException;
@@ -23,6 +27,7 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.List;
 
 public class TimetableViewController implements Initializable {
 
@@ -274,10 +279,45 @@ public class TimetableViewController implements Initializable {
 
     @FXML
     private void savetoFileClicked(){
-        final FileChooser fileChooser = new FileChooser();
-        //File file = fileChooser.showOpenDialog(stage);
+        //https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        File file = fileChooser.showSaveDialog(new Stage());
+        if (file != null) {
+            try {
+                PrintWriter writer;
+                writer = new PrintWriter(file);
+                Integer tmpRowCounter = 1;
+                Integer tmpRowCounterNow = 1;
+                JavaFXTimetableHourText tmpDateNode;
+                String content = "";
+                ObservableList<Node> grdpn = grdpn_TimetableView.getChildren();
+                Node[][] gridPaneArray = null;
+                gridPaneArray = new Node[/*nbLines*/][/*nbColumns*/];
+                for(Node node : grdpn)
+                {
+                    gridPaneArray[GridPane.getRowIndex(node)][GridPane.getColumnIndex(node)] = node;
+                }
+                for(Node node : grdpn){
+                    if (node instanceof JavaFXTimetableHourText) {
+                        tmpRowCounterNow = (Integer) node.getProperties().get("gridpane-row");
+                        if(tmpRowCounter.compareTo(tmpRowCounterNow) < 0) {
+                            content += ";\r\n";
+                            tmpDateNode = (JavaFXTimetableHourText) gridPaneArray[tmpRowCounterNow][0];
+                            content += tmpDateNode.getText().replace("\r\n",";");
+                            writer.println(content);
+                            content = "";
+                        }
+                        content += (((JavaFXTimetableHourText)node).getText().replace("\r\n",""));
+                        content += ";";
+                    }
+                }
 
-        timetable.exportTimetableToFile();
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
