@@ -100,7 +100,7 @@ public class SQLConnectionManager {
         }catch(Exception e){
             e.printStackTrace();
         }
-        File folder = new File("src/de/bremen/jTimetable/SQLMigration");
+        File folder = new File("de/bremen/jTimetable/SQLMigration");
         File[] listOfFiles = folder.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {

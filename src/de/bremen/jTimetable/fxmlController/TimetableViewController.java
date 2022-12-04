@@ -25,6 +25,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.List;
@@ -64,8 +65,8 @@ public class TimetableViewController implements Initializable {
         Calendar cal = Calendar.getInstance();
         ZoneId defaultZoneId = ZoneId.systemDefault();
         for (TimetableDay day : timetable.getArrayTimetableDays()) {
-            Date tmpDate = Date.from(day.getDate().atStartOfDay(defaultZoneId).toInstant());
-            grdpn_TimetableView.add(new Text(new SimpleDateFormat("EEEE").format(tmpDate) + "\r\n" + day.getDate().toString()), 0, inttmpRowIdx);
+            LocalDate tmpDate = day.getDate();
+            grdpn_TimetableView.add(new JavaFXTimetableDay(tmpDate), 0, inttmpRowIdx);
 
             for (TimetableHour timeslot : day.getArrayTimetableDay()) {
                 if(timeslot == null){
@@ -292,24 +293,19 @@ public class TimetableViewController implements Initializable {
                 JavaFXTimetableHourText tmpDateNode;
                 String content = "";
                 ObservableList<Node> grdpn = grdpn_TimetableView.getChildren();
-                Node[][] gridPaneArray = null;
-                gridPaneArray = new Node[/*nbLines*/][/*nbColumns*/];
-                for(Node node : grdpn)
-                {
-                    gridPaneArray[GridPane.getRowIndex(node)][GridPane.getColumnIndex(node)] = node;
+                String tmpDatePlaceholder = "";
+
+                if (coursepass != null){
+                    writer.println(coursepass.getDescription());
                 }
+
                 for(Node node : grdpn){
                     if (node instanceof JavaFXTimetableHourText) {
-                        tmpRowCounterNow = (Integer) node.getProperties().get("gridpane-row");
-                        if(tmpRowCounter.compareTo(tmpRowCounterNow) < 0) {
-                            content += ";\r\n";
-                            tmpDateNode = (JavaFXTimetableHourText) gridPaneArray[tmpRowCounterNow][0];
-                            content += tmpDateNode.getText().replace("\r\n",";");
-                            writer.println(content);
-                            content = "";
-                        }
-                        content += (((JavaFXTimetableHourText)node).getText().replace("\r\n",""));
-                        content += ";";
+                        content += (((JavaFXTimetableHourText)node).getText().replace("\r\n"," ")) + ";";
+                    } else if (node instanceof  JavaFXTimetableDay) {
+                        writer.println(content);
+                        tmpDatePlaceholder = (((JavaFXTimetableDay)node).getText().replace("\r\n",";")) + ";";
+                        content = tmpDatePlaceholder;
                     }
                 }
 
