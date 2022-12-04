@@ -181,7 +181,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     }
 
-    public void updatePlanedHours(){
+    private void updatePlanedHours(){
         try{
             SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
@@ -200,8 +200,25 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         }
 
     }
-
-    public void updateIsHours(){
+    private void updateShouldHours(){
+        try{
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            ResultSet rs;
+            //query the is hours
+            SQLValues.clear();
+            LocalDate today = LocalDate.now();
+            SQLValues.add(new SQLValueLong(this.coursepass.id));
+            SQLValues.add(new SQLValueLong(this.subject.id));
+            SQLValues.add(new SQLValueDate(today));
+            rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday < ?;",SQLValues);
+            rs.first();
+            this.isHours = rs.getLong(1);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    private void updateIsHours(){
         try{
             SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
@@ -219,6 +236,48 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             e.printStackTrace();
         }
 
+    }
+    public void updateallHours(){
+        this.updateShouldHours();
+        this.updateIsHours();
+        this.updatePlanedHours();
+    }
+
+    public void deleteCLS(LocalDate pDate, Integer pTimestamp){
+        try{
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+
+            SQLValues.add(new SQLValueLong(this.id));
+            SQLValues.add(new SQLValueDate(pDate));
+            SQLValues.add(new SQLValueInt(pTimestamp));
+            sqlConnectionManager.execute("Delete FROM T_TIMETABLES where REFCOURSEPASSLECTURERSUBJECT  = ? and timetableday = ? and timeslot = ?;",SQLValues);
+            //delete lecturer resourceblock
+            SQLValues.clear();
+            SQLValues.add(new SQLValueLong(this.getLecturerID()));
+            SQLValues.add(new SQLValueString("LECTURER"));
+            SQLValues.add(new SQLValueDate(pDate));
+            SQLValues.add(new SQLValueDate(pDate));
+            SQLValues.add(new SQLValueInt(pTimestamp));
+            SQLValues.add(new SQLValueInt(pTimestamp));
+            sqlConnectionManager.execute("Delete FROM T_RESOURCESBLOCKED where REFRESOURCEID = ? and " +
+                    "RESOURCENAME = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and " +
+                    "ENDTIMESLOT = ?;",SQLValues);
+
+            //delete room resourceblock
+            SQLValues.clear();
+            SQLValues.add(new SQLValueLong(this.getRoom().getId()));
+            SQLValues.add(new SQLValueString("ROOM"));
+            SQLValues.add(new SQLValueDate(pDate));
+            SQLValues.add(new SQLValueDate(pDate));
+            SQLValues.add(new SQLValueInt(pTimestamp));
+            SQLValues.add(new SQLValueInt(pTimestamp));
+            sqlConnectionManager.execute("Delete FROM T_RESOURCESBLOCKED where REFRESOURCEID = ? and " +
+                    "RESOURCENAME = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and " +
+                    "ENDTIMESLOT = ?;",SQLValues);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void save() throws SQLException{

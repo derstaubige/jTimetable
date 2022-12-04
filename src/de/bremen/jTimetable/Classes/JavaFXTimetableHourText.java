@@ -13,6 +13,10 @@ public class JavaFXTimetableHourText extends Text {
     public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLexturerSubject, LocalDate pday, int ptimeslot){
         this(pCoursepassLexturerSubject, pday, ptimeslot, false);
     }
+    public void deleteCLS(){
+        this.coursepassLecturerSubject.deleteCLS(this.day,this.timeslot);
+    }
+
     public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLexturerSubject, LocalDate pday, int ptimeslot, Boolean showClassname){
         super();
         this.coursepassLecturerSubject = pCoursepassLexturerSubject;

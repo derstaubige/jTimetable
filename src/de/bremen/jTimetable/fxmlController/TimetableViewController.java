@@ -1,6 +1,10 @@
 package de.bremen.jTimetable.fxmlController;
 
 import de.bremen.jTimetable.Classes.*;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueDate;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueInt;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,15 +17,18 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.scene.text.Font;
 
 import java.awt.*;
 import java.io.File;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -192,15 +199,10 @@ public class TimetableViewController implements Initializable {
                                 Integer TargetCol = GridPane.getColumnIndex(target);
                                 grdpn_TimetableView.getChildren().remove(target);
                                 grdpn_TimetableView.add(new JavaFXTimetableHourText(source.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot()), TargetCol, TargetRow);
-
-                                //this.emptyGridpanes();
-                                //this.drawTimetable();
+                                updateEditboxItems();
                             }
                         }
-
-
                         dragEvent.consume();
-
                     });
 
                     tmpText.setOnDragDone(dragEvent -> {
@@ -278,7 +280,51 @@ public class TimetableViewController implements Initializable {
                     tmpRowIdx++;
                 }
             }
+
             //Add a Trashcan to Delete Planed Hours
+            Label trashcan = new Label("\uD83D\uDDD1");
+            Font defaultFont = new Font(38);
+            trashcan.setFont(defaultFont);
+            trashcan.setTextAlignment(TextAlignment.CENTER);
+            trashcan.setMinWidth(100);
+            grdpn_Editbox.add(trashcan,tmpColIdx,tmpRowIdx);
+
+            trashcan.setOnDragOver(dragEvent -> {
+                //accept it only if it is not dragged from the same node
+                if (dragEvent.getGestureSource() != dragEvent.getGestureTarget()) {
+                    //allow for both copying and moving, whatever user chooses
+                    dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                }
+
+                dragEvent.consume();
+            });
+
+            trashcan.setOnDragDropped(dragEvent -> {
+                if (dragEvent.getDragboard().getString() == "SWITCH") {
+                    JavaFXTimetableHourText source = (JavaFXTimetableHourText) dragEvent.getGestureSource();
+                    source.deleteCLS();
+                    Integer SourceRow = GridPane.getRowIndex(source);
+                    Integer SourceCol = GridPane.getColumnIndex(source);
+                    LocalDate tmpDate = source.getDay();
+                    Integer tmpTimeslot = source.getTimeslot();
+                    try{
+                        CoursepassLecturerSubject tmpcoursepassLecturerSubject = new CoursepassLecturerSubject(0L);
+                        tmpcoursepassLecturerSubject.setCoursepass(source.getCoursepassLecturerSubject().getCoursepass());
+                        grdpn_TimetableView.getChildren().remove(source);
+
+                        grdpn_TimetableView.add(new JavaFXTimetableHourText(tmpcoursepassLecturerSubject,tmpDate,tmpTimeslot),SourceCol,SourceRow);
+
+                        //save freetime
+                        setEntryInTimetable(tmpDate,tmpcoursepassLecturerSubject,tmpTimeslot);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    //update editbox
+                    updateEditboxItems();
+                }
+                dragEvent.consume();
+            });
+
         }
     }
 
@@ -370,20 +416,35 @@ public class TimetableViewController implements Initializable {
         return 0;
     }
 
-    private void emptyGridpanes(){
-        for (int i = 1 ; i <= getRowCount(grdpn_TimetableView) ; i++){
-            int finalI = i;
-            grdpn_TimetableView.getChildren().removeIf(node -> GridPane.getRowIndex(node) == finalI);
-        }
-        for (int i = 0 ; i <= getRowCount(grdpn_Editbox) ; i++){
-            if(i == 0){
-                grdpn_Editbox.getChildren().removeIf(node -> GridPane.getRowIndex(node) == null);
-            }else{
-                int finalI = i;
-                grdpn_Editbox.getChildren().removeIf(node -> GridPane.getRowIndex(node) == finalI);
+    private void updateEditboxItems(){
+        for(Node node : grdpn_Editbox.getChildren()){
+            if(node instanceof JavaFXCoursepassLecturerSubjectText){
+                ((JavaFXCoursepassLecturerSubjectText)node).updateText();
             }
-
         }
     }
 
+    private void setEntryInTimetable(LocalDate TimetableDay, CoursepassLecturerSubject coursepassLecturerSubject,  int timeslot)
+            throws SQLException {
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues =
+                new ArrayList<SQLConnectionManagerValues>();
+        Long refcoursepassID = coursepassLecturerSubject.getCoursepass().getId();
+        Long refCoursepassLecturerSubjectId = coursepassLecturerSubject.getId();
+        Long refRoomId = coursepassLecturerSubject.getRoom().getId();
+        Long refLecturerId = coursepassLecturerSubject.getLecturerID();
+        Long refSubjectId = coursepassLecturerSubject.getSubject().getId();
+
+        SQLValues.add(new SQLValueDate(TimetableDay));
+        SQLValues.add(new SQLValueLong(refcoursepassID));
+        SQLValues.add(new SQLValueLong(refCoursepassLecturerSubjectId));
+        SQLValues.add(new SQLValueLong(refRoomId));
+        SQLValues.add(new SQLValueLong(refLecturerId));
+        SQLValues.add(new SQLValueLong(refSubjectId));
+        SQLValues.add(new SQLValueInt(timeslot));
+
+        ResultSet rs = sqlConnectionManager.execute(
+                "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
+                SQLValues);
+    }
 }
