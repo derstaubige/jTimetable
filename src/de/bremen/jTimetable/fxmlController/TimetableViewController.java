@@ -188,8 +188,12 @@ public class TimetableViewController implements Initializable {
                                 timetable.addSingleHour(tmptimetableHour, target.getDay(), target.getTimeslot());
 
                                 //update visuals
+                                Integer TargetRow = GridPane.getRowIndex(target);
+                                Integer TargetCol = GridPane.getColumnIndex(target);
+                                grdpn_TimetableView.getChildren().remove(target);
+                                grdpn_TimetableView.add(new JavaFXTimetableHourText(source.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot()), TargetCol, TargetRow);
 
-                                this.emptyGridpanes();
+                                //this.emptyGridpanes();
                                 //this.drawTimetable();
                             }
                         }
