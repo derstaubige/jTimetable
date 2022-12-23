@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -219,9 +218,9 @@ public class LecturerController implements Initializable {
     }
 
     public ArrayList<Lecturer> getLecturer(Boolean activeState) {
-        ArrayList<Lecturer> activeLecturer = new ArrayList();
+        ArrayList<Lecturer> activeLecturer = new ArrayList<Lecturer>();
         try {
-            activeLecturer = new Lecturer(0L).getAllLecturer(activeState);
+            activeLecturer = Lecturer.getAllLecturer(activeState);
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();

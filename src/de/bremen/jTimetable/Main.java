@@ -1,31 +1,16 @@
 package de.bremen.jTimetable ;
 
 import de.bremen.jTimetable.Classes.*;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueInt;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.time.LocalDate;
 import java.util.*;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.h2.jdbc.JdbcSQLException;
 
 
 public class Main extends Application {

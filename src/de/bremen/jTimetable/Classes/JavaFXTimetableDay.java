@@ -2,7 +2,6 @@ package de.bremen.jTimetable.Classes;
 
 import javafx.scene.text.Text;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;

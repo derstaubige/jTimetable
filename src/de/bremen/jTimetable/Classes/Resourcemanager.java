@@ -9,10 +9,8 @@ import java.time.LocalDateTime;
 import java.time.MonthDay;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.function.Function;
 
 import static java.time.temporal.ChronoUnit.DAYS;
-import static java.util.stream.Collectors.toMap;
 
 public class Resourcemanager {
     public ArrayList<TimetableDay> arrayTimetabledays;
@@ -147,7 +145,7 @@ public class Resourcemanager {
         SQLValues.add(new SQLValueInt(STARTTIMESLOT));
         SQLValues.add(new SQLValueInt(ENDTIMESLOT));
 
-        ResultSet rs = sqlConnectionManager.execute(
+        sqlConnectionManager.execute(
                 "Insert Into T_RESOURCESBLOCKED  ( REFRESOURCEID, RESOURCENAME, DESCRIPTION, STARTDATE, ENDDATE, STARTTIMESLOT, ENDTIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                 SQLValues);
     }
@@ -168,7 +166,7 @@ public class Resourcemanager {
         SQLValues.add(new SQLValueLong(refSubjectId));
         SQLValues.add(new SQLValueInt(timeslot));
 
-        ResultSet rs = sqlConnectionManager.execute(
+        sqlConnectionManager.execute(
                 "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                 SQLValues);
     }

@@ -108,9 +108,9 @@ public class LocationController implements Initializable {
     }
 
     public ArrayList<Location> getLocation(Boolean activeState) {
-        ArrayList<Location> activeLocation = new ArrayList();
+        ArrayList<Location> activeLocation = new ArrayList<Location>();
         try {
-            activeLocation = new Location(0L).getAllLocations(activeState);
+            activeLocation = Location.getAllLocations(activeState);
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();

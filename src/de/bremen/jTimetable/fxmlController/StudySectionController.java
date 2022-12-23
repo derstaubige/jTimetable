@@ -108,7 +108,7 @@ public class StudySectionController implements Initializable {
     }
 
     public ArrayList<StudySection> getStudySection(Boolean activeState) {
-        ArrayList<StudySection> activeStudySection = new ArrayList();
+        ArrayList<StudySection> activeStudySection = new ArrayList<StudySection>();
         try {
             activeStudySection = StudySection.getAllStudySections(activeState);
         } catch (SQLException e) {

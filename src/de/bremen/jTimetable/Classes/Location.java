@@ -43,7 +43,7 @@ public class Location {
 
         SQLValues.add(new SQLValueBoolean(pActivestate));
         ResultSet rs = sqlConnectionManager.select("Select * from T_Locations where active = ?",SQLValues);
-        ArrayList returnList = new ArrayList();
+        ArrayList<Location> returnList = new ArrayList<Location>();
         while( rs.next() ){
             returnList.add(new Location(rs.getLong("id")));
         }
@@ -65,7 +65,7 @@ public class Location {
         }else{
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            ResultSet rs = sqlConnectionManager.execute("update `T_Locations` set `caption` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
+            sqlConnectionManager.execute("update `T_Locations` set `caption` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
     }
 

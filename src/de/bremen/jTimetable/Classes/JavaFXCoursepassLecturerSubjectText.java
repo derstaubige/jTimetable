@@ -2,8 +2,6 @@ package de.bremen.jTimetable.Classes;
 
 import javafx.scene.text.Text;
 
-import java.time.LocalDate;
-
 public class JavaFXCoursepassLecturerSubjectText extends Text {
 
     CoursepassLecturerSubject coursepassLecturerSubject;

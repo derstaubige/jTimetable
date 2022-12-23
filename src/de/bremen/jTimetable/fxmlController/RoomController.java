@@ -185,9 +185,9 @@ public class RoomController implements Initializable {
     }
 
     public ArrayList<Room> getRoom(Boolean activeState) {
-        ArrayList<Room> activeRoom = new ArrayList();
+        ArrayList<Room> activeRoom = new ArrayList<Room>();
         try {
-            activeRoom = new Room(0L).getAllRooms(activeState);
+            activeRoom = Room.getAllRooms(activeState);
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();

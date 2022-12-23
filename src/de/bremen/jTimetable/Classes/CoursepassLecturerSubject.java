@@ -60,7 +60,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
             SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-            ResultSet rs;
+
 
             //update source lecturer entry if the new lecturer is not 0
             if(target.lecturer.getId() != 0){
@@ -71,7 +71,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                 SQLValues.add(new SQLValueDate(sourceDay));
                 SQLValues.add(new SQLValueInt(sourceTimeslot));
                 SQLValues.add(new SQLValueInt(sourceTimeslot));
-                rs = sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Lecturer' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
+                sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Lecturer' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
                 SQLValues = new ArrayList<SQLConnectionManagerValues>();
             }
 
@@ -83,7 +83,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                 SQLValues.add(new SQLValueDate(sourceDay));
                 SQLValues.add(new SQLValueInt(sourceTimeslot));
                 SQLValues.add(new SQLValueInt(sourceTimeslot));
-                rs = sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Room' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
+                sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Room' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
                 SQLValues = new ArrayList<SQLConnectionManagerValues>();
             }
 
@@ -95,7 +95,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                 SQLValues.add(new SQLValueDate(targetDay));
                 SQLValues.add(new SQLValueInt(targetTimeslot));
                 SQLValues.add(new SQLValueInt(targetTimeslot));
-                rs = sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Lecturer' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
+                sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Lecturer' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
                 SQLValues = new ArrayList<SQLConnectionManagerValues>();
             }
 
@@ -108,7 +108,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                 SQLValues.add(new SQLValueDate(targetDay));
                 SQLValues.add(new SQLValueInt(targetTimeslot));
                 SQLValues.add(new SQLValueInt(targetTimeslot));
-                rs = sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Room' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
+                sqlConnectionManager.execute("update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Room' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",SQLValues);
                 SQLValues = new ArrayList<SQLConnectionManagerValues>();
             }
 
@@ -122,7 +122,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                 SQLValues.add(new SQLValueLong(source.coursepass.getId() != 0 ? source.coursepass.getId() : target.coursepass.getId()));
                 SQLValues.add(new SQLValueDate(sourceDay));
                 SQLValues.add(new SQLValueInt(sourceTimeslot));
-                rs = sqlConnectionManager.execute("update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",SQLValues);
+                sqlConnectionManager.execute("update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",SQLValues);
                 SQLValues = new ArrayList<SQLConnectionManagerValues>();
 //            }
 
@@ -135,7 +135,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                 SQLValues.add(new SQLValueLong( target.coursepass.getId() != 0 ? target.coursepass.getId() : source.coursepass.getId()));
                 SQLValues.add(new SQLValueDate(targetDay));
                 SQLValues.add(new SQLValueInt(targetTimeslot));
-                rs = sqlConnectionManager.execute("update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",SQLValues);
+                sqlConnectionManager.execute("update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",SQLValues);
                 SQLValues = new ArrayList<SQLConnectionManagerValues>();
 //            }
 
@@ -298,7 +298,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         }else{
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            ResultSet rs = sqlConnectionManager.execute("update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, shouldhours` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
+            sqlConnectionManager.execute("update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, shouldhours` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
     }
 

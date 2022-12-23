@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -20,18 +19,14 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.scene.text.Font;
 
-import java.awt.*;
 import java.io.File;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -69,8 +64,8 @@ public class TimetableViewController implements Initializable {
     private void drawTimetable(Timetable timetable, Boolean dragandDrop){
 
         int inttmpRowIdx = 2;
-        Calendar cal = Calendar.getInstance();
-        ZoneId defaultZoneId = ZoneId.systemDefault();
+        Calendar.getInstance();
+        ZoneId.systemDefault();
         for (TimetableDay day : timetable.getArrayTimetableDays()) {
             LocalDate tmpDate = day.getDate();
             grdpn_TimetableView.add(new JavaFXTimetableDay(tmpDate), 0, inttmpRowIdx);
@@ -247,8 +242,7 @@ public class TimetableViewController implements Initializable {
                     List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
                             JavaFXTimetableHourText.class);
                     for (int i = 0; i < timetableHourTexts.size(); i++) {
-                        CoursepassLecturerSubject tmpCoursepassLecturerSubject =
-                                timetableHourTexts.get(i).getCoursepassLecturerSubject();
+                        timetableHourTexts.get(i).getCoursepassLecturerSubject();
                         try {
                             if (CoursepassLecturerSubject.isFreeTarget(cls, timetableHourTexts.get(i).getDay(),
                                     timetableHourTexts.get(i).getTimeslot()) == true) {
@@ -338,9 +332,6 @@ public class TimetableViewController implements Initializable {
             try {
                 PrintWriter writer;
                 writer = new PrintWriter(file);
-                Integer tmpRowCounter = 1;
-                Integer tmpRowCounterNow = 1;
-                JavaFXTimetableHourText tmpDateNode;
                 String content = "";
                 ObservableList<Node> grdpn = grdpn_TimetableView.getChildren();
                 String tmpDatePlaceholder = "";
@@ -405,17 +396,6 @@ public class TimetableViewController implements Initializable {
         return result;
     }
 
-    private int getRowCount(GridPane gridPane) {
-        try {
-            Method method = gridPane.getClass().getDeclaredMethod("getNumberOfRows");
-            method.setAccessible(true);
-            return (Integer) method.invoke(gridPane);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
     private void updateEditboxItems(){
         for(Node node : grdpn_Editbox.getChildren()){
             if(node instanceof JavaFXCoursepassLecturerSubjectText){
@@ -443,7 +423,7 @@ public class TimetableViewController implements Initializable {
         SQLValues.add(new SQLValueLong(refSubjectId));
         SQLValues.add(new SQLValueInt(timeslot));
 
-        ResultSet rs = sqlConnectionManager.execute(
+        sqlConnectionManager.execute(
                 "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                 SQLValues);
     }

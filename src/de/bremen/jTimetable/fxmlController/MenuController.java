@@ -1,15 +1,12 @@
 package de.bremen.jTimetable.fxmlController;
 
-import java.net.URL;
 import java.util.ResourceBundle;
 
-import de.bremen.jTimetable.Classes.CourseofStudy;
 import de.bremen.jTimetable.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.input.InputEvent;
@@ -87,7 +84,7 @@ public class MenuController implements Initializable
 
         try {
             AnchorPane anchorPane = loader.<AnchorPane>load();
-            CourseofStudyController courseofStudyController = loader.<CourseofStudyController>getController();
+            loader.<CourseofStudyController>getController();
             //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
