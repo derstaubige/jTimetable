@@ -2,13 +2,10 @@ package de.bremen.jTimetable.fxmlController;
 
 //import com.sun.org.apache.xpath.internal.operations.Bool;
 
-import de.bremen.jTimetable.Classes.CourseofStudy;
 import de.bremen.jTimetable.Classes.Coursepass;
 import de.bremen.jTimetable.Main;
-import de.bremen.jTimetable.Resources.Config;
 //import de.bremen.jTimetable.Resources.Resources_de;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,9 +16,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -30,7 +24,6 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
@@ -131,7 +124,7 @@ public class HomeController implements Initializable {
 
 
     public ArrayList<Coursepass> getCoursepass(Boolean activeState) {
-        ArrayList<Coursepass> activeCoursepass = new ArrayList();
+        ArrayList<Coursepass> activeCoursepass = new ArrayList<Coursepass> ();
         try {
             activeCoursepass = new Coursepass(0L).getCoursepasses(activeState);
         } catch (SQLException e) {

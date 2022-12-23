@@ -132,7 +132,7 @@ public class CourseofStudyController implements Initializable {
         this.cos = cos;
     }
     public ArrayList<CourseofStudy> getCoursesofStudy(Boolean activeState) {
-        ArrayList<CourseofStudy> activeCoursesofStudy = new ArrayList();
+        ArrayList<CourseofStudy> activeCoursesofStudy = new ArrayList<CourseofStudy>();
         try {
             activeCoursesofStudy = new CourseofStudy(0L).getCoursesofStudy(activeState);
         } catch (SQLException e) {

@@ -2,8 +2,6 @@ package de.bremen.jTimetable.Classes;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
-
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -168,7 +166,7 @@ public class Coursepass {
         } else {
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            ResultSet rs = sqlConnectionManager.execute("update `T_Coursepasses` set `refCourseofStudyID` = ?, `refStudySectionID` = ?, `start` = ?, `end` = ?, `active` = ?, `description` = ?, `refRoomID` = ? where `id` = ?;", SQLValues);
+            sqlConnectionManager.execute("update `T_Coursepasses` set `refCourseofStudyID` = ?, `refStudySectionID` = ?, `start` = ?, `end` = ?, `active` = ?, `description` = ?, `refRoomID` = ? where `id` = ?;", SQLValues);
         }
     }
 
@@ -274,7 +272,7 @@ public class Coursepass {
         SQLValues.add(new SQLValueBoolean(activeStatus));
         SQLValues.add(new SQLValueLong(this.id));
         ResultSet rs = sqlConnectionManager.select("Select * from  T_COURSEPASSESLECTURERSUBJECT  where active = ? and REFCOURSEPASSID = ?",SQLValues);
-        ArrayList returnList = new ArrayList();
+        ArrayList<CoursepassLecturerSubject> returnList = new ArrayList<CoursepassLecturerSubject>();
         while( rs.next() ){
             returnList.add(new CoursepassLecturerSubject(rs.getLong("id")));
         }

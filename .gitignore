@@ -32,3 +32,5 @@ H2 starten.lnk
 javafx-sdk*
 out/
 lib/
+
+.vscode

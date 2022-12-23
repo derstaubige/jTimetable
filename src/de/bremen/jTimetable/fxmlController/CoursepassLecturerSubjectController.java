@@ -16,7 +16,6 @@ import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -260,7 +259,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
     }
 
     public ArrayList<CoursepassLecturerSubject> getCLS(Boolean activeState) {
-        ArrayList<CoursepassLecturerSubject> activeSubject = new ArrayList();
+        ArrayList<CoursepassLecturerSubject> activeSubject = new ArrayList<CoursepassLecturerSubject>();
         try {
             activeSubject = this.coursepass.getAllCLS(activeState);
         } catch (SQLException e) {

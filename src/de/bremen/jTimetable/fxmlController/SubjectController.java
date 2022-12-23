@@ -9,10 +9,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -111,9 +108,9 @@ public class SubjectController implements Initializable {
     }
 
     public ArrayList<Subject> getSubject(Boolean activeState) {
-        ArrayList<Subject> activeSubject = new ArrayList();
+        ArrayList<Subject> activeSubject = new ArrayList<Subject>();
         try {
-            activeSubject = new Subject(0L).getAllSubjects(activeState);
+            activeSubject = Subject.getAllSubjects(activeState);
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();

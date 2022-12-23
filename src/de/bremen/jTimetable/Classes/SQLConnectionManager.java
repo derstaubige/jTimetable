@@ -87,11 +87,6 @@ public class SQLConnectionManager {
         conn.close();
     }
 
-    @Override protected void finalize() throws Throwable{
-        //close database when SQLConnectionManager is deleted
-        super.finalize();
-    }
-
     /* The Migrate Function checks if there are new SQL Migrations available and will execute them. It also
     * checks if the Database is new and fills an empty DB */
     public void Migrate() throws SQLException{

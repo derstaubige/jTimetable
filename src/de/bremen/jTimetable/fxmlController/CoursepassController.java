@@ -362,7 +362,7 @@ public class CoursepassController implements Initializable {
     }
 
     public ArrayList<Coursepass> getCoursepass(Boolean activeState) {
-        ArrayList<Coursepass> activeCoursepass = new ArrayList();
+        ArrayList<Coursepass> activeCoursepass = new ArrayList<Coursepass>();
         try {
             activeCoursepass = new Coursepass(0L).getCoursepasses(activeState);
         } catch (SQLException e) {

@@ -53,7 +53,7 @@ public class Subject {
         }else{
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            ResultSet rs = sqlConnectionManager.execute("update `T_Subjects` set `caption` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
+            sqlConnectionManager.execute("update `T_Subjects` set `caption` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
     }
 
@@ -87,7 +87,7 @@ public class Subject {
 
         SQLValues.add(new SQLValueBoolean(pActivestate));
         ResultSet rs = sqlConnectionManager.select("Select * from T_Subjects where active = ?",SQLValues);
-        ArrayList returnList = new ArrayList();
+        ArrayList<Subject> returnList = new ArrayList<Subject>();
         while( rs.next() ){
             returnList.add(new Subject(rs.getLong("id")));
         }

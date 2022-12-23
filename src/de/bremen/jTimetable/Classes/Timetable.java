@@ -3,7 +3,6 @@ package de.bremen.jTimetable.Classes;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 import javafx.stage.FileChooser;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -82,7 +81,7 @@ public class Timetable  {
             SQLValues.add(new SQLValueLong(timetableHour.getCoursepassLecturerSubject().getSubject().getId()));
             SQLValues.add(new SQLValueInt(timeslot));
 
-            ResultSet rs = sqlConnectionManager.execute(
+            sqlConnectionManager.execute(
                     "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                     SQLValues);
         } catch (SQLException e) {

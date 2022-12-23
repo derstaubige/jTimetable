@@ -58,7 +58,7 @@ public class Lecturer {
         }else{
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            ResultSet rs = sqlConnectionManager.execute("update `T_Lecturers` set `firstname` = ?, `lastname` = ?, `reflocationID` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
+            sqlConnectionManager.execute("update `T_Lecturers` set `firstname` = ?, `lastname` = ?, `reflocationID` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
     }
 
@@ -119,7 +119,7 @@ public class Lecturer {
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
         SQLValues.add(new SQLValueBoolean(activeStatus));
         ResultSet rs = sqlConnectionManager.select("Select * from T_Lecturers where active = ?",SQLValues);
-        ArrayList returnList = new ArrayList();
+        ArrayList<Lecturer> returnList = new ArrayList<Lecturer>();
         while( rs.next() ){
             returnList.add(new Lecturer(rs.getLong("id")));
         }

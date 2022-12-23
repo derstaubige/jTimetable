@@ -49,7 +49,7 @@ public class StudySection {
         }else{
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            ResultSet rs = sqlConnectionManager.execute("update `T_StudySections` set `description` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
+            sqlConnectionManager.execute("update `T_StudySections` set `description` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
     }
 
@@ -58,7 +58,7 @@ public class StudySection {
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
         SQLValues.add(new SQLValueBoolean(activeStatus));
         ResultSet rs = sqlConnectionManager.select("Select * from T_StudySections where active = ? order by Description",SQLValues);
-        ArrayList returnList = new ArrayList();
+        ArrayList<StudySection> returnList = new ArrayList<StudySection>();
 
         while( rs.next() ){
             returnList.add(new StudySection(rs.getLong("id")));
@@ -96,7 +96,7 @@ public class StudySection {
 
         SQLValues.add(new SQLValueBoolean(pActivestate));
         ResultSet rs = sqlConnectionManager.select("Select * from T_StudySections where active = ?",SQLValues);
-        ArrayList returnList = new ArrayList();
+        ArrayList<StudySection> returnList = new ArrayList<StudySection>();
         while( rs.next() ){
             returnList.add(new StudySection(rs.getLong("id")));
         }
