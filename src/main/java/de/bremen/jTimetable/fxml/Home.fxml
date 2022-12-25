@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.text.Text?>
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.HomeController">
+    <ScrollPane>
+        <VBox>
+
+        <children>
+            <fx:include source="Menu.fxml" fillWidth="true" />
+            <HBox>
+                <ImageView id="boxImage" layoutX="800" layoutY="10">
+                    <image>
+                        <Image url="@/de/bremen/jTimetable/img/icon.png" />
+                    </image>
+                </ImageView>
+            </HBox>
+            <Label text="%home.lblActiveCoursepasses" fx:id="lblActiveCoursepasses"></Label>
+            <HBox>
+                <children>
+                    <TableView fx:id="CoursepassTableview" minWidth="800">
+                        <columns>
+                            <TableColumn text="%home.CoursepassTableview.CPID" fx:id="CPID" visible="false"></TableColumn>
+                            <TableColumn text="%home.CoursepassTableview.CPCOSCaption" fx:id="CPCOSCaption"></TableColumn>
+                            <TableColumn text="%home.CoursepassTableview.CPstudysection" fx:id="CPstudysection"></TableColumn>
+                            <TableColumn text="%home.CoursepassTableview.CPDescription" fx:id="CPDescription"></TableColumn>
+                            <TableColumn text="%home.CoursepassTableview.CPStart" fx:id="CPStart"></TableColumn>
+                            <TableColumn text="%home.CoursepassTableview.CPEnd" fx:id="CPEnd"></TableColumn>
+                            <TableColumn text="%home.CoursepassTableview.CPActive" fx:id="CPActive"></TableColumn>
+                        </columns>
+                    </TableView>
+                    <VBox minWidth="200">
+
+                        <Button fx:id="btnCoursepassEdit" text="%button.edit"></Button>
+                        <Button fx:id="btnTimetableShow" text="%home.btnShowTimetable"></Button>
+                        <CheckBox fx:id="chkToogleCoursepass" text="%chkbox.ToogleInactive"></CheckBox>
+
+                    </VBox>
+                </children>
+            </HBox>
+        </children>
+
+        </VBox>
+    </ScrollPane>
+
+</AnchorPane>

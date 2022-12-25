@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="de.bremen.jTimetable.fxmlController.StudySectionController"
+            prefHeight="400.0" prefWidth="800.0" minWidth="800">
+    <ScrollPane>
+        <VBox >
+            <children>
+                <fx:include source="Menu.fxml" fillWidth="true" />
+                <Label text="%studysection.title"></Label>
+                <HBox>
+                    <children>
+                        <TableView fx:id="StudySectionTableview" minWidth="800">
+                            <columns>
+                                <TableColumn text="%studysection.StudySectionTableview.ID" fx:id="ID" visible="false"></TableColumn>
+                                <TableColumn text="%studysection.StudySectionTableview.Description" fx:id="Description"></TableColumn>
+                                <TableColumn text="%studysection.StudySectionTableview.Active" fx:id="Active"></TableColumn>
+                            </columns>
+                        </TableView>
+                        <VBox minWidth="200">
+
+                            <Button fx:id="btnStudySectionEdit" text="%button.edit"></Button>
+                            <Button fx:id="btnStudySectionNew" text="%button.new"></Button>
+                            <CheckBox fx:id="chkToogleStudySection" text="%chkbox.ToogleInactive"></CheckBox>
+
+                        </VBox>
+                    </children>
+                </HBox>
+                <VBox fx:id="editbox">
+
+                    <HBox>
+                        <Label text="%studysection.editbox.ID"></Label><TextField fx:id="txtID"></TextField>
+                    </HBox>
+                    <HBox>
+                        <Label text="%studysection.editbox.Description"></Label><TextField fx:id="txtDescription"></TextField>
+                    </HBox>
+                    <HBox>
+                        <Label text="%studysection.editbox.Active"></Label><CheckBox fx:id="chkActive"></CheckBox>
+                    </HBox>
+                    <HBox>
+                        <Button fx:id="btnSave" text="%button.save"></Button>
+                    </HBox>
+
+                </VBox>
+            </children>
+        </VBox>
+    </ScrollPane>
+
+</AnchorPane>

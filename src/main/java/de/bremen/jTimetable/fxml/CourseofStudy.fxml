@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.CourseofStudyController">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <children>
+            <fx:include fillWidth="true" source="Menu.fxml" />
+            <Label text="%cos.title"></Label>
+            <HBox>
+            <children>
+                <TableView fx:id="ActiveCoursesofStudyTableview" minWidth="800">
+                    <columns>
+                        <TableColumn text="%cos.ActiveCoursesofStudyTableview.id" fx:id="COSID" visible="false"></TableColumn>
+                        <TableColumn text="%cos.ActiveCoursesofStudyTableview.description" fx:id="COSDescription"></TableColumn>
+                        <TableColumn text="%cos.ActiveCoursesofStudyTableview.begin" fx:id="COSBegin"></TableColumn>
+                        <TableColumn text="%cos.ActiveCoursesofStudyTableview.end" fx:id="COSEnd"></TableColumn>
+                        <TableColumn text="%cos.ActiveCoursesofStudyTableview.active" fx:id="COSActive"></TableColumn>
+                    </columns>
+                </TableView>
+                <VBox minWidth="200">
+
+                    <Button fx:id="ActiveCoursesofStudyButton" text="%button.edit"></Button>
+                    <Button fx:id="ActiveCoursesofStudyButtonNew" text="%button.new"></Button>
+                    <CheckBox fx:id="chkToogleActiveCourseofStudy" text="%chkbox.ToogleInactive"></CheckBox>
+
+                </VBox>
+
+            </children>
+            </HBox>
+            <HBox fx:id="editbox">
+                <VBox>
+                <HBox>
+                    <Label text="%cos.editbox.id"></Label><TextField fx:id="txtID" />
+                </HBox>
+                <HBox>
+                    <Label text="%cos.editbox.caption"></Label><TextField fx:id="txtCaption" />
+                </HBox>
+                <HBox>
+                    <Label text="%cos.editbox.begin"></Label><DatePicker fx:id="datBegin" />
+                </HBox>
+                <HBox>
+                    <Label text="%cos.editbox.end"></Label><DatePicker fx:id="datEnd" />
+                </HBox>
+                <HBox>
+                    <Label text="%cos.editbox.active"></Label><CheckBox fx:id="chkActive" />
+                </HBox>
+                <HBox>
+                    <Button fx:id="btnSave" text="%button.save"></Button>
+                </HBox>
+                </VBox>
+            </HBox>
+        </children>
+    </VBox>
+</AnchorPane>

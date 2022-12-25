@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="de.bremen.jTimetable.fxmlController.CoursepassController"
+            prefHeight="400.0" prefWidth="800.0" minWidth="800">
+    <ScrollPane>
+        <VBox >
+            <children>
+                <fx:include source="Menu.fxml" fillWidth="true" />
+                <Label text="%coursepass.title"></Label>
+                <HBox>
+                    <children>
+                        <TableView fx:id="CoursepassTableview" minWidth="800">
+                            <columns>
+                                <TableColumn text="%coursepass.CoursepassTableview.id" fx:id="CPID" visible="false"></TableColumn>
+                                <TableColumn text="%coursepass.CoursepassTableview.courseofstudy" fx:id="CPCOSCaption"></TableColumn>
+                                <TableColumn text="%coursepass.CoursepassTableview.studySection" fx:id="CPstudysection"></TableColumn>
+                                <TableColumn text="%coursepass.CoursepassTableview.description" fx:id="CPDescription"></TableColumn>
+                                <TableColumn text="%coursepass.CoursepassTableview.start" fx:id="CPStart"></TableColumn>
+                                <TableColumn text="%coursepass.CoursepassTableview.end" fx:id="CPEnd"></TableColumn>
+                                <TableColumn text="%coursepass.CoursepassTableview.active" fx:id="CPActive"></TableColumn>
+                            </columns>
+                        </TableView>
+                        <VBox minWidth="200">
+
+                            <Button fx:id="btnCoursepassEdit" text="%button.edit"></Button>
+                            <Button fx:id="btnCoursepassNew" text="%button.new"></Button>
+                            <CheckBox fx:id="chkToogleCoursepass" text="%chkbox.ToogleInactive"></CheckBox>
+                            <Button fx:id="btnEditCLS" text="%coursepass.btnEditCLS"></Button>
+                            <Button fx:id="btnInitialTimetable" text="%coursepass.btnInitialTimetable"></Button>
+                            <Button fx:id="btnDeleteTimetable" text="%coursepass.btnDeleteTimetable"></Button>
+                        </VBox>
+                    </children>
+                </HBox>
+                <VBox fx:id="editbox">
+                    <HBox>
+                        <Label text="%coursepass.editbox.courseofstudy"></Label><ComboBox fx:id="cmbCourseofStudy"></ComboBox>
+                    </HBox>
+                    <HBox>
+                        <Label text="%coursepass.editbox.studySection"></Label><ComboBox fx:id="cmbStudySections" minWidth="400"></ComboBox>
+                    </HBox>
+                    <HBox>
+                        <Label text="%coursepass.editbox.start"></Label><DatePicker fx:id="datStart"></DatePicker>
+                    </HBox>
+                    <HBox>
+                        <Label text="%coursepass.editbox.end"></Label><DatePicker fx:id="datEnd"></DatePicker>
+                    </HBox>
+                    <HBox>
+                        <Label text="%coursepass.editbox.description"></Label><TextField fx:id="txtDescription"></TextField>
+                    </HBox>
+                    <HBox>
+                        <Label text="%coursepass.editbox.active"></Label><CheckBox fx:id="chkActive"></CheckBox>
+                    </HBox>
+                    <HBox>
+                        <Button fx:id="btnSave" text="%button.save"></Button>
+                    </HBox>
+
+                </VBox>
+            </children>
+        </VBox>
+    </ScrollPane>
+
+</AnchorPane>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox id="vbox"  prefWidth="1024"      xmlns:fx="http://javafx.com/fxml"     fx:controller="de.bremen.jTimetable.fxmlController.MenuController" >
+    <MenuBar fx:id="menuBar" onKeyPressed="#handleKeyInput">
+        <menus>
+            <Menu text="%menu.file">
+                <items>
+                    <MenuItem text="%menu.file.home" onAction="#openHome"/>
+<!--                    <MenuItem text="Open"/>-->
+<!--                    <MenuItem text="Save"/>-->
+<!--                    <MenuItem text="Save As"/>-->
+<!--                    <SeparatorMenuItem  />-->
+                    <MenuItem text="%menu.file.exit" onAction="#closeButtonAction"/>
+                </items>
+            </Menu>
+            <Menu text="%menu.entitiys">
+                <MenuItem text="%menu.entitiys.cos" onAction="#openCourseofStudy"></MenuItem>
+                <MenuItem text="%menu.entitiys.coursepass" onAction="#openCoursepass"></MenuItem>
+                <MenuItem text="%menu.entitiys.lecturer" onAction="#openLecturer"></MenuItem>
+                <MenuItem text="%menu.entitiys.subject" onAction="#openSubject"></MenuItem>
+                <MenuItem text="%menu.entitiys.room" onAction="#openRoom"></MenuItem>
+                <MenuItem text="%menu.entitiys.locations" onAction="#openLocation"></MenuItem>
+                <MenuItem text="%menu.entitiys.StudySections" onAction="#openStudySection"></MenuItem>
+            </Menu>
+<!--            <Menu text="Help">-->
+<!--                <items>-->
+<!--                    <MenuItem text="Search" disable="true"/>-->
+<!--                    <MenuItem text="Online Manual" visible="false"/>-->
+<!--                    <SeparatorMenuItem />-->
+<!--                    <MenuItem text="About"  onAction="#handleAboutAction"/>-->
+<!--                </items>-->
+<!--            </Menu>-->
+        </menus>
+    </MenuBar>
+</VBox>
