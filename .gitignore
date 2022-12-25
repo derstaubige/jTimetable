@@ -37,3 +37,4 @@ lib/
 .idea
 jTimetable.iml
 target/
+*.lnk

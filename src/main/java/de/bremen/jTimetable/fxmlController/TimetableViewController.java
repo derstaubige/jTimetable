@@ -23,9 +23,7 @@ import javafx.scene.text.Font;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.lang.reflect.Method;
 import java.net.URL;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
