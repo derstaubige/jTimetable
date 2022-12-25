@@ -105,7 +105,7 @@ public class SQLConnectionManager {
             for(Path file : listOfFiles){
                 ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
                 SQLValues.add(new SQLValueString(file.getFileName().toString()));
-                System.out.println("Migrationname " + file.getFileName().toString());
+                // System.out.println("Migrationname " + file.getFileName().toString());
                 tmpFilepath = "/SQLMigration/" + file.getFileName().toString();
                               
                 try {

@@ -73,7 +73,7 @@ public class FileResourcesUtils {
         for (int i = 0; i < listOfFiles.length; i++) {
             returnPathlist.add(listOfFiles[i].toPath());
         }
-
+        Collections.sort(returnPathlist);
         return returnPathlist;
     }
 
@@ -98,7 +98,7 @@ public class FileResourcesUtils {
                     .filter(Files::isRegularFile)
                     .collect(Collectors.toList());
         }
-
+        Collections.sort(result);
         return result;
 
     }

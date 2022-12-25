@@ -1,2 +1,5 @@
+--add rommid
 Alter Table T_COURSEPASSESLECTURERSUBJECT  add column REFROOMID LONG;
+
+--set roomid to 0
 Update T_COURSEPASSESLECTURERSUBJECT set REFROOMID = 0 where REFROOMID is null;
