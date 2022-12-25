@@ -39,7 +39,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         FXMLLoader loader = new FXMLLoader();
-        loader.setResources(ResourceBundle.getBundle("de.bremen.jTimetable.Resources.Resources"));
+        loader.setResources(ResourceBundle.getBundle("Resources"));
         URL url = Main.class.getResource("fxml/Home.fxml");
         loader.setLocation(url);
         AnchorPane anchorPane = loader.<AnchorPane>load();

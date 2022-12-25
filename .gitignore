@@ -34,3 +34,6 @@ out/
 lib/
 
 .vscode
+.idea
+jTimetable.iml
+target/

@@ -11,51 +11,45 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class FileResourcesUtils {
 
-    public static void main(String[] args) throws IOException {
+    public static List<Path> start() throws IOException {
 
         FileResourcesUtils app = new FileResourcesUtils();
-
-        // Sample 3 - read all files from a resources folder (JAR version)
+        String jarorFile = FileResourcesUtils.class.getResource("FileResourcesUtils.class").getProtocol();
+        
+        List<Path> result = new ArrayList<Path>();
         try {
-
-            // get paths from src/main/resources/SQLMigration
-            List<Path> result = app.getPathsFromResourceJAR("SQLMigration");
-            for (Path path : result) {
-                System.out.println("Path : " + path);
-
-                String filePathInJAR = path.toString();
-                // Windows will returns /json/file1.json, cut the first /
-                // the correct path should be json/file1.json
-                if (filePathInJAR.startsWith("/")) {
-                    filePathInJAR = filePathInJAR.substring(1, filePathInJAR.length());
-                }
-
-                System.out.println("filePathInJAR : " + filePathInJAR);
-
-                // read a file from resource folder
-                InputStream is = app.getFileFromResourceAsStream(filePathInJAR);
-                printInputStream(is);
+            
+            if(jarorFile == "file"){
+                Path currentWorkingDir = Paths.get("","Target","classes","SQLMigration").toAbsolutePath();
+       
+                result = app.getPathsFromFile(currentWorkingDir.normalize().toString());
+            }else{
+                result = app.getPathsFromResourceJAR("SQLMigration");
             }
+            
+            
 
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
-
+        return result;
     }
 
     // get a file from the resources folder
     // works everywhere, IDEA, unit test and JAR file.
-    private InputStream getFileFromResourceAsStream(String fileName) {
+    public InputStream getFileFromResourceAsStream(String fileName) {
 
         // The class loader that loaded the class
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(fileName);
+        // ClassLoader classLoader = getClass().getClassLoader();
+        InputStream inputStream = getClass().getResourceAsStream(fileName);
 
         // the stream holding the file content
         if (inputStream == null) {
@@ -64,6 +58,23 @@ public class FileResourcesUtils {
             return inputStream;
         }
 
+    }
+
+    private List<Path> getPathsFromFile(String folderpath){
+        File folder = new File(folderpath);
+        File[] listOfFiles = folder.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                String name = pathname.getAbsolutePath();
+                return name.toLowerCase().endsWith(".sql");
+            }
+        });
+        List<Path> returnPathlist = new ArrayList<Path>();
+        for (int i = 0; i < listOfFiles.length; i++) {
+            returnPathlist.add(listOfFiles[i].toPath());
+        }
+
+        return returnPathlist;
     }
 
     // Get all paths from a folder that inside the JAR file
