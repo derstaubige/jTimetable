@@ -18,25 +18,44 @@ import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.*;
+import de.bremen.jTimetable.Classes.Resourcesblocked.Resourcenames;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class LecturerController implements Initializable {
     Lecturer lecturer;
 
-    @FXML    private TableView<Lecturer> LecturerTableview;
-    @FXML    private TableColumn<Lecturer, Long> ID;
-    @FXML    private TableColumn<Lecturer, String> Firstname;
-    @FXML    private TableColumn<Lecturer, String> Lastname;
-    @FXML    private TableColumn<de.bremen.jTimetable.Classes.Location, String> Location;
-    @FXML    private TableColumn<Lecturer, Boolean> Active;
-    @FXML    private Button btnLecturerEdit;
-    @FXML    private Button btnLecturerNew;
-    @FXML    private CheckBox chkToogleLecturer;
-    @FXML    private VBox editbox;
+    @FXML private TableView<Lecturer> LecturerTableview;
+    @FXML private TableColumn<Lecturer, Long> ID;
+    @FXML private TableColumn<Lecturer, String> Firstname;
+    @FXML private TableColumn<Lecturer, String> Lastname;
+    @FXML private TableColumn<de.bremen.jTimetable.Classes.Location, String> Location;
+    @FXML private TableColumn<Lecturer, Boolean> Active;
+    @FXML    private TableView<Resourcesblocked> LecturerBlockedTableview;
+    @FXML
+    private TableColumn<Resourcesblocked, Long> LecturerBlockedTableviewID;
+    @FXML
+    private TableColumn<Resourcesblocked, Long> LecturerBlockedTableviewREFRESOURCEID;
+    @FXML
+    private TableColumn<Resourcesblocked, String> LecturerBlockedTableviewRESOURCENAME;
+    @FXML
+    private TableColumn<Resourcesblocked, LocalDate> LecturerBlockedTableviewSTARTDATE;
+    @FXML
+    private TableColumn<Resourcesblocked, LocalDate> LecturerBlockedTableviewENDDATE;
+    @FXML
+    private TableColumn<Resourcesblocked, Integer> LecturerBlockedTableviewSTARTTIMESLOT;
+    @FXML
+    private TableColumn<Resourcesblocked, Integer> LecturerBlockedTableviewENDTIMESLOT;
+    @FXML
+    private TableColumn<Resourcesblocked, String> LecturerBlockedTableviewDESCRIPTION;
+    @FXML private Button btnLecturerEdit;
+    @FXML private Button btnLecturerNew;
+    @FXML private CheckBox chkToogleLecturer;
+    @FXML private VBox editbox;
     @FXML private TextField txtID;
     @FXML private TextField txtFirstname;
     @FXML private TextField txtLastname;
@@ -106,7 +125,6 @@ public class LecturerController implements Initializable {
             }
         });
 
-
         btnSave.setOnAction(event ->{
             this.lecturer.setFirstname(txtFirstname.getText());
             this.lecturer.setLastname(txtLastname.getText());
@@ -125,11 +143,6 @@ public class LecturerController implements Initializable {
 
         });
 
-//     <TableColumn text="ID" fx:id="ID" visible="false"></TableColumn>
-//                                <TableColumn text="Firstname" fx:id="Firstname"></TableColumn>
-//                                <TableColumn text="Lastname" fx:id="Lastname"></TableColumn>
-//                                <TableColumn text="Location" fx:id="Location"></TableColumn>
-//                                <TableColumn text="Active" fx:id="Active"></TableColumn>
         ID.setCellValueFactory(new PropertyValueFactory<Lecturer, Long>("id"));
         Firstname.setCellValueFactory(new PropertyValueFactory<Lecturer, String>("Firstname"));
         Lastname.setCellValueFactory(new PropertyValueFactory<Lecturer, String>("Lastname"));
@@ -147,6 +160,23 @@ public class LecturerController implements Initializable {
             }
         });
 
+        LecturerBlockedTableviewID.setCellValueFactory(new PropertyValueFactory<Resourcesblocked, Long>("ID"));
+        LecturerBlockedTableviewREFRESOURCEID
+                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, Long>("ID"));
+        LecturerBlockedTableviewRESOURCENAME
+                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, String>("ID"));
+        LecturerBlockedTableviewSTARTDATE
+                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, LocalDate>("ID"));
+        LecturerBlockedTableviewENDDATE
+                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, LocalDate>("ID"));
+        LecturerBlockedTableviewSTARTTIMESLOT
+                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, Integer>("ID"));
+        LecturerBlockedTableviewENDTIMESLOT
+                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, Integer>("ID"));
+        LecturerBlockedTableviewDESCRIPTION
+                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, String>("ID"));
+
+        
         btnLecturerEdit.setOnAction(event -> {
             TableView.TableViewSelectionModel<Lecturer> selectionModel = LecturerTableview.getSelectionModel();
             ObservableList<Lecturer> selectedItems = selectionModel.getSelectedItems();
@@ -166,6 +196,8 @@ public class LecturerController implements Initializable {
                 cmbLocation.setValue(this.lecturer.getLocation());
                 chkActive.setSelected(this.lecturer.getActive());
 
+                LecturerBlockedTableview.getItems().setAll(Resourcesblocked
+                        .getArrayListofResourcesblockeds(this.lecturer.getId(), Resourcenames.LECTURER));
                 editbox.setVisible(true);
             }
         });

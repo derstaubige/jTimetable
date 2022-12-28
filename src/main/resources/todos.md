@@ -2,13 +2,17 @@ export timetable to file
 
 lecturer on duty days / days of
 
-[*] timetable for lecturers
+use Resourcesblocked Object
 
-make hours dragable from the  botton to the timetable
-
-make hours in timetable deletable
+write unit tests
 
 make holidays internationalisationable
+
+[*] timetable for lecturers
+
+[*] make hours dragable from the  botton to the timetable
+
+[*] make hours in timetable deletable
 
 [*] change initial timetable so, that there is max 2x the same subject per day
 

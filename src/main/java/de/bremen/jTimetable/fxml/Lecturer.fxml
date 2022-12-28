@@ -36,7 +36,6 @@
                     </children>
                 </HBox>
                 <VBox fx:id="editbox">
-
                     <HBox>
                         <Label text="%lecturer.editbox.id"></Label><TextField fx:id="txtID"></TextField>
                     </HBox>
@@ -55,7 +54,21 @@
                     <HBox>
                         <Button fx:id="btnSave" text="%button.save"></Button>
                     </HBox>
-
+                    <HBox>
+                    <Label text="%lecturer.LecturerBlockedTableview.label" />
+                    <TableView fx:id="LecturerBlockedTableview" minWidth="800">
+                        <columns>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.ID" fx:id="LecturerBlockedTableviewID" visible="false"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.REFRESOURCEID" fx:id="LecturerBlockedTableviewREFRESOURCEID" visible="false"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.RESOURCENAME" fx:id="LecturerBlockedTableviewRESOURCENAME" visible="false"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.STARTDATE" fx:id="LecturerBlockedTableviewSTARTDATE"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.ENDDATE" fx:id="LecturerBlockedTableviewENDDATE"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.STARTTIMESLOT" fx:id="LecturerBlockedTableviewSTARTTIMESLOT"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.ENDTIMESLOT" fx:id="LecturerBlockedTableviewENDTIMESLOT"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.DESCRIPTION" fx:id="LecturerBlockedTableviewDESCRIPTION"></TableColumn>
+                        </columns>
+                    </TableView>
+                    </HBox>
                 </VBox>
             </children>
         </VBox>
