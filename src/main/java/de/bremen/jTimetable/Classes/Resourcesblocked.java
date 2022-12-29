@@ -55,31 +55,35 @@ public class Resourcesblocked {
 
     }
     
-    public void save() throws SQLException {
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+    public void save() {
+        try {
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
-        SQLValues.add(new SQLValueLong(this.REFRESOURCEID));
-        SQLValues.add(new SQLValueString(this.RESOURCENAME));
-        SQLValues.add(new SQLValueDate(this.STARTDATE));
-        SQLValues.add(new SQLValueDate(this.ENDDATE));
-        SQLValues.add(new SQLValueInt(this.STARTTIMESLOT));
-        SQLValues.add(new SQLValueInt(this.ENDTIMESLOT));
-        SQLValues.add(new SQLValueString(this.DESCRIPTION));
+            SQLValues.add(new SQLValueLong(this.REFRESOURCEID));
+            SQLValues.add(new SQLValueString(this.RESOURCENAME));
+            SQLValues.add(new SQLValueDate(this.STARTDATE));
+            SQLValues.add(new SQLValueDate(this.ENDDATE));
+            SQLValues.add(new SQLValueInt(this.STARTTIMESLOT));
+            SQLValues.add(new SQLValueInt(this.ENDTIMESLOT));
+            SQLValues.add(new SQLValueString(this.DESCRIPTION));
+            if (this.ID == 0) {
+                // its a new object, we have to insert it
+                ResultSet rs = sqlConnectionManager.execute(
+                        "Insert Into `T_RESOURCESBLOCKED` (`REFRESOURCEID`, `RESOURCENAME`, `STARTDATE`, `ENDDATE`, `STARTTIMESLOT`, `ENDTIMESLOT`, `DESCRIPTION`) values (?, ?, ?, ?, ?, ?, ?)",
+                        SQLValues);
+                rs.first();
+                this.ID = rs.getLong(1);
+            } else {
+                // we only have to update an existing entry
+                SQLValues.add(new SQLValueLong(this.ID));
+                sqlConnectionManager.execute(
+                        "update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ?, `RESOURCENAME` = ?, `STARTDATE` = ?, `ENDDATE` = ?, `STARTTIMESLOT` = ?, `ENDTIMESLOT` = ?, `DESCRIPTION` = ? where `id` = ?;",
+                        SQLValues);
+            }
 
-        if (this.ID == 0) {
-            // its a new object, we have to insert it
-            ResultSet rs = sqlConnectionManager.execute(
-                    "Insert Into `T_RESOURCESBLOCKED` (`REFRESOURCEID`, `RESOURCENAME`, `STARTDATE`, `ENDDATE`, `STARTTIMESLOT`, `ENDTIMESLOT`, `DESCRIPTION`) values (?, ?, ?, ?, ?, ?, ?)",
-                    SQLValues);
-            rs.first();
-            this.ID = rs.getLong(1);
-        } else {
-            // we only have to update an existing entry
-            SQLValues.add(new SQLValueLong(this.ID));
-            sqlConnectionManager.execute(
-                    "update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ?, `RESOURCENAME` = ?, `STARTDATE` = ?, `ENDDATE` = ?, `STARTTIMESLOT` = ?, `ENDTIMESLOT` = ?, `DESCRIPTION` = ? where `id` = ?;",
-                    SQLValues);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
@@ -94,8 +98,13 @@ public class Resourcesblocked {
         }
     }
 
-    public static ArrayList<Resourcesblocked> getArrayListofResourcesblockeds(Long resourceID,
+    public static ArrayList<Resourcesblocked> getArrayListofResourcesblocked(Long resourceID,
             Resourcenames resourcename) {
+        return getArrayListofResourcesblocked(resourceID, resourcename, false, true);
+    }
+
+    public static ArrayList<Resourcesblocked> getArrayListofResourcesblocked(Long resourceID,
+            Resourcenames resourcename, Boolean showPassed, Boolean withoutLesson) {
         ArrayList<Resourcesblocked> returnListe = new ArrayList<Resourcesblocked>();
 
         try {
@@ -104,8 +113,19 @@ public class Resourcesblocked {
             SQLValues.add(new SQLValueLong(resourceID));
             SQLValues.add(new SQLValueString(resourcename.toString()));
 
-            ResultSet rs = sqlConnectionManager.select(
-                    "Select * from T_Resourcesblocked where REFRESOURCEID = ? and RESOURCENAME = ?;", SQLValues);
+            String SQLString = "Select * from T_Resourcesblocked where REFRESOURCEID = ? and RESOURCENAME = ?";
+
+            if (showPassed == false) {
+                SQLString = SQLString + " and ENDDATE >= '" + LocalDate.now().toString() + "'";
+            }
+
+            if (withoutLesson == true) {
+                SQLString = SQLString + " and DESCRIPTION NOT LIKE 'LESSON%'";
+            }
+
+            SQLString = SQLString + ";";
+            
+            ResultSet rs = sqlConnectionManager.select(SQLString, SQLValues);
 
             while (rs.next()) {
                 returnListe.add(new Resourcesblocked(rs.getLong("ID")));
@@ -116,6 +136,21 @@ public class Resourcesblocked {
         }
 
         return returnListe;
+    }
+
+    public static void setResourcesBlocked(Long REFRESOURCEID, String RESOURCENAME, String DESCRIPTION,
+            LocalDate STARTDATE, LocalDate ENDDATE, int STARTTIMESLOT,
+            int ENDTIMESLOT) throws SQLException {
+        Resourcesblocked resourcesblocked = new Resourcesblocked(0L);
+        resourcesblocked.setREFRESOURCEID(REFRESOURCEID);
+        resourcesblocked.setRESOURCENAME(RESOURCENAME);
+        resourcesblocked.setDESCRIPTION(DESCRIPTION);
+        resourcesblocked.setSTARTDATE(STARTDATE);
+        resourcesblocked.setENDDATE(ENDDATE);
+        resourcesblocked.setSTARTTIMESLOT(STARTTIMESLOT);
+        resourcesblocked.setENDTIMESLOT(ENDTIMESLOT);
+
+        resourcesblocked.save();
     }
 
     public void get(Long resourceID, Resourcenames resourcename, LocalDate startDate, LocalDate endDate,

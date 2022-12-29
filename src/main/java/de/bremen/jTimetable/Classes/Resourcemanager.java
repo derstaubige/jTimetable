@@ -8,6 +8,7 @@ import java.time.MonthDay;
 import java.time.ZoneId;
 import java.util.*;
 
+import de.bremen.jTimetable.Classes.Resourcesblocked.Resourcenames;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -91,10 +92,10 @@ public class Resourcemanager {
                                 refCoursepassLecturerSubjectId, refRoomId, refLecturerId,
                                 refSubjectId, idxTimeslot);
                         //block lecturer and room
-                        setResourcesBlocked(refLecturerId, "Lecturer", "", Timetableday,
-                                Timetableday, idxTimeslot, idxTimeslot);
-                        setResourcesBlocked(refRoomId, "Room", "", Timetableday, Timetableday,
-                                idxTimeslot, idxTimeslot);
+                        Resourcesblocked.setResourcesBlocked(refLecturerId, Resourcenames.LECTURER.toString(), "LESSON", Timetableday, Timetableday, idxTimeslot, idxTimeslot);
+                        Resourcesblocked.setResourcesBlocked(refRoomId, Resourcenames.ROOM
+                                        .toString(), "LESSON", Timetableday, Timetableday, idxTimeslot, idxTimeslot);
+
                         //add to the is hours count
                         this.arraycoursepasslecturersubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).planedHours++;
@@ -128,26 +129,6 @@ public class Resourcemanager {
 
             }
         }
-    }
-
-    public void setResourcesBlocked(Long REFRESOURCEID, String RESOURCENAME, String DESCRIPTION,
-                                    LocalDate STARTDATE, LocalDate ENDDATE, int STARTTIMESLOT,
-                                    int ENDTIMESLOT) throws SQLException {
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-        ArrayList<SQLConnectionManagerValues> SQLValues =
-                new ArrayList<SQLConnectionManagerValues>();
-
-        SQLValues.add(new SQLValueLong(REFRESOURCEID));
-        SQLValues.add(new SQLValueString(RESOURCENAME));
-        SQLValues.add(new SQLValueString(DESCRIPTION));
-        SQLValues.add(new SQLValueDate(STARTDATE));
-        SQLValues.add(new SQLValueDate(ENDDATE));
-        SQLValues.add(new SQLValueInt(STARTTIMESLOT));
-        SQLValues.add(new SQLValueInt(ENDTIMESLOT));
-
-        sqlConnectionManager.execute(
-                "Insert Into T_RESOURCESBLOCKED  ( REFRESOURCEID, RESOURCENAME, DESCRIPTION, STARTDATE, ENDDATE, STARTTIMESLOT, ENDTIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
-                SQLValues);
     }
 
     private void setEntryInTimetable(LocalDate TimetableDay, Long refcoursepassID,

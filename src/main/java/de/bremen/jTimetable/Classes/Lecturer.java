@@ -189,7 +189,7 @@ public class Lecturer {
     }
     
     public ArrayList<Resourcesblocked> getArrayListofResourcesBlockeds() {
-        return Resourcesblocked.getArrayListofResourcesblockeds(this.id, Resourcenames.LECTURER);
+        return Resourcesblocked.getArrayListofResourcesblocked(this.id, Resourcenames.LECTURER);
     }
 
     public Long getId() {
