@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
@@ -40,7 +41,7 @@ public class LecturerController implements Initializable {
     @FXML private TableColumn<Lecturer, String> Lastname;
     @FXML private TableColumn<de.bremen.jTimetable.Classes.Location, String> Location;
     @FXML private TableColumn<Lecturer, Boolean> Active;
-    @FXML    private TableView<Resourcesblocked> LecturerBlockedTableview;
+    @FXML private TableView<Resourcesblocked> LecturerBlockedTableview;
     @FXML
     private TableColumn<Resourcesblocked, Long> LecturerBlockedTableviewID;
     @FXML
@@ -59,6 +60,7 @@ public class LecturerController implements Initializable {
     private TableColumn<Resourcesblocked, String> LecturerBlockedTableviewDESCRIPTION;
     @FXML
     private TableColumn<Resourcesblocked, Void> LecturerBlockedTableviewDelete;
+    @FXML private Button LecturerBlockedAdd;
     @FXML private Button btnLecturerEdit;
     @FXML private Button btnLecturerNew;
     @FXML private CheckBox chkToogleLecturer;
@@ -253,11 +255,23 @@ public class LecturerController implements Initializable {
 
                             private final Button btn = new Button(resources.getString("lecturer.LecturerBlockedTableview.Delete"));
                             
-
                             {
                                 btn.setOnAction((ActionEvent event) -> {
-                                    Resourcesblocked resourcesblocked = getTableView().getItems().get(getIndex());
-                                    System.out.println("selectedResourcesblocked: " + resourcesblocked);
+                                    Alert alert = new Alert(AlertType.CONFIRMATION);
+                                    alert.setTitle(resources.getString("lecturer.LecturerBlockedTableview.DeleteMessageTitle"));
+                                    alert.setHeaderText("");
+                                    alert.setContentText(resources.getString("lecturer.LecturerBlockedTableview.DeleteMessage"));
+                                    alert.showAndWait().ifPresent(rs -> {
+                                        if (rs == ButtonType.OK) {
+                                            Resourcesblocked resourcesblocked = getTableView().getItems().get(getIndex());
+                                            try {
+                                                resourcesblocked.delete();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }      
+                                            LecturerBlockedTableview.getItems().remove(resourcesblocked); 
+                                        }
+                                    });                                                               
                                 });
                             }
 
@@ -277,6 +291,21 @@ public class LecturerController implements Initializable {
 
         LecturerBlockedTableview.setEditable(true);
 
+        LecturerBlockedAdd.setOnAction(event ->{
+            try {                
+                Resourcesblocked resourcesblocked = new Resourcesblocked(0L);
+                resourcesblocked.setREFRESOURCEID(lecturer.getId());
+                resourcesblocked.setRESOURCENAME(Resourcenames.LECTURER.toString());
+                resourcesblocked.setSTARTDATE(LocalDate.now());
+                resourcesblocked.setENDDATE(LocalDate.now());
+                resourcesblocked.save();
+                LecturerBlockedTableview.getItems().add(resourcesblocked);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
+        
         btnLecturerEdit.setOnAction(event -> {
             TableView.TableViewSelectionModel<Lecturer> selectionModel = LecturerTableview.getSelectionModel();
             ObservableList<Lecturer> selectedItems = selectionModel.getSelectedItems();

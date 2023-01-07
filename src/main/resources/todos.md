@@ -8,6 +8,8 @@ write unit tests
 
 make holidays internationalisationable
 
+[*] lecturer blocktime editable
+
 [*] timetable for lecturers
 
 [*] make hours dragable from the  botton to the timetable

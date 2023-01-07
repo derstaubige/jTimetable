@@ -39,8 +39,25 @@
 			</plugin>
 		</plugins>
 	</build>
-        
+ 	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.junit</groupId>
+				<artifactId>junit-bom</artifactId>
+				<version>5.9.1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>       
   <dependencies>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 
     <dependency>
       <groupId>org.openjfx</groupId>
@@ -62,13 +79,6 @@
       <version>2.1.214</version>
     </dependency>
 
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
 </project>
