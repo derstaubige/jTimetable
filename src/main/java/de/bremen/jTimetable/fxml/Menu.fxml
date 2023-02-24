@@ -3,27 +3,27 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox id="vbox"  prefWidth="1024"      xmlns:fx="http://javafx.com/fxml"     fx:controller="de.bremen.jTimetable.fxmlController.MenuController" >
-    <MenuBar fx:id="menuBar" onKeyPressed="#handleKeyInput">
+<VBox id="vbox" prefWidth="1024" stylesheets="@../styles/menuStyle.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.MenuController">
+    <MenuBar fx:id="menuBar" onKeyPressed="#handleKeyInput" styleClass="MenuBar">
         <menus>
-            <Menu text="%menu.file">
+            <Menu styleClass="MenuItem" text="%menu.file">
                 <items>
-                    <MenuItem text="%menu.file.home" onAction="#openHome"/>
+                    <MenuItem onAction="#openHome" text="%menu.file.home" />
 <!--                    <MenuItem text="Open"/>-->
 <!--                    <MenuItem text="Save"/>-->
 <!--                    <MenuItem text="Save As"/>-->
 <!--                    <SeparatorMenuItem  />-->
-                    <MenuItem text="%menu.file.exit" onAction="#closeButtonAction"/>
+                    <MenuItem onAction="#closeButtonAction" text="%menu.file.exit" />
                 </items>
             </Menu>
-            <Menu text="%menu.entitiys">
-                <MenuItem text="%menu.entitiys.cos" onAction="#openCourseofStudy"></MenuItem>
-                <MenuItem text="%menu.entitiys.coursepass" onAction="#openCoursepass"></MenuItem>
-                <MenuItem text="%menu.entitiys.lecturer" onAction="#openLecturer"></MenuItem>
-                <MenuItem text="%menu.entitiys.subject" onAction="#openSubject"></MenuItem>
-                <MenuItem text="%menu.entitiys.room" onAction="#openRoom"></MenuItem>
-                <MenuItem text="%menu.entitiys.locations" onAction="#openLocation"></MenuItem>
-                <MenuItem text="%menu.entitiys.StudySections" onAction="#openStudySection"></MenuItem>
+            <Menu styleClass="MenuItem" text="%menu.entitiys">
+                <MenuItem onAction="#openCourseofStudy" text="%menu.entitiys.cos" />
+                <MenuItem onAction="#openCoursepass" text="%menu.entitiys.coursepass" />
+                <MenuItem onAction="#openLecturer" text="%menu.entitiys.lecturer" />
+                <MenuItem onAction="#openSubject" text="%menu.entitiys.subject" />
+                <MenuItem onAction="#openRoom" text="%menu.entitiys.room" />
+                <MenuItem onAction="#openLocation" text="%menu.entitiys.locations" />
+                <MenuItem onAction="#openStudySection" text="%menu.entitiys.StudySections" />
             </Menu>
 <!--            <Menu text="Help">-->
 <!--                <items>-->

@@ -16,8 +16,7 @@ import javafx.stage.Stage;
 import de.bremen.jTimetable.Main;
 
 
-public class MenuController implements Initializable
-{
+public class MenuController implements Initializable {
     @FXML
     private MenuBar menuBar;
 
@@ -25,12 +24,11 @@ public class MenuController implements Initializable
 
     /**
      * Handle action related to "About" menu item.
-     *
+     * TODO item doesn't exist
      * @param event Event on "About" menu item.
      */
     @FXML
-    private void handleAboutAction(final ActionEvent event)
-    {
+    private void handleAboutAction(final ActionEvent event) {
         provideAboutFunctionality();
     }
 
@@ -41,13 +39,10 @@ public class MenuController implements Initializable
      * @param event Input event.
      */
     @FXML
-    private void handleKeyInput(final InputEvent event)
-    {
-        if (event instanceof KeyEvent)
-        {
+    private void handleKeyInput(final InputEvent event) {
+        if (event instanceof KeyEvent) {
             final KeyEvent keyEvent = (KeyEvent) event;
-            if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.A)
-            {
+            if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.A) {
                 provideAboutFunctionality();
             }
         }
@@ -56,8 +51,7 @@ public class MenuController implements Initializable
     /**
      * Perform functionality associated with "About" menu selection or CTRL-A.
      */
-    private void provideAboutFunctionality()
-    {
+    private void provideAboutFunctionality() {
         System.out.println("You clicked on About!");
     }
 
@@ -69,7 +63,7 @@ public class MenuController implements Initializable
     }
 
     @FXML
-    private void closeButtonAction(){
+    private void closeButtonAction() {
         // get a handle to the stage
         Stage stage = (Stage) menuBar.getScene().getWindow();
         // do what you have to do
@@ -77,7 +71,7 @@ public class MenuController implements Initializable
     }
 
     @FXML
-    private void openCourseofStudy(){
+    private void openCourseofStudy() {
         //System.out.println(selectedItems.get(0).getId());
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/CourseofStudy.fxml"), this.resourceBundle);
@@ -93,8 +87,9 @@ public class MenuController implements Initializable
             e.printStackTrace();
         }
     }
+
     @FXML
-    private void openHome(){
+    private void openHome() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Home.fxml"), this.resourceBundle);
 
@@ -107,8 +102,9 @@ public class MenuController implements Initializable
             e.printStackTrace();
         }
     }
+
     @FXML
-    private void openCoursepass(){
+    private void openCoursepass() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), this.resourceBundle);
 
@@ -123,7 +119,7 @@ public class MenuController implements Initializable
     }
 
     @FXML
-    private void openLecturer(){
+    private void openLecturer() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Lecturer.fxml"), this.resourceBundle);
 
@@ -136,8 +132,9 @@ public class MenuController implements Initializable
             e.printStackTrace();
         }
     }
+
     @FXML
-    private void openSubject(){
+    private void openSubject() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Subject.fxml"), this.resourceBundle);
 
@@ -150,8 +147,9 @@ public class MenuController implements Initializable
             e.printStackTrace();
         }
     }
+
     @FXML
-    private void openRoom(){
+    private void openRoom() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Room.fxml"), this.resourceBundle);
 
@@ -164,8 +162,9 @@ public class MenuController implements Initializable
             e.printStackTrace();
         }
     }
+
     @FXML
-    private void openLocation(){
+    private void openLocation() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Location.fxml"), this.resourceBundle);
 
@@ -178,8 +177,9 @@ public class MenuController implements Initializable
             e.printStackTrace();
         }
     }
+
     @FXML
-    private void openStudySection(){
+    private void openStudySection() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/StudySection.fxml"), this.resourceBundle);
 

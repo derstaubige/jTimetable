@@ -1,0 +1,16 @@
+.root {
+-fx-background-image: url("../img/HdR_Schraeg_von_vorne.jpg");
+}
+.vbx {
+-fx-background-color: transparent;
+}
+.label {
+    -fx-background-color: rgba(255,255,255, 50);
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
+}
+.tableView {
+-fx-background-color: rgba(255,255,255, 50);
+}

@@ -1,6 +1,7 @@
 package de.bremen.jTimetable.fxmlController;
 
 //import de.bremen.jTimetable.Resources.Resources_de;
+
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -26,18 +27,30 @@ import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
 
-    @FXML    private TableView<Coursepass> CoursepassTableview;
-    @FXML    private TableColumn<Coursepass, Long> CPID;
-    @FXML    private TableColumn<Coursepass, String> CPCOSCaption;
-    @FXML    private TableColumn<Coursepass, String> CPstudysection;
-    @FXML    private TableColumn<Coursepass, String> CPDescription;
-    @FXML    private TableColumn<Coursepass, LocalDate> CPStart;
-    @FXML    private TableColumn<Coursepass, LocalDate> CPEnd;
-    @FXML    private TableColumn<Coursepass, Boolean> CPActive;
-    @FXML    private Button btnCoursepassEdit;
-    @FXML    private Button btnTimetableShow;
-    @FXML    private CheckBox chkToogleCoursepass;
-    @FXML private Label lblActiveCoursepasses;
+    @FXML
+    private TableView<Coursepass> CoursepassTableview;
+    @FXML
+    private TableColumn<Coursepass, Long> CPID;
+    @FXML
+    private TableColumn<Coursepass, String> CPCOSCaption;
+    @FXML
+    private TableColumn<Coursepass, String> CPstudysection;
+    @FXML
+    private TableColumn<Coursepass, String> CPDescription;
+    @FXML
+    private TableColumn<Coursepass, LocalDate> CPStart;
+    @FXML
+    private TableColumn<Coursepass, LocalDate> CPEnd;
+    @FXML
+    private TableColumn<Coursepass, Boolean> CPActive;
+    @FXML
+    private Button btnTimetableShow;
+    @FXML
+    private Button btnCoursepassEdit;
+    @FXML
+    private CheckBox chkToogleCoursepass;
+    @FXML
+    private Label lblActiveCoursepasses;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -120,9 +133,8 @@ public class HomeController implements Initializable {
     }
 
 
-
     public ArrayList<Coursepass> getCoursepass(Boolean activeState) {
-        ArrayList<Coursepass> activeCoursepass = new ArrayList<Coursepass> ();
+        ArrayList<Coursepass> activeCoursepass = new ArrayList<Coursepass>();
         try {
             activeCoursepass = new Coursepass(0L).getCoursepasses(activeState);
         } catch (SQLException e) {
