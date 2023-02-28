@@ -24,7 +24,6 @@ import javafx.util.converter.IntegerStringConverter;
 import javafx.util.converter.LocalDateStringConverter;
 import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.*;
-import de.bremen.jTimetable.Classes.Resourcesblocked.Resourcenames;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -41,25 +40,25 @@ public class LecturerController implements Initializable {
     @FXML private TableColumn<Lecturer, String> Lastname;
     @FXML private TableColumn<de.bremen.jTimetable.Classes.Location, String> Location;
     @FXML private TableColumn<Lecturer, Boolean> Active;
-    @FXML private TableView<Resourcesblocked> LecturerBlockedTableview;
+    @FXML private TableView<ResourcesBlocked> LecturerBlockedTableview;
     @FXML
-    private TableColumn<Resourcesblocked, Long> LecturerBlockedTableviewID;
+    private TableColumn<ResourcesBlocked, Long> LecturerBlockedTableviewID;
     @FXML
-    private TableColumn<Resourcesblocked, Long> LecturerBlockedTableviewREFRESOURCEID;
+    private TableColumn<ResourcesBlocked, Long> LecturerBlockedTableviewREFRESOURCEID;
     @FXML
-    private TableColumn<Resourcesblocked, String> LecturerBlockedTableviewRESOURCENAME;
+    private TableColumn<ResourcesBlocked, String> LecturerBlockedTableviewRESOURCENAME;
     @FXML
-    private TableColumn<Resourcesblocked, LocalDate> LecturerBlockedTableviewSTARTDATE;
+    private TableColumn<ResourcesBlocked, LocalDate> LecturerBlockedTableviewSTARTDATE;
     @FXML
-    private TableColumn<Resourcesblocked, LocalDate> LecturerBlockedTableviewENDDATE;
+    private TableColumn<ResourcesBlocked, LocalDate> LecturerBlockedTableviewENDDATE;
     @FXML
-    private TableColumn<Resourcesblocked, Integer> LecturerBlockedTableviewSTARTTIMESLOT;
+    private TableColumn<ResourcesBlocked, Integer> LecturerBlockedTableviewSTARTTIMESLOT;
     @FXML
-    private TableColumn<Resourcesblocked, Integer> LecturerBlockedTableviewENDTIMESLOT;
+    private TableColumn<ResourcesBlocked, Integer> LecturerBlockedTableviewENDTIMESLOT;
     @FXML
-    private TableColumn<Resourcesblocked, String> LecturerBlockedTableviewDESCRIPTION;
+    private TableColumn<ResourcesBlocked, String> LecturerBlockedTableviewDESCRIPTION;
     @FXML
-    private TableColumn<Resourcesblocked, Void> LecturerBlockedTableviewDelete;
+    private TableColumn<ResourcesBlocked, Void> LecturerBlockedTableviewDelete;
     @FXML private Button LecturerBlockedAdd;
     @FXML private Button btnLecturerEdit;
     @FXML private Button btnLecturerNew;
@@ -171,65 +170,65 @@ public class LecturerController implements Initializable {
             }
         });
 
-        LecturerBlockedTableviewID.setCellValueFactory(new PropertyValueFactory<Resourcesblocked, Long>("ID"));
+        LecturerBlockedTableviewID.setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Long>("ID"));
         LecturerBlockedTableviewREFRESOURCEID
-                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, Long>("REFRESOURCEID"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Long>("REFRESOURCEID"));
         LecturerBlockedTableviewRESOURCENAME
-                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, String>("RESOURCENAME"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, String>("RESOURCENAME"));
         LecturerBlockedTableviewSTARTDATE
-                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, LocalDate>("STARTDATE"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, LocalDate>("STARTDATE"));
         LecturerBlockedTableviewSTARTDATE.setCellFactory(cellData -> {
-            TextFieldTableCell<Resourcesblocked, LocalDate> textFieldTableCell = new TextFieldTableCell<Resourcesblocked, LocalDate>(new LocalDateStringConverter());
+            TextFieldTableCell<ResourcesBlocked, LocalDate> textFieldTableCell = new TextFieldTableCell<ResourcesBlocked, LocalDate>(new LocalDateStringConverter());
             return textFieldTableCell;
         });
         LecturerBlockedTableviewSTARTDATE.setOnEditCommit(
                 e -> {
-                    e.getTableView().getItems().get(e.getTablePosition().getRow()).setSTARTDATE(e.getNewValue());
+                    e.getTableView().getItems().get(e.getTablePosition().getRow()).setStartDate(e.getNewValue());
                     e.getTableView().getItems().get(e.getTablePosition().getRow()).save();
                 });
                 
         LecturerBlockedTableviewENDDATE
-                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, LocalDate>("ENDDATE"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, LocalDate>("ENDDATE"));
         LecturerBlockedTableviewENDDATE.setCellFactory(cellData -> {
-            TextFieldTableCell<Resourcesblocked, LocalDate> textFieldTableCell = new TextFieldTableCell<Resourcesblocked, LocalDate>(
+            TextFieldTableCell<ResourcesBlocked, LocalDate> textFieldTableCell = new TextFieldTableCell<ResourcesBlocked, LocalDate>(
                     new LocalDateStringConverter());
             return textFieldTableCell;
         });
         LecturerBlockedTableviewENDDATE.setOnEditCommit(
                 e -> {
-                    e.getTableView().getItems().get(e.getTablePosition().getRow()).setENDDATE(e.getNewValue());
+                    e.getTableView().getItems().get(e.getTablePosition().getRow()).setEndDate(e.getNewValue());
                     e.getTableView().getItems().get(e.getTablePosition().getRow()).save();
                 });
 
         LecturerBlockedTableviewSTARTTIMESLOT
-                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, Integer>("STARTTIMESLOT"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Integer>("STARTTIMESLOT"));
         LecturerBlockedTableviewSTARTTIMESLOT.setCellFactory(cellData -> {
-            TextFieldTableCell<Resourcesblocked, Integer> textFieldTableCell = new TextFieldTableCell<Resourcesblocked, Integer>(
+            TextFieldTableCell<ResourcesBlocked, Integer> textFieldTableCell = new TextFieldTableCell<ResourcesBlocked, Integer>(
                     new IntegerStringConverter());
             return textFieldTableCell;
         });
         LecturerBlockedTableviewSTARTTIMESLOT.setOnEditCommit(
                 e -> {
-                    e.getTableView().getItems().get(e.getTablePosition().getRow()).setSTARTTIMESLOT(e.getNewValue());
+                    e.getTableView().getItems().get(e.getTablePosition().getRow()).setStartTimeslot(e.getNewValue());
                     e.getTableView().getItems().get(e.getTablePosition().getRow()).save();
                 });
 
         LecturerBlockedTableviewENDTIMESLOT
-                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, Integer>("ENDTIMESLOT"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Integer>("ENDTIMESLOT"));
         LecturerBlockedTableviewENDTIMESLOT.setCellFactory(cellData -> {
-            TextFieldTableCell<Resourcesblocked, Integer> textFieldTableCell = new TextFieldTableCell<Resourcesblocked, Integer>(
+            TextFieldTableCell<ResourcesBlocked, Integer> textFieldTableCell = new TextFieldTableCell<ResourcesBlocked, Integer>(
                     new IntegerStringConverter());
             return textFieldTableCell;
         });
         LecturerBlockedTableviewENDTIMESLOT.setOnEditCommit(
                 e -> {
-                    e.getTableView().getItems().get(e.getTablePosition().getRow()).setENDTIMESLOT(e.getNewValue());
+                    e.getTableView().getItems().get(e.getTablePosition().getRow()).setEndTimeslot(e.getNewValue());
                     e.getTableView().getItems().get(e.getTablePosition().getRow()).save();
                 });
         LecturerBlockedTableviewDESCRIPTION
-                .setCellValueFactory(new PropertyValueFactory<Resourcesblocked, String>("DESCRIPTION"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, String>("DESCRIPTION"));
         LecturerBlockedTableviewDESCRIPTION.setCellFactory(cellData -> {
-            TextFieldTableCell<Resourcesblocked, String> textFieldTableCell = new TextFieldTableCell<Resourcesblocked, String>(
+            TextFieldTableCell<ResourcesBlocked, String> textFieldTableCell = new TextFieldTableCell<ResourcesBlocked, String>(
                     new StringConverter<String>() {
                         public String toString(String str) {
                             return str;
@@ -243,15 +242,15 @@ public class LecturerController implements Initializable {
         });
         LecturerBlockedTableviewDESCRIPTION.setOnEditCommit(
                 e -> {
-                    e.getTableView().getItems().get(e.getTablePosition().getRow()).setDESCRIPTION(e.getNewValue());
+                    e.getTableView().getItems().get(e.getTablePosition().getRow()).setDescription(e.getNewValue());
                     e.getTableView().getItems().get(e.getTablePosition().getRow()).save();
                 });
         
         LecturerBlockedTableviewDelete
-                .setCellFactory(new Callback<TableColumn<Resourcesblocked, Void>, TableCell<Resourcesblocked, Void>>() {
+                .setCellFactory(new Callback<TableColumn<ResourcesBlocked, Void>, TableCell<ResourcesBlocked, Void>>() {
                     @Override
-                    public TableCell<Resourcesblocked, Void> call(final TableColumn<Resourcesblocked, Void> param) {
-                        final TableCell<Resourcesblocked, Void> cell = new TableCell<Resourcesblocked, Void>() {
+                    public TableCell<ResourcesBlocked, Void> call(final TableColumn<ResourcesBlocked, Void> param) {
+                        final TableCell<ResourcesBlocked, Void> cell = new TableCell<ResourcesBlocked, Void>() {
 
                             private final Button btn = new Button(resources.getString("lecturer.LecturerBlockedTableview.Delete"));
                             
@@ -263,7 +262,7 @@ public class LecturerController implements Initializable {
                                     alert.setContentText(resources.getString("lecturer.LecturerBlockedTableview.DeleteMessage"));
                                     alert.showAndWait().ifPresent(rs -> {
                                         if (rs == ButtonType.OK) {
-                                            Resourcesblocked resourcesblocked = getTableView().getItems().get(getIndex());
+                                            ResourcesBlocked resourcesblocked = getTableView().getItems().get(getIndex());
                                             try {
                                                 resourcesblocked.delete();
                                             } catch (Exception e) {
@@ -293,11 +292,11 @@ public class LecturerController implements Initializable {
 
         LecturerBlockedAdd.setOnAction(event ->{
             try {                
-                Resourcesblocked resourcesblocked = new Resourcesblocked(0L);
-                resourcesblocked.setREFRESOURCEID(lecturer.getId());
-                resourcesblocked.setRESOURCENAME(Resourcenames.LECTURER.toString());
-                resourcesblocked.setSTARTDATE(LocalDate.now());
-                resourcesblocked.setENDDATE(LocalDate.now());
+                ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L);
+                resourcesblocked.setReResourceID(lecturer.getId());
+                resourcesblocked.setResourceName(ResourceNames.LECTURER);
+                resourcesblocked.setStartDate(LocalDate.now());
+                resourcesblocked.setEndDate(LocalDate.now());
                 resourcesblocked.save();
                 LecturerBlockedTableview.getItems().add(resourcesblocked);
             } catch (Exception e) {
@@ -325,8 +324,8 @@ public class LecturerController implements Initializable {
                 cmbLocation.setValue(this.lecturer.getLocation());
                 chkActive.setSelected(this.lecturer.getActive());
 
-                LecturerBlockedTableview.getItems().setAll(Resourcesblocked
-                        .getArrayListofResourcesblocked(this.lecturer.getId(), Resourcenames.LECTURER));
+                LecturerBlockedTableview.getItems().setAll(ResourcesBlocked
+                        .getArrayListofResourcesblocked(this.lecturer.getId(), ResourceNames.LECTURER));
                 editbox.setVisible(true);
             }
 
@@ -369,7 +368,7 @@ public class LecturerController implements Initializable {
             try {
                 stage.setScene(new Scene(loader.load()));
                 TimetableViewController controller = loader.getController();
-                // controller.initResourcesblockedTimetable(new Timetable(lecturer));
+                controller.initDataTimetable(new Timetable(lecturer));
                 stage.show();
             } catch (Exception e) {
                 e.printStackTrace();

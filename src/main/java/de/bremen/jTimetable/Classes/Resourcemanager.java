@@ -8,7 +8,6 @@ import java.time.MonthDay;
 import java.time.ZoneId;
 import java.util.*;
 
-import de.bremen.jTimetable.Classes.Resourcesblocked.Resourcenames;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -93,9 +92,9 @@ public class Resourcemanager {
                                 refCoursepassLecturerSubjectId, refRoomId, refLecturerId,
                                 refSubjectId, idxTimeslot);
                         //block lecturer and room
-                        Resourcesblocked.setResourcesBlocked(refLecturerId, Resourcenames.LECTURER.toString(), "LESSON", Timetableday, Timetableday, idxTimeslot, idxTimeslot);
-                        Resourcesblocked.setResourcesBlocked(refRoomId, Resourcenames.ROOM
-                                        .toString(), "LESSON", Timetableday, Timetableday, idxTimeslot, idxTimeslot);
+                        ResourcesBlocked.setResourcesBlocked(refLecturerId, ResourceNames.LECTURER, "LESSON", Timetableday, Timetableday, idxTimeslot, idxTimeslot);
+                        ResourcesBlocked.setResourcesBlocked(refRoomId, ResourceNames.ROOM
+                                        , "LESSON", Timetableday, Timetableday, idxTimeslot, idxTimeslot);
 
                         //add to the is hours count
                         this.arraycoursepasslecturersubject.get(

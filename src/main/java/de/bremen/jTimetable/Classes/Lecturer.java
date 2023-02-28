@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import de.bremen.jTimetable.Classes.Resourcesblocked.Resourcenames;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 public class Lecturer {
@@ -79,7 +78,7 @@ public class Lecturer {
         SQLValues.add(new SQLValueDate(date));
 
         ResultSet rs = sqlConnectionManager.select(
-                "Select * from T_RESOURCESBLOCKED where Resourcename = 'LECTURER' and refresourceid = ? and STARTDATE <= ? and ENDDATE >= ?;",
+                "Select * from T_RESOURCESBLOCKED where Resourcename = '"+ ResourceNames.LECTURER + "' and refresourceid = ? and STARTDATE <= ? and ENDDATE >= ?;",
                 SQLValues);
         while (rs.next()) {
             startdate = rs.getDate("startdate").toLocalDate();
@@ -189,8 +188,8 @@ public class Lecturer {
         return result;
     }
 
-    public ArrayList<Resourcesblocked> getArrayListofResourcesBlockeds() {
-        return Resourcesblocked.getArrayListofResourcesblocked(this.id, Resourcenames.LECTURER);
+    public ArrayList<ResourcesBlocked> getArrayListofResourcesBlockeds() {
+        return ResourcesBlocked.getArrayListofResourcesblocked(this.id, ResourceNames.LECTURER);
     }
 
     public Long getId() {
