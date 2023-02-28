@@ -7,22 +7,58 @@ import java.util.ArrayList;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
+/**
+ *
+ */
 public class Resourcesblocked {
-    
-    Long ID;
-    Long REFRESOURCEID;
-    String RESOURCENAME;
-    LocalDate STARTDATE;
-    LocalDate ENDDATE;
-    Integer STARTTIMESLOT;
-    Integer ENDTIMESLOT;
-    String DESCRIPTION;
 
+    /**
+     *
+     */
+    private Long ID;
+    /**
+     *
+     */
+    private Long REFRESOURCEID;
+    /**
+     *
+     */
+    private String RESOURCENAME;
+    /**
+     *
+     */
+    private LocalDate STARTDATE;
+    /**
+     *
+     */
+    private LocalDate ENDDATE;
+    /**
+     *
+     */
+    private Integer STARTTIMESLOT;
+    /**
+     *
+     */
+    private Integer ENDTIMESLOT;
+    /**
+     *
+     */
+    private String DESCRIPTION;
+
+    /**
+     * TODO Enum should be outside this class so that Typ of Description could be Enum Type --> less risk for
+     *  spelling mistakes
+     */
     public enum Resourcenames {
         ROOM,
         LECTURER
     }
 
+    /**
+     * Constructor that only sets the ID.
+     * @param resourcesblockedID
+     * @throws SQLException
+     */
     public Resourcesblocked(Long resourcesblockedID) throws SQLException {
         this.ID = resourcesblockedID;
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
@@ -98,6 +134,33 @@ public class Resourcesblocked {
         }
     }
 
+    /**
+     * Static method that creates a new resourcesBlocked-instance and setts all values at once.
+     * Afterwards it calls method save() to save the changes in the database.
+     * @param REFRESOURCEID
+     * @param RESOURCENAME
+     * @param DESCRIPTION
+     * @param STARTDATE
+     * @param ENDDATE
+     * @param STARTTIMESLOT
+     * @param ENDTIMESLOT
+     * @throws SQLException
+     */
+    public static void setResourcesBlocked(Long REFRESOURCEID, String RESOURCENAME, String DESCRIPTION,
+                                           LocalDate STARTDATE, LocalDate ENDDATE, int STARTTIMESLOT,
+                                           int ENDTIMESLOT) throws SQLException {
+        Resourcesblocked resourcesblocked = new Resourcesblocked(0L);
+        resourcesblocked.setREFRESOURCEID(REFRESOURCEID);
+        resourcesblocked.setRESOURCENAME(RESOURCENAME);
+        resourcesblocked.setDESCRIPTION(DESCRIPTION);
+        resourcesblocked.setSTARTDATE(STARTDATE);
+        resourcesblocked.setENDDATE(ENDDATE);
+        resourcesblocked.setSTARTTIMESLOT(STARTTIMESLOT);
+        resourcesblocked.setENDTIMESLOT(ENDTIMESLOT);
+
+        resourcesblocked.save();
+    }
+
     public static ArrayList<Resourcesblocked> getArrayListofResourcesblocked(Long resourceID,
             Resourcenames resourcename) {
         return getArrayListofResourcesblocked(resourceID, resourcename, false, true);
@@ -124,7 +187,7 @@ public class Resourcesblocked {
             }
 
             SQLString = SQLString + ";";
-            
+
             ResultSet rs = sqlConnectionManager.select(SQLString, SQLValues);
 
             while (rs.next()) {
@@ -136,21 +199,6 @@ public class Resourcesblocked {
         }
 
         return returnListe;
-    }
-
-    public static void setResourcesBlocked(Long REFRESOURCEID, String RESOURCENAME, String DESCRIPTION,
-            LocalDate STARTDATE, LocalDate ENDDATE, int STARTTIMESLOT,
-            int ENDTIMESLOT) throws SQLException {
-        Resourcesblocked resourcesblocked = new Resourcesblocked(0L);
-        resourcesblocked.setREFRESOURCEID(REFRESOURCEID);
-        resourcesblocked.setRESOURCENAME(RESOURCENAME);
-        resourcesblocked.setDESCRIPTION(DESCRIPTION);
-        resourcesblocked.setSTARTDATE(STARTDATE);
-        resourcesblocked.setENDDATE(ENDDATE);
-        resourcesblocked.setSTARTTIMESLOT(STARTTIMESLOT);
-        resourcesblocked.setENDTIMESLOT(ENDTIMESLOT);
-
-        resourcesblocked.save();
     }
 
     public void get(Long resourceID, Resourcenames resourcename, LocalDate startDate, LocalDate endDate,

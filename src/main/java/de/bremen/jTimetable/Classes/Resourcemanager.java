@@ -20,6 +20,7 @@ public class Resourcemanager {
     int tmppositionInCoursepassLecturerSubjectStack;
     int maxCoursepassLecturerSubjectStack;
 
+    //TODO generateInitialTimetable doesn't check correctly whether Lecturer is free
     public void generateInitialTimetable(Coursepass coursepass) throws SQLException {
         LocalDate startdate = coursepass.start;
         LocalDate enddate = coursepass.end;
@@ -33,8 +34,8 @@ public class Resourcemanager {
                 new ArrayList<>(Collections.singleton(new SQLValueLong(coursepass.id)));
         ResultSet rs = sqlConnectionManager.select("Select * from T_TIMETABLES where REFCOURSEPASS = ?;",
                 SQLValues);
-        //If the ResultSet is empty, the method next will return false, if it returns true (elements
-        // for the given id where found it should not generate a new timetable
+        //If the ResultSet is empty, the method next will return false, if it returns true
+        // (elements for the given id where found, it should not generate a new timetable)
         if (!rs.next()) {
 //            coursepass.getCoursepassLecturerSubjects(); //should be obsolote now
             // order subjects by should hours descending, count total hours, build stack of hours
@@ -156,6 +157,7 @@ public class Resourcemanager {
             throws SQLException {
         //runs through the stack of CoursepassLecturerSubjects until it does or does not find a matching Object
         // also checks if there is more hours that can be planed (shouldhours < ishours + planedhours)
+        //TODO why do we check this again?
 
         Long tmpshouldhours = this.arraycoursepasslecturersubject.get(
                 this.positionInCoursepassLecturerSubjectStack).shouldHours;
@@ -164,8 +166,7 @@ public class Resourcemanager {
         Long tmpishours = this.arraycoursepasslecturersubject.get(
                 this.positionInCoursepassLecturerSubjectStack).isHours;
 
-        if (this.arraycoursepasslecturersubject.get(
-                positionInCoursepassLecturerSubjectStack).lecturer.checkLecturerAvailability(this.arraycoursepasslecturersubject.get(
+        if (Lecturer.checkLecturerAvailability(this.arraycoursepasslecturersubject.get(
                         positionInCoursepassLecturerSubjectStack).lecturer.id,
                 arrayTimetabledays.get(idxDay).date, idxTimeslot) &&
                 tmpshouldhours > (tmpishours + tmpplanedhours)) {
@@ -230,8 +231,8 @@ public class Resourcemanager {
 
             if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY &&
                     startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY &&
-                this.isHoliday(LocalDateTime.ofInstant(startCal.toInstant(), defaultZoneId)
-                        .toLocalDate()) == false) {
+                    !this.isHoliday(LocalDateTime.ofInstant(startCal.toInstant(), defaultZoneId)
+                            .toLocalDate())) {
 
                 arrayTimetabledays.add(new TimetableDay(
                         LocalDateTime.ofInstant(startCal.toInstant(), defaultZoneId)
@@ -268,6 +269,7 @@ public class Resourcemanager {
         holidays.put(getEasterDate(year).plus(39, DAYS), "Himmelfahrt");
         holidays.put(getEasterDate(year).plus(49, DAYS), "Pfingsten");
         holidays.put(MonthDay.parse("--05-01").atYear(year), "Tag der Arbeit");
+        //TODO why august?
         holidays.put(MonthDay.parse("--08-03").atYear(year), "Tag der Einheit");
         holidays.put(MonthDay.parse("--08-31").atYear(year), "Reformationstag");
         holidays.put(MonthDay.parse("--12-24").atYear(year), "Heiligabend");

@@ -42,8 +42,8 @@ public class Lecturer {
         }
 
     }
-    
-    public void save() throws SQLException{
+
+    public void save() throws SQLException {
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
@@ -54,13 +54,13 @@ public class Lecturer {
 
         if (this.id == 0) {
             // its a new object, we have to insert it
-            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Lecturers` (`firstname`, `lastname`, `reflocationID`, `ACTIVE`) values (?, ?, ?, ?)",SQLValues);
+            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Lecturers` (`firstname`, `lastname`, `reflocationID`, `ACTIVE`) values (?, ?, ?, ?)", SQLValues);
             rs.first();
             this.id = rs.getLong(1);
-        }else{
+        } else {
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            sqlConnectionManager.execute("update `T_Lecturers` set `firstname` = ?, `lastname` = ?, `reflocationID` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
+            sqlConnectionManager.execute("update `T_Lecturers` set `firstname` = ?, `lastname` = ?, `reflocationID` = ?, `ACTIVE` = ? where `id` = ?;", SQLValues);
         }
     }
 
@@ -79,7 +79,7 @@ public class Lecturer {
         SQLValues.add(new SQLValueDate(date));
 
         ResultSet rs = sqlConnectionManager.select(
-                "Select * from T_RESOURCESBLOCKED where Resourcename = 'Lecturer' and refresourceid = ? and STARTDATE <= ? and ENDDATE >= ?;",
+                "Select * from T_RESOURCESBLOCKED where Resourcename = 'LECTURER' and refresourceid = ? and STARTDATE <= ? and ENDDATE >= ?;",
                 SQLValues);
         while (rs.next()) {
             startdate = rs.getDate("startdate").toLocalDate();
@@ -116,13 +116,14 @@ public class Lecturer {
         // there is no blocking
         return true;
     }
-    public static ArrayList<Lecturer> getAllLecturer(Boolean activeStatus) throws SQLException{
+
+    public static ArrayList<Lecturer> getAllLecturer(Boolean activeStatus) throws SQLException {
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
         SQLValues.add(new SQLValueBoolean(activeStatus));
-        ResultSet rs = sqlConnectionManager.select("Select * from T_Lecturers where active = ?",SQLValues);
+        ResultSet rs = sqlConnectionManager.select("Select * from T_Lecturers where active = ?", SQLValues);
         ArrayList<Lecturer> returnList = new ArrayList<Lecturer>();
-        while( rs.next() ){
+        while (rs.next()) {
             returnList.add(new Lecturer(rs.getLong("id")));
         }
         return returnList;
@@ -187,7 +188,7 @@ public class Lecturer {
 
         return result;
     }
-    
+
     public ArrayList<Resourcesblocked> getArrayListofResourcesBlockeds() {
         return Resourcesblocked.getArrayListofResourcesblocked(this.id, Resourcenames.LECTURER);
     }
@@ -195,7 +196,8 @@ public class Lecturer {
     public Long getId() {
         return id;
     }
-    public String getLecturerFullName(){
+
+    public String getLecturerFullName() {
         return this.lastname + ", " + this.firstname;
     }
 
@@ -234,5 +236,8 @@ public class Lecturer {
     public void setActive(Boolean active) {
         this.active = active;
     }
-    public String getLocationCaption(){        return location.getCaption();    }
+
+    public String getLocationCaption() {
+        return location.getCaption();
+    }
 }
