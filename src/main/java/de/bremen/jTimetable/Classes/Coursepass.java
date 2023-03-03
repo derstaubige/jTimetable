@@ -90,11 +90,15 @@ public class Coursepass {
         //Generate a Timetable if non exists yet
         Resourcemanager resourcemanager = new Resourcemanager();
         //resourcemanager.generateInitialTimetable(this);
+
+
         //Create new SQLValues that are used for the following select statement
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
         SQLValues.add(new SQLValueLong(this.id));
         //Create new Connection to database
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+
+
         ResultSet rs = sqlConnectionManager.select("Select * From T_TIMETABLES where REFCOURSEPASS=? ORDER BY TIMETABLEDAY, TIMESLOT ASC;", SQLValues);
         ArrayList<TimetableDay> result = new ArrayList<TimetableDay>();
 

@@ -170,12 +170,11 @@ public class TimetableViewController implements Initializable {
                                 //check if the target was a freetime, if not we have to delete the existing cls
                                 if (target.getCoursepassLecturerSubject().getSubject().getId() != 0) {
                                     //no freetime, we have to delete the resourceblocked and the entry in the timetable
-                                    //TODO ENUM ResourceName
-                                    Timetable.deleteResourceblocked(target.getCoursepassLecturerSubject().getLecturerID(),
-                                            "Lecturer", target.getDay(), target.getDay(), target.getTimeslot(),
+                                    Timetable.deleteResourceBlocked(target.getCoursepassLecturerSubject().getLecturerID(),
+                                            ResourceNames.LECTURER, target.getDay(), target.getDay(), target.getTimeslot(),
                                             target.getTimeslot());
-                                    Timetable.deleteResourceblocked(target.getCoursepassLecturerSubject().getRoom().getId(),
-                                            "Room", target.getDay(), target.getDay(), target.getTimeslot(),
+                                    Timetable.deleteResourceBlocked(target.getCoursepassLecturerSubject().getRoom().getId(),
+                                            ResourceNames.ROOM, target.getDay(), target.getDay(), target.getTimeslot(),
                                             target.getTimeslot());
                                 }
                                 //delete the entry in the timetable table

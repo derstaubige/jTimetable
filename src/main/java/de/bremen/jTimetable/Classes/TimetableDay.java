@@ -3,16 +3,37 @@ package de.bremen.jTimetable.Classes;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ *
+ */
 public class TimetableDay {
-    LocalDate date;
-    public int timeslots;
-    public ArrayList<TimetableHour> arrayTimetableDay;
+    /**
+     *
+     */
+    private LocalDate date;
+    /**
+     *
+     */
+    private int timeslots;
+    /**
+     *
+     */
+    private ArrayList<TimetableHour> arrayTimetableDay;
 
+    /**
+     * TODO problematic use of this constructor because we
+     * @param date
+     */
     public TimetableDay(LocalDate date){
         // a default day has 3 timeslots
         this(date, 3);
     }
 
+    /**
+     *
+     * @param date
+     * @param timeslots
+     */
     public TimetableDay(LocalDate date, int timeslots){
         this.date = date;
         this.timeslots = timeslots;

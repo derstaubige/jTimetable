@@ -132,9 +132,12 @@ public class Lecturer {
         //Create new SQLValues that are used for the following select statement
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
         SQLValues.add(new SQLValueLong(this.getId()));
+        //TODO why just today?
         SQLValues.add(new SQLValueDate(LocalDate.now()));
         //Create new Connection to database
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+
+
         ResultSet rs = sqlConnectionManager.select(
                 "Select * From T_TIMETABLES where REFLECTURER =? and TIMETABLEDAY >= ? ORDER BY TIMETABLEDAY, TIMESLOT ASC;",
                 SQLValues);

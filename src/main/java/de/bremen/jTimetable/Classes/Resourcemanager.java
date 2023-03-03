@@ -74,7 +74,7 @@ public class Resourcemanager {
 
                     if (EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot)) {
                         //we found a matching coursepasslecturersubject object
-                        LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).date;
+                        LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).getDate();
                         Long refcoursepassID = this.arraycoursepasslecturersubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).coursepass.id;
                         Long refCoursepassLecturerSubjectId =
@@ -112,7 +112,7 @@ public class Resourcemanager {
                                 this.positionInCoursepassLecturerSubjectStack;
                     } else {
                         //we didnt find a matching coursepasslecturersubject, freetime?!
-                        LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).date;
+                        LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).getDate();
                         Long refcoursepassID = this.arraycoursepasslecturersubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).coursepass.id;
                         Long refCoursepassLecturerSubjectId =  0L;
@@ -167,7 +167,7 @@ public class Resourcemanager {
 
         if (Lecturer.checkLecturerAvailability(this.arraycoursepasslecturersubject.get(
                         positionInCoursepassLecturerSubjectStack).lecturer.id,
-                arrayTimetabledays.get(idxDay).date, idxTimeslot) &&
+                arrayTimetabledays.get(idxDay).getDate(), idxTimeslot) &&
                 tmpshouldhours > (tmpishours + tmpplanedhours)) {
             //Lecturer is Available and there are hours left to plan
             return true;
