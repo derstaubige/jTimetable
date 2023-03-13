@@ -128,69 +128,6 @@ public class Lecturer {
         return returnList;
     }
 
-    public ArrayList<TimetableDay> getTimetable() throws SQLException {
-        //Create new SQLValues that are used for the following select statement
-        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
-        SQLValues.add(new SQLValueLong(this.getId()));
-        //TODO why just today?
-        SQLValues.add(new SQLValueDate(LocalDate.now()));
-        //Create new Connection to database
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-
-
-        ResultSet rs = sqlConnectionManager.select(
-                "Select * From T_TIMETABLES where REFLECTURER =? and TIMETABLEDAY >= ? ORDER BY TIMETABLEDAY, TIMESLOT ASC;",
-                SQLValues);
-        ArrayList<TimetableDay> result = new ArrayList<TimetableDay>();
-        Long maxTimeslot = 0L; //keep track of the maximum of timeslots
-        while (rs.next()) {
-            //Check if the day of this recordset is allready an timetableday object. if so select the existing object
-            TimetableDay tmpDayObject = null;
-            Long tmpTimeslot = rs.getLong("Timeslot");
-            if (tmpTimeslot > maxTimeslot) {
-                maxTimeslot = tmpTimeslot;
-            }
-            LocalDate tmpDate = rs.getDate("TIMETABLEDAY").toLocalDate();
-            for (TimetableDay day : result) {
-                if (day.getDate().isEqual(tmpDate)) {
-                    tmpDayObject = day;
-                    break;
-                }
-            }
-            // if not create a new object
-            if (tmpDayObject == null) {
-                tmpDayObject = new TimetableDay(rs.getDate("TIMETABLEDAY").toLocalDate(), maxTimeslot.intValue());
-                result.add(tmpDayObject);
-            }
-
-            //ToDo: Check if timeslot is already filled?
-
-            //Check if we have to add to the max timeslots per day
-            //ToDo: i guess we will crash here if we dont fill up our array of empty TimetableHours, aka index out of bounds
-            if (tmpDayObject.getTimeslots() < tmpTimeslot) {
-                tmpDayObject.setTimeslots(tmpTimeslot.intValue());
-            }
-
-            //add this timeslot/TimetableHour to our tmpDayObject
-            tmpDayObject.getArrayTimetableDay().add(new TimetableHour(tmpTimeslot.intValue(),
-                    new CoursepassLecturerSubject(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"))));
-
-        }
-
-        //if we havent add CoursepassLecturerSubjects for this Coursepass yet, we should return an empty array to display
-        if (result.size() == 0) {
-            TimetableDay tmpTimetableDay = new TimetableDay(LocalDate.now());
-            ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
-            tmpArrayList.add(new TimetableHour(0, new CoursepassLecturerSubject(0L)));
-            tmpArrayList.add(new TimetableHour(1, new CoursepassLecturerSubject(0L)));
-            tmpArrayList.add(new TimetableHour(2, new CoursepassLecturerSubject(0L)));
-            tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
-            result.add(tmpTimetableDay);
-        }
-
-        return result;
-    }
-
     public ArrayList<ResourcesBlocked> getArrayListofResourcesBlockeds() {
         return ResourcesBlocked.getArrayListofResourcesblocked(this.id, ResourceNames.LECTURER);
     }

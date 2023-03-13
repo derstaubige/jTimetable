@@ -3,6 +3,7 @@ package de.bremen.jTimetable.Classes;
 import javafx.stage.FileChooser;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class Timetable {
      */
     private Coursepass coursepass;
     /**
-     *
+     * Lecturer for which this timetable is for.
      */
     private Lecturer lecturer;
 
@@ -34,30 +35,160 @@ public class Timetable {
      */
     public Timetable(Coursepass coursePass) {
         this.coursepass = coursePass;
-        this.update();
-    }
-
-    public Timetable(Lecturer lecturer) {
-        this.lecturer = lecturer;
         try {
-            this.arrayTimetableDays = lecturer.getTimetable();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void update() {
-        try {
-            this.arrayTimetableDays = this.coursepass.getTimetable();
-        } catch (Exception e) {
-            //ToDO: Errorhandling
+            getTimetable(coursePass);
+        } catch (SQLException e) {
+            System.err.println("Timetable for lecturer couldn't load correctly.");
             e.printStackTrace();
         }
     }
 
     /**
+     * Constructor.
+     *
+     * @param lecturer the given lecturer is set for the new instance and the corresponding timetable is
+     *                 loaded into the instance
+     */
+    public Timetable(Lecturer lecturer) {
+        this.lecturer = lecturer;
+        try {
+            getTimetable(lecturer);
+        } catch (SQLException e) {
+            System.err.println("Timetable for lecturer couldn't load correctly.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Runs database query to get resultSet with all timetable entries for given lecturer. The resultSet will
+     * be loaded into this object with method loadTimetableFromResultSet().
+     *
+     * @param lecturer for whom the timetable is loaded
+     */
+    private void getTimetable(Lecturer lecturer) throws SQLException {
+        //Create new SQLValues that are used for the following select statement
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
+        SQLValues.add(new SQLValueLong(lecturer.getId()));
+        SQLValues.add(new SQLValueDate(LocalDate.now()));
+        //Create new Connection to database
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+
+        ResultSet rs = sqlConnectionManager.select(
+                "Select * From T_TIMETABLES where REFLECTURER =? and TIMETABLEDAY >= ? " +
+                        "ORDER BY TIMETABLEDAY, TIMESLOT ASC;",
+                SQLValues);
+
+        loadTimetableFromResultSet(rs);
+
+        //if we haven't added CoursePassLecturerSubjects for this CoursePass yet,
+        // we should return an empty array to display
+        if (this.arrayTimetableDays.size() == 0) {
+            TimetableDay tmpTimetableDay = new TimetableDay(LocalDate.now());
+            ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
+            tmpArrayList.add(new TimetableHour(0, new CoursepassLecturerSubject(0L)));
+            tmpArrayList.add(new TimetableHour(1, new CoursepassLecturerSubject(0L)));
+            tmpArrayList.add(new TimetableHour(2, new CoursepassLecturerSubject(0L)));
+            tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
+            this.arrayTimetableDays.add(tmpTimetableDay);
+        }
+    }
+
+    /**
+     * Runs database query to get resultSet with all timetable entries for given coursePass. The resultSet will
+     * be loaded into this object with method loadTimetableFromResultSet().
+     *
+     * @param coursePass for which the timetable is loaded
+     */
+    private void getTimetable(Coursepass coursePass) throws SQLException {
+        //Create new SQLValues that are used for the following select statement
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
+        SQLValues.add(new SQLValueLong(coursePass.getId()));
+        //Create new Connection to database
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+
+
+        ResultSet rs = sqlConnectionManager.select("Select * From T_TIMETABLES where REFCOURSEPASS=? " +
+                "ORDER BY TIMETABLEDAY, TIMESLOT ASC;", SQLValues);
+        ArrayList<TimetableDay> result = new ArrayList<>();
+
+        loadTimetableFromResultSet(rs);
+
+        //if we haven't added CoursePassLecturerSubjects for this CoursePass yet,
+        // we should return an empty array to display
+        if (this.arrayTimetableDays.size() == 0) {
+            Resourcemanager resourcemanager = new Resourcemanager();
+            result = resourcemanager.getWorkingDaysBetweenTwoDates(coursePass.getStart(), coursePass.getEnd());
+            for (TimetableDay tmpTimetableDay : result) {
+
+                ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
+                tmpArrayList.add(new TimetableHour(0, new CoursepassLecturerSubject(0L)));
+                tmpArrayList.add(new TimetableHour(1, new CoursepassLecturerSubject(0L)));
+                tmpArrayList.add(new TimetableHour(2, new CoursepassLecturerSubject(0L)));
+                tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
+            }
+
+        }
+    }
+
+    /**
+     * Loads all already planned hours from a resultSet into this object.
+     *
+     * @param resultSet contains timetable entries from a database
+     */
+    private void loadTimetableFromResultSet(ResultSet resultSet) throws SQLException {
+        this.arrayTimetableDays = new ArrayList<>();
+        int timeslotCount = 0;
+
+        while (resultSet.next()) {
+
+            TimetableDay tmpDayObject = null;
+            long tmpTimeslot = resultSet.getLong("Timeslot");
+            //If current timeslot is bigger than the timeslotCount current is the new maxTimeslot
+            if (tmpTimeslot > timeslotCount) {
+                timeslotCount = (int) tmpTimeslot;
+            }
+            LocalDate tmpDate = resultSet.getDate("TIMETABLEDAY").toLocalDate();
+
+            //Check if timetableDay object exists
+            for (TimetableDay day : arrayTimetableDays) {
+                //If exists select correct timetableDay, to add new Hours to it
+                if (day.getDate().isEqual(tmpDate)) {
+                    tmpDayObject = day;
+                    //TODO another timeslot is added
+                    // necessary?
+                    timeslotCount++;
+                    break;
+                }
+            }
+
+            //If day doesn't exist, create a new object
+            if (tmpDayObject == null) {
+                tmpDayObject = new TimetableDay(tmpDate, timeslotCount);
+                //reset timeslotCount for new day
+                timeslotCount = 0;
+                this.arrayTimetableDays.add(tmpDayObject);
+            }
+
+            //ToDo: Check if timeslot is already filled?
+
+            //Check if we have to add to the max timeslots per day
+            //ToDo: i guess we will crash here if we don't fill up our array of empty TimetableHours,
+            // aka index out of bounds
+            if (tmpDayObject.getTimeslots() <= tmpTimeslot) {
+                tmpDayObject.setTimeslots((int) tmpTimeslot);
+            }
+            //System.out.println(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"));
+            //add this timeslot/TimetableHour to our tmpDayObject
+            tmpDayObject.getArrayTimetableDay().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
+                    new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"))));
+
+        }
+    }
+
+    /**
      * Getter for this.arrayTimetableDays
-     * @return
+     *
+     * @return this.arrayTimetableDays
      */
     public ArrayList<TimetableDay> getArrayTimetableDays() {
         return arrayTimetableDays;
@@ -109,7 +240,7 @@ public class Timetable {
                     SQLValues);
         } catch (SQLException e) {
             System.err.println("SQLException was thrown in addSingleHour, therefor adding the lesson to this timeslot: "
-            + timetableHour.getTimeslot() + " was not successful.");
+                    + timetableHour.getTimeslot() + " was not successful.");
             throw new RuntimeException(e);
         }
 

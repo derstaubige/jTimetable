@@ -77,9 +77,11 @@ public class TimetableDay {
     }
 
     public void setTimeslots(int timeslots) {
+        //All timeslots are filled with empty objects
         while(this.arrayTimetableDay.size() <= timeslots) {
             try {
-                this.arrayTimetableDay.add(new TimetableHour(this.arrayTimetableDay.size(), new CoursepassLecturerSubject(0L)));
+                this.arrayTimetableDay.add
+                        (new TimetableHour(this.arrayTimetableDay.size(), new CoursepassLecturerSubject(0L)));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -94,18 +96,24 @@ public class TimetableDay {
     public void setArrayTimetableDay(ArrayList<TimetableHour> arrayTimetableDay) {
         this.arrayTimetableDay = arrayTimetableDay;
     }
-    public TimetableHour getTimetableHourfromarrayTimetableDay(int timeslot){
+    public TimetableHour getTimetableHourFromArrayTimetableDay(int timeslot){
         return arrayTimetableDay.get(timeslot);
     }
 
-    public void removeTimetableHourfromarrayTimetableDay(int timeslot){
+    public void removeTimetableHourFromArrayTimetableDay(int timeslot){
         try{
             arrayTimetableDay.set(timeslot, new TimetableHour(timeslot, new CoursepassLecturerSubject(0L)));
         }catch(Exception e){
             e.printStackTrace();
         }
     }
-    public void setTimetableHourfromarrayTimetableDay(int timeslot, TimetableHour timetableHour){
+
+    /**
+     *
+     * @param timeslot
+     * @param timetableHour
+     */
+    public void setTimetableHourFromArrayTimetableDay(int timeslot, TimetableHour timetableHour){
         arrayTimetableDay.set(timeslot, timetableHour);
         timetableHour.setTimeslot(timeslot);
     }
