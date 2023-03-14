@@ -378,13 +378,6 @@ public class LecturerController implements Initializable {
     }
 
     public ArrayList<Lecturer> getLecturer(Boolean activeState) {
-        ArrayList<Lecturer> activeLecturer = new ArrayList<Lecturer>();
-        try {
-            activeLecturer = Lecturer.getAllLecturer(activeState);
-        } catch (SQLException e) {
-            //TODo: better error handling
-            e.printStackTrace();
-        }
-        return activeLecturer;
+        return Lecturer.getAllLecturer(activeState);
     }
 }

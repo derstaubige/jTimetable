@@ -21,7 +21,7 @@ public class Timetable {
      * CourPass for which this timetable is for. This timetable fulfills the requirements the subjects and resources
      * in this coursePass have.
      */
-    private Coursepass coursepass;
+    private CoursePass coursepass;
     /**
      * Lecturer for which this timetable is for.
      */
@@ -33,7 +33,7 @@ public class Timetable {
      * @param coursePass the given coursePass is set for the new instance and the corresponding timetable is
      *                   loaded into the instance
      */
-    public Timetable(Coursepass coursePass) {
+    public Timetable(CoursePass coursePass) {
         this.coursepass = coursePass;
         try {
             getTimetable(coursePass);
@@ -99,7 +99,7 @@ public class Timetable {
      *
      * @param coursePass for which the timetable is loaded
      */
-    private void getTimetable(Coursepass coursePass) throws SQLException {
+    private void getTimetable(CoursePass coursePass) throws SQLException {
         //Create new SQLValues that are used for the following select statement
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
         SQLValues.add(new SQLValueLong(coursePass.getId()));
@@ -186,15 +186,6 @@ public class Timetable {
     }
 
     /**
-     * Getter for this.arrayTimetableDays
-     *
-     * @return this.arrayTimetableDays
-     */
-    public ArrayList<TimetableDay> getArrayTimetableDays() {
-        return arrayTimetableDays;
-    }
-
-    /**
      * TODO file export
      */
     public void exportTimetableToFile() {
@@ -269,7 +260,8 @@ public class Timetable {
             SQLValues.add(new SQLValueInt(startTimeslot));
             SQLValues.add(new SQLValueInt(endTimeslot));
             sqlConnectionManager.execute("DELETE FROM T_RESOURCESBLOCKED where REFRESOURCEID = ? and " +
-                    "RESOURCENAME = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT = ?", SQLValues);
+                            "RESOURCENAME = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT = ?",
+                    SQLValues);
         } catch (SQLException e) {
             System.err.println("SQLException was thrown in deleteResourceBlocked, therefor deleting " +
                     "timetable entries has side effects because resources are still blocked.");
@@ -285,9 +277,11 @@ public class Timetable {
         // Loop through all Days and Hours and Delete ResourceBlocked and Timetable
         for (TimetableDay arrayTimetableDay : arrayTimetableDays) {
             for (TimetableHour timetableHour : arrayTimetableDay.getArrayTimetableDay()) {
-                deleteResourceBlocked(timetableHour.coursepassLecturerSubject.getLecturerID(), ResourceNames.LECTURER, arrayTimetableDay.getDate(),
+                deleteResourceBlocked(timetableHour.coursepassLecturerSubject.getLecturerID(),
+                        ResourceNames.LECTURER, arrayTimetableDay.getDate(),
                         arrayTimetableDay.getDate(), timetableHour.getTimeslot(), timetableHour.getTimeslot());
-                deleteResourceBlocked(timetableHour.coursepassLecturerSubject.getLecturerID(), ResourceNames.ROOM, arrayTimetableDay.getDate(),
+                deleteResourceBlocked(timetableHour.coursepassLecturerSubject.getLecturerID(),
+                        ResourceNames.ROOM, arrayTimetableDay.getDate(),
                         arrayTimetableDay.getDate(), timetableHour.getTimeslot(), timetableHour.getTimeslot());
             }
         }
@@ -335,6 +329,15 @@ public class Timetable {
                     " therefor deleting timetable entries didn't work.");
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Getter for this.arrayTimetableDays
+     *
+     * @return this.arrayTimetableDays
+     */
+    public ArrayList<TimetableDay> getArrayTimetableDays() {
+        return arrayTimetableDays;
     }
 
 }

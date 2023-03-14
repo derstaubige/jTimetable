@@ -14,10 +14,8 @@ public class Location {
     public String caption;
     public Boolean active;
 
-    public Location(Long id) throws SQLException {
+    public Location(Long id) {
         this.id = id;
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
         if (this.id == 0){
             //load dummy object
@@ -25,13 +23,20 @@ public class Location {
             this.active = Boolean.TRUE;
         }else{
             //load object from db
-            SQLValues.add(new SQLValueLong(id));
+            try {
+                SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+                ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
+                SQLValues.add(new SQLValueLong(id));
 
-            ResultSet rs = sqlConnectionManager.select("Select * from T_Locations where id = ?;",SQLValues);
-            rs.first();
-            this.id = rs.getLong("id");
-            this.caption = rs.getString("caption");
-            this.active = rs.getBoolean("active");
+                ResultSet rs = sqlConnectionManager.select("Select * from T_Locations where id = ?;", SQLValues);
+                rs.first();
+                this.id = rs.getLong("id");
+                this.caption = rs.getString("caption");
+                this.active = rs.getBoolean("active");
+            } catch (SQLException e) {
+                System.err.println("Location with id: " + this.id + " could not be loaded.");
+                e.printStackTrace();
+            }
 
         }
 

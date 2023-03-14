@@ -9,7 +9,7 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerSubject> {
     Long id;
-    Coursepass coursepass;
+    CoursePass coursepass;
     Lecturer lecturer;
     Subject subject;
     Room room;
@@ -76,9 +76,9 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             }
 
             //update source room entry if the new room is not 0
-            if(target.coursepass.room.getId() != 0){
-                SQLValues.add(new SQLValueLong(target.coursepass.room.getId()));
-                SQLValues.add(new SQLValueLong(source.coursepass.room.getId()));
+            if(target.coursepass.getRoom().getId() != 0){
+                SQLValues.add(new SQLValueLong(target.coursepass.getRoom().getId()));
+                SQLValues.add(new SQLValueLong(source.coursepass.getRoom().getId()));
                 SQLValues.add(new SQLValueDate(sourceDay));
                 SQLValues.add(new SQLValueDate(sourceDay));
                 SQLValues.add(new SQLValueInt(sourceTimeslot));
@@ -100,10 +100,10 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             }
 
             //update target room entry if source room is not 0
-            if(source.coursepass.room.getId() != 0){
+            if(source.coursepass.getRoom().getId() != 0){
 
-                SQLValues.add(new SQLValueLong(source.coursepass.room.getId()));
-                SQLValues.add(new SQLValueLong(target.coursepass.room.getId()));
+                SQLValues.add(new SQLValueLong(source.coursepass.getRoom().getId()));
+                SQLValues.add(new SQLValueLong(target.coursepass.getRoom().getId()));
                 SQLValues.add(new SQLValueDate(targetDay));
                 SQLValues.add(new SQLValueDate(targetDay));
                 SQLValues.add(new SQLValueInt(targetTimeslot));
@@ -116,7 +116,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             //update source if the target is not 0 / freetime
 //            if(target.id != 0){
                 SQLValues.add(new SQLValueLong(target.id));
-                SQLValues.add(new SQLValueLong(target.coursepass.room.getId()));
+                SQLValues.add(new SQLValueLong(target.coursepass.getRoom().getId()));
                 SQLValues.add(new SQLValueLong(target.lecturer.getId()));
                 SQLValues.add(new SQLValueLong( source.subject.getId() ));
                 SQLValues.add(new SQLValueLong(source.coursepass.getId() != 0 ? source.coursepass.getId() : target.coursepass.getId()));
@@ -129,7 +129,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             //update target if the source is not 0 / freetime
 //            if(source.id != 0){
                 SQLValues.add(new SQLValueLong(source.id));
-                SQLValues.add(new SQLValueLong(source.coursepass.room.getId()));
+                SQLValues.add(new SQLValueLong(source.coursepass.getRoom().getId()));
                 SQLValues.add(new SQLValueLong(source.lecturer.getId()));
                 SQLValues.add(new SQLValueLong(source.subject.getId()));
                 SQLValues.add(new SQLValueLong( target.coursepass.getId() != 0 ? target.coursepass.getId() : source.coursepass.getId()));
@@ -152,7 +152,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
         if (this.id == 0){
             //load dummy object
-            this.coursepass = new Coursepass(0L);
+            this.coursepass = new CoursePass(0L);
             this.lecturer = new Lecturer(0L);
             this.subject = new Subject(0L);
             this.room = new Room(0L);
@@ -167,7 +167,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             ResultSet rs = sqlConnectionManager.select("Select * from T_CoursepassesLecturerSubject where id = ?;",SQLValues);
             rs.first();
             this.id = rs.getLong("id");
-            this.coursepass = new Coursepass(rs.getLong("refCoursePassID"));
+            this.coursepass = new CoursePass(rs.getLong("refCoursePassID"));
             this.lecturer = new Lecturer(rs.getLong("refLecturerID"));
             this.subject = new Subject(rs.getLong("refSubjectID"));
             this.room = new Room(rs.getLong("refRoomID"));
@@ -189,7 +189,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             LocalDate today = LocalDate.now();
             //query the planed hours
             SQLValues.clear();
-            SQLValues.add(new SQLValueLong(this.coursepass.id));
+            SQLValues.add(new SQLValueLong(this.coursepass.getId()));
             SQLValues.add(new SQLValueLong(this.subject.id));
             SQLValues.add(new SQLValueDate(today));
             rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday > ?;",SQLValues);
@@ -208,7 +208,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             //query the is hours
             SQLValues.clear();
             LocalDate today = LocalDate.now();
-            SQLValues.add(new SQLValueLong(this.coursepass.id));
+            SQLValues.add(new SQLValueLong(this.coursepass.getId()));
             SQLValues.add(new SQLValueLong(this.subject.id));
             SQLValues.add(new SQLValueDate(today));
             rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday < ?;",SQLValues);
@@ -226,7 +226,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             //query the is hours
             SQLValues.clear();
             LocalDate today = LocalDate.now();
-            SQLValues.add(new SQLValueLong(this.coursepass.id));
+            SQLValues.add(new SQLValueLong(this.coursepass.getId()));
             SQLValues.add(new SQLValueLong(this.subject.id));
             SQLValues.add(new SQLValueDate(today));
             rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday < ?;",SQLValues);
@@ -284,8 +284,8 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
-        SQLValues.add(new SQLValueLong(this.coursepass.id));
-        SQLValues.add(new SQLValueLong(this.lecturer.id));
+        SQLValues.add(new SQLValueLong(this.coursepass.getId()));
+        SQLValues.add(new SQLValueLong(this.lecturer.getId()));
         SQLValues.add(new SQLValueLong(this.subject.id));
         SQLValues.add(new SQLValueLong(this.shouldHours));
         SQLValues.add(new SQLValueBoolean(this.active));
@@ -347,11 +347,11 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         return id;
     }
 
-    public Coursepass getCoursepass() {
+    public CoursePass getCoursepass() {
         return coursepass;
     }
 
-    public void setCoursepass(Coursepass coursepass) {
+    public void setCoursepass(CoursePass coursepass) {
         this.coursepass = coursepass;
     }
 

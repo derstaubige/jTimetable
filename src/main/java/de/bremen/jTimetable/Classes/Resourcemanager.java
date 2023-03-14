@@ -20,9 +20,9 @@ public class Resourcemanager {
     int maxCoursepassLecturerSubjectStack;
 
     //TODO generateInitialTimetable doesn't check correctly whether Lecturer is free
-    public void generateInitialTimetable(Coursepass coursepass) throws SQLException {
-        LocalDate startdate = coursepass.start;
-        LocalDate enddate = coursepass.end;
+    public void generateInitialTimetable(CoursePass coursepass) throws SQLException {
+        LocalDate startdate = coursepass.getStart();
+        LocalDate enddate = coursepass.getEnd();
         int Coursepasshours = 0;
         int WorkingDays = 0;
         int WorkingHours = 0;
@@ -30,7 +30,7 @@ public class Resourcemanager {
 
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues =
-                new ArrayList<>(Collections.singleton(new SQLValueLong(coursepass.id)));
+                new ArrayList<>(Collections.singleton(new SQLValueLong(coursepass.getId())));
         ResultSet rs = sqlConnectionManager.select("Select * from T_TIMETABLES where REFCOURSEPASS = ?;",
                 SQLValues);
         //If the ResultSet is empty, the method next will return false, if it returns true
@@ -38,8 +38,8 @@ public class Resourcemanager {
         if (!rs.next()) {
 //            coursepass.getCoursepassLecturerSubjects(); //should be obsolote now
             // order subjects by should hours descending, count total hours, build stack of hours
-            for (int i = 0; i < coursepass.arraycoursepasslecturersubject.size(); i++) {
-                Coursepasshours += coursepass.arraycoursepasslecturersubject.get(i).shouldHours;
+            for (int i = 0; i < coursepass.arrayCoursePassLecturerSubject.size(); i++) {
+                Coursepasshours += coursepass.arrayCoursePassLecturerSubject.get(i).shouldHours;
             }
 
 //        System.out.println(Coursepasshours);
@@ -58,7 +58,7 @@ public class Resourcemanager {
             }
 
             this.positionInCoursepassLecturerSubjectStack = 0;
-            this.arraycoursepasslecturersubject = coursepass.arraycoursepasslecturersubject;
+            this.arraycoursepasslecturersubject = coursepass.arrayCoursePassLecturerSubject;
             this.maxCoursepassLecturerSubjectStack = this.arraycoursepasslecturersubject.size();
             if (this.maxCoursepassLecturerSubjectStack > 0) {
                 this.maxCoursepassLecturerSubjectStack--;
@@ -76,14 +76,14 @@ public class Resourcemanager {
                         //we found a matching coursepasslecturersubject object
                         LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).getDate();
                         Long refcoursepassID = this.arraycoursepasslecturersubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).coursepass.id;
+                                this.positionInCoursepassLecturerSubjectStack).coursepass.getId();
                         Long refCoursepassLecturerSubjectId =
                                 this.arraycoursepasslecturersubject.get(
                                         this.positionInCoursepassLecturerSubjectStack).id;
                         //ToDO: if we want to also manage the rooms we could do it here
                         Long refRoomId = 0L;
                         Long refLecturerId = this.arraycoursepasslecturersubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).lecturer.id;
+                                this.positionInCoursepassLecturerSubjectStack).lecturer.getId();
                         Long refSubjectId = this.arraycoursepasslecturersubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).subject.id;
 
@@ -114,7 +114,7 @@ public class Resourcemanager {
                         //we didnt find a matching coursepasslecturersubject, freetime?!
                         LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).getDate();
                         Long refcoursepassID = this.arraycoursepasslecturersubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).coursepass.id;
+                                this.positionInCoursepassLecturerSubjectStack).coursepass.getId();
                         Long refCoursepassLecturerSubjectId =  0L;
                         //ToDO: if we want to also manage the rooms we could do it here
                         Long refRoomId = 0L;
@@ -166,7 +166,7 @@ public class Resourcemanager {
                 this.positionInCoursepassLecturerSubjectStack).isHours;
 
         if (Lecturer.checkLecturerAvailability(this.arraycoursepasslecturersubject.get(
-                        positionInCoursepassLecturerSubjectStack).lecturer.id,
+                        positionInCoursepassLecturerSubjectStack).lecturer.getId(),
                 arrayTimetabledays.get(idxDay).getDate(), idxTimeslot) &&
                 tmpshouldhours > (tmpishours + tmpplanedhours)) {
             //Lecturer is Available and there are hours left to plan

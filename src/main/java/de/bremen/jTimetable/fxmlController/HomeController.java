@@ -16,7 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import de.bremen.jTimetable.Main;
-import de.bremen.jTimetable.Classes.Coursepass;
+import de.bremen.jTimetable.Classes.CoursePass;
 
 import java.io.IOException;
 import java.net.URL;
@@ -28,21 +28,21 @@ import java.util.ResourceBundle;
 public class HomeController implements Initializable {
 
     @FXML
-    private TableView<Coursepass> CoursepassTableview;
+    private TableView<CoursePass> CoursepassTableview;
     @FXML
-    private TableColumn<Coursepass, Long> CPID;
+    private TableColumn<CoursePass, Long> CPID;
     @FXML
-    private TableColumn<Coursepass, String> CPCOSCaption;
+    private TableColumn<CoursePass, String> CPCOSCaption;
     @FXML
-    private TableColumn<Coursepass, String> CPstudysection;
+    private TableColumn<CoursePass, String> CPstudysection;
     @FXML
-    private TableColumn<Coursepass, String> CPDescription;
+    private TableColumn<CoursePass, String> CPDescription;
     @FXML
-    private TableColumn<Coursepass, LocalDate> CPStart;
+    private TableColumn<CoursePass, LocalDate> CPStart;
     @FXML
-    private TableColumn<Coursepass, LocalDate> CPEnd;
+    private TableColumn<CoursePass, LocalDate> CPEnd;
     @FXML
-    private TableColumn<Coursepass, Boolean> CPActive;
+    private TableColumn<CoursePass, Boolean> CPActive;
     @FXML
     private Button btnTimetableShow;
     @FXML
@@ -67,30 +67,30 @@ public class HomeController implements Initializable {
 //        // Translate everything
 //        lblActiveCoursepasses.setText(resources.getString("currency"));
 
-        CPID.setCellValueFactory(new PropertyValueFactory<Coursepass, Long>("id"));
-        CPCOSCaption.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("courseofstudycaption"));
-        CPstudysection.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("CPstudysection"));
-        CPDescription.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("description"));
-        CPStart.setCellValueFactory(new PropertyValueFactory<Coursepass, LocalDate>("start"));
-        CPEnd.setCellValueFactory(new PropertyValueFactory<Coursepass, LocalDate>("end"));
-        CPActive.setCellValueFactory(new PropertyValueFactory<Coursepass, Boolean>("active"));
+        CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
+        CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseofstudycaption"));
+        CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPstudysection"));
+        CPDescription.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("description"));
+        CPStart.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("start"));
+        CPEnd.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("end"));
+        CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
 
         CoursepassTableview.getItems().setAll(getCoursepass(true));
         btnTimetableShow.setOnAction(event -> {
-            TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
             Stage stage = new Stage(StageStyle.DECORATED);
-            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseofstudy().getCaption() + " " +
-                    selectedItems.get(0).getStudysection().getDescription());
+            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
+                    selectedItems.get(0).getStudySection().getDescription());
             URL url = Main.class.getResource("fxml/TimetableView.fxml");
             loader.setLocation(url);
             try {
                 stage.setScene(new Scene(loader.load()));
                 TimetableViewController controller = loader.getController();
-                controller.initDataCoursepass(new Coursepass((selectedItems.get(0).getId())));
+                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
                 stage.show();
-            } catch (SQLException | IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -106,8 +106,8 @@ public class HomeController implements Initializable {
         });
 
         btnCoursepassEdit.setOnAction(event -> {
-            TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
                 //System.out.println(selectedItems.get(0).getId());
                 Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -116,7 +116,7 @@ public class HomeController implements Initializable {
                 try {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
                     CoursepassController coursepassController = loader.<CoursepassController>getController();
-                    coursepassController.setCoursepass(new Coursepass(selectedItems.get(0).getId()));
+                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
                     Scene scene = new Scene(anchorPane);
                     stageTheEventSourceNodeBelongs.setScene(scene);
                 } catch (Exception e) {
@@ -133,10 +133,10 @@ public class HomeController implements Initializable {
     }
 
 
-    public ArrayList<Coursepass> getCoursepass(Boolean activeState) {
-        ArrayList<Coursepass> activeCoursepass = new ArrayList<Coursepass>();
+    public ArrayList<CoursePass> getCoursepass(Boolean activeState) {
+        ArrayList<CoursePass> activeCoursepass = new ArrayList<CoursePass>();
         try {
-            activeCoursepass = new Coursepass(0L).getCoursepasses(activeState);
+            activeCoursepass = new CoursePass(0L).getCoursePasses(activeState);
         } catch (SQLException e) {
             //TODo: better error handling
             System.out.println(e);

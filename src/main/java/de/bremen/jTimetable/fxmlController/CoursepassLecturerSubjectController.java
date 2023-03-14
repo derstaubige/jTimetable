@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class CoursepassLecturerSubjectController implements Initializable {
-    Coursepass coursepass;
+    CoursePass coursepass;
     CoursepassLecturerSubject coursepassLecturerSubject;
 
     @FXML    public TableView<CoursepassLecturerSubject> CLSTableview;
@@ -246,11 +246,11 @@ public class CoursepassLecturerSubjectController implements Initializable {
         Platform.runLater(() -> {
             lblCoursepassName.setText(this.coursepass.getDescription());
             try{
-                this.coursepass.updateCoursepassLecturerSubjects();
+                this.coursepass.updateCoursePassLecturerSubjects();
             }catch (Exception e){
                 e.printStackTrace();
             }
-            CLSTableview.getItems().setAll(this.coursepass.getArraycoursepasslecturersubject());
+            CLSTableview.getItems().setAll(this.coursepass.getArrayCoursePassLecturerSubject());
         });
         chkToogleCLS.setOnAction(event -> {
             CLSTableview.getItems().setAll(getCLS(!chkToogleCLS.isSelected()));
@@ -269,7 +269,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
         return activeSubject;
     }
 
-    public void setCoursepass(Coursepass pCoursepass){
+    public void setCoursepass(CoursePass pCoursepass){
         coursepass = pCoursepass;
     }
 }

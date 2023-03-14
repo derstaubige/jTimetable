@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class CoursepassController implements Initializable {
-    Coursepass coursepass;
+    CoursePass coursepass;
     @FXML private ComboBox<CourseofStudy> cmbCourseofStudy;
     @FXML private ComboBox<StudySection> cmbStudySections;
     @FXML private DatePicker datStart;
@@ -38,14 +38,14 @@ public class CoursepassController implements Initializable {
     @FXML private CheckBox chkActive;
     @FXML private Button btnBack;
     @FXML private Button btnSave;
-    @FXML    private TableView<Coursepass> CoursepassTableview;
-    @FXML    private TableColumn<Coursepass, Long> CPID;
-    @FXML    private TableColumn<Coursepass, String> CPCOSCaption;
-    @FXML    private TableColumn<Coursepass, String> CPstudysection;
-    @FXML    private TableColumn<Coursepass, String> CPDescription;
-    @FXML    private TableColumn<Coursepass, LocalDate> CPStart;
-    @FXML    private TableColumn<Coursepass, LocalDate> CPEnd;
-    @FXML    private TableColumn<Coursepass, Boolean> CPActive;
+    @FXML    private TableView<CoursePass> CoursepassTableview;
+    @FXML    private TableColumn<CoursePass, Long> CPID;
+    @FXML    private TableColumn<CoursePass, String> CPCOSCaption;
+    @FXML    private TableColumn<CoursePass, String> CPstudysection;
+    @FXML    private TableColumn<CoursePass, String> CPDescription;
+    @FXML    private TableColumn<CoursePass, LocalDate> CPStart;
+    @FXML    private TableColumn<CoursePass, LocalDate> CPEnd;
+    @FXML    private TableColumn<CoursePass, Boolean> CPActive;
     @FXML    private Button btnCoursepassEdit;
     @FXML    private Button btnCoursepassNew;
     @FXML    private CheckBox chkToogleCoursepass;
@@ -174,12 +174,12 @@ public class CoursepassController implements Initializable {
         });
 
         btnSave.setOnAction(event ->{
-            this.coursepass.setStudysection(cmbStudySections.getValue());
+            this.coursepass.setStudySection(cmbStudySections.getValue());
             this.coursepass.setStart(datStart.getValue());
             this.coursepass.setEnd(datEnd.getValue());
             this.coursepass.setActive(chkActive.isSelected());
             this.coursepass.setDescription(txtDescription.getText());
-            this.coursepass.setCourseofstudy(cmbCourseofStudy.getValue());
+            this.coursepass.setCourseOfStudy(cmbCourseofStudy.getValue());
             try {
                 this.coursepass.save();
             }catch (Exception e){
@@ -194,13 +194,13 @@ public class CoursepassController implements Initializable {
         });
 
 
-        CPID.setCellValueFactory(new PropertyValueFactory<Coursepass, Long>("id"));
-        CPCOSCaption.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("courseofstudycaption"));
-        CPstudysection.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("CPstudysection"));
-        CPDescription.setCellValueFactory(new PropertyValueFactory<Coursepass, String>("description"));
-        CPStart.setCellValueFactory(new PropertyValueFactory<Coursepass, LocalDate>("start"));
-        CPEnd.setCellValueFactory(new PropertyValueFactory<Coursepass, LocalDate>("end"));
-        CPActive.setCellValueFactory(new PropertyValueFactory<Coursepass, Boolean>("active"));
+        CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
+        CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseofstudycaption"));
+        CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPstudysection"));
+        CPDescription.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("description"));
+        CPStart.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("start"));
+        CPEnd.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("end"));
+        CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
 
         CoursepassTableview.getItems().setAll(getCoursepass(true));
         CoursepassTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -212,8 +212,8 @@ public class CoursepassController implements Initializable {
                 }
                 //DoubleClick: Timetable is shown
                 if (click.getClickCount() == 2) {
-                    TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
-                    ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
+                    TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+                    ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"));
                     Stage stage = new Stage(StageStyle.DECORATED);
                     URL url = Main.class.getResource("fxml/TimetableView.fxml");
@@ -222,24 +222,24 @@ public class CoursepassController implements Initializable {
                         stage.setScene(new Scene(loader.load()));
                         stage.setTitle("Timetable");
                         TimetableViewController controller = loader.getController();
-                        controller.initDataCoursepass(new Coursepass((selectedItems.get(0).getId())));
+                        controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
                         stage.show();
-                    } catch (SQLException | IOException e) {
+                    } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
             }
         });
         btnEditCLS.setOnAction(event ->{
-            TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
                 Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/CoursepassLecturerSubject.fxml"), resources);
                 try {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
                     CoursepassLecturerSubjectController coursepassLecturerSubjectController = loader.<CoursepassLecturerSubjectController>getController();
-                    coursepassLecturerSubjectController.setCoursepass(new Coursepass(selectedItems.get(0).getId()));
+                    coursepassLecturerSubjectController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
                     Scene scene = new Scene(anchorPane);
                     stageTheEventSourceNodeBelongs.setScene(scene);
                 } catch (Exception e) {
@@ -250,20 +250,20 @@ public class CoursepassController implements Initializable {
         });
 
         btnCoursepassEdit.setOnAction(event -> {
-            TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
                 //System.out.println(selectedItems.get(0).getId());
                 this.coursepass = selectedItems.get(0);
                 try{
-                    cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseofstudy().getCoursesofStudy(true));
-                    cmbCourseofStudy.setValue(this.coursepass.getCourseofstudy());
+                    cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
+                    cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
                 try{
                     cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
-                    cmbStudySections.setValue(this.coursepass.getStudysection());
+                    cmbStudySections.setValue(this.coursepass.getStudySection());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -279,10 +279,10 @@ public class CoursepassController implements Initializable {
 
         btnCoursepassNew.setOnAction(event -> {
             try{
-                this.coursepass = new Coursepass(0L);
+                this.coursepass = new CoursePass(0L);
                 try{
-                    cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseofstudy().getCoursesofStudy(true));
-                    cmbCourseofStudy.setValue(this.coursepass.getCourseofstudy());
+                    cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
+                    cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -310,14 +310,14 @@ public class CoursepassController implements Initializable {
         });
 
         btnInitialTimetable.setOnAction(event -> {
-            TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
                 this.coursepass = selectedItems.get(0);
 
                 Resourcemanager resourcemanager = new Resourcemanager();
                 try {
-                    this.coursepass.updateCoursepassLecturerSubjects();
+                    this.coursepass.updateCoursePassLecturerSubjects();
                     resourcemanager.generateInitialTimetable(this.coursepass);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -326,15 +326,15 @@ public class CoursepassController implements Initializable {
         });
 
         btnDeleteTimetable.setOnAction(event -> {
-            TableView.TableViewSelectionModel<Coursepass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<Coursepass> selectedItems = selectionModel.getSelectedItems();
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
                 this.coursepass = selectedItems.get(0);
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Want to delete Timetable for " + coursepass.getDescription());
                 alert.setHeaderText("");
-                alert.setContentText("Realy want to delete the Timetable for " + coursepass.getCourseofstudy().getCaption()
-                + " " + coursepass.getStudysection().getDescription() + "?");
+                alert.setContentText("Realy want to delete the Timetable for " + coursepass.getCourseOfStudy().getCaption()
+                + " " + coursepass.getStudySection().getDescription() + "?");
                 alert.showAndWait().ifPresent(rs -> {
                     if ( rs == ButtonType.OK){
                         Timetable timetable = new Timetable(coursepass);
@@ -342,8 +342,8 @@ public class CoursepassController implements Initializable {
 
                         alert.setAlertType(Alert.AlertType.INFORMATION);
                         alert.setTitle("Success");
-                        alert.setContentText("The Timetable for "+ coursepass.getCourseofstudy().getCaption()
-                                + " " + coursepass.getStudysection().getDescription() + " has been deleted.");
+                        alert.setContentText("The Timetable for "+ coursepass.getCourseOfStudy().getCaption()
+                                + " " + coursepass.getStudySection().getDescription() + " has been deleted.");
                         alert.show();
 
                     }
@@ -353,18 +353,18 @@ public class CoursepassController implements Initializable {
         });
     }
 
-    public Coursepass getCoursepass() {
+    public CoursePass getCoursepass() {
         return coursepass;
     }
 
-    public void setCoursepass(Coursepass coursepass) {
+    public void setCoursepass(CoursePass coursepass) {
         this.coursepass = coursepass;
     }
 
-    public ArrayList<Coursepass> getCoursepass(Boolean activeState) {
-        ArrayList<Coursepass> activeCoursepass = new ArrayList<Coursepass>();
+    public ArrayList<CoursePass> getCoursepass(Boolean activeState) {
+        ArrayList<CoursePass> activeCoursepass = new ArrayList<CoursePass>();
         try {
-            activeCoursepass = new Coursepass(0L).getCoursepasses(activeState);
+            activeCoursepass = new CoursePass(0L).getCoursePasses(activeState);
         } catch (SQLException e) {
             //TODo: better error handling
             System.out.println(e);
