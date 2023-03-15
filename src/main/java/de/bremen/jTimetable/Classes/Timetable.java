@@ -116,7 +116,7 @@ public class Timetable {
         //if we haven't added CoursePassLecturerSubjects for this CoursePass yet,
         // we should return an empty array to display
         if (this.arrayTimetableDays.size() == 0) {
-            Resourcemanager resourcemanager = new Resourcemanager();
+            ResourceManager resourcemanager = new ResourceManager();
             result = resourcemanager.getWorkingDaysBetweenTwoDates(coursePass.getStart(), coursePass.getEnd());
             for (TimetableDay tmpTimetableDay : result) {
 

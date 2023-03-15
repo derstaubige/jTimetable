@@ -315,7 +315,7 @@ public class CoursepassController implements Initializable {
             if (selectedItems.size() > 0) {
                 this.coursepass = selectedItems.get(0);
 
-                Resourcemanager resourcemanager = new Resourcemanager();
+                ResourceManager resourcemanager = new ResourceManager();
                 try {
                     this.coursepass.updateCoursePassLecturerSubjects();
                     resourcemanager.generateInitialTimetable(this.coursepass);

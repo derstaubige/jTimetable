@@ -7,6 +7,10 @@ import java.util.ArrayList;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
+/**
+ * Class represents which CoursePass needs to attend how many lessons of which subject taught by which lecturer
+ * and is saved in the database.
+ */
 public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerSubject> {
     Long id;
     CoursePass coursepass;
@@ -280,6 +284,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         }
     }
 
+    //TODO save after every change of value?
     public void save() throws SQLException{
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
@@ -367,8 +372,24 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         return isHours;
     }
 
+    /**
+     * Setter for isHours
+     * @param isHours
+     */
+    public void setIsHours(Long isHours) {
+        this.isHours = isHours;
+    }
+
     public Long getPlanedHours() {
         return planedHours;
+    }
+
+    /**
+     * Setter for this.planedHours
+     * @param planedHours new value for this.planedHours
+     */
+    public void setPlanedHours(Long planedHours) {
+        this.planedHours = planedHours;
     }
 
     public Room getRoom() {

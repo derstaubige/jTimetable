@@ -145,26 +145,26 @@ public class ResourcesBlocked {
      * Static method that creates a new resourcesBlocked-instance and setts all values at once.
      * Afterwards it calls method save() to save the changes in the database.
      *
-     * @param REFRESOURCEID
-     * @param RESOURCENAME
-     * @param DESCRIPTION
-     * @param STARTDATE
-     * @param ENDDATE
-     * @param STARTTIMESLOT
-     * @param ENDTIMESLOT
+     * @param refResourceId
+     * @param resourceName
+     * @param description
+     * @param startDate
+     * @param endDate
+     * @param startTimeslot
+     * @param endTimeslot
      * @throws SQLException
      */
-    public static void setResourcesBlocked(Long REFRESOURCEID, ResourceNames RESOURCENAME, String DESCRIPTION,
-                                           LocalDate STARTDATE, LocalDate ENDDATE, int STARTTIMESLOT,
-                                           int ENDTIMESLOT) throws SQLException {
+    public static void setResourcesBlocked(Long refResourceId, ResourceNames resourceName, String description,
+                                           LocalDate startDate, LocalDate endDate, int startTimeslot,
+                                           int endTimeslot) {
         ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L);
-        resourcesblocked.setReResourceID(REFRESOURCEID);
-        resourcesblocked.setResourceName(RESOURCENAME);
-        resourcesblocked.setDescription(DESCRIPTION);
-        resourcesblocked.setStartDate(STARTDATE);
-        resourcesblocked.setEndDate(ENDDATE);
-        resourcesblocked.setStartTimeslot(STARTTIMESLOT);
-        resourcesblocked.setEndTimeslot(ENDTIMESLOT);
+        resourcesblocked.setReResourceID(refResourceId);
+        resourcesblocked.setResourceName(resourceName);
+        resourcesblocked.setDescription(description);
+        resourcesblocked.setStartDate(startDate);
+        resourcesblocked.setEndDate(endDate);
+        resourcesblocked.setStartTimeslot(startTimeslot);
+        resourcesblocked.setEndTimeslot(endTimeslot);
 
         resourcesblocked.save();
     }
