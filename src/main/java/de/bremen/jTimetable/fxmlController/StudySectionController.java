@@ -55,7 +55,7 @@ public class StudySectionController implements Initializable {
         });
 
         ID.setCellValueFactory(new PropertyValueFactory<StudySection, Long>("id"));
-        Description.setCellValueFactory(new PropertyValueFactory<StudySection, String>("Description"));
+        Description.setCellValueFactory(new PropertyValueFactory<StudySection, String>("description"));
         Active.setCellValueFactory(new PropertyValueFactory<StudySection, Boolean>("active"));
 
         StudySectionTableview.getItems().setAll(getStudySection(true));

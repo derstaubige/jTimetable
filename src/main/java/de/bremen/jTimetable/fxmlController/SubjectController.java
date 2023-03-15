@@ -55,7 +55,7 @@ public class SubjectController implements Initializable {
         });
 
         ID.setCellValueFactory(new PropertyValueFactory<Subject, Long>("id"));
-        Caption.setCellValueFactory(new PropertyValueFactory<Subject, String>("Caption"));
+        Caption.setCellValueFactory(new PropertyValueFactory<Subject, String>("caption"));
         Active.setCellValueFactory(new PropertyValueFactory<Subject, Boolean>("active"));
 
         SubjectTableview.getItems().setAll(getSubject(true));
