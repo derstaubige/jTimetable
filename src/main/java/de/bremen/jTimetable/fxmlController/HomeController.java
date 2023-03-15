@@ -68,8 +68,8 @@ public class HomeController implements Initializable {
 //        lblActiveCoursepasses.setText(resources.getString("currency"));
 
         CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
-        CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseofstudycaption"));
-        CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPstudysection"));
+        CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
+        CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPStudySection"));
         CPDescription.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("description"));
         CPStart.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("start"));
         CPEnd.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("end"));
