@@ -155,6 +155,7 @@ public class LecturerController implements Initializable {
         ID.setCellValueFactory(new PropertyValueFactory<Lecturer, Long>("id"));
         Firstname.setCellValueFactory(new PropertyValueFactory<Lecturer, String>("Firstname"));
         Lastname.setCellValueFactory(new PropertyValueFactory<Lecturer, String>("Lastname"));
+        //TODO does this work?
         Location.setCellValueFactory(
                 new PropertyValueFactory<de.bremen.jTimetable.Classes.Location, String>("locationCaption"));
         Active.setCellValueFactory(new PropertyValueFactory<Lecturer, Boolean>("active"));

@@ -118,6 +118,10 @@ public class ResourceManager {
         }
     }
 
+    /**
+     *
+     * @param maxTimeslotsPerDay
+     */
     private void planLessons(int maxTimeslotsPerDay) {
         //Try to place subject
         // --> check if the lecturer and the room is free for this date / hour, if not try next subject

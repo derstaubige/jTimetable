@@ -195,7 +195,8 @@ public class CoursePass {
     /**
      * Method selects all active/inactive CoursePassLecturerSubjects from the database
      *
-     * @param activeStatus defines whether active CoursePassLecturerSubjects (true) or inactive ones (false) are selected
+     * @param activeStatus defines whether active CoursePassLecturerSubjects (true) or inactive ones (false) are
+     *                     selected
      * @return list of active or inactive CoursePassLecturerSubjects
      * @throws SQLException is thrown if database query to get coursePassLecturerSubjects fails
      */
@@ -204,7 +205,8 @@ public class CoursePass {
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
         SQLValues.add(new SQLValueBoolean(activeStatus));
         SQLValues.add(new SQLValueLong(this.id));
-        ResultSet rs = sqlConnectionManager.select("Select * from  T_COURSEPASSESLECTURERSUBJECT  where active = ? and REFCOURSEPASSID = ?", SQLValues);
+        ResultSet rs = sqlConnectionManager.select("Select * from  T_COURSEPASSESLECTURERSUBJECT  " +
+                "where active = ? and REFCOURSEPASSID = ?", SQLValues);
         ArrayList<CoursepassLecturerSubject> returnList = new ArrayList<>();
         while (rs.next()) {
             returnList.add(new CoursepassLecturerSubject(rs.getLong("id")));
@@ -286,7 +288,7 @@ public class CoursePass {
 
     /**
      * Getter for caption of this.courseOfStudy
-     * TODO why not trimmed
+     * TODO why not trimmed --> getCaption already trimmed?
      *
      * @return description of this.courseOfStudy
      */
