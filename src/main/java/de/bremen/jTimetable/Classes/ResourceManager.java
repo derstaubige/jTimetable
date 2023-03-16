@@ -85,7 +85,7 @@ public class ResourceManager {
                 workingHours = workingDays * maxTimeslotsPerDay;
 
                 //Check if we have to add timeslots to fit all hours
-                while (workingHours < coursePassHours) {
+                while (workingHours < this.coursePassHours) {
                     //We have to Add Timeslots per Day if we have more shouldHours than timeslots
                     maxTimeslotsPerDay++;
                     workingHours = workingDays * maxTimeslotsPerDay;
@@ -103,13 +103,13 @@ public class ResourceManager {
                 //TODO if we still have shouldHours we need to add a timeslot
                 // --> Problem: do we need to check whether timeslot is already blocked or is it possible to
                 // just override?
+                //TODO doesn't work
                 while (this.coursePassHours > 0) {
                     planLessons(maxTimeslotsPerDay);
                     if (this.coursePassHours > 0) {
                         maxTimeslotsPerDay++;
                     }
                 }
-
             }
         } catch (SQLException e) {
             System.err.println("No initial timetable could be generated for CoursePass with the id: " +
@@ -137,26 +137,27 @@ public class ResourceManager {
                     LocalDate timetableDay = this.arrayTimetableDays.get(idxDay).getDate();
                     Long refCoursePassID = this.arrayCoursePassLecturerSubjectStack.get
                             (this.positionInCoursePassLecturerSubjectStack).coursepass.getId();
-                    Long refCoursePassLecturerSubjectId =
-                            this.arrayCoursePassLecturerSubjectStack.get
-                                    (this.positionInCoursePassLecturerSubjectStack).id;
-                    //ToDO: if we want to also manage the rooms we could do it here
+                    Long refCoursePassLecturerSubjectId = this.arrayCoursePassLecturerSubjectStack.get
+                                    (this.positionInCoursePassLecturerSubjectStack).getId();
+                    //TODO: if we want to also manage the rooms we could do it here
                     Long refRoomId = 0L;
                     Long refLecturerId = this.arrayCoursePassLecturerSubjectStack.get
                             (this.positionInCoursePassLecturerSubjectStack).getLecturer().getId();
                     Long refSubjectId = this.arrayCoursePassLecturerSubjectStack.get
                             (this.positionInCoursePassLecturerSubjectStack).getSubject().getId();
 
-                    //write to timetable
+                    //Write to timetable
                     setEntryInTimetable(timetableDay, refCoursePassID, refCoursePassLecturerSubjectId, refRoomId,
                             refLecturerId, refSubjectId, idxTimeslot);
-                    //block lecturer and room
+                    //If a lesson is inserted in the database there is one hour less to plan
+                    this.coursePassHours--;
+                    //Block lecturer and room
                     ResourcesBlocked.setResourcesBlocked(refLecturerId, ResourceNames.LECTURER,
                             ResourceNames.LECTURER.toString(), timetableDay, timetableDay, idxTimeslot, idxTimeslot);
                     ResourcesBlocked.setResourcesBlocked(refRoomId, ResourceNames.ROOM
                             , ResourceNames.LECTURER.toString(), timetableDay, timetableDay, idxTimeslot, idxTimeslot);
 
-                    //add to the is hours count
+                    //Add to the is hours count
                     //TODO method to increment in coursePassLecturerSubject
                     this.arrayCoursePassLecturerSubjectStack.get
                             (this.positionInCoursePassLecturerSubjectStack).planedHours++;
@@ -222,8 +223,6 @@ public class ResourceManager {
                     "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, " +
                             "REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                     SQLValues);
-            //If a lesson is inserted in the database there is one hour less to plan
-            this.coursePassHours--;
         } catch (SQLException e) {
             System.err.println("Setting a new timetable entry into the database table T_TIMETABLES wasn't successful.");
             e.printStackTrace();
@@ -234,6 +233,7 @@ public class ResourceManager {
      * Runs through the entire stack of CoursePassLecturerSubjects until it does or does not find a matching object
      * that can be placed into the given timeslot. Meaning the lecturer is available and there are hours for this
      * subject left to plan.
+     * TODO add checking whether timeslot is already filled
      *
      * @param idxDay      index of the day in arrayTimetableDays at which we want to plan the lesson
      * @param idxTimeslot timeslot at which the lesson is supposed to be planned
