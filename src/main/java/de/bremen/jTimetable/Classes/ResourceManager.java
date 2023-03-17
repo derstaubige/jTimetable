@@ -65,7 +65,8 @@ public class ResourceManager {
             SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
             ArrayList<SQLConnectionManagerValues> SQLValues =
                     new ArrayList<>(Collections.singleton(new SQLValueLong(coursePass.getId())));
-            ResultSet rs = sqlConnectionManager.select("Select * from T_TIMETABLES where REFCOURSEPASS = ?;",
+            ResultSet rs = sqlConnectionManager.select(
+                    "Select * from T_TIMETABLES where REFCOURSEPASS = ?;",
                     SQLValues);
 
             //If the ResultSet is empty, the method next will return false, if it returns true
@@ -73,7 +74,7 @@ public class ResourceManager {
             if (!rs.next()) {
                 //Order subjects by should hours descending,
                 // build stack of hours
-                // count total hours, TODO this is the only out we the three we actually do here
+                // count total hours, TODO this is the only out one out of the three we actually do here
                 for (int i = 0; i < coursePass.arrayCoursePassLecturerSubject.size(); i++) {
                     coursePassHours += coursePass.arrayCoursePassLecturerSubject.get(i).shouldHours;
                 }
@@ -93,9 +94,11 @@ public class ResourceManager {
 
                 //Start at the beginning of the stack to fit all hours into timetable
                 this.positionInCoursePassLecturerSubjectStack = 0;
-                this.arrayCoursePassLecturerSubjectStack = coursePass.getArrayCoursePassLecturerSubject();
+                this.arrayCoursePassLecturerSubjectStack =
+                        coursePass.getArrayCoursePassLecturerSubject();
                 //Define last index of the stack
-                this.maxCoursePassLecturerSubjectStack = this.arrayCoursePassLecturerSubjectStack.size();
+                this.maxCoursePassLecturerSubjectStack =
+                        this.arrayCoursePassLecturerSubjectStack.size();
                 if (this.maxCoursePassLecturerSubjectStack > 0) {
                     this.maxCoursePassLecturerSubjectStack--;
                 }
@@ -112,15 +115,18 @@ public class ResourceManager {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("No initial timetable could be generated for CoursePass with the id: " +
-                    coursePass.getId() + " because the database query failed.");
+            System.err.println(
+                    "No initial timetable could be generated for CoursePass with the id: " +
+                            coursePass.getId() + " because the database query failed.");
             e.printStackTrace();
         }
     }
 
     /**
+     * Method plans the timetable for a coursePass by checking the lecturers availability and saving
+     * entries in the database table T_TIMETABLES.
      *
-     * @param maxTimeslotsPerDay
+     * @param maxTimeslotsPerDay maximum timeslots that can be set for one day
      */
     private void planLessons(int maxTimeslotsPerDay) {
         //Try to place subject
@@ -137,7 +143,8 @@ public class ResourceManager {
                     LocalDate timetableDay = this.arrayTimetableDays.get(idxDay).getDate();
                     Long refCoursePassID = this.arrayCoursePassLecturerSubjectStack.get
                             (this.positionInCoursePassLecturerSubjectStack).coursepass.getId();
-                    Long refCoursePassLecturerSubjectId = this.arrayCoursePassLecturerSubjectStack.get
+                    Long refCoursePassLecturerSubjectId =
+                            this.arrayCoursePassLecturerSubjectStack.get
                                     (this.positionInCoursePassLecturerSubjectStack).getId();
                     //TODO: if we want to also manage the rooms we could do it here
                     Long refRoomId = 0L;
@@ -147,15 +154,18 @@ public class ResourceManager {
                             (this.positionInCoursePassLecturerSubjectStack).getSubject().getId();
 
                     //Write to timetable
-                    setEntryInTimetable(timetableDay, refCoursePassID, refCoursePassLecturerSubjectId, refRoomId,
+                    setEntryInTimetable(timetableDay, refCoursePassID,
+                            refCoursePassLecturerSubjectId, refRoomId,
                             refLecturerId, refSubjectId, idxTimeslot);
                     //If a lesson is inserted in the database there is one hour less to plan
                     this.coursePassHours--;
                     //Block lecturer and room
                     ResourcesBlocked.setResourcesBlocked(refLecturerId, ResourceNames.LECTURER,
-                            ResourceNames.LECTURER.toString(), timetableDay, timetableDay, idxTimeslot, idxTimeslot);
+                            ResourceNames.LECTURER.toString(), timetableDay, timetableDay,
+                            idxTimeslot, idxTimeslot);
                     ResourcesBlocked.setResourcesBlocked(refRoomId, ResourceNames.ROOM
-                            , ResourceNames.LECTURER.toString(), timetableDay, timetableDay, idxTimeslot, idxTimeslot);
+                            , ResourceNames.LECTURER.toString(), timetableDay, timetableDay,
+                            idxTimeslot, idxTimeslot);
 
                     //Add to the is hours count
                     //TODO method to increment in coursePassLecturerSubject
@@ -163,13 +173,15 @@ public class ResourceManager {
                             (this.positionInCoursePassLecturerSubjectStack).planedHours++;
 
                     //Set pointer to the next subject, so they are alternating in the timetable
-                    if (this.positionInCoursePassLecturerSubjectStack < this.maxCoursePassLecturerSubjectStack) {
+                    if (this.positionInCoursePassLecturerSubjectStack <
+                            this.maxCoursePassLecturerSubjectStack) {
                         this.positionInCoursePassLecturerSubjectStack++;
                     } else {
                         this.positionInCoursePassLecturerSubjectStack = 0;
                     }
                     //TODO necessary? Because we reset this in the beginning of the loop
-                    this.tmpPositionInCoursePassLecturerSubjectStack = this.positionInCoursePassLecturerSubjectStack;
+                    this.tmpPositionInCoursePassLecturerSubjectStack =
+                            this.positionInCoursePassLecturerSubjectStack;
                 } else {
                     //We didn't find a matching coursePassLecturerSubject, free time?!
                     LocalDate timetableDay = this.arrayTimetableDays.get(idxDay).getDate();
@@ -188,6 +200,38 @@ public class ResourceManager {
             }
 
         }
+    }
+
+    /**
+     * Check whether there is an entry for the current coursePassLecturerSubject object at this date
+     * in this timeslot in the database because that would mean, that the lecturer is not available
+     * because they are already teaching this coursePass.
+     *
+     * @param idxDay   index of current date in this.arrayTimetableDays
+     * @param timeslot timeslot to be checked
+     * @return true if this lecturer teaches this coursePass at this date in this timeslot, fales if not
+     * @throws SQLException is thrown if database query fails
+     */
+    private boolean isLessonAlreadySet(int idxDay, int timeslot) throws SQLException {
+        long refCoursePassLecturerSubjectID =
+                this.arrayCoursePassLecturerSubjectStack.get
+                        (this.positionInCoursePassLecturerSubjectStack).getId();
+        LocalDate timetableDay = this.arrayTimetableDays.get(idxDay).getDate();
+
+        //Database query
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        ArrayList<SQLConnectionManagerValues> SQLValues =
+                new ArrayList<>();
+
+        SQLValues.add(new SQLValueDate(timetableDay));
+        SQLValues.add(new SQLValueLong(refCoursePassLecturerSubjectID));
+        SQLValues.add(new SQLValueInt(timeslot));
+
+        ResultSet rs = sqlConnectionManager.execute(
+                "Select * from T_TIMETABLES where TIMETABLEDAY = '?' and REFCOURSEPASSLECTURERSUBJECT = ? and timeslot = ? ",
+                SQLValues);
+        //rs.next() returns true if select query has result, lesson is available if rs is empty
+        return !rs.next();
     }
 
     /**
@@ -224,7 +268,8 @@ public class ResourceManager {
                             "REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                     SQLValues);
         } catch (SQLException e) {
-            System.err.println("Setting a new timetable entry into the database table T_TIMETABLES wasn't successful.");
+            System.err.println(
+                    "Setting a new timetable entry into the database table T_TIMETABLES wasn't successful.");
             e.printStackTrace();
         }
     }
@@ -233,7 +278,6 @@ public class ResourceManager {
      * Runs through the entire stack of CoursePassLecturerSubjects until it does or does not find a matching object
      * that can be placed into the given timeslot. Meaning the lecturer is available and there are hours for this
      * subject left to plan.
-     * TODO add checking whether timeslot is already filled
      *
      * @param idxDay      index of the day in arrayTimetableDays at which we want to plan the lesson
      * @param idxTimeslot timeslot at which the lesson is supposed to be planned
@@ -247,6 +291,24 @@ public class ResourceManager {
         Long tmpIsHours = this.arrayCoursePassLecturerSubjectStack.get
                 (this.positionInCoursePassLecturerSubjectStack).getIsHours();
 
+        //If method returns true the lesson is already set with
+        //TODO technically no new timetable entry necessary
+        // but needs to be checked for every coursePassLecturerSubjectObject
+        try {
+            if (!isLessonAlreadySet(idxDay, idxTimeslot)) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.err.println("Calling method isLessonAlreadySet failed in method " +
+                    "evaluateCoursePassLecturerSubject. For lecturer id: " +
+                    this.arrayCoursePassLecturerSubjectStack.get
+                            (positionInCoursePassLecturerSubjectStack).lecturer.getId() +
+                    " at date: " +
+                    arrayTimetableDays.get(idxDay).getDate().toString() + " and timeslot: " +
+                    idxTimeslot + " .");
+            e.printStackTrace();
+        }
+
         //Check if current coursePassLecturerSubject fits
         try {
             if (Lecturer.checkLecturerAvailability(this.arrayCoursePassLecturerSubjectStack.get
@@ -258,15 +320,19 @@ public class ResourceManager {
             }
         } catch (SQLException e) {
             System.err.println("Calling method checkLecturerAvailability failed in method " +
-                    "evaluateCoursePassLecturerSubject. For lecturer id: " + this.arrayCoursePassLecturerSubjectStack.get
-                    (positionInCoursePassLecturerSubjectStack).lecturer.getId() + " at date: " +
-                    arrayTimetableDays.get(idxDay).getDate().toString() + " and timeslot: " + idxTimeslot + " .");
+                    "evaluateCoursePassLecturerSubject. For lecturer id: " +
+                    this.arrayCoursePassLecturerSubjectStack.get
+                            (positionInCoursePassLecturerSubjectStack).lecturer.getId() +
+                    " at date: " +
+                    arrayTimetableDays.get(idxDay).getDate().toString() + " and timeslot: " +
+                    idxTimeslot + " .");
             e.printStackTrace();
         }
 
         //Check if we rolled over our stack size and start at 0 if we did, if we are not at the end of our stack set
         // pointer forward
-        if (this.positionInCoursePassLecturerSubjectStack < this.maxCoursePassLecturerSubjectStack) {
+        if (this.positionInCoursePassLecturerSubjectStack <
+                this.maxCoursePassLecturerSubjectStack) {
             this.positionInCoursePassLecturerSubjectStack++;
         } else {
             this.positionInCoursePassLecturerSubjectStack = 0;
