@@ -19,7 +19,6 @@ public class Resourcemanager {
     int tmppositionInCoursepassLecturerSubjectStack;
     int maxCoursepassLecturerSubjectStack;
 
-    //TODO generateInitialTimetable doesn't check correctly whether Lecturer is free
     public void generateInitialTimetable(CoursePass coursepass) throws SQLException {
         LocalDate startdate = coursepass.getStart();
         LocalDate enddate = coursepass.getEnd();
@@ -42,15 +41,12 @@ public class Resourcemanager {
                 Coursepasshours += coursepass.arrayCoursePassLecturerSubject.get(i).shouldHours;
             }
 
-//        System.out.println(Coursepasshours);
             // check how many hours are in the coursepass object and if we need to add more hours (more than 3 per day)
             // iterate over every day between startdate and enddate / hour
             arrayTimetabledays = getWorkingDaysBetweenTwoDates(startdate, enddate);
             WorkingDays = arrayTimetabledays.size();
             WorkingHours = WorkingDays * MaxTimeslotsperDay;
 
-            //TODO condition should be: WorkingHours < CoursePassHours --> we want to know whether less
-            // timeslots are available than needed
             while (WorkingHours < Coursepasshours) {
                 // We have to Add Timeslots per Day if we have more shouldhours than timeslots
                 MaxTimeslotsperDay++;
@@ -156,7 +152,6 @@ public class Resourcemanager {
             throws SQLException {
         //runs through the stack of CoursepassLecturerSubjects until it does or does not find a matching Object
         // also checks if there is more hours that can be planed (shouldhours < ishours + planedhours)
-        //TODO why do we check this again?
 
         Long tmpshouldhours = this.arraycoursepasslecturersubject.get(
                 this.positionInCoursepassLecturerSubjectStack).shouldHours;
@@ -268,9 +263,8 @@ public class Resourcemanager {
         holidays.put(getEasterDate(year).plus(39, DAYS), "Himmelfahrt");
         holidays.put(getEasterDate(year).plus(49, DAYS), "Pfingsten");
         holidays.put(MonthDay.parse("--05-01").atYear(year), "Tag der Arbeit");
-        //TODO why august?
-        holidays.put(MonthDay.parse("--08-03").atYear(year), "Tag der Einheit");
-        holidays.put(MonthDay.parse("--08-31").atYear(year), "Reformationstag");
+        holidays.put(MonthDay.parse("--10-03").atYear(year), "Tag der Einheit");
+        holidays.put(MonthDay.parse("--10-31").atYear(year), "Reformationstag");
         holidays.put(MonthDay.parse("--12-24").atYear(year), "Heiligabend");
         holidays.put(MonthDay.parse("--12-25").atYear(year), "1. Weihnachtstag");
         holidays.put(MonthDay.parse("--12-26").atYear(year), "2. Weihnachtstag");

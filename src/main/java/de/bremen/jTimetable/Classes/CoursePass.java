@@ -101,8 +101,7 @@ public class CoursePass {
     public void updateCoursePassLecturerSubjects() {
         // load CoursePassLecturerSubjects
 
-        //Empty arraylist and reload everything TODO
-        //this.arraycoursepasslecturersubject.removeAll(this.arraycoursepasslecturersubject);
+        //Empty arrayList
         this.arrayCoursePassLecturerSubject = new ArrayList<>();
 
         try {
@@ -123,10 +122,6 @@ public class CoursePass {
                     + this.id + " wasn't successful.");
             e.printStackTrace();
         }
-        //check if array is empty, then add dummy object TODO
-//        if(arraycoursepasslecturersubject.size() == 0){
-//            arraycoursepasslecturersubject.add(new CoursepassLecturerSubject(0L));
-//        }
 
         //Sort the array after shouldHours descending
         Collections.sort(this.arrayCoursePassLecturerSubject);
@@ -286,12 +281,11 @@ public class CoursePass {
 
     /**
      * Getter for caption of this.courseOfStudy
-     * TODO why not trimmed
      *
      * @return description of this.courseOfStudy
      */
     public String getCourseOfStudyCaption() {
-        return this.courseOfStudy.getCaption();
+        return this.courseOfStudy.getCaption().trim();
     }
 
     /**
@@ -311,8 +305,6 @@ public class CoursePass {
     public ArrayList<CoursepassLecturerSubject> getArrayCoursePassLecturerSubject() {
         return this.arrayCoursePassLecturerSubject;
     }
-
-    //TODO do Setters need to update the
 
     /**
      * Setter for this.id

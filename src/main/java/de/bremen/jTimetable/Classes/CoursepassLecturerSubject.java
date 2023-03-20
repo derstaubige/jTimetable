@@ -298,7 +298,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         }else{
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            sqlConnectionManager.execute("update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, shouldhours` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
+            sqlConnectionManager.execute("update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, `shouldhours` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
     }
 
