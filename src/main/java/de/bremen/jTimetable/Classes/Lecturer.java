@@ -160,13 +160,12 @@ public class Lecturer {
                 if (timeslot <= endTimeslot) {
                     return false;
                 }
-//                else {
-//                    continue;
-//                }
+                else {
+                    continue;
+                }
             }
 
-            //TODO why?
-            //return false;
+            return false;
         }
         //There is no blocking
         return true;
