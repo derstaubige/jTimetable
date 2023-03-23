@@ -40,7 +40,7 @@ public class Main extends Application {
 
         FXMLLoader loader = new FXMLLoader();
         loader.setResources(ResourceBundle.getBundle("Resources"));
-        URL url = Main.class.getResource("fxml/Home.fxml");
+        URL url = Main.class.getResource("fxml/Background.fxml");
         loader.setLocation(url);
         AnchorPane anchorPane = loader.<AnchorPane>load();
 
