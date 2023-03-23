@@ -5,14 +5,17 @@ import java.util.*;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import de.bremen.jTimetable.Classes.*;
+import javafx.stage.StageStyle;
 
 
 public class Main extends Application {
+    double x, y =0;
     public static void main(String[] args){
 
         // https://jenkov.com/tutorials/javafx/your-first-javafx-application.html
@@ -42,7 +45,7 @@ public class Main extends Application {
         loader.setResources(ResourceBundle.getBundle("Resources"));
         URL url = Main.class.getResource("fxml/Background.fxml");
         loader.setLocation(url);
-        AnchorPane anchorPane = loader.<AnchorPane>load();
+        AnchorPane anchorPane = loader.load();
 
         Scene scene = new Scene(anchorPane);
         primaryStage.getIcons().add(new Image("/de/bremen/jTimetable/img/icon.png"));
@@ -51,7 +54,25 @@ public class Main extends Application {
         primaryStage.setHeight(768);
         primaryStage.setScene(scene);
         primaryStage.show();
+
+//
+//        Parent root = FXMLLoader.load(getClass().getResource("fxml/Background.fxml"));
+//        primaryStage.initStyle(StageStyle.UNDECORATED);
+//
+//
+//        root.setOnMousePressed(event -> {
+//            x = event.getSceneX();
+//            y = event.getSceneY();
+//        });
+//
+//        root.setOnMouseDragged(event -> {
+//            primaryStage.setX(event.getScreenX() - x);
+//            primaryStage.setY(event.getScreenY() - y);
+//        });
+//
+//        primaryStage.setScene(new Scene(root, 700, 400));
+//        primaryStage.show();
     }
 
-
 }
+
