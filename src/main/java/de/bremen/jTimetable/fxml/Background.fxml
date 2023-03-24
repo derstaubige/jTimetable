@@ -6,42 +6,10 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.text.Font?>
-<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" stylesheets="@../styles/menuStyle.css"
             fx:controller="de.bremen.jTimetable.fxmlController.BackgroundController"
             prefHeight="400.0" prefWidth="600.0">
-    <VBox id="vbox" prefWidth="1024" stylesheets="@../styles/menuStyle.css">
-        <MenuBar fx:id="menuBar" onKeyPressed="#handleKeyInput" styleClass="MenuBar">
-            <menus>
-                <Menu styleClass="MenuItem" text="%menu.file">
-                    <items>
-                        <MenuItem onAction="#openHome" text="%menu.file.home"/>
-                        <!--                    <MenuItem text="Open"/>-->
-                        <!--                    <MenuItem text="Save"/>-->
-                        <!--                    <MenuItem text="Save As"/>-->
-                        <!--                    <SeparatorMenuItem  />-->
-                        <MenuItem onAction="#closeButtonAction" text="%menu.file.exit"/>
-                    </items>
-                </Menu>
-                <Menu styleClass="MenuItem" text="%menu.entitiys">
-                    <MenuItem onAction="#openCourseofStudy" text="%menu.entitiys.cos"/>
-                    <MenuItem onAction="#openCoursepass" text="%menu.entitiys.coursepass"/>
-                    <MenuItem onAction="#openLecturer" text="%menu.entitiys.lecturer"/>
-                    <MenuItem onAction="#openSubject" text="%menu.entitiys.subject"/>
-                    <MenuItem onAction="#openRoom" text="%menu.entitiys.room"/>
-                    <MenuItem onAction="#openLocation" text="%menu.entitiys.locations"/>
-                    <MenuItem onAction="#openStudySection" text="%menu.entitiys.StudySections"/>
-                </Menu>
-                <Menu text="Help">
-                    <items>
-                        <MenuItem text="Search" disable="true"/>
-                        <MenuItem text="Online Manual" visible="false"/>
-                        <SeparatorMenuItem/>
-                        <MenuItem text="About" onAction="#handleAboutAction"/>
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-    </VBox>
+
     <children>
         <BorderPane layoutX="114.0" layoutY="54.0" prefHeight="200.0" prefWidth="200.0"
                     AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"

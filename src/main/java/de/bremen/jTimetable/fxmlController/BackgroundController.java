@@ -40,8 +40,8 @@ public class BackgroundController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        menuBar.setFocusTraversable(true);
-        this.resourceBundle = resources;
+        //menuBar.setFocusTraversable(true);
+        //this.resourceBundle = resources;
 
         Exit.setOnMouseClicked(event -> {
             System.exit(0);
