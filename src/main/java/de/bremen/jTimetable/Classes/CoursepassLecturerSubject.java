@@ -200,6 +200,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         }
 
     }
+
     private void updateShouldHours(){
         try{
             SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
@@ -214,6 +215,10 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday < ?;",SQLValues);
             rs.first();
             this.isHours = rs.getLong(1);
+
+            if(this.shouldHours>this.planedHours + this.isHours){
+                //TODO: Here we can think about a possibility to inform the user, that there are now more planed/is hours and should hours git issue #5
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -341,6 +346,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     public void setShouldHours(Long shouldHours) {
         this.shouldHours = shouldHours;
+        this.updateShouldHours();
     }
 
     public Long getId() {
