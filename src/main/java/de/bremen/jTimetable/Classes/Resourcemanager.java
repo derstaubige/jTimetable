@@ -41,9 +41,20 @@ public class Resourcemanager {
                 Coursepasshours += coursepass.arrayCoursePassLecturerSubject.get(i).shouldHours;
             }
 
+            // check if enddate is after startdate, if not exit funktion and inform user
+            // the value 0 if the argument Date is equal to this Date; a value less than 0 if this Date is before the Date argument; and a value greater than 0 if this Date is after the Date argument.
+            if(enddate.compareTo(startdate) < 0){
+                return;
+            }
+
             // check how many hours are in the coursepass object and if we need to add more hours (more than 3 per day)
             // iterate over every day between startdate and enddate / hour
             arrayTimetabledays = getWorkingDaysBetweenTwoDates(startdate, enddate);
+
+            //check if there are days in with there could be education and inform user
+            if(arrayTimetabledays.size() == 0){
+                return;
+            }
             WorkingDays = arrayTimetabledays.size();
             WorkingHours = WorkingDays * MaxTimeslotsperDay;
 
