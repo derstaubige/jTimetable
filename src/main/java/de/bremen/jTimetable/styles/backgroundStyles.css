@@ -1,3 +1,7 @@
 .borderPane {
 -fx-background-image: url("../img/HdR_Schraeg_von_vorne.jpg");
 }
+
+.root {
+-fx-background-image: url("../img/HdR_Schraeg_von_vorne.jpg");
+}

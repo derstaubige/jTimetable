@@ -76,24 +76,24 @@ public class HomeController implements Initializable {
         CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
 
         CoursepassTableview.getItems().setAll(getCoursepass(true));
-        btnTimetableShow.setOnAction(event -> {
-            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
-            Stage stage = new Stage(StageStyle.DECORATED);
-            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
-                    selectedItems.get(0).getStudySection().getDescription());
-            URL url = Main.class.getResource("fxml/TimetableView.fxml");
-            loader.setLocation(url);
-            try {
-                stage.setScene(new Scene(loader.load()));
-                TimetableViewController controller = loader.getController();
-                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
-                stage.show();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+//        btnTimetableShow.setOnAction(event -> {
+//            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+//            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
+//            Stage stage = new Stage(StageStyle.DECORATED);
+//            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
+//                    selectedItems.get(0).getStudySection().getDescription());
+//            URL url = Main.class.getResource("fxml/TimetableView.fxml");
+//            loader.setLocation(url);
+//            try {
+//                stage.setScene(new Scene(loader.load()));
+//                TimetableViewController controller = loader.getController();
+//                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
+//                stage.show();
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
         CoursepassTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
@@ -105,26 +105,26 @@ public class HomeController implements Initializable {
             }
         });
 
-        btnCoursepassEdit.setOnAction(event -> {
-            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            if (selectedItems.size() > 0) {
-                //System.out.println(selectedItems.get(0).getId());
-                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
-
-                try {
-                    AnchorPane anchorPane = loader.<AnchorPane>load();
-                    CoursepassController coursepassController = loader.<CoursepassController>getController();
-                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
-                    Scene scene = new Scene(anchorPane);
-                    stageTheEventSourceNodeBelongs.setScene(scene);
-                } catch (Exception e) {
-                    //TODo: Propper Error handling
-                    e.printStackTrace();
-                }
-            }
-        });
+//        btnCoursepassEdit.setOnAction(event -> {
+//            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+//            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+//            if (selectedItems.size() > 0) {
+//                //System.out.println(selectedItems.get(0).getId());
+//                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//                FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
+//
+//                try {
+//                    AnchorPane anchorPane = loader.<AnchorPane>load();
+//                    CoursepassController coursepassController = loader.<CoursepassController>getController();
+//                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
+//                    Scene scene = new Scene(anchorPane);
+//                    stageTheEventSourceNodeBelongs.setScene(scene);
+//                } catch (Exception e) {
+//                    //TODo: Propper Error handling
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
 
         chkToogleCoursepass.setOnAction(event -> {
             CoursepassTableview.getItems().setAll(getCoursepass(!chkToogleCoursepass.isSelected()));

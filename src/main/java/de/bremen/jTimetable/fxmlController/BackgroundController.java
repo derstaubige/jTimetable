@@ -2,52 +2,68 @@ package de.bremen.jTimetable.fxmlController;
 
 import de.bremen.jTimetable.Main;
 import javafx.animation.TranslateTransition;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class BackgroundController implements Initializable {
-    @FXML
-    private MenuBar menuBar;
 
+    public Button btnCoursePassEdit;
     ResourceBundle resourceBundle;
 
     @FXML
-    private ImageView Exit;
+    public Parent embeddedView;
+
+   // @FXML
+ //   private Background embeddedViewController;
+
+    /**
+     * FXML Elements:
+     */
+    @FXML
+    private MenuBar menuBar;
 
     @FXML
-    private Label Menu;
+    private ImageView exit;
 
     @FXML
-    private Label MenuClose;
+    private Label menu;
+
+    @FXML
+    private Label menuClose;
 
     @FXML
     private AnchorPane slider;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //menuBar.setFocusTraversable(true);
-        //this.resourceBundle = resources;
+        this.resourceBundle = resources;
 
-        Exit.setOnMouseClicked(event -> {
-            System.exit(0);
-        });
+        exit.setOnMouseClicked(event -> System.exit(0));
         slider.setTranslateX(-176);
-        Menu.setOnMouseClicked(event -> {
+        menu.setOnMouseClicked(event -> {
             TranslateTransition slide = new TranslateTransition();
             slide.setDuration(Duration.seconds(0.4));
             slide.setNode(slider);
@@ -57,13 +73,13 @@ public class BackgroundController implements Initializable {
 
             slider.setTranslateX(-176);
 
-            slide.setOnFinished((ActionEvent e)-> {
-                Menu.setVisible(false);
-                MenuClose.setVisible(true);
+            slide.setOnFinished((ActionEvent e) -> {
+                menu.setVisible(false);
+                menuClose.setVisible(true);
             });
         });
 
-        MenuClose.setOnMouseClicked(event -> {
+        menuClose.setOnMouseClicked(event -> {
             TranslateTransition slide = new TranslateTransition();
             slide.setDuration(Duration.seconds(0.4));
             slide.setNode(slider);
@@ -73,15 +89,57 @@ public class BackgroundController implements Initializable {
 
             slider.setTranslateX(0);
 
-            slide.setOnFinished((ActionEvent e)-> {
-                Menu.setVisible(true);
-                MenuClose.setVisible(false);
+            slide.setOnFinished((ActionEvent e) -> {
+                menu.setVisible(true);
+                menuClose.setVisible(false);
             });
         });
+//
+//        btnTimetableShow.setOnAction(event -> {
+//            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+//            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
+//            Stage stage = new Stage(StageStyle.DECORATED);
+//            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
+//                    selectedItems.get(0).getStudySection().getDescription());
+//            URL url = Main.class.getResource("fxml/TimetableView.fxml");
+//            loader.setLocation(url);
+//            try {
+//                stage.setScene(new Scene(loader.load()));
+//                TimetableViewController controller = loader.getController();
+//                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
+//                stage.show();
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
+//
+//        btnCoursepassEdit.setOnAction(event -> {
+//            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+//            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+//            if (selectedItems.size() > 0) {
+//                //System.out.println(selectedItems.get(0).getId());
+//                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//                FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
+//
+//                try {
+//                    AnchorPane anchorPane = loader.load();
+//                    CoursepassController coursepassController = loader.getController();
+//                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
+//                    Scene scene = new Scene(anchorPane);
+//                    stageTheEventSourceNodeBelongs.setScene(scene);
+//                } catch (Exception e) {
+//                    //TODo: Proper Error handling
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
     }
+
     /**
      * Handle action related to "About" menu item.
      * TODO item doesn't exist
+     *
      * @param event Event on "About" menu item.
      */
     @FXML
@@ -121,19 +179,19 @@ public class BackgroundController implements Initializable {
     }
 
     @FXML
-    private void openCourseofStudy() {
+    private void openCourseOfStudy() {
         //System.out.println(selectedItems.get(0).getId());
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/CourseofStudy.fxml"), this.resourceBundle);
 
         try {
-            AnchorPane anchorPane = loader.<AnchorPane>load();
-            loader.<CourseofStudyController>getController();
+            AnchorPane anchorPane = loader.load();
+            loader.getController();
             //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
-            //TODo: Propper Error handling
+            //TODo: Proper Error handling
             e.printStackTrace();
         }
     }
@@ -144,26 +202,26 @@ public class BackgroundController implements Initializable {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Home.fxml"), this.resourceBundle);
 
         try {
-            AnchorPane anchorPane = loader.<AnchorPane>load();
+            AnchorPane anchorPane = loader.load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
-            //TODo: Propper Error handling
+            //TODo: Proper Error handling
             e.printStackTrace();
         }
     }
 
     @FXML
-    private void openCoursepass() {
+    private void openCoursePass() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), this.resourceBundle);
 
         try {
-            AnchorPane anchorPane = loader.<AnchorPane>load();
+            AnchorPane anchorPane = loader.load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
-            //TODo: Propper Error handling
+            //TODo: Proper Error handling
             e.printStackTrace();
         }
     }
@@ -178,7 +236,7 @@ public class BackgroundController implements Initializable {
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
-            //TODo: Propper Error handling
+            //TODo: Proper Error handling
             e.printStackTrace();
         }
     }
@@ -189,11 +247,11 @@ public class BackgroundController implements Initializable {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Subject.fxml"), this.resourceBundle);
 
         try {
-            AnchorPane anchorPane = loader.<AnchorPane>load();
+            AnchorPane anchorPane = loader.load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
-            //TODo: Propper Error handling
+            //TODo: Proper Error handling
             e.printStackTrace();
         }
     }

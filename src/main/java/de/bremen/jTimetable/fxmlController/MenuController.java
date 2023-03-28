@@ -94,11 +94,11 @@ public class MenuController implements Initializable {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Home.fxml"), this.resourceBundle);
 
         try {
-            AnchorPane anchorPane = loader.<AnchorPane>load();
+            AnchorPane anchorPane = loader.load();
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
-            //TODo: Propper Error handling
+            //TODo: Proper Error handling
             e.printStackTrace();
         }
     }
