@@ -8,7 +8,7 @@
 
 <AnchorPane stylesheets="@../styles/menuStyle.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.BackgroundController">
     <children>
-        <BorderPane layoutX="114.0" layoutY="54.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <BorderPane fx:id="brdrPnAll" layoutX="114.0" layoutY="54.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <top>
                 <AnchorPane prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: WHITE;" BorderPane.alignment="CENTER">
                     <children>
@@ -32,7 +32,7 @@
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="ADD">
+                                <Button fx:id="btnNew" prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="NEU">
                                     <graphic>
                                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
@@ -60,9 +60,9 @@
                                     </graphic>
                                 </Button>
                             </children>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
+                            <opaqueInsets>
+                                <Insets />
+                            </opaqueInsets>
                         </HBox>
                         <Label fx:id="menu" layoutX="14.0" layoutY="36.0" minHeight="22.0" minWidth="30.0" prefHeight="22.0" prefWidth="92.0" text="MENU" textFill="#b7b7b7" AnchorPane.bottomAnchor="7.007998687500045" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="36.0">
                             <graphic>
@@ -96,7 +96,7 @@
                     <children>
                         <VBox layoutX="14.0" layoutY="35.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="53.0">
                             <children>
-                                <Button alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Dashboard" textFill="WHITE">
+                                <Button fx:id="btnHome" alignment="BASELINE_LEFT" onAction="#openHome" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="\%menu.file.home" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="15.0" />
                                     </font>
@@ -120,19 +120,19 @@
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Report" textFill="WHITE">
+                                <Button fx:id="btnLecturer" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Dozenten" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="15.0" />
                                     </font>
                                     <graphic>
                                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
-                                                <Image url="@../img/report.png" />
+                                                <Image url="@../img/lecturer.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>
                                 </Button>
-                                <Button alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="BackUp" textFill="WHITE">
+                                <Button fx:id="btnCoursePass" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Durchgänge" textFill="WHITE">
                                     <font>
                                         <Font name="System Bold" size="15.0" />
                                     </font>
@@ -140,6 +140,66 @@
                                         <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                             <image>
                                                 <Image url="@../img/data.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnCourseOfStudy" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Lehrgänge" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="15.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../img/data.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnSubject" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Fächer" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="15.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../img/data.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnRoom" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Räume" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="15.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../img/data.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnLocations" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Standorte" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="15.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../img/data.png" />
+                                            </image>
+                                        </ImageView>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnExit" alignment="BASELINE_LEFT" onAction="#closeButtonAction" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="%menu.file.exit" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="15.0" />
+                                    </font>
+                                    <graphic>
+                                        <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                            <image>
+                                                <Image url="@../img/exit.png" />
                                             </image>
                                         </ImageView>
                                     </graphic>

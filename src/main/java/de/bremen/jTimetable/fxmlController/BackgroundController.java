@@ -1,5 +1,6 @@
 package de.bremen.jTimetable.fxmlController;
 
+import de.bremen.jTimetable.Classes.CoursePass;
 import de.bremen.jTimetable.Main;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableList;
@@ -20,6 +21,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -31,13 +33,15 @@ import java.util.ResourceBundle;
 public class BackgroundController implements Initializable {
 
     public Button btnCoursePassEdit;
+    public Button btnNew;
+    public BorderPane brdrPnAll;
     ResourceBundle resourceBundle;
 
     @FXML
     public Parent embeddedView;
 
-   // @FXML
- //   private Background embeddedViewController;
+    @FXML
+    private HomeController embeddedViewController;
 
     /**
      * FXML Elements:
@@ -60,8 +64,11 @@ public class BackgroundController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.resourceBundle = resources;
+        embeddedViewController.initialize(location, resources);
+        btnNew.setDisable(true);
 
         exit.setOnMouseClicked(event -> System.exit(0));
+
         slider.setTranslateX(-176);
         menu.setOnMouseClicked(event -> {
             TranslateTransition slide = new TranslateTransition();
@@ -94,46 +101,46 @@ public class BackgroundController implements Initializable {
                 menuClose.setVisible(false);
             });
         });
-//
-//        btnTimetableShow.setOnAction(event -> {
-//            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
-//            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
-//            Stage stage = new Stage(StageStyle.DECORATED);
-//            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
-//                    selectedItems.get(0).getStudySection().getDescription());
-//            URL url = Main.class.getResource("fxml/TimetableView.fxml");
-//            loader.setLocation(url);
-//            try {
-//                stage.setScene(new Scene(loader.load()));
-//                TimetableViewController controller = loader.getController();
-//                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
-//                stage.show();
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//
-//        btnCoursepassEdit.setOnAction(event -> {
-//            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
-//            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-//            if (selectedItems.size() > 0) {
-//                //System.out.println(selectedItems.get(0).getId());
-//                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//                FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
-//
-//                try {
-//                    AnchorPane anchorPane = loader.load();
-//                    CoursepassController coursepassController = loader.getController();
-//                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
-//                    Scene scene = new Scene(anchorPane);
-//                    stageTheEventSourceNodeBelongs.setScene(scene);
-//                } catch (Exception e) {
-//                    //TODo: Proper Error handling
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+
+        embeddedViewController.getBtnTimetableShow().setOnAction(event -> {
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = embeddedViewController.getCoursePassTableview().getSelectionModel();
+            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
+            Stage stage = new Stage(StageStyle.DECORATED);
+            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
+                    selectedItems.get(0).getStudySection().getDescription());
+            URL url = Main.class.getResource("fxml/TimetableView.fxml");
+            loader.setLocation(url);
+            try {
+                stage.setScene(new Scene(loader.load()));
+                TimetableViewController controller = loader.getController();
+                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
+                stage.show();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        embeddedViewController.getBtnCoursePassEdit().setOnAction(event -> {
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = embeddedViewController.getCoursePassTableview().getSelectionModel();
+            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+            if (selectedItems.size() > 0) {
+                //System.out.println(selectedItems.get(0).getId());
+                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
+
+                try {
+                    AnchorPane anchorPane = loader.load();
+                    CoursepassController coursepassController = loader.getController();
+                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
+                    Scene scene = new Scene(anchorPane);
+                    stageTheEventSourceNodeBelongs.setScene(scene);
+                } catch (Exception e) {
+                    //TODo: Proper Error handling
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**

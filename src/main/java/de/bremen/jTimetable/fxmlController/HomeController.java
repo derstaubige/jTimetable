@@ -25,7 +25,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class HomeController implements Initializable {
+public class HomeController {
 
     @FXML
     private TableView<CoursePass> CoursepassTableview;
@@ -52,7 +52,6 @@ public class HomeController implements Initializable {
     @FXML
     private Label lblActiveCoursepasses;
 
-    @Override
     public void initialize(URL location, ResourceBundle resources) {
         // ToDo: Read prefered language out of config.properties file
 
@@ -142,5 +141,53 @@ public class HomeController implements Initializable {
             System.out.println(e);
         }
         return activeCoursepass;
+    }
+
+    public TableView<CoursePass> getCoursePassTableview() {
+        return CoursepassTableview;
+    }
+
+    public TableColumn<CoursePass, Long> getCPID() {
+        return CPID;
+    }
+
+    public TableColumn<CoursePass, String> getCPCOSCaption() {
+        return CPCOSCaption;
+    }
+
+    public TableColumn<CoursePass, String> getCPStudySection() {
+        return CPstudysection;
+    }
+
+    public TableColumn<CoursePass, String> getCPDescription() {
+        return CPDescription;
+    }
+
+    public TableColumn<CoursePass, LocalDate> getCPStart() {
+        return CPStart;
+    }
+
+    public TableColumn<CoursePass, LocalDate> getCPEnd() {
+        return CPEnd;
+    }
+
+    public TableColumn<CoursePass, Boolean> getCPActive() {
+        return CPActive;
+    }
+
+    public Button getBtnTimetableShow() {
+        return btnTimetableShow;
+    }
+
+    public Button getBtnCoursePassEdit() {
+        return btnCoursepassEdit;
+    }
+
+    public CheckBox getChkToggleCoursePass() {
+        return chkToogleCoursepass;
+    }
+
+    public Label getLblActiveCoursePasses() {
+        return lblActiveCoursepasses;
     }
 }
