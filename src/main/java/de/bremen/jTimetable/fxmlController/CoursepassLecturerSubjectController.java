@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class CoursepassLecturerSubjectController implements Initializable {
-    CoursePass coursepass;
+    CoursePass coursepass = new CoursePass(0L);
     CoursepassLecturerSubject coursepassLecturerSubject;
 
     @FXML    public TableView<CoursepassLecturerSubject> CLSTableview;

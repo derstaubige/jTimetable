@@ -20,7 +20,6 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -38,10 +37,10 @@ public class BackgroundController implements Initializable {
     ResourceBundle resourceBundle;
 
     @FXML
-    public Parent embeddedView;
+    public Parent homeView;
 
     @FXML
-    private HomeController embeddedViewController;
+    private HomeController homeViewController;
 
     /**
      * FXML Elements:
@@ -60,12 +59,44 @@ public class BackgroundController implements Initializable {
 
     @FXML
     private AnchorPane slider;
+    @FXML
+    private AnchorPane courseOfStudyView;
+    @FXML
+    private AnchorPane coursePassView;
+    @FXML
+    private AnchorPane coursePassLecturerSubjectView;
+    @FXML
+    private AnchorPane lecturerView;
+    @FXML
+    private AnchorPane locationView;
+    @FXML
+    private AnchorPane roomView;
+    @FXML
+    private AnchorPane studySectionView;
+    @FXML
+    private AnchorPane subjectView;
+    @FXML
+    private AnchorPane timetableView;
+
+    private AnchorPane currentlyVisible = new AnchorPane();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.resourceBundle = resources;
-        embeddedViewController.initialize(location, resources);
+        homeViewController.initialize(location, resources);
         btnNew.setDisable(true);
+
+        //Initialise includes
+        homeView.setVisible(true);
+        courseOfStudyView.setVisible(false);
+        coursePassView.setVisible(false);
+        coursePassLecturerSubjectView.setVisible(false);
+        lecturerView.setVisible(false);
+        locationView.setVisible(false);
+        roomView.setVisible(false);
+        studySectionView.setVisible(false);
+        subjectView.setVisible(false);
+        timetableView.setVisible(false);
 
         exit.setOnMouseClicked(event -> System.exit(0));
 
@@ -102,8 +133,8 @@ public class BackgroundController implements Initializable {
             });
         });
 
-        embeddedViewController.getBtnTimetableShow().setOnAction(event -> {
-            TableView.TableViewSelectionModel<CoursePass> selectionModel = embeddedViewController.getCoursePassTableview().getSelectionModel();
+        homeViewController.getBtnTimetableShow().setOnAction(event -> {
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = homeViewController.getCoursePassTableview().getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
             Stage stage = new Stage(StageStyle.DECORATED);
@@ -121,8 +152,8 @@ public class BackgroundController implements Initializable {
             }
         });
 
-        embeddedViewController.getBtnCoursePassEdit().setOnAction(event -> {
-            TableView.TableViewSelectionModel<CoursePass> selectionModel = embeddedViewController.getCoursePassTableview().getSelectionModel();
+        homeViewController.getBtnCoursePassEdit().setOnAction(event -> {
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = homeViewController.getCoursePassTableview().getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
                 //System.out.println(selectedItems.get(0).getId());
@@ -141,6 +172,16 @@ public class BackgroundController implements Initializable {
                 }
             }
         });
+    }
+
+    /**
+     *
+     * @param visible
+     */
+    private void handleIncludes(AnchorPane visible) {
+        currentlyVisible.setVisible(false);
+        visible.setVisible(true);
+        currentlyVisible = visible;
     }
 
     /**

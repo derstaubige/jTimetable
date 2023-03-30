@@ -210,7 +210,16 @@
                 </AnchorPane>
             </left>
             <center>
-                <fx:include fx:id="embeddedView" source="Home.fxml" />
+                <fx:include fx:id="homeView" source="Home.fxml" />
+                <fx:include fx:id="courseOfStudyView" source="CourseofStudy.fxml" />
+                <fx:include fx:id="coursePassView" source="Coursepass.fxml" />
+                <fx:include fx:id="coursePassLecturerSubjectView" source="CoursepassLecturerSubject.fxml" />
+                <fx:include fx:id="lecturerView" source="Lecturer.fxml" />
+                <fx:include fx:id="locationView" source="Location.fxml" />
+                <fx:include fx:id="roomView" source="Room.fxml" />
+                <fx:include fx:id="studySectionView" source="StudySection.fxml" />
+                <fx:include fx:id="subjectView" source="Subject.fxml" />
+                <fx:include fx:id="timetableView" source="TimetableView.fxml" />
             </center>
         </BorderPane>
     </children>
