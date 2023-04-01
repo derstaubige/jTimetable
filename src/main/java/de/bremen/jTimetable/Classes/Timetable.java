@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.stream.IntStream;
 
 /**
  * Class represents all timetable entries for a coursePass.
@@ -26,6 +28,8 @@ public class Timetable {
      * Lecturer for which this timetable is for.
      */
     private Lecturer lecturer;
+    // Set the maximum Timeslotcount to fill the timetable with freetimes
+    private Integer maxTimeslots = 9;
 
     /**
      * Constructor.
@@ -85,11 +89,27 @@ public class Timetable {
         if (this.arrayTimetableDays.size() == 0) {
             TimetableDay tmpTimetableDay = new TimetableDay(LocalDate.now());
             ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
-            tmpArrayList.add(new TimetableHour(0, new CoursepassLecturerSubject(0L)));
-            tmpArrayList.add(new TimetableHour(1, new CoursepassLecturerSubject(0L)));
-            tmpArrayList.add(new TimetableHour(2, new CoursepassLecturerSubject(0L)));
-            tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
+            Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
+            while (timeslotIterator.hasNext()){
+                tmpArrayList.add(new TimetableHour(timeslotIterator.next(), new CoursepassLecturerSubject(0L)));
+            }
             this.arrayTimetableDays.add(tmpTimetableDay);
+        }
+
+        //loop through all days and add freetimes in slots that dont have subjects jet
+        for (TimetableDay tmpTimetableday : this.arrayTimetableDays){
+            // loop through all possible timeslots and check if there is already a subject
+            Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
+            while (timeslotIterator.hasNext()){
+                Integer tmpTimeslot = timeslotIterator.next();
+                while(tmpTimetableday.getArrayTimetableDay().size() <= tmpTimeslot){
+                    tmpTimetableday.getArrayTimetableDay().add(tmpTimetableday.getArrayTimetableDay().size(), new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L)));
+                }
+                // if this timeslot is null we add a freetime
+                if(tmpTimetableday.getArrayTimetableDay().get(tmpTimeslot) == null){
+                    tmpTimetableday.getArrayTimetableDay().set(tmpTimeslot, new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L)));
+                }
+            }
         }
     }
 
@@ -121,12 +141,21 @@ public class Timetable {
             for (TimetableDay tmpTimetableDay : result) {
 
                 ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
-                tmpArrayList.add(new TimetableHour(0, new CoursepassLecturerSubject(0L)));
-                tmpArrayList.add(new TimetableHour(1, new CoursepassLecturerSubject(0L)));
-                tmpArrayList.add(new TimetableHour(2, new CoursepassLecturerSubject(0L)));
+                Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
+                while (timeslotIterator.hasNext()){
+                    tmpArrayList.add(new TimetableHour(timeslotIterator.next(), new CoursepassLecturerSubject(0L)));
+                }
                 tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
             }
+        }
 
+        //loop through all days and add freetimes in slots that dont have subjects jet
+        for (TimetableDay tmpTimetableday : this.arrayTimetableDays){
+            // loop through all possible timeslots and check if there is already a subject
+            Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
+            while (timeslotIterator.hasNext()){
+                tmpTimetableday.addToSlot(timeslotIterator.next(), new CoursepassLecturerSubject(0L));
+            }
         }
     }
 

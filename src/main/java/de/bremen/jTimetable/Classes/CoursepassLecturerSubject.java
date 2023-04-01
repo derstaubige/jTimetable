@@ -289,6 +289,11 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
+        //if we have a freetime object coursepass.id = 0, lecturer.id = 0, subject.id = 0
+        if(this.coursepass.getId() == 0 && this.lecturer.getId() == 0 && this.subject.id == 0){
+            return;
+        }
+
         SQLValues.add(new SQLValueLong(this.coursepass.getId()));
         SQLValues.add(new SQLValueLong(this.lecturer.getId()));
         SQLValues.add(new SQLValueLong(this.subject.id));

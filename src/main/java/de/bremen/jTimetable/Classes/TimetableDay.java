@@ -48,11 +48,23 @@ public class TimetableDay {
         if(!this.checkIfSlotIsFree(timeslot)){
             return;
         }
+        // if timeslot > arrayTimetableDay.size add as many
+        while(this.arrayTimetableDay.size() < timeslot){
+            try{
+                this.arrayTimetableDay.add(new TimetableHour(this.arrayTimetableDay.size() + 1, new CoursepassLecturerSubject(0L)));                
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
         this.arrayTimetableDay.add(timeslot, new TimetableHour(timeslot, coursepassLecturerSubject));
     }
 
     private boolean checkIfSlotIsFree(int timeslot){
         try{
+            // if the timeslot we want to check is bigger than the size of the arrayTimetableDay the Timeslot is free
+            if(this.arrayTimetableDay.size() < timeslot){
+                return true;
+            }
             if(this.arrayTimetableDay.get(timeslot) == null){
                 return true;
             }else {
