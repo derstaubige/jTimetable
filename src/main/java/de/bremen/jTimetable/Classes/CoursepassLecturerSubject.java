@@ -209,10 +209,9 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             //query the is hours
             SQLValues.clear();
             LocalDate today = LocalDate.now();
-            SQLValues.add(new SQLValueLong(this.coursepass.getId()));
-            SQLValues.add(new SQLValueLong(this.subject.id));
+            SQLValues.add(new SQLValueLong(this.getId()));
             SQLValues.add(new SQLValueDate(today));
-            rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday < ?;",SQLValues);
+            rs = sqlConnectionManager.select("Select count(id) from T_Timetables where REFCOURSEPASSLECTURERSUBJECT  = ? and timetableday < ?;",SQLValues);
             rs.first();
             this.isHours = rs.getLong(1);
 
@@ -231,10 +230,9 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             //query the is hours
             SQLValues.clear();
             LocalDate today = LocalDate.now();
-            SQLValues.add(new SQLValueLong(this.coursepass.getId()));
-            SQLValues.add(new SQLValueLong(this.subject.id));
+            SQLValues.add(new SQLValueLong(this.getId()));
             SQLValues.add(new SQLValueDate(today));
-            rs = sqlConnectionManager.select("Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday < ?;",SQLValues);
+            rs = sqlConnectionManager.select("Select count(id) from T_Timetables where REFCOURSEPASSLECTURERSUBJECT  = ? and timetableday < ?;",SQLValues);
             rs.first();
             this.isHours = rs.getLong(1);
         }catch (Exception e){
