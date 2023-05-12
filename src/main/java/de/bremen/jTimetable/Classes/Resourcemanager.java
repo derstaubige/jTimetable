@@ -197,8 +197,6 @@ public class Resourcemanager {
         //return false;
     }
 
-
-
     public ArrayList<TimetableDay> getWorkingDaysBetweenTwoDates(LocalDate localstartDate,
                                                                  LocalDate localendDate) {
         // https://stackoverflow.com/questions/4600034/calculate-number-of-weekdays-between-two-dates-in-java
