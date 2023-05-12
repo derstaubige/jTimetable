@@ -1,2 +1,2 @@
 --T_LecturerBlocks table'
-create table if not exists `T_LecturerBlocks` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `refLecturerID` long, `DayNr` int, `BlockStart` Date, `BlockEnd` Date DEFAULT '2999-12-31', `active` Boolean)
+create table if not exists `T_LecturerBlocks` (`id` long not null PRIMARY KEY AUTO_INCREMENT, `refLecturerID` long, `DayNr` int, `BlockStart` Date, `BlockEnd` Date DEFAULT '2999-12-31', `timeslot` int, `active` Boolean)

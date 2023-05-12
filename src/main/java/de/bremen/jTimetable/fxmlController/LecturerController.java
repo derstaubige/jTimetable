@@ -13,6 +13,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -33,6 +34,7 @@ import java.util.ResourceBundle;
 
 public class LecturerController implements Initializable {
     Lecturer lecturer;
+    ResourceBundle resourceBundle;
 
     @FXML private TableView<Lecturer> LecturerTableview;
     @FXML private TableColumn<Lecturer, Long> ID;
@@ -60,6 +62,7 @@ public class LecturerController implements Initializable {
     @FXML
     private TableColumn<ResourcesBlocked, Void> LecturerBlockedTableviewDelete;
     @FXML private Button LecturerBlockedAdd;
+    @FXML private Button LecturerBlockedPermaAdd;
     @FXML private Button btnLecturerEdit;
     @FXML private Button btnLecturerNew;
     @FXML private CheckBox chkToogleLecturer;
@@ -303,6 +306,23 @@ public class LecturerController implements Initializable {
                 e.printStackTrace();
             }
 
+        });
+
+        LecturerBlockedPermaAdd.setOnAction(event ->{
+            //System.out.println(selectedItems.get(0).getId());
+            Stage stageTheEventSourceNodeBelongs = (Stage) LecturerBlockedPermaAdd.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/LecturerBlocks.fxml"), this.resourceBundle);
+
+            try {
+                AnchorPane anchorPane = loader.<AnchorPane>load();
+                loader.<CourseofStudyController>getController();
+                //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+                Scene scene = new Scene(anchorPane);
+                stageTheEventSourceNodeBelongs.setScene(scene);
+            } catch (Exception e) {
+                //TODo: Propper Error handling
+                e.printStackTrace();
+            }
         });
         
         btnLecturerEdit.setOnAction(event -> {

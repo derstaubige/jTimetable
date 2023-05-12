@@ -14,6 +14,7 @@ public class LecturerBlock {
     private DayOfWeek DayNr;
     private LocalDate BlockStart;
     private LocalDate BlockEnd;
+    private int timeslot;
     private boolean active;
 
     public LecturerBlock(){
@@ -28,6 +29,7 @@ public class LecturerBlock {
             setDayNr(DayOfWeek.SUNDAY);
             setBlockStart(LocalDate.now());
             setBlockEnd(LocalDate.of(2999, 12, 31));
+            setTimeslot(0);
             setActive(true);
         }else{
             //load object from db
@@ -42,6 +44,7 @@ public class LecturerBlock {
                 setDayNr(DayOfWeek.of( rs.getInt("DayNr")));
                 setBlockStart(rs.getDate("BlockStart").toLocalDate());
                 setBlockEnd(rs.getDate("BlockEnd").toLocalDate());
+                setTimeslot(rs.getInt("timeslot"));
                 setActive(rs.getBoolean("active"));
             } catch (SQLException e) {
                 System.err.println("LecturerBlock with id:  " + getId() + " could not be loaded in constructor.");
@@ -58,19 +61,20 @@ public class LecturerBlock {
         SQLValues.add(new SQLValueInt(getDayNrInt()));
         SQLValues.add(new SQLValueDate(getBlockStart()));
         SQLValues.add(new SQLValueDate(getBlockEnd()));
+        SQLValues.add(new SQLValueInt(getTimeslot()));
         SQLValues.add(new SQLValueBoolean(this.active));
 
         if (this.id == 0) {
             //It's a new object, we have to insert it
             ResultSet rs = sqlConnectionManager.execute("Insert Into `T_LECTURERBLOCKS` (`RefLecturerID`, `DayNrInt`," +
-                    " `BlockStart`, `BlockEnd`, `ACTIVE`) values (?, ?, ?, ?, ?)", SQLValues);
+                    " `BlockStart`, `BlockEnd`, `timeslot`, `ACTIVE`) values (?, ?, ?, ?, ?, ?)", SQLValues);
             rs.first();
             setId(rs.getLong(1));
         } else {
             //We only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
             sqlConnectionManager.execute("update `T_LECTURERBLOCKS` set `RefLecturerID` = ?, `DayNrInt` = ?, " +
-                    "`BlockStart` = ?, `BlockEnd` = ?, `ACTIVE` = ? where `id` = ?;", SQLValues);
+                    "`BlockStart` = ?, `BlockEnd` = ?,`timeslot` = ?, `ACTIVE` = ? where `id` = ?;", SQLValues);
         }
     }
 
@@ -130,5 +134,13 @@ public class LecturerBlock {
         this.active = active;
     }
 
+
+    public int getTimeslot() {
+        return this.timeslot;
+    }
+
+    public void setTimeslot(int timeslot) {
+        this.timeslot = timeslot;
+    }
 
 }

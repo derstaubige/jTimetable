@@ -34,6 +34,8 @@ public class Lecturer {
      */
     private Boolean active;
 
+    private ArrayList<LecturerBlock> lecturerBlocks;
+
     /**
      * Constructor that creates a new empty object if the 0 is passed and loads an existing object from the
      * database if id isn't 0.
@@ -63,10 +65,31 @@ public class Lecturer {
                 this.lastname = rs.getString("lastname").trim();
                 this.location = new Location(rs.getLong("reflocationID"));
                 this.active = rs.getBoolean("active");
+
+                updateLecturerBlocks();
             } catch (SQLException e) {
                 System.err.println("Lecturer with id:  " + this.firstname + " could not be loaded in constructor.");
                 e.printStackTrace();
             }
+        }
+
+    }
+
+    private void updateLecturerBlocks(){
+        ArrayList<LecturerBlock> lecturerBlocks = new ArrayList<LecturerBlock>();
+        try {
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
+            SQLValues.add(new SQLValueLong(getId()));
+            SQLValues.add(new SQLValueDate(LocalDate.now()));
+
+            ResultSet rs = sqlConnectionManager.select("Select * from T_LECTURERBLOCKS where refLecturerID = ? and BlockEnd >= ?;", SQLValues);
+
+            while(rs.next()){
+                lecturerBlocks.add(new LecturerBlock(rs.getLong("id")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -312,4 +335,18 @@ public class Lecturer {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+
+    public Boolean isActive() {
+        return this.active;
+    }
+
+    public ArrayList<LecturerBlock> getLecturerBlocks() {
+        return this.lecturerBlocks;
+    }
+
+    public void setLecturerBlocks(ArrayList<LecturerBlock> lecturerBlocks) {
+        this.lecturerBlocks = lecturerBlocks;
+    }
+
 }
