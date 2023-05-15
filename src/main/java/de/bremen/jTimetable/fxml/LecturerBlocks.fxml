@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.*?>
 
 <AnchorPane minWidth="1000" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.LecturerBlocksController">
     <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" prefHeight="768" prefWidth="1024" vbarPolicy="ALWAYS">

@@ -71,8 +71,10 @@
                                 <TableColumn text="%lecturer.LecturerBlockedTableview.Delete" fx:id="LecturerBlockedTableviewDelete"></TableColumn>
                             </columns>
                         </TableView>
-                        <Button fx:id="LecturerBlockedPermaAdd" text="%lecturer.LecturerBlockedPermaAddBtn" />
-                        <Button fx:id="LecturerBlockedAdd" text="%lecturer.LecturerBlockedAddBtn" />
+                        <VBox>
+                            <Button fx:id="LecturerBlockedPermaAdd" text="%lecturer.LecturerBlockedPermaAddBtn" />
+                            <Button fx:id="LecturerBlockedAdd" text="%lecturer.LecturerBlockedAddBtn" />
+                        </VBox>
                     </HBox>
                 </VBox>
             </children>
