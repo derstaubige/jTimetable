@@ -2,6 +2,7 @@ package de.bremen.jTimetable.Classes;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -35,6 +36,15 @@ public class Lecturer {
     private Boolean active;
 
     private ArrayList<LecturerBlock> lecturerBlocks;
+
+    public boolean checkifLecturerisBlocked(Integer dayoftheweek, Integer timeslot){
+        for (LecturerBlock lecturerBlock : lecturerBlocks) {
+            if (lecturerBlock.getDayNrInt() == dayoftheweek && lecturerBlock.getTimeslot() == timeslot) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Constructor that creates a new empty object if the 0 is passed and loads an existing object from the
@@ -75,6 +85,18 @@ public class Lecturer {
 
     }
 
+    public void addLecturerBlocks(DayOfWeek dow, Integer timeslot){
+        LecturerBlock lecturerBlock = new LecturerBlock(0L);
+        lecturerBlock.setDayNr(dow);
+        lecturerBlock.setTimeslot(timeslot);
+        lecturerBlock.setRefLecturerID(id);
+
+        this.lecturerBlocks.add(lecturerBlock);
+    }
+
+    /**
+     * Reads the saved LecturerBlocks from the Database
+     */
     private void updateLecturerBlocks(){
         ArrayList<LecturerBlock> lecturerBlocks = new ArrayList<LecturerBlock>();
         try {
@@ -91,7 +113,7 @@ public class Lecturer {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        setLecturerBlocks(lecturerBlocks);
     }
 
     /**
@@ -121,6 +143,29 @@ public class Lecturer {
             sqlConnectionManager.execute("update `T_Lecturers` set `firstname` = ?, `lastname` = ?, " +
                     "`reflocationID` = ?, `ACTIVE` = ? where `id` = ?;", SQLValues);
         }
+
+        deleteLecturerBlocks();
+
+        for(LecturerBlock lecturerBlock : lecturerBlocks){
+            lecturerBlock.save();
+        }
+    }
+
+    /**
+     * Naiv LecturerBlocks handeling
+     */
+    private void deleteLecturerBlocks(){
+        try {
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
+
+            SQLValues.add(new SQLValueLong(getId()));
+            ResultSet rs = sqlConnectionManager.execute("Delete From `T_LECTURERBLOCKS` where `RefLecturerID` = ?", SQLValues);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
     }
 
     /**
@@ -288,8 +333,6 @@ public class Lecturer {
     public Boolean getActive() {
         return active;
     }
-
-    //TODO do all setter have to update the lecturer in the database?
 
     /**
      * Setter for this.id

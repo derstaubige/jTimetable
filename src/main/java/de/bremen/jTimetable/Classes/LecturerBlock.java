@@ -66,14 +66,14 @@ public class LecturerBlock {
 
         if (this.id == 0) {
             //It's a new object, we have to insert it
-            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_LECTURERBLOCKS` (`RefLecturerID`, `DayNrInt`," +
+            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_LECTURERBLOCKS` (`RefLecturerID`, `DayNr`," +
                     " `BlockStart`, `BlockEnd`, `timeslot`, `ACTIVE`) values (?, ?, ?, ?, ?, ?)", SQLValues);
             rs.first();
             setId(rs.getLong(1));
         } else {
             //We only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            sqlConnectionManager.execute("update `T_LECTURERBLOCKS` set `RefLecturerID` = ?, `DayNrInt` = ?, " +
+            sqlConnectionManager.execute("update `T_LECTURERBLOCKS` set `RefLecturerID` = ?, `DayNr` = ?, " +
                     "`BlockStart` = ?, `BlockEnd` = ?,`timeslot` = ?, `ACTIVE` = ? where `id` = ?;", SQLValues);
         }
     }

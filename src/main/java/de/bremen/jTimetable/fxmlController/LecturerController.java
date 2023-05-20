@@ -312,11 +312,13 @@ public class LecturerController implements Initializable {
             //System.out.println(selectedItems.get(0).getId());
             Stage stageTheEventSourceNodeBelongs = (Stage) LecturerBlockedPermaAdd.getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/LecturerBlocks.fxml"), resources);
-
+            TableView.TableViewSelectionModel<Lecturer> selectionModel = LecturerTableview.getSelectionModel();
+            ObservableList<Lecturer> selectedItems = selectionModel.getSelectedItems();
             try {
                 AnchorPane anchorPane = loader.<AnchorPane>load();
-                loader.<CourseofStudyController>getController();
-                //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+                LecturerBlocksController lecturerBlocksController = loader.<LecturerBlocksController>getController();
+                lecturerBlocksController.setLecturer(selectedItems.get(0));
+                lecturerBlocksController.populateBlocked();
                 Scene scene = new Scene(anchorPane);
                 stageTheEventSourceNodeBelongs.setScene(scene);
             } catch (Exception e) {

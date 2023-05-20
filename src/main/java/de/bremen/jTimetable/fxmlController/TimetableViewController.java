@@ -38,12 +38,11 @@ public class TimetableViewController implements Initializable {
     public AnchorPane anchorpane_TimetableView;
     @FXML
     public AnchorPane anchorpane_Editbox;
-
     @FXML
     public GridPane grdpn_Editbox;
-
-    @FXML
+    @FXML    
     public Label savetofile;
+    
     private Timetable timetable;
     private CoursePass coursepass;
 
