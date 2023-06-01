@@ -46,6 +46,10 @@ public class Lecturer {
         return false;
     }
 
+    public boolean checkifLecturerisBlocked(LocalDate date, Integer timeslot){
+        return checkifLecturerisBlocked(date.getDayOfWeek().getValue(),timeslot);
+    }
+
     /**
      * Constructor that creates a new empty object if the 0 is passed and loads an existing object from the
      * database if id isn't 0.
@@ -185,6 +189,11 @@ public class Lecturer {
         LocalDate endDate;
         int startTimeslot;
         int endTimeslot;
+
+        //Check if the Lecturer is generall not available at this day and timestamp
+        if(new Lecturer(lecturerID).checkifLecturerisBlocked(date,timeslot) == true){
+            return false;
+        }
 
         //Database query
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
