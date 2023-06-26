@@ -44,6 +44,7 @@ public class Resourcemanager {
             // check if enddate is after startdate, if not exit funktion and inform user
             // the value 0 if the argument Date is equal to this Date; a value less than 0 if this Date is before the Date argument; and a value greater than 0 if this Date is after the Date argument.
             if(enddate.compareTo(startdate) < 0){
+                sqlConnectionManager.close();
                 return;
             }
 
@@ -53,6 +54,7 @@ public class Resourcemanager {
 
             //check if there are days in with there could be education and inform user
             if(arrayTimetabledays.size() == 0){
+                sqlConnectionManager.close();
                 return;
             }
             WorkingDays = arrayTimetabledays.size();
@@ -136,6 +138,7 @@ public class Resourcemanager {
 
             }
         }
+        sqlConnectionManager.close();
     }
 
     private void setEntryInTimetable(LocalDate TimetableDay, Long refcoursepassID,
@@ -157,6 +160,7 @@ public class Resourcemanager {
         sqlConnectionManager.execute(
                 "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                 SQLValues);
+        sqlConnectionManager.close();
     }
 
     private boolean EvaluateCoursepassLecturerSubject(int idxDay, int idxTimeslot)

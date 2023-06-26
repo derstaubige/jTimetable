@@ -13,7 +13,7 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 
 import static java.sql.Types.NULL;
 
-public class SQLConnectionManager {
+public class SQLConnectionManager implements AutoCloseable{
     Connection conn;
 
     public SQLConnectionManager() throws SQLException {
@@ -37,12 +37,8 @@ public class SQLConnectionManager {
         //used for inserting into the database
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
         pstmt.execute();
-//        System.out.println(pstmt);
+
         return pstmt.getGeneratedKeys();
-        //if (generatedKeys.next()) {
-        //    System.out.println((generatedKeys.getLong(1)));
-        //}
-        //System.out.println();
     }
 
     private PreparedStatement prepareStatement(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws SQLException{
@@ -74,18 +70,17 @@ public class SQLConnectionManager {
             }
             parameterindex++;
         }
-//        System.out.println(pstmt);
+        
         return pstmt;
     }
 
     public void connect(String jdbcstring, String username, String password) throws SQLException{
-        Connection conn = null;
-        conn = DriverManager.getConnection(jdbcstring, username, password);
-        this.conn = conn;
+        this.conn = DriverManager.getConnection(jdbcstring, username, password);
     }
 
-    public void close(Connection conn) throws  SQLException{
-        conn.close();
+    @Override
+    public void close() throws  SQLException{
+        this.conn.close();
     }
 
     /* The Migrate Function checks if there are new SQL Migrations available and will execute them. It also
@@ -140,7 +135,5 @@ public class SQLConnectionManager {
             //TODO handle exception
             e.printStackTrace();
         }
-        
-
     }
 }

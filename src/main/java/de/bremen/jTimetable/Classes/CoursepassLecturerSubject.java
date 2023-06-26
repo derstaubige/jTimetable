@@ -55,12 +55,10 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     public static void changeCoursepassLecturerSubject(CoursepassLecturerSubject source, LocalDate sourceDay, int sourceTimeslot, CoursepassLecturerSubject target, LocalDate targetDay, int targetTimeslot){
 
-        try{
+        try(SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();){
             //change Resourcesblocked, Lecturerer and Room ID
-
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-
 
             //update source lecturer entry if the new lecturer is not 0
             if(target.lecturer.getId() != 0){
@@ -178,12 +176,12 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             this.updatePlanedHours();
         }
 
-
+        sqlConnectionManager.close();
     }
 
     private void updatePlanedHours(){
-        try{
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try(SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             ResultSet rs;
             LocalDate today = LocalDate.now();
@@ -202,8 +200,8 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     }
 
     private void updateShouldHours(){
-        try{
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try(SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             ResultSet rs;
             //query the is hours
@@ -223,8 +221,8 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         }
     }
     private void updateIsHours(){
-        try{
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try(SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             ResultSet rs;
             //query the is hours
@@ -247,8 +245,8 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     }
 
     public void deleteCLS(LocalDate pDate, Integer pTimestamp){
-        try{
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try(SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
             SQLValues.add(new SQLValueLong(this.id));
@@ -289,6 +287,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
         //if we have a freetime object coursepass.id = 0, lecturer.id = 0, subject.id = 0
         if(this.coursepass.getId() == 0 && this.lecturer.getId() == 0 && this.subject.id == 0){
+            sqlConnectionManager.close();
             return;
         }
 
@@ -308,6 +307,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             SQLValues.add(new SQLValueLong(this.id));
             sqlConnectionManager.execute("update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, `shouldhours` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
+        sqlConnectionManager.close();
     }
 
     @Override
