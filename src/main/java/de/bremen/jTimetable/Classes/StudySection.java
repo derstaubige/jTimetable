@@ -37,26 +37,25 @@ public class StudySection {
     }
 
     public void save() throws SQLException {
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
-        SQLValues.add(new SQLValueString(this.description));
-        SQLValues.add(new SQLValueBoolean(this.active));
+            SQLValues.add(new SQLValueString(this.description));
+            SQLValues.add(new SQLValueBoolean(this.active));
 
-        if (this.id == 0) {
-            // its a new object, we have to insert it
-            ResultSet rs = sqlConnectionManager
-                    .execute("Insert Into `T_StudySections` (`description`, `ACTIVE`) values (?, ?)", SQLValues);
-            rs.first();
-            this.id = rs.getLong(1);
-        } else {
-            // we only have to update an existing entry
-            SQLValues.add(new SQLValueLong(this.id));
-            sqlConnectionManager.execute("update `T_StudySections` set `description` = ?, `ACTIVE` = ? where `id` = ?;",
-                    SQLValues);
-        }
-        sqlConnectionManager.close();
-        sqlConnectionManager = null;
+            if (this.id == 0) {
+                // its a new object, we have to insert it
+                ResultSet rs = sqlConnectionManager
+                        .execute("Insert Into `T_StudySections` (`description`, `ACTIVE`) values (?, ?)", SQLValues);
+                rs.first();
+                this.id = rs.getLong(1);
+            } else {
+                // we only have to update an existing entry
+                SQLValues.add(new SQLValueLong(this.id));
+                sqlConnectionManager.execute("update `T_StudySections` set `description` = ?, `ACTIVE` = ? where `id` = ?;",
+                        SQLValues);
+            }
+        } 
     }
 
     public static ArrayList<StudySection> getStudySections(Boolean activeStatus) throws SQLException {
@@ -108,6 +107,7 @@ public class StudySection {
         while (rs.next()) {
             returnList.add(new StudySection(rs.getLong("id")));
         }
+        sqlConnectionManager.close();
         return returnList;
     }
 

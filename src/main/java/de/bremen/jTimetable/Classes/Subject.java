@@ -93,6 +93,7 @@ public class Subject {
         while (rs.next()) {
             returnList.add(new Subject(rs.getLong("id")));
         }
+        sqlConnectionManager.close();
         return returnList;
     }
 }
