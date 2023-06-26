@@ -57,7 +57,7 @@ public class ResourcesBlocked {
      * @param resourcesBlockedID id the object has in database (0 if it's not stored
      *                           in the db yet)
      */
-    public ResourcesBlocked(Long resourcesBlockedID) throws SQLException {
+    public ResourcesBlocked(Long resourcesBlockedID) {
         this.ID = resourcesBlockedID;
         // establish connection
         try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
@@ -94,6 +94,8 @@ public class ResourcesBlocked {
                     throw new RuntimeException(e);
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
