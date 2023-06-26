@@ -37,12 +37,8 @@ public class SQLConnectionManager implements AutoCloseable{
         //used for inserting into the database
         PreparedStatement pstmt = prepareStatement(SQLString, SQLValues);
         pstmt.execute();
-//        System.out.println(pstmt);
+
         return pstmt.getGeneratedKeys();
-        //if (generatedKeys.next()) {
-        //    System.out.println((generatedKeys.getLong(1)));
-        //}
-        //System.out.println();
     }
 
     private PreparedStatement prepareStatement(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws SQLException{
@@ -74,16 +70,15 @@ public class SQLConnectionManager implements AutoCloseable{
             }
             parameterindex++;
         }
-//        System.out.println(pstmt);
+        
         return pstmt;
     }
 
     public void connect(String jdbcstring, String username, String password) throws SQLException{
-        Connection conn = null;
-        conn = DriverManager.getConnection(jdbcstring, username, password);
-        this.conn = conn;
+        this.conn = DriverManager.getConnection(jdbcstring, username, password);
     }
 
+    @Override
     public void close() throws  SQLException{
         this.conn.close();
     }
@@ -140,7 +135,5 @@ public class SQLConnectionManager implements AutoCloseable{
             //TODO handle exception
             e.printStackTrace();
         }
-        
-
     }
 }

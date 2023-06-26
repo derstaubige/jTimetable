@@ -56,6 +56,7 @@ public class StudySection {
                     SQLValues);
         }
         sqlConnectionManager.close();
+        sqlConnectionManager = null;
     }
 
     public static ArrayList<StudySection> getStudySections(Boolean activeStatus) throws SQLException {
