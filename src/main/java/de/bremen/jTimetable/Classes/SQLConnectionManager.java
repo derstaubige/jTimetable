@@ -13,7 +13,7 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 
 import static java.sql.Types.NULL;
 
-public class SQLConnectionManager {
+public class SQLConnectionManager implements AutoCloseable{
     Connection conn;
 
     public SQLConnectionManager() throws SQLException {
@@ -84,8 +84,8 @@ public class SQLConnectionManager {
         this.conn = conn;
     }
 
-    public void close(Connection conn) throws  SQLException{
-        conn.close();
+    public void close() throws  SQLException{
+        this.conn.close();
     }
 
     /* The Migrate Function checks if there are new SQL Migrations available and will execute them. It also

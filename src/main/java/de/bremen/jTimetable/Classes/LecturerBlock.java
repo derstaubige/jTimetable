@@ -33,8 +33,8 @@ public class LecturerBlock {
             setActive(true);
         }else{
             //load object from db
-            try {
-                SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+                
                 ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
                 SQLValues.add(new SQLValueLong(getId()));
 
@@ -76,6 +76,7 @@ public class LecturerBlock {
             sqlConnectionManager.execute("update `T_LECTURERBLOCKS` set `RefLecturerID` = ?, `DayNr` = ?, " +
                     "`BlockStart` = ?, `BlockEnd` = ?,`timeslot` = ?, `ACTIVE` = ? where `id` = ?;", SQLValues);
         }
+        sqlConnectionManager.close();
     }
 
     public long getId() {

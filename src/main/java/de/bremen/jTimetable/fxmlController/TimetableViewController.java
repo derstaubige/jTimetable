@@ -40,20 +40,23 @@ public class TimetableViewController implements Initializable {
     public AnchorPane anchorpane_Editbox;
     @FXML
     public GridPane grdpn_Editbox;
-    @FXML    
+    @FXML
     public Label savetofile;
-    
+
     private Timetable timetable;
     private CoursePass coursepass;
 
     /**
-     * Can be called to hand parameters from the calling class to this controller. Be aware that the initialize method
-     * is performed bevor this one and therefore has no access to the data that is set here.
+     * Can be called to hand parameters from the calling class to this controller.
+     * Be aware that the initialize method
+     * is performed bevor this one and therefore has no access to the data that is
+     * set here.
      *
-     * @param coursepass the coursepass that was selected and for which the timetable is shown
+     * @param coursepass the coursepass that was selected and for which the
+     *                   timetable is shown
      */
     public void initDataCoursepass(CoursePass coursepass) {
-        //Get Timetable for Coursepass
+        // Get Timetable for Coursepass
         this.coursepass = coursepass;
         this.timetable = new Timetable(coursepass);
         this.drawTimetable(this.timetable, true);
@@ -79,66 +82,68 @@ public class TimetableViewController implements Initializable {
                 }
                 JavaFXTimetableHourText tmpText;
                 if (dragandDrop == true) {
-                    tmpText =
-                            new JavaFXTimetableHourText(timeslot.getCoursepassLecturerSubject(), day.getDate(),
-                                    timeslot.getTimeslot());
+                    tmpText = new JavaFXTimetableHourText(timeslot.getCoursepassLecturerSubject(), day.getDate(),
+                            timeslot.getTimeslot());
                 } else {
-                    tmpText =
-                            new JavaFXTimetableHourText(timeslot.getCoursepassLecturerSubject(), day.getDate(),
-                                    timeslot.getTimeslot(), true);
+                    tmpText = new JavaFXTimetableHourText(timeslot.getCoursepassLecturerSubject(), day.getDate(),
+                            timeslot.getTimeslot(), true);
                 }
                 if (dragandDrop == true) {
-                    //enables the text to be dragged
-                    //drag was detected, start a drag-and-drop gesture
-                    //https://www.youtube.com/watch?v=-TgSIr5IzQ8
+                    // enables the text to be dragged
+                    // drag was detected, start a drag-and-drop gesture
+                    // https://www.youtube.com/watch?v=-TgSIr5IzQ8
                     tmpText.setOnDragDetected(mouseEvent -> {
-                        //allow any transfer mode
+                        // allow any transfer mode
                         Dragboard db = tmpText.startDragAndDrop(TransferMode.ANY);
 
-                        //Put a string on a dragboard
+                        // Put a string on a dragboard
                         ClipboardContent content = new ClipboardContent();
                         content.putString("SWITCH");
 
                         db.setContent(content);
 
-                        //check for all JavaFXTimetableHourText if they could be exchanged and color them
-                        List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView, JavaFXTimetableHourText.class);
+                        // check for all JavaFXTimetableHourText if they could be exchanged and color
+                        // them
+                        List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
+                                JavaFXTimetableHourText.class);
                         for (int i = 0; i < timetableHourTexts.size(); i++) {
-                            CoursepassLecturerSubject tmpCoursepassLecturerSubject = timetableHourTexts.get(i).getCoursepassLecturerSubject();
+                            CoursepassLecturerSubject tmpCoursepassLecturerSubject = timetableHourTexts.get(i)
+                                    .getCoursepassLecturerSubject();
                             try {
                                 if (tmpCoursepassLecturerSubject.cangetExchanged(
                                         tmpText.getCoursepassLecturerSubject(),
-                                        tmpText.getDay(), tmpText.getTimeslot(), timetableHourTexts.get(i).getCoursepassLecturerSubject(),
-                                        timetableHourTexts.get(i).getDay(), timetableHourTexts.get(i).getTimeslot()
-                                ) == true) {
+                                        tmpText.getDay(), tmpText.getTimeslot(),
+                                        timetableHourTexts.get(i).getCoursepassLecturerSubject(),
+                                        timetableHourTexts.get(i).getDay(),
+                                        timetableHourTexts.get(i).getTimeslot()) == true) {
                                     timetableHourTexts.get(i).setFill(Color.GREEN);
                                 } else {
                                     timetableHourTexts.get(i).setFill(Color.RED);
                                 }
                             } catch (Exception e) {
-                                System.out.println("Error while determing if a Lectrurer is availdable at a given date");
+                                System.out
+                                        .println("Error while determing if a Lectrurer is availdable at a given date");
                                 e.printStackTrace();
                             }
-
 
                         }
                         mouseEvent.consume();
                     });
 
-                    //allows this field to take dropped items when they're dragged over the target
-                    //https://www.youtube.com/watch?v=yP_UjqnIsCk
+                    // allows this field to take dropped items when they're dragged over the target
+                    // https://www.youtube.com/watch?v=yP_UjqnIsCk
                     tmpText.setOnDragOver(dragEvent -> {
-                        //accept it only if it is not dragged from the same node
+                        // accept it only if it is not dragged from the same node
                         if (dragEvent.getGestureSource() != dragEvent.getGestureTarget()) {
-                            //allow for both copying and moving, whatever user chooses
+                            // allow for both copying and moving, whatever user chooses
                             dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                         }
 
                         dragEvent.consume();
                     });
 
-                    //handles if an element is dropped on this field
-                    //https://www.youtube.com/watch?v=yP_UjqnIsCk
+                    // handles if an element is dropped on this field
+                    // https://www.youtube.com/watch?v=yP_UjqnIsCk
                     tmpText.setOnDragDropped(dragEvent -> {
                         if (dragEvent.getDragboard().getString() == "SWITCH") {
                             JavaFXTimetableHourText source = (JavaFXTimetableHourText) dragEvent.getGestureSource();
@@ -147,55 +152,63 @@ public class TimetableViewController implements Initializable {
                             if (CoursepassLecturerSubject.cangetExchanged(source.getCoursepassLecturerSubject(),
                                     source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
                                     target.getDay(), target.getTimeslot()) == true) {
-                                //ger Row and Column from Source and Target
+                                // ger Row and Column from Source and Target
                                 Integer SourceRow = GridPane.getRowIndex(source);
                                 Integer SourceCol = GridPane.getColumnIndex(source);
                                 Integer TargetRow = GridPane.getRowIndex(target);
                                 Integer TargetCol = GridPane.getColumnIndex(target);
 
-                                //Change Source and Target in the GridPane
+                                // Change Source and Target in the GridPane
                                 GridPane.setRowIndex(source, TargetRow);
                                 GridPane.setColumnIndex(source, TargetCol);
                                 GridPane.setRowIndex(target, SourceRow);
                                 GridPane.setColumnIndex(target, SourceCol);
 
-                                CoursepassLecturerSubject.changeCoursepassLecturerSubject(source.getCoursepassLecturerSubject(),
+                                CoursepassLecturerSubject.changeCoursepassLecturerSubject(
+                                        source.getCoursepassLecturerSubject(),
                                         source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
                                         target.getDay(), target.getTimeslot());
                             }
                         }
 
                         if (dragEvent.getDragboard().getString() == "NEW") {
-                            JavaFXCoursepassLecturerSubjectText source = (JavaFXCoursepassLecturerSubjectText)
-                                    dragEvent.getGestureSource();
+                            JavaFXCoursepassLecturerSubjectText source = (JavaFXCoursepassLecturerSubjectText) dragEvent
+                                    .getGestureSource();
                             JavaFXTimetableHourText target = (JavaFXTimetableHourText) dragEvent.getGestureTarget();
 
-                            if (CoursepassLecturerSubject.isFreeTarget(source.getCoursepassLecturerSubject(), target.getDay(),
+                            if (CoursepassLecturerSubject.isFreeTarget(source.getCoursepassLecturerSubject(),
+                                    target.getDay(),
                                     target.getTimeslot()) == true) {
-                                //check if the target was a freetime, if not we have to delete the existing cls
+                                // check if the target was a freetime, if not we have to delete the existing cls
                                 if (target.getCoursepassLecturerSubject().getSubject().getId() != 0) {
-                                    //no freetime, we have to delete the resourceblocked and the entry in the timetable
-                                    Timetable.deleteResourceBlocked(target.getCoursepassLecturerSubject().getLecturerID(),
-                                            ResourceNames.LECTURER, target.getDay(), target.getDay(), target.getTimeslot(),
+                                    // no freetime, we have to delete the resourceblocked and the entry in the
+                                    // timetable
+                                    Timetable.deleteResourceBlocked(
+                                            target.getCoursepassLecturerSubject().getLecturerID(),
+                                            ResourceNames.LECTURER, target.getDay(), target.getDay(),
+                                            target.getTimeslot(),
                                             target.getTimeslot());
-                                    Timetable.deleteResourceBlocked(target.getCoursepassLecturerSubject().getRoom().getId(),
+                                    Timetable.deleteResourceBlocked(
+                                            target.getCoursepassLecturerSubject().getRoom().getId(),
                                             ResourceNames.ROOM, target.getDay(), target.getDay(), target.getTimeslot(),
                                             target.getTimeslot());
                                 }
-                                //delete the entry in the timetable table
+                                // delete the entry in the timetable table
                                 Timetable.deleteTimetable(source.getCoursepassLecturerSubject().getId(),
                                         target.getDay(), target.getTimeslot());
 
-                                //save the new timetablehour
+                                // save the new timetablehour
                                 TimetableHour tmptimetableHour = new TimetableHour(target.getTimeslot(),
                                         source.getCoursepassLecturerSubject());
                                 timetable.addSingleHour(tmptimetableHour, target.getDay(), target.getTimeslot());
 
-                                //update visuals
+                                // update visuals
                                 Integer TargetRow = GridPane.getRowIndex(target);
                                 Integer TargetCol = GridPane.getColumnIndex(target);
                                 grdpn_TimetableView.getChildren().remove(target);
-                                grdpn_TimetableView.add(new JavaFXTimetableHourText(source.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot()), TargetCol, TargetRow);
+                                grdpn_TimetableView
+                                        .add(new JavaFXTimetableHourText(source.getCoursepassLecturerSubject(),
+                                                target.getDay(), target.getTimeslot()), TargetCol, TargetRow);
                                 updateEditboxItems();
                             }
                         }
@@ -203,8 +216,10 @@ public class TimetableViewController implements Initializable {
                     });
 
                     tmpText.setOnDragDone(dragEvent -> {
-                        //check for all JavaFXTimetableHourText if they could be exchanged and color them
-                        List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView, JavaFXTimetableHourText.class);
+                        // check for all JavaFXTimetableHourText if they could be exchanged and color
+                        // them
+                        List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
+                                JavaFXTimetableHourText.class);
                         for (int i = 0; i < timetableHourTexts.size(); i++) {
                             timetableHourTexts.get(i).setFill(Color.BLACK);
                         }
@@ -216,32 +231,34 @@ public class TimetableViewController implements Initializable {
             inttmpRowIdx++;
         }
         if (dragandDrop == true) {
-            //Read all CoursepassLecturerSubject Objects from Coursepass and generate the Labels for the Timetableview
+            // Read all CoursepassLecturerSubject Objects from Coursepass and generate the
+            // Labels for the Timetableview
             Integer tmpRowIdx = 0;
             Integer tmpColIdx = 0;
-            //     try {
+            // try {
             coursepass.updateCoursePassLecturerSubjects();
-            //TODO Exception handling is now earlier
-//            } catch (SQLException e) {
-//                throw new RuntimeException(e);
-//            }
+            // TODO Exception handling is now earlier
+            // } catch (SQLException e) {
+            // throw new RuntimeException(e);
+            // }
             for (CoursepassLecturerSubject cls : coursepass.getArrayCoursePassLecturerSubject()) {
                 Text tmpText = new JavaFXCoursepassLecturerSubjectText(cls);
 
-                //enables the text to be dragged
-                //drag was detected, start a drag-and-drop gesture
-                //https://www.youtube.com/watch?v=-TgSIr5IzQ8
+                // enables the text to be dragged
+                // drag was detected, start a drag-and-drop gesture
+                // https://www.youtube.com/watch?v=-TgSIr5IzQ8
                 tmpText.setOnDragDetected(mouseEvent -> {
-                    //allow any transfer mode
+                    // allow any transfer mode
                     Dragboard db = tmpText.startDragAndDrop(TransferMode.COPY);
 
-                    //Put a string on a dragboard
+                    // Put a string on a dragboard
                     ClipboardContent content = new ClipboardContent();
                     content.putString("NEW");
 
                     db.setContent(content);
 
-                    //check for all JavaFXTimetableHourText if they could be exchanged and color them
+                    // check for all JavaFXTimetableHourText if they could be exchanged and color
+                    // them
                     List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
                             JavaFXTimetableHourText.class);
                     for (int i = 0; i < timetableHourTexts.size(); i++) {
@@ -261,10 +278,11 @@ public class TimetableViewController implements Initializable {
                     mouseEvent.consume();
                 });
 
-
                 tmpText.setOnDragDone(dragEvent -> {
-                    //check for all JavaFXTimetableHourText if they could be exchanged and color them
-                    List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView, JavaFXTimetableHourText.class);
+                    // check for all JavaFXTimetableHourText if they could be exchanged and color
+                    // them
+                    List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
+                            JavaFXTimetableHourText.class);
                     for (int i = 0; i < timetableHourTexts.size(); i++) {
                         timetableHourTexts.get(i).setFill(Color.BLACK);
                     }
@@ -278,7 +296,7 @@ public class TimetableViewController implements Initializable {
                 }
             }
 
-            //Add a Trashcan to Delete Planed Hours
+            // Add a Trashcan to Delete Planed Hours
             Label trashcan = new Label("\uD83D\uDDD1");
             Font defaultFont = new Font(38);
             trashcan.setFont(defaultFont);
@@ -287,9 +305,9 @@ public class TimetableViewController implements Initializable {
             grdpn_Editbox.add(trashcan, tmpColIdx, tmpRowIdx);
 
             trashcan.setOnDragOver(dragEvent -> {
-                //accept it only if it is not dragged from the same node
+                // accept it only if it is not dragged from the same node
                 if (dragEvent.getGestureSource() != dragEvent.getGestureTarget()) {
-                    //allow for both copying and moving, whatever user chooses
+                    // allow for both copying and moving, whatever user chooses
                     dragEvent.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 }
 
@@ -306,17 +324,20 @@ public class TimetableViewController implements Initializable {
                     Integer tmpTimeslot = source.getTimeslot();
                     try {
                         CoursepassLecturerSubject tmpcoursepassLecturerSubject = new CoursepassLecturerSubject(0L);
-                        tmpcoursepassLecturerSubject.setCoursepass(source.getCoursepassLecturerSubject().getCoursepass());
+                        tmpcoursepassLecturerSubject
+                                .setCoursepass(source.getCoursepassLecturerSubject().getCoursepass());
                         grdpn_TimetableView.getChildren().remove(source);
 
-                        grdpn_TimetableView.add(new JavaFXTimetableHourText(tmpcoursepassLecturerSubject, tmpDate, tmpTimeslot), SourceCol, SourceRow);
+                        grdpn_TimetableView.add(
+                                new JavaFXTimetableHourText(tmpcoursepassLecturerSubject, tmpDate, tmpTimeslot),
+                                SourceCol, SourceRow);
 
-                        //save freetime
+                        // save freetime
                         setEntryInTimetable(tmpDate, tmpcoursepassLecturerSubject, tmpTimeslot);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    //update editbox
+                    // update editbox
                     updateEditboxItems();
                 }
                 dragEvent.consume();
@@ -327,7 +348,7 @@ public class TimetableViewController implements Initializable {
 
     @FXML
     private void savetoFileClicked() {
-        //https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
+        // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         File file = fileChooser.showSaveDialog(new Stage());
@@ -360,14 +381,13 @@ public class TimetableViewController implements Initializable {
         }
     }
 
-
     private <T> List<T> getNodesOfType(Pane parent, Class<T> type) {
         List<T> elements = new ArrayList<>();
         for (Node node : parent.getChildren()) {
             if (node instanceof Pane) {
                 elements.addAll(getNodesOfType((Pane) node, type));
             } else if (type.isAssignableFrom(node.getClass())) {
-                //noinspection unchecked
+                // noinspection unchecked
                 elements.add((T) node);
             }
         }
@@ -380,7 +400,8 @@ public class TimetableViewController implements Initializable {
 
     /**
      * TODO method is new :)
-     * Returns the node that is in a certain field of a gridPane specified by row and column.
+     * Returns the node that is in a certain field of a gridPane specified by row
+     * and column.
      *
      * @param row      which row is selected
      * @param column   which column is selected
@@ -408,11 +429,11 @@ public class TimetableViewController implements Initializable {
         }
     }
 
-    private void setEntryInTimetable(LocalDate TimetableDay, CoursepassLecturerSubject coursepassLecturerSubject, int timeslot)
+    private void setEntryInTimetable(LocalDate TimetableDay, CoursepassLecturerSubject coursepassLecturerSubject,
+            int timeslot)
             throws SQLException {
         SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-        ArrayList<SQLConnectionManagerValues> SQLValues =
-                new ArrayList<SQLConnectionManagerValues>();
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
         Long refcoursepassID = coursepassLecturerSubject.getCoursepass().getId();
         Long refCoursepassLecturerSubjectId = coursepassLecturerSubject.getId();
         Long refRoomId = coursepassLecturerSubject.getRoom().getId();
@@ -430,5 +451,6 @@ public class TimetableViewController implements Initializable {
         sqlConnectionManager.execute(
                 "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                 SQLValues);
+        sqlConnectionManager.close();
     }
 }

@@ -99,8 +99,8 @@ public class ResourcesBlocked {
     }
 
     public void save() {
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
             SQLValues.add(new SQLValueLong(this.reResourceID));
@@ -138,6 +138,7 @@ public class ResourcesBlocked {
             sqlConnectionManager.execute(
                     "delete from `T_RESOURCESBLOCKED` where `id` = ?;",
                     SQLValues);
+            sqlConnectionManager.close();
         }
     }
 
@@ -178,8 +179,8 @@ public class ResourcesBlocked {
                                                                              ResourceNames resourcename, Boolean showPassed, Boolean withoutLesson) {
         ArrayList<ResourcesBlocked> returnListe = new ArrayList<ResourcesBlocked>();
 
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             SQLValues.add(new SQLValueLong(resourceID));
             SQLValues.add(new SQLValueString(resourcename.toString()));
@@ -211,8 +212,8 @@ public class ResourcesBlocked {
 
     public void get(Long resourceID, ResourceNames resourcename, LocalDate startDate, LocalDate endDate,
                     Integer startTimeslot, Integer endTimeslot) {
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             SQLValues.add(new SQLValueLong(resourceID));
             SQLValues.add(new SQLValueString(resourcename.toString()));

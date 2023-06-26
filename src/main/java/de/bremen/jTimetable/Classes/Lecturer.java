@@ -67,8 +67,8 @@ public class Lecturer {
             this.active = Boolean.TRUE;
         } else {
             //load object from db
-            try {
-                SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+                
                 ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
                 SQLValues.add(new SQLValueLong(id));
 
@@ -103,8 +103,8 @@ public class Lecturer {
      */
     private void updateLecturerBlocks(){
         ArrayList<LecturerBlock> lecturerBlocks = new ArrayList<LecturerBlock>();
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
             SQLValues.add(new SQLValueLong(getId()));
             SQLValues.add(new SQLValueDate(LocalDate.now()));
@@ -153,14 +153,15 @@ public class Lecturer {
         for(LecturerBlock lecturerBlock : lecturerBlocks){
             lecturerBlock.save();
         }
+        sqlConnectionManager.close();
     }
 
     /**
      * Naiv LecturerBlocks handeling
      */
     private void deleteLecturerBlocks(){
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
             SQLValues.add(new SQLValueLong(getId()));
@@ -224,6 +225,7 @@ public class Lecturer {
                         // to teach at 3rd timeslot
                         continue;
                     } else {
+                        sqlConnectionManager.close();
                         return false;
                     }
                 } else {
@@ -235,16 +237,18 @@ public class Lecturer {
             // blocking ends before the timestamp we want to reserve
             if (endDate.compareTo(date) == 0) {
                 if (timeslot <= endTimeslot) {
+                    sqlConnectionManager.close();
                     return false;
                 }
                 else {
                     continue;
                 }
             }
-
+            sqlConnectionManager.close();
             return false;
         }
         //There is no blocking
+        sqlConnectionManager.close();
         return true;
     }
 
@@ -255,8 +259,8 @@ public class Lecturer {
      * @return ArrayList with all lecturers of the given status
      */
     public static ArrayList<Lecturer> getAllLecturer(Boolean activeStatus) {
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
             SQLValues.add(new SQLValueBoolean(activeStatus));
             ResultSet rs = sqlConnectionManager.select("Select * from T_Lecturers where active = ?", SQLValues);

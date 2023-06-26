@@ -37,7 +37,7 @@ public class Room {
             this.active = rs.getBoolean("active");
 
         }
-
+        sqlConnectionManager.close();
     }
 
     public void save() throws SQLException{
@@ -58,6 +58,7 @@ public class Room {
             SQLValues.add(new SQLValueLong(this.id));
             sqlConnectionManager.execute("update `T_Rooms` set `roomcaption` = ?, `refLocationID` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
+        sqlConnectionManager.close();
     }
 
     public Long getId() {
@@ -101,6 +102,7 @@ public class Room {
         while( rs.next() ){
             returnList.add(new Room(rs.getLong("id")));
         }
+        sqlConnectionManager.close();
         return returnList;
     }
     public String getLocationCaption(){
