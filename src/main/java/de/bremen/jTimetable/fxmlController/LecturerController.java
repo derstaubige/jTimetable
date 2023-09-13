@@ -13,6 +13,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -33,6 +34,7 @@ import java.util.ResourceBundle;
 
 public class LecturerController implements Initializable {
     Lecturer lecturer;
+    ResourceBundle resourceBundle;
 
     @FXML private TableView<Lecturer> LecturerTableview;
     @FXML private TableColumn<Lecturer, Long> ID;
@@ -60,6 +62,7 @@ public class LecturerController implements Initializable {
     @FXML
     private TableColumn<ResourcesBlocked, Void> LecturerBlockedTableviewDelete;
     @FXML private Button LecturerBlockedAdd;
+    @FXML private Button LecturerBlockedPermaAdd;
     @FXML private Button btnLecturerEdit;
     @FXML private Button btnLecturerNew;
     @FXML private CheckBox chkToogleLecturer;
@@ -172,11 +175,11 @@ public class LecturerController implements Initializable {
 
         LecturerBlockedTableviewID.setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Long>("ID"));
         LecturerBlockedTableviewREFRESOURCEID
-                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Long>("REFRESOURCEID"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Long>("reResourceID"));
         LecturerBlockedTableviewRESOURCENAME
-                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, String>("RESOURCENAME"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, String>("resourceName"));
         LecturerBlockedTableviewSTARTDATE
-                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, LocalDate>("STARTDATE"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, LocalDate>("startDate"));
         LecturerBlockedTableviewSTARTDATE.setCellFactory(cellData -> {
             TextFieldTableCell<ResourcesBlocked, LocalDate> textFieldTableCell = new TextFieldTableCell<ResourcesBlocked, LocalDate>(new LocalDateStringConverter());
             return textFieldTableCell;
@@ -188,7 +191,7 @@ public class LecturerController implements Initializable {
                 });
                 
         LecturerBlockedTableviewENDDATE
-                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, LocalDate>("ENDDATE"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, LocalDate>("endDate"));
         LecturerBlockedTableviewENDDATE.setCellFactory(cellData -> {
             TextFieldTableCell<ResourcesBlocked, LocalDate> textFieldTableCell = new TextFieldTableCell<ResourcesBlocked, LocalDate>(
                     new LocalDateStringConverter());
@@ -201,7 +204,7 @@ public class LecturerController implements Initializable {
                 });
 
         LecturerBlockedTableviewSTARTTIMESLOT
-                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Integer>("STARTTIMESLOT"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Integer>("startTimeslot"));
         LecturerBlockedTableviewSTARTTIMESLOT.setCellFactory(cellData -> {
             TextFieldTableCell<ResourcesBlocked, Integer> textFieldTableCell = new TextFieldTableCell<ResourcesBlocked, Integer>(
                     new IntegerStringConverter());
@@ -214,7 +217,7 @@ public class LecturerController implements Initializable {
                 });
 
         LecturerBlockedTableviewENDTIMESLOT
-                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Integer>("ENDTIMESLOT"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, Integer>("endTimeslot"));
         LecturerBlockedTableviewENDTIMESLOT.setCellFactory(cellData -> {
             TextFieldTableCell<ResourcesBlocked, Integer> textFieldTableCell = new TextFieldTableCell<ResourcesBlocked, Integer>(
                     new IntegerStringConverter());
@@ -226,7 +229,7 @@ public class LecturerController implements Initializable {
                     e.getTableView().getItems().get(e.getTablePosition().getRow()).save();
                 });
         LecturerBlockedTableviewDESCRIPTION
-                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, String>("DESCRIPTION"));
+                .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, String>("Description"));
         LecturerBlockedTableviewDESCRIPTION.setCellFactory(cellData -> {
             TextFieldTableCell<ResourcesBlocked, String> textFieldTableCell = new TextFieldTableCell<ResourcesBlocked, String>(
                     new StringConverter<String>() {
@@ -303,6 +306,25 @@ public class LecturerController implements Initializable {
                 e.printStackTrace();
             }
 
+        });
+
+        LecturerBlockedPermaAdd.setOnAction(event ->{
+            //System.out.println(selectedItems.get(0).getId());
+            Stage stageTheEventSourceNodeBelongs = (Stage) LecturerBlockedPermaAdd.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/LecturerBlocks.fxml"), resources);
+            TableView.TableViewSelectionModel<Lecturer> selectionModel = LecturerTableview.getSelectionModel();
+            ObservableList<Lecturer> selectedItems = selectionModel.getSelectedItems();
+            try {
+                AnchorPane anchorPane = loader.<AnchorPane>load();
+                LecturerBlocksController lecturerBlocksController = loader.<LecturerBlocksController>getController();
+                lecturerBlocksController.setLecturer(selectedItems.get(0));
+                lecturerBlocksController.populateBlocked();
+                Scene scene = new Scene(anchorPane);
+                stageTheEventSourceNodeBelongs.setScene(scene);
+            } catch (Exception e) {
+                //TODo: Propper Error handling
+                e.printStackTrace();
+            }
         });
         
         btnLecturerEdit.setOnAction(event -> {

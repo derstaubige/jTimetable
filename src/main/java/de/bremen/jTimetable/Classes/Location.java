@@ -23,8 +23,8 @@ public class Location {
             this.active = Boolean.TRUE;
         }else{
             //load object from db
-            try {
-                SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+                
                 ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
                 SQLValues.add(new SQLValueLong(id));
 
@@ -52,6 +52,7 @@ public class Location {
         while( rs.next() ){
             returnList.add(new Location(rs.getLong("id")));
         }
+        sqlConnectionManager.close();
         return returnList;
     }
 
@@ -72,6 +73,7 @@ public class Location {
             SQLValues.add(new SQLValueLong(this.id));
             sqlConnectionManager.execute("update `T_Locations` set `caption` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
+        sqlConnectionManager.close();
     }
 
     public String getCaption() {
@@ -93,7 +95,4 @@ public class Location {
     public Long getId() {
         return id;
     }
-
-
-
 }

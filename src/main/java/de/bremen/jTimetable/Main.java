@@ -19,23 +19,13 @@ public class Main extends Application {
     public static void main(String[] args){
 
         // https://jenkov.com/tutorials/javafx/your-first-javafx-application.html
-        try{
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try( SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();){
             sqlConnectionManager.Migrate();
         }catch (Exception e){
             System.out.println(e);
-        }
+        } 
 
             Application.launch(args);
-//            CourseofStudy c1 = new CourseofStudy(0L);
-//            ArrayList alc1 = c1.getCoursesofStudy();
-//            System.out.println("JO");
-
-
-
-//         } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     @Override

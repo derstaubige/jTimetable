@@ -59,8 +59,8 @@ public class CoursePass {
      */
     public CoursePass(long id) {
         this.id = id;
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
             if (this.id == 0) {
@@ -92,6 +92,7 @@ public class CoursePass {
                     " could not be created/loaded in the constructor correct.");
             e.printStackTrace();
         }
+        
     }
 
     /**
@@ -104,8 +105,8 @@ public class CoursePass {
         //Empty arrayList
         this.arrayCoursePassLecturerSubject = new ArrayList<>();
 
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();){
+            
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
             SQLValues.add(new SQLValueLong(this.id));
@@ -144,8 +145,8 @@ public class CoursePass {
         SQLValues.add(new SQLValueString(this.description));
         SQLValues.add(new SQLValueLong(this.room.id));
 
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();){
+            
             if (this.id == 0) {
                 //It's a new object, we have to insert it
                 ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Coursepasses` " +
@@ -184,6 +185,7 @@ public class CoursePass {
         while (rs.next()) {
             returnList.add(new CoursePass(rs.getLong("id")));
         }
+        sqlConnectionManager.close();
         return returnList;
     }
 
@@ -204,6 +206,7 @@ public class CoursePass {
         while (rs.next()) {
             returnList.add(new CoursepassLecturerSubject(rs.getLong("id")));
         }
+        sqlConnectionManager.close();
         return returnList;
     }
 

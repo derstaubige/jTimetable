@@ -1,14 +1,18 @@
 package de.bremen.jTimetable.Classes;
 
 import java.sql.ResultSet;
+import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Locale.Category;
+import java.util.concurrent.ExecutionException;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 /**
- * Class represents object of a blocked resource (either LECTURER or ROOM) that can be stored in a database and
+ * Class represents object of a blocked resource (either LECTURER or ROOM) that
+ * can be stored in a database and
  * provides actions for editing these objects.
  */
 public class ResourcesBlocked {
@@ -42,65 +46,62 @@ public class ResourcesBlocked {
      */
     private Integer endTimeslot;
     /**
-     * Description is optional and can describe the matter of the blocking (e.g.: "LESSON" or "VACATION")
+     * Description is optional and can describe the matter of the blocking (e.g.:
+     * "LESSON" or "VACATION")
      */
     private String description;
 
     /**
      * Constructor that only sets the ID.
      *
-     * @param resourcesBlockedID id the object has in database (0 if it's not stored in the db yet)
+     * @param resourcesBlockedID id the object has in database (0 if it's not stored
+     *                           in the db yet)
      */
     public ResourcesBlocked(Long resourcesBlockedID) {
         this.ID = resourcesBlockedID;
-        //establish connection
-        SQLConnectionManager sqlConnectionManager = null;
-        try {
-            sqlConnectionManager = new SQLConnectionManager();
-        } catch (SQLException e) {
-            System.err.println("Connection to Database could not be established in ResourcesBlocked-Constructor.");
-            e.printStackTrace();
-            throw new RuntimeException("Connection can't be established. Therefor the constructor ResourcesBlocked " +
-                    "may not function correctly.");
-        }
+        // establish connection
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
 
-        //id == 0 if object doesn't exist in database
-        if (this.ID == 0) {
-            // load dummy object
-            this.reResourceID = 0L;
-            this.resourceName = ResourceNames.LECTURER;
-            this.startDate = LocalDate.of(1990, 1, 1);
-            this.endDate = LocalDate.of(1990, 1, 1);
-            this.startTimeslot = 0;
-            this.endTimeslot = 0;
-            this.description = "";
-        } else {
-            //load object from db
-            //Array with values that will be stored in the database
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-            SQLValues.add(new SQLValueLong(ID));
-            try {
-                ResultSet rs = sqlConnectionManager.select("Select * from T_Resourcesblocked where id = ?;", SQLValues);
+            // id == 0 if object doesn't exist in database
+            if (this.ID == 0) {
+                // load dummy object
+                this.reResourceID = 0L;
+                this.resourceName = ResourceNames.LECTURER;
+                this.startDate = LocalDate.of(1990, 1, 1);
+                this.endDate = LocalDate.of(1990, 1, 1);
+                this.startTimeslot = 0;
+                this.endTimeslot = 0;
+                this.description = "";
+            } else {
+                // load object from db
+                // Array with values that will be stored in the database
+                ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+                SQLValues.add(new SQLValueLong(ID));
+                try {
+                    ResultSet rs = sqlConnectionManager.select("Select * from T_Resourcesblocked where id = ?;",
+                            SQLValues);
 
-                rs.first();
-                this.ID = rs.getLong("id");
-                this.reResourceID = rs.getLong("REFRESOURCEID");
-                this.resourceName = ResourceNames.valueOf(rs.getString("RESOURCENAME").trim());
-                this.startDate = rs.getDate("STARTDATE").toLocalDate();
-                this.endDate = rs.getDate("ENDDATE").toLocalDate();
-                this.startTimeslot = rs.getInt("STARTTIMESLOT");
-                this.endTimeslot = rs.getInt("ENDTIMESLOT");
-                this.description = rs.getString("DESCRIPTION").trim();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                    rs.first();
+                    this.ID = rs.getLong("id");
+                    this.reResourceID = rs.getLong("REFRESOURCEID");
+                    this.resourceName = ResourceNames.valueOf(rs.getString("RESOURCENAME").trim());
+                    this.startDate = rs.getDate("STARTDATE").toLocalDate();
+                    this.endDate = rs.getDate("ENDDATE").toLocalDate();
+                    this.startTimeslot = rs.getInt("STARTTIMESLOT");
+                    this.endTimeslot = rs.getInt("ENDTIMESLOT");
+                    this.description = rs.getString("DESCRIPTION").trim();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
     public void save() {
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();) {
+
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
             SQLValues.add(new SQLValueLong(this.reResourceID));
@@ -138,11 +139,13 @@ public class ResourcesBlocked {
             sqlConnectionManager.execute(
                     "delete from `T_RESOURCESBLOCKED` where `id` = ?;",
                     SQLValues);
+            sqlConnectionManager.close();
         }
     }
 
     /**
-     * Static method that creates a new resourcesBlocked-instance and setts all values at once.
+     * Static method that creates a new resourcesBlocked-instance and setts all
+     * values at once.
      * Afterwards it calls method save() to save the changes in the database.
      *
      * @param REFRESOURCEID
@@ -155,8 +158,8 @@ public class ResourcesBlocked {
      * @throws SQLException
      */
     public static void setResourcesBlocked(Long REFRESOURCEID, ResourceNames RESOURCENAME, String DESCRIPTION,
-                                           LocalDate STARTDATE, LocalDate ENDDATE, int STARTTIMESLOT,
-                                           int ENDTIMESLOT) throws SQLException {
+            LocalDate STARTDATE, LocalDate ENDDATE, int STARTTIMESLOT,
+            int ENDTIMESLOT) throws SQLException {
         ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L);
         resourcesblocked.setReResourceID(REFRESOURCEID);
         resourcesblocked.setResourceName(RESOURCENAME);
@@ -170,16 +173,16 @@ public class ResourcesBlocked {
     }
 
     public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
-                                                                             ResourceNames resourcename) {
+            ResourceNames resourcename) {
         return getArrayListofResourcesblocked(resourceID, resourcename, false, true);
     }
 
     public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
-                                                                             ResourceNames resourcename, Boolean showPassed, Boolean withoutLesson) {
+            ResourceNames resourcename, Boolean showPassed, Boolean withoutLesson) {
         ArrayList<ResourcesBlocked> returnListe = new ArrayList<ResourcesBlocked>();
 
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             SQLValues.add(new SQLValueLong(resourceID));
             SQLValues.add(new SQLValueString(resourcename.toString()));
@@ -210,9 +213,9 @@ public class ResourcesBlocked {
     }
 
     public void get(Long resourceID, ResourceNames resourcename, LocalDate startDate, LocalDate endDate,
-                    Integer startTimeslot, Integer endTimeslot) {
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+            Integer startTimeslot, Integer endTimeslot) {
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             SQLValues.add(new SQLValueLong(resourceID));
             SQLValues.add(new SQLValueString(resourcename.toString()));
@@ -310,6 +313,5 @@ public class ResourcesBlocked {
     public void setDescription(String dESCRIPTION) {
         description = dESCRIPTION;
     }
-
 
 }
