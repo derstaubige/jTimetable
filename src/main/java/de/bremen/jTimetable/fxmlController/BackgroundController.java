@@ -21,6 +21,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -31,16 +32,16 @@ import java.util.ResourceBundle;
 
 public class BackgroundController implements Initializable {
 
+    @FXML
     public Button btnCoursePassEdit;
+    @FXML
     public Button btnNew;
+    @FXML
     public BorderPane brdrPnAll;
+    @FXML
+    public Button btnLecturer;
+
     ResourceBundle resourceBundle;
-
-    @FXML
-    public Parent homeView;
-
-    @FXML
-    private HomeController homeViewController;
 
     /**
      * FXML Elements:
@@ -59,25 +60,55 @@ public class BackgroundController implements Initializable {
 
     @FXML
     private AnchorPane slider;
+
+    /**
+     * Includes.
+     */
+    //TODO do the AnchorPanes need to be a Parent?
+    @FXML
+    public Parent homeView;
+    @FXML
+    private HomeController homeViewController;
     @FXML
     private AnchorPane courseOfStudyView;
     @FXML
+    private CourseofStudyController courseOfStudyViewController;
+    @FXML
     private AnchorPane coursePassView;
+    @FXML
+    private CoursepassController coursePassViewController;
     @FXML
     private AnchorPane coursePassLecturerSubjectView;
     @FXML
+    private CoursepassLecturerSubjectController coursepassLecturerSubjectViewController;
+    @FXML
     private AnchorPane lecturerView;
+    @FXML
+    private LecturerController lecturerViewController;
     @FXML
     private AnchorPane locationView;
     @FXML
+    private LocationController locationViewController;
+    @FXML
     private AnchorPane roomView;
+    @FXML
+    private RoomController roomViewController;
     @FXML
     private AnchorPane studySectionView;
     @FXML
+    private StudySectionController studySectionViewController;
+    @FXML
     private AnchorPane subjectView;
     @FXML
+    private SubjectController subjectViewController;
+    @FXML
     private AnchorPane timetableView;
+    @FXML
+    private TimetableViewController timetableViewController;
 
+    /**
+     * Currently displayed include.
+     */
     private AnchorPane currentlyVisible = new AnchorPane();
 
     @Override
@@ -86,17 +117,22 @@ public class BackgroundController implements Initializable {
         homeViewController.initialize(location, resources);
         btnNew.setDisable(true);
 
-        //Initialise includes
+        //Initialize includes
         homeView.setVisible(true);
-        courseOfStudyView.setVisible(false);
-        coursePassView.setVisible(false);
-        coursePassLecturerSubjectView.setVisible(false);
-        lecturerView.setVisible(false);
-        locationView.setVisible(false);
-        roomView.setVisible(false);
-        studySectionView.setVisible(false);
-        subjectView.setVisible(false);
-        timetableView.setVisible(false);
+//        courseOfStudyView.setVisible(false);
+//        coursePassView.setVisible(false);
+//        coursePassLecturerSubjectView.setVisible(false);
+//        lecturerView.setVisible(false);
+//        locationView.setVisible(false);
+//        roomView.setVisible(false);
+//        studySectionView.setVisible(false);
+//        subjectView.setVisible(false);
+//        timetableView.setVisible(false);
+
+        Pane platzhalter = new Pane();
+  //      platzhalter.
+        //TODO build includes as a separate node
+ //       brdrPnAll.centerProperty().set(courseOfStudyView);
 
         exit.setOnMouseClicked(event -> System.exit(0));
 
@@ -133,10 +169,12 @@ public class BackgroundController implements Initializable {
             });
         });
 
+        //TODO where/when do we use this
         homeViewController.getBtnTimetableShow().setOnAction(event -> {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = homeViewController.getCoursePassTableview().getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
+            //TODO does this work?
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Home.fxml"), resources);
             Stage stage = new Stage(StageStyle.DECORATED);
             stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
                     selectedItems.get(0).getStudySection().getDescription());

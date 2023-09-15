@@ -55,6 +55,7 @@ public class HomeController {
     public void initialize(URL location, ResourceBundle resources) {
         // ToDo: Read prefered language out of config.properties file
 
+        System.out.println("Initialize Home!");
 //        Config config = new Config();
 //        Locale locale = new Locale(config.getLocalLang(),config.getLocaCountry());
 //        System.out.println(config.getLocaCountry() + config.getLocalLang());
