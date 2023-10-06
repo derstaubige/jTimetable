@@ -25,7 +25,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class HomeController extends Controller implements Initializable{
+public class HomeController implements Initializable{
 
     @FXML
     private TableView<CoursePass> CoursepassTableview;

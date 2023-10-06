@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane stylesheets="@../styles/menuStyle.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.BackgroundController">
+<AnchorPane stylesheets="@../styles/menuStyle.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.BackgroundController">
     <BorderPane fx:id="brdrPnAll" layoutX="114.0" layoutY="54.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <top>
             <AnchorPane prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: WHITE;" BorderPane.alignment="CENTER">
@@ -83,21 +89,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <!--                        <Button fx:id="btnAdd" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0"-->
-                    <!--                                styleClass="sidebarItem" text="ADD" textFill="WHITE">-->
-                    <!--                            <font>-->
-                    <!--                                <Font name="System Bold" size="15.0"/>-->
-                    <!--                            </font>-->
-                    <!--                            <graphic>-->
-                    <!--                                <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true"-->
-                    <!--                                           preserveRatio="true">-->
-                    <!--                                    <image>-->
-                    <!--                                        <Image url="@../img/add.png"/>-->
-                    <!--                                    </image>-->
-                    <!--                                </ImageView>-->
-                    <!--                            </graphic>-->
-                    <!--                        </Button>-->
-                    <Button fx:id="btnLecturer" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Dozenten" textFill="WHITE">
+                    <Button fx:id="btnLecturer" alignment="BASELINE_LEFT" onAction="#openLecturer" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Dozenten" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -107,7 +99,19 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnCoursePass" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Durchgänge" textFill="WHITE">
+               <Button fx:id="btnStudySection" alignment="BASELINE_LEFT" onAction="#openStudySection" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Studienabschnitte" textFill="WHITE">
+                  <font>
+                     <Font name="System Bold" size="15.0" />
+                  </font>
+                  <graphic>
+                     <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                           <Image url="@../img/data.png" />
+                        </image>
+                     </ImageView>
+                  </graphic>
+               </Button>
+                    <Button fx:id="btnCoursePass" alignment="BASELINE_LEFT" onAction="#openCoursePass" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Durchgänge" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -117,7 +121,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnCourseOfStudy" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Lehrgänge" textFill="WHITE">
+                    <Button fx:id="btnCourseOfStudy" alignment="BASELINE_LEFT" onAction="#openCourseOfStudy" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Lehrgänge" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -127,7 +131,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnSubject" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Fächer" textFill="WHITE">
+                    <Button fx:id="btnSubject" alignment="BASELINE_LEFT" onAction="#openSubject" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Fächer" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -137,7 +141,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnRoom" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Räume" textFill="WHITE">
+                    <Button fx:id="btnRoom" alignment="BASELINE_LEFT" onAction="#openRoom" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Räume" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -147,7 +151,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnLocations" alignment="BASELINE_LEFT" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Standorte" textFill="WHITE">
+                    <Button fx:id="btnLocations" alignment="BASELINE_LEFT" onAction="#openLocation" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Standorte" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -171,18 +175,8 @@
             </AnchorPane>
         </left>
         <center>
-<AnchorPane fx:id="childContainer">
-</AnchorPane>
-           <!-- <fx:include fx:id="homeView" source="Home.fxml"/> -->
-            <!--                <fx:include fx:id="courseOfStudyView" source="CourseofStudy.fxml" />-->
-            <!--                <fx:include fx:id="coursePassView" source="Coursepass.fxml" />-->
-            <!--                <fx:include fx:id="coursePassLecturerSubjectView" source="CoursepassLecturerSubject.fxml" />-->
-            <!--                <fx:include fx:id="lecturerView" source="Lecturer.fxml" />-->
-            <!--                <fx:include fx:id="locationView" source="Location.fxml" />-->
-            <!--                <fx:include fx:id="roomView" source="Room.fxml" />-->
-            <!--                <fx:include fx:id="studySectionView" source="StudySection.fxml" />-->
-            <!--                <fx:include fx:id="subjectView" source="Subject.fxml" />-->
-            <!--                <fx:include fx:id="timetableView" source="TimetableView.fxml" />-->
+            <AnchorPane fx:id="childContainer">
+            </AnchorPane>
         </center>
     </BorderPane>
 </AnchorPane>
