@@ -1,10 +1,12 @@
 package de.bremen.jTimetable.fxmlController;
 
 import de.bremen.jTimetable.Classes.CoursePass;
+import de.bremen.jTimetable.Classes.Location;
 import de.bremen.jTimetable.Main;
 import javafx.animation.TranslateTransition;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -19,9 +21,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -40,8 +44,11 @@ public class BackgroundController implements Initializable {
     public BorderPane brdrPnAll;
     @FXML
     public Button btnLecturer;
+    @FXML
+    public AnchorPane childContainer;
 
     ResourceBundle resourceBundle;
+    URL location;
 
     /**
      * FXML Elements:
@@ -114,11 +121,24 @@ public class BackgroundController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.resourceBundle = resources;
-        homeViewController.initialize(location, resources);
+        this.location = location;
+        //  homeViewController.initialize(location, resources);
         btnNew.setDisable(true);
 
+//        BorderPane childContainer = brdrPnAll;
+        try {
+            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"), this.resourceBundle);
+            Pane childNode = childLoader.load();
+            Controller childController = childLoader.getController();
+            childController.initialize(location, resources);
+            // Do something with the child node and controller
+            childContainer.getChildren().add(childNode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         //Initialize includes
-        homeView.setVisible(true);
+        //  homeView.setVisible(true);
 //        courseOfStudyView.setVisible(false);
 //        coursePassView.setVisible(false);
 //        coursePassLecturerSubjectView.setVisible(false);
@@ -130,9 +150,9 @@ public class BackgroundController implements Initializable {
 //        timetableView.setVisible(false);
 
         Pane platzhalter = new Pane();
-  //      platzhalter.
+        //      platzhalter.
         //TODO build includes as a separate node
- //       brdrPnAll.centerProperty().set(courseOfStudyView);
+        //       brdrPnAll.centerProperty().set(courseOfStudyView);
 
         exit.setOnMouseClicked(event -> System.exit(0));
 
@@ -170,46 +190,47 @@ public class BackgroundController implements Initializable {
         });
 
         //TODO where/when do we use this
-        homeViewController.getBtnTimetableShow().setOnAction(event -> {
-            TableView.TableViewSelectionModel<CoursePass> selectionModel = homeViewController.getCoursePassTableview().getSelectionModel();
-            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            //TODO does this work?
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Home.fxml"), resources);
-            Stage stage = new Stage(StageStyle.DECORATED);
-            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
-                    selectedItems.get(0).getStudySection().getDescription());
-            URL url = Main.class.getResource("fxml/TimetableView.fxml");
-            loader.setLocation(url);
-            try {
-                stage.setScene(new Scene(loader.load()));
-                TimetableViewController controller = loader.getController();
-                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
-                stage.show();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+//        homeViewController.getBtnTimetableShow().setOnAction(event -> {
+//            TableView.TableViewSelectionModel<CoursePass> selectionModel = homeViewController.getCoursePassTableview().getSelectionModel();
+//            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+//            //TODO does this work?
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Home.fxml"), resources);
+//            Stage stage = new Stage(StageStyle.DECORATED);
+//            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
+//                    selectedItems.get(0).getStudySection().getDescription());
+//            URL url = Main.class.getResource("fxml/TimetableView.fxml");
+//            loader.setLocation(url);
+//            try {
+//                stage.setScene(new Scene(loader.load()));
+//                TimetableViewController controller = loader.getController();
+//                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
+//                stage.show();
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        });
 
-        homeViewController.getBtnCoursePassEdit().setOnAction(event -> {
-            TableView.TableViewSelectionModel<CoursePass> selectionModel = homeViewController.getCoursePassTableview().getSelectionModel();
-            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            if (selectedItems.size() > 0) {
-                //System.out.println(selectedItems.get(0).getId());
-                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
-
-                try {
-                    AnchorPane anchorPane = loader.load();
-                    CoursepassController coursepassController = loader.getController();
-                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
-                    Scene scene = new Scene(anchorPane);
-                    stageTheEventSourceNodeBelongs.setScene(scene);
-                } catch (Exception e) {
-                    //TODo: Proper Error handling
-                    e.printStackTrace();
-                }
-            }
-        });
+//        homeViewController.getBtnCoursePassEdit().setOnAction(event -> {
+//            TableView.TableViewSelectionModel<CoursePass> selectionModel = homeViewController.getCoursePassTableview().getSelectionModel();
+//            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+//            if (selectedItems.size() > 0) {
+//                //System.out.println(selectedItems.get(0).getId());
+//                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//                FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
+//
+//                try {
+//                    AnchorPane anchorPane = loader.load();
+//                    CoursepassController coursepassController = loader.getController();
+//                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
+//                    Scene scene = new Scene(anchorPane);
+//                    stageTheEventSourceNodeBelongs.setScene(scene);
+//                } catch (Exception e) {
+//                    //TODo: Proper Error handling
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+        btnLecturer.setOnAction(event -> openLecturer());
     }
 
     /**
@@ -314,17 +335,28 @@ public class BackgroundController implements Initializable {
 
     @FXML
     private void openLecturer() {
-        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Lecturer.fxml"), this.resourceBundle);
-
         try {
-            AnchorPane anchorPane = loader.<AnchorPane>load();
-            Scene scene = new Scene(anchorPane);
-            stageTheEventSourceNodeBelongs.setScene(scene);
-        } catch (Exception e) {
-            //TODo: Proper Error handling
+            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/Lecturer.fxml"), this.resourceBundle);
+            Pane childNode = childLoader.load();
+            LecturerController childController = childLoader.getController();
+          childController.initialize(location, this.resourceBundle);
+            // Do something with the child node and controller
+            childContainer.getChildren().clear();
+            childContainer.getChildren().add(childNode);
+        } catch (IOException e) {
             e.printStackTrace();
         }
+//        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
+//        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Lecturer.fxml"), this.resourceBundle);
+//
+//        try {
+//            AnchorPane anchorPane = loader.<AnchorPane>load();
+//            Scene scene = new Scene(anchorPane);
+//            stageTheEventSourceNodeBelongs.setScene(scene);
+//        } catch (Exception e) {
+//            //TODo: Proper Error handling
+//            e.printStackTrace();
+//        }
     }
 
     @FXML
