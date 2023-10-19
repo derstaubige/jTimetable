@@ -68,10 +68,9 @@ public class BackgroundController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.resourceBundle = resources;
         this.location = location;
-        //  homeViewController.initialize(location, resources);
         btnNew.setDisable(true);
+        //Initially home view is displayed
         openHome();
-
 
         exit.setOnMouseClicked(event -> System.exit(0));
 
@@ -189,7 +188,9 @@ public class BackgroundController implements Initializable {
             homeController.initialize(this.location, this.resourceBundle);
             //Do something with the child node and controller:
             //Open the selected timetable in a new window
-            //TODO in include as well
+            //TODO theoretically this only needs to be in the home controller
+            // (currently commented out, because it needs testing)
+            // same for second event handler
             homeController.getBtnTimetableShow().setOnAction(event -> {
                 TableView.TableViewSelectionModel<CoursePass> selectionModel =
                         homeController.getCoursePassTableview().getSelectionModel();
@@ -244,7 +245,6 @@ public class BackgroundController implements Initializable {
             });
         } catch (IOException e) {
             System.err.println("Home could not be loaded properly!");
-            e.printStackTrace();
         }
     }
 
@@ -265,7 +265,6 @@ public class BackgroundController implements Initializable {
             //Do something with the child node and controller
         } catch (IOException e) {
             System.err.println("Coursepass could not be loaded properly!");
-            e.printStackTrace();
         }
     }
 
@@ -285,7 +284,6 @@ public class BackgroundController implements Initializable {
             //Do something with the child node and controller
         } catch (IOException e) {
             System.err.println("Lecturer could not be loaded properly!");
-            e.printStackTrace();
         }
     }
 
@@ -305,7 +303,6 @@ public class BackgroundController implements Initializable {
             //Do something with the child node and controller
         } catch (IOException e) {
             System.err.println("Subject could not be loaded properly!");
-            e.printStackTrace();
         }
     }
 
@@ -325,7 +322,6 @@ public class BackgroundController implements Initializable {
             //Do something with the child node and controller
         } catch (IOException e) {
             System.err.println("Lecturer could not be loaded properly!");
-            e.printStackTrace();
         }
     }
 
@@ -345,7 +341,6 @@ public class BackgroundController implements Initializable {
             //Do something with the child node and controller
         } catch (IOException e) {
             System.err.println("Location could not be loaded properly!");
-            e.printStackTrace();
         }
     }
 
@@ -366,7 +361,6 @@ public class BackgroundController implements Initializable {
             //Do something with the child node and controller
         } catch (IOException e) {
             System.err.println("StudySection could not be loaded properly!");
-            e.printStackTrace();
         }
     }
 }

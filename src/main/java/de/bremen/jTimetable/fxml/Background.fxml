@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane stylesheets="@../styles/menuStyle.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.BackgroundController">
+<AnchorPane stylesheets="@../styles/backgroundStyles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.BackgroundController">
     <BorderPane fx:id="brdrPnAll" layoutX="114.0" layoutY="54.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <top>
             <AnchorPane prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: WHITE;" BorderPane.alignment="CENTER">
@@ -79,7 +79,7 @@
         <left>
             <AnchorPane fx:id="slider" prefHeight="362.0" prefWidth="176.0" style="-fx-background-color: #0A4969;" BorderPane.alignment="CENTER">
                 <VBox layoutX="14.0" layoutY="35.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="53.0">
-                    <Button fx:id="btnHome" alignment="BASELINE_LEFT" onAction="#openHome" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="\%menu.file.home" textFill="WHITE">
+                    <Button fx:id="btnHome" alignment="BASELINE_LEFT" onAction="#openHome" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="%menu.file.home" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -89,7 +89,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnLecturer" alignment="BASELINE_LEFT" onAction="#openLecturer" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Dozenten" textFill="WHITE">
+                    <Button fx:id="btnLecturer" alignment="BASELINE_LEFT" onAction="#openLecturer" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="%menu.entitiys.lecturer" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -99,7 +99,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-               <Button fx:id="btnStudySection" alignment="BASELINE_LEFT" onAction="#openStudySection" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Studienabschnitte" textFill="WHITE">
+               <Button fx:id="btnStudySection" alignment="BASELINE_LEFT" onAction="#openStudySection" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="%menu.entitiys.StudySections" textFill="WHITE">
                   <font>
                      <Font name="System Bold" size="15.0" />
                   </font>
@@ -111,7 +111,7 @@
                      </ImageView>
                   </graphic>
                </Button>
-                    <Button fx:id="btnCoursePass" alignment="BASELINE_LEFT" onAction="#openCoursePass" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Durchgänge" textFill="WHITE">
+                    <Button fx:id="btnCoursePass" alignment="BASELINE_LEFT" onAction="#openCoursePass" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="%menu.entitiys.coursepass" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -121,7 +121,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnCourseOfStudy" alignment="BASELINE_LEFT" onAction="#openCourseOfStudy" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Lehrgänge" textFill="WHITE">
+                    <Button fx:id="btnCourseOfStudy" alignment="BASELINE_LEFT" onAction="#openCourseOfStudy" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="%menu.entitiys.cos" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -131,7 +131,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnSubject" alignment="BASELINE_LEFT" onAction="#openSubject" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Fächer" textFill="WHITE">
+                    <Button fx:id="btnSubject" alignment="BASELINE_LEFT" onAction="#openSubject" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="%menu.entitiys.subject" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -141,7 +141,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnRoom" alignment="BASELINE_LEFT" onAction="#openRoom" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Räume" textFill="WHITE">
+                    <Button fx:id="btnRoom" alignment="BASELINE_LEFT" onAction="#openRoom" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="%menu.entitiys.room" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
@@ -151,7 +151,7 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnLocations" alignment="BASELINE_LEFT" onAction="#openLocation" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="Standorte" textFill="WHITE">
+                    <Button fx:id="btnLocations" alignment="BASELINE_LEFT" onAction="#openLocation" prefHeight="38.0" prefWidth="176.0" styleClass="sidebarItem" text="%menu.entitiys.locations" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="15.0" />
                         </font>
