@@ -8,19 +8,13 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <AnchorPane stylesheets="@../styles/backgroundStyles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.BackgroundController">
     <BorderPane fx:id="brdrPnAll" layoutX="114.0" layoutY="54.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <top>
-            <AnchorPane prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: WHITE;" BorderPane.alignment="CENTER">
-                <Pane layoutX="102.0" layoutY="20.0" prefHeight="25.0" prefWidth="200.0" style="-fx-background-color: #032d4d;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <ImageView fx:id="exit" fitHeight="22.0" fitWidth="22.0" layoutX="1146.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
-                        <Image url="@../img/exit.png" />
-                    </ImageView>
-                </Pane>
+            <AnchorPane prefHeight="65.0" prefWidth="200.0" style="-fx-background-color: #0A4969;" BorderPane.alignment="CENTER">
                 <HBox layoutX="239.0" layoutY="1.0" prefHeight="43.0" prefWidth="525.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="26.0">
                     <opaqueInsets>
                         <Insets />
@@ -39,17 +33,17 @@
                             </ImageView>
                         </graphic>
                     </Button>
-                    <Button prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="Report">
-                        <graphic>
-                            <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                                <Image url="@../img/report1.png" />
-                            </ImageView>
-                        </graphic>
-                    </Button>
                     <Button prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" text="BackUp">
                         <graphic>
                             <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
                                 <Image url="@../img/data1.png" />
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                    <Button prefHeight="38.0" prefWidth="136.0" styleClass="menuItem" onAction="#closeButtonAction" text="%menu.file.exit">
+                        <graphic>
+                            <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                                <Image url="@../img/exit.png" />
                             </ImageView>
                         </graphic>
                     </Button>

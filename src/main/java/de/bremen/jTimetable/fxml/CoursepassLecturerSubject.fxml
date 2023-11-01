@@ -12,7 +12,6 @@
         <VBox>
 
         <children>
-            <fx:include source="Menu.fxml" fillWidth="true" />
             <Label text="%cls.title" fx:id="lblCoursepassName"></Label>
             <HBox>
                 <children>

@@ -13,7 +13,6 @@
     <ScrollPane>
         <VBox >
             <children>
-                <fx:include source="Menu.fxml" fillWidth="true" />
                 <Label text="%coursepass.title"></Label>
                 <HBox>
                     <children>

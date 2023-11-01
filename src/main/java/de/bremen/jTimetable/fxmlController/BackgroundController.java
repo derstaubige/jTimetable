@@ -14,7 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.TableView;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -52,9 +51,6 @@ public class BackgroundController implements Initializable {
     private MenuBar menuBar;
 
     @FXML
-    private ImageView exit;
-
-    @FXML
     private Label menu;
 
     @FXML
@@ -71,8 +67,6 @@ public class BackgroundController implements Initializable {
         btnNew.setDisable(true);
         //Initially home view is displayed
         openHome();
-
-        exit.setOnMouseClicked(event -> System.exit(0));
 
         slider.setTranslateX(-176);
         menu.setOnMouseClicked(event -> {
@@ -145,12 +139,12 @@ public class BackgroundController implements Initializable {
         System.out.println("You clicked on About!");
     }
 
+    /**
+     * Closes the entire program.
+     */
     @FXML
     private void closeButtonAction() {
-        // get a handle to the stage
-        Stage stage = (Stage) menuBar.getScene().getWindow();
-        // do what you have to do
-        stage.close();
+        System.exit(0);
     }
 
     @FXML

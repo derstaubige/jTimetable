@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
@@ -13,7 +10,6 @@
     <ScrollPane>
         <VBox >
             <children>
-                <fx:include source="Menu.fxml" fillWidth="true" />
                 <Label text="%subject.title"></Label>
                 <HBox>
                     <children>
