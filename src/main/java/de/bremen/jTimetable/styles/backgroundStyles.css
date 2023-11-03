@@ -1,10 +1,4 @@
-.borderPane {
--fx-background-image: url("../img/HdR_Schraeg_von_vorne.jpg");
-}
-
 .root {
 -fx-background-image: url("../img/HdR_Schraeg_von_vorne.jpg");
-}
-.HBox {
- -fx-background-color: linear-gradient-to-right(to right, #6A9ED7, #B0D1FE, #CEE6FE);
+-fx-opacity: 0.6;
 }
