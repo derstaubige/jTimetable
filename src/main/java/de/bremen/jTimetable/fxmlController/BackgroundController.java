@@ -40,6 +40,9 @@ public class BackgroundController implements Initializable {
     public Button btnLecturer;
     @FXML
     public AnchorPane childContainer;
+    @FXML
+    public Button btnEdit;
+    public Button btnShow;
 
     ResourceBundle resourceBundle;
     URL location;
@@ -64,7 +67,7 @@ public class BackgroundController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         this.resourceBundle = resources;
         this.location = location;
-        btnNew.setDisable(true);
+
         //Initially home view is displayed
         openHome();
 
@@ -107,7 +110,7 @@ public class BackgroundController implements Initializable {
 
     /**
      * Handle action related to "About" menu item.
-     * TODO item doesn't exist
+     * TODO was included in help menu which we don't have atm
      *
      * @param event Event on "About" menu item.
      */
@@ -149,21 +152,20 @@ public class BackgroundController implements Initializable {
 
     @FXML
     private void openCourseOfStudy() {
-        //TODO kann ich das hier genauso laden wie bei den anderen?
-        //System.out.println(selectedItems.get(0).getId());
-        Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/CourseofStudy.fxml"),
-                this.resourceBundle);
-
         try {
-            AnchorPane anchorPane = loader.load();
-            loader.getController();
-            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
-            Scene scene = new Scene(anchorPane);
-            stageTheEventSourceNodeBelongs.setScene(scene);
+            //Load fmxl that will be included in center of brdrPnAll
+            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/CourseofStudy.fxml"),
+                    this.resourceBundle);
+            Pane childNode = childLoader.load();
+            //Add include
+            this.childContainer.getChildren().clear();
+            this.childContainer.getChildren().add(childNode);
+            //Load corresponding Controller
+            CourseofStudyController courseofStudyController = childLoader.getController();
+            courseofStudyController.initialize(this.location, this.resourceBundle);
+            //Do something with the child node and controller:
         } catch (Exception e) {
-            //TODo: Proper Error handling
-            e.printStackTrace();
+            System.err.println("CourseOfStudy could not be loaded properly!");
         }
     }
 
@@ -181,62 +183,13 @@ public class BackgroundController implements Initializable {
             HomeController homeController = childLoader.getController();
             homeController.initialize(this.location, this.resourceBundle);
             //Do something with the child node and controller:
+
+            //Set up top menu buttons
+            btnEdit.setOnAction(e -> homeController.editCoursePass(childContainer));
+            btnNew.setDisable(true);
             //Open the selected timetable in a new window
-            //TODO theoretically this only needs to be in the home controller
-            // (currently commented out, because it needs testing)
-            // same for second event handler
-            homeController.getBtnTimetableShow().setOnAction(event -> {
-                TableView.TableViewSelectionModel<CoursePass> selectionModel =
-                        homeController.getCoursePassTableview().getSelectionModel();
-                ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+            btnShow.setOnAction(e -> homeController.showTimetable());
 
-                //TODO does this still work?
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Home.fxml"),
-                        this.resourceBundle);
-                Stage stage = new Stage(StageStyle.DECORATED);
-                stage.setTitle(
-                        "Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() +
-                                " " +
-                                selectedItems.get(0).getStudySection().getDescription());
-                URL url = Main.class.getResource("fxml/TimetableView.fxml");
-                loader.setLocation(url);
-                try {
-                    stage.setScene(new Scene(loader.load()));
-                    TimetableViewController controller = loader.getController();
-                    controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
-                    stage.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    throw new RuntimeException(e);
-                }
-            });
-
-            homeController.getBtnCoursePassEdit().setOnAction(event -> {
-                TableView.TableViewSelectionModel<CoursePass> selectionModel =
-                        homeController
-                                .getCoursePassTableview().getSelectionModel();
-                ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-                if (selectedItems.size() > 0) {
-                    //System.out.println(selectedItems.get(0).getId());
-                    Stage stageTheEventSourceNodeBelongs =
-                            (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    FXMLLoader loader =
-                            new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"),
-                                    this.resourceBundle);
-
-                    try {
-                        AnchorPane anchorPane = loader.load();
-                        CoursepassController coursepassController = loader.getController();
-                        coursepassController.setCoursepass(
-                                new CoursePass(selectedItems.get(0).getId()));
-                        Scene scene = new Scene(anchorPane);
-                        stageTheEventSourceNodeBelongs.setScene(scene);
-                    } catch (Exception e) {
-                        //TODo: Proper Error handling
-                        e.printStackTrace();
-                    }
-                }
-            });
         } catch (IOException e) {
             System.err.println("Home could not be loaded properly!");
         }

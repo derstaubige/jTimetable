@@ -3,20 +3,21 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="de.bremen.jTimetable.fxmlController.LecturerController"
-            prefHeight="800.0" prefWidth="1000.0" minWidth="1000">
+            stylesheets="@../styles/includeStyles.css" prefHeight="800.0" prefWidth="1000.0" minWidth="1000">
     <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" vbarPolicy="ALWAYS" prefWidth="1024" prefHeight="768">
-        <VBox >
+        <VBox>
             <children>
                 <Label text="%lecturer.title"></Label>
                 <HBox>
                     <children>
                         <TableView fx:id="LecturerTableview" minWidth="800">
                             <columns>
-                                <TableColumn text="%lecturer.LecturerTableview.id" fx:id="ID" visible="false"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerTableview.firstname" fx:id="Firstname"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerTableview.id" fx:id="ID"
+                                             visible="false"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerTableview.firstname"
+                                             fx:id="Firstname"></TableColumn>
                                 <TableColumn text="%lecturer.LecturerTableview.lastname" fx:id="Lastname"></TableColumn>
                                 <TableColumn text="%lecturer.LecturerTableview.location" fx:id="Location"></TableColumn>
                                 <TableColumn text="%lecturer.LecturerTableview.active" fx:id="Active"></TableColumn>
@@ -34,42 +35,57 @@
                 <VBox fx:id="editbox">
 
                     <HBox>
-                        <Label text="%lecturer.editbox.id"></Label><TextField fx:id="txtID"></TextField>
+                        <Label text="%lecturer.editbox.id"></Label>
+                        <TextField fx:id="txtID"></TextField>
 
-                        <Label text="%lecturer.editbox.firstname"></Label><TextField fx:id="txtFirstname"></TextField>
+                        <Label text="%lecturer.editbox.firstname"></Label>
+                        <TextField fx:id="txtFirstname"></TextField>
 
-                        <Label text="%lecturer.editbox.lastname"></Label><TextField fx:id="txtLastname"></TextField>
+                        <Label text="%lecturer.editbox.lastname"></Label>
+                        <TextField fx:id="txtLastname"></TextField>
                     </HBox>
 
 
                     <HBox>
-                        <Label text="%lecturer.editbox.location"></Label><ComboBox fx:id="cmbLocation" minWidth="400"></ComboBox>
+                        <Label text="%lecturer.editbox.location"></Label>
+                        <ComboBox fx:id="cmbLocation" minWidth="400"></ComboBox>
 
-                        <Label text="%lecturer.editbox.active"></Label><CheckBox fx:id="chkActive"></CheckBox>
+                        <Label text="%lecturer.editbox.active"></Label>
+                        <CheckBox fx:id="chkActive"></CheckBox>
 
                         <Button fx:id="btnSave" text="%button.save"></Button>
                     </HBox>
 
                     <HBox>
-                        <Label text="%lecturer.LecturerBlockedTableview.label" />
+                        <Label text="%lecturer.LecturerBlockedTableview.label"/>
                     </HBox>
                     <HBox>
                         <TableView fx:id="LecturerBlockedTableview" minWidth="800">
                             <columns>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.ID" fx:id="LecturerBlockedTableviewID" visible="false"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.REFRESOURCEID" fx:id="LecturerBlockedTableviewREFRESOURCEID" visible="false"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.RESOURCENAME" fx:id="LecturerBlockedTableviewRESOURCENAME" visible="false"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.STARTDATE" fx:id="LecturerBlockedTableviewSTARTDATE"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.ENDDATE" fx:id="LecturerBlockedTableviewENDDATE"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.STARTTIMESLOT" fx:id="LecturerBlockedTableviewSTARTTIMESLOT"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.ENDTIMESLOT" fx:id="LecturerBlockedTableviewENDTIMESLOT"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.DESCRIPTION" fx:id="LecturerBlockedTableviewDESCRIPTION"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.Delete" fx:id="LecturerBlockedTableviewDelete"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerBlockedTableview.ID"
+                                             fx:id="LecturerBlockedTableviewID" visible="false"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerBlockedTableview.REFRESOURCEID"
+                                             fx:id="LecturerBlockedTableviewREFRESOURCEID"
+                                             visible="false"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerBlockedTableview.RESOURCENAME"
+                                             fx:id="LecturerBlockedTableviewRESOURCENAME" visible="false"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerBlockedTableview.STARTDATE"
+                                             fx:id="LecturerBlockedTableviewSTARTDATE"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerBlockedTableview.ENDDATE"
+                                             fx:id="LecturerBlockedTableviewENDDATE"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerBlockedTableview.STARTTIMESLOT"
+                                             fx:id="LecturerBlockedTableviewSTARTTIMESLOT"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerBlockedTableview.ENDTIMESLOT"
+                                             fx:id="LecturerBlockedTableviewENDTIMESLOT"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerBlockedTableview.DESCRIPTION"
+                                             fx:id="LecturerBlockedTableviewDESCRIPTION"></TableColumn>
+                                <TableColumn text="%lecturer.LecturerBlockedTableview.Delete"
+                                             fx:id="LecturerBlockedTableviewDelete"></TableColumn>
                             </columns>
                         </TableView>
                         <VBox>
-                            <Button fx:id="LecturerBlockedPermaAdd" text="%lecturer.LecturerBlockedPermaAddBtn" />
-                            <Button fx:id="LecturerBlockedAdd" text="%lecturer.LecturerBlockedAddBtn" />
+                            <Button fx:id="LecturerBlockedPermaAdd" text="%lecturer.LecturerBlockedPermaAddBtn"/>
+                            <Button fx:id="LecturerBlockedAdd" text="%lecturer.LecturerBlockedAddBtn"/>
                         </VBox>
                     </HBox>
                 </VBox>

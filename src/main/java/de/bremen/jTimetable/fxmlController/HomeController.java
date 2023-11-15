@@ -3,6 +3,7 @@ package de.bremen.jTimetable.fxmlController;
 //import de.bremen.jTimetable.Resources.Resources_de;
 
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import de.bremen.jTimetable.Main;
@@ -25,7 +27,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-public class HomeController implements Initializable{
+public class HomeController implements Initializable {
 
     @FXML
     private TableView<CoursePass> CoursepassTableview;
@@ -52,8 +54,14 @@ public class HomeController implements Initializable{
     @FXML
     private Label lblActiveCoursepasses;
 
+    private ResourceBundle resources;
+    private URL location;
+
     public void initialize(URL location, ResourceBundle resources) {
         // ToDo: Read prefered language out of config.properties file
+
+        this.resources = resources;
+        this.location = location;
 
         System.out.println("Initialize Home!");
 //        Config config = new Config();
@@ -76,55 +84,15 @@ public class HomeController implements Initializable{
         CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
 
         CoursepassTableview.getItems().setAll(getCoursepass(true));
-//        btnTimetableShow.setOnAction(event -> {
-//            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
-//            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
-//            Stage stage = new Stage(StageStyle.DECORATED);
-//            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
-//                    selectedItems.get(0).getStudySection().getDescription());
-//            URL url = Main.class.getResource("fxml/TimetableView.fxml");
-//            loader.setLocation(url);
-//            try {
-//                stage.setScene(new Scene(loader.load()));
-//                TimetableViewController controller = loader.getController();
-//                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
-//                stage.show();
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-        CoursepassTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent click) {
-                //DoubleClick: Editor is opened
-                if (click.getClickCount() == 2) {
-                    btnCoursepassEdit.fire();
-                }
 
+        //ToDo double click on TableView opens edit menu but currently btnCoursePassEdit doesn't exist!!!!!
+        CoursepassTableview.setOnMouseClicked(click -> {
+            //DoubleClick: Editor is opened
+            if (click.getClickCount() == 2) {
+                btnCoursepassEdit.fire();
             }
-        });
 
-//        btnCoursepassEdit.setOnAction(event -> {
-//            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
-//            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-//            if (selectedItems.size() > 0) {
-//                //System.out.println(selectedItems.get(0).getId());
-//                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//                FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
-//
-//                try {
-//                    AnchorPane anchorPane = loader.<AnchorPane>load();
-//                    CoursepassController coursepassController = loader.<CoursepassController>getController();
-//                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
-//                    Scene scene = new Scene(anchorPane);
-//                    stageTheEventSourceNodeBelongs.setScene(scene);
-//                } catch (Exception e) {
-//                    //TODo: Propper Error handling
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
+        });
 
         chkToogleCoursepass.setOnAction(event -> {
             CoursepassTableview.getItems().setAll(getCoursepass(!chkToogleCoursepass.isSelected()));
@@ -132,6 +100,61 @@ public class HomeController implements Initializable{
 
     }
 
+    /**
+     * ToDo can this open more than one timetable at once/ should it be able to? Otherwise only one selected
+     *  item allowed
+     */
+    public void showTimetable() {
+        TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+        ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
+        Stage stage = new Stage(StageStyle.DECORATED);
+
+        stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
+                selectedItems.get(0).getStudySection().getDescription());
+        URL url = Main.class.getResource("fxml/TimetableView.fxml");
+        loader.setLocation(url);
+        try {
+            stage.setScene(new Scene(loader.load()));
+            TimetableViewController controller = loader.getController();
+            controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
+            stage.show();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Open the coursePass menu and set the id of the selected coursePass
+     * @param childContainer the coursePass include is loaded into this anchorPane
+     */
+    public void editCoursePass(AnchorPane childContainer) {
+        //Get the selected items from tableView
+        TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+        ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+        //Check if exactly one column is selected
+
+        if (selectedItems.size() == 1) {
+            try {
+                //Load fmxl that will be included in center of brdrPnAll
+                FXMLLoader childLoader =
+                        new FXMLLoader(getClass().getResource("../fxml/Coursepass.fxml"),
+                                this.resources);
+                Pane childNode = childLoader.load();
+                //Add include
+                childContainer.getChildren().clear();
+                childContainer.getChildren().add(childNode);
+                //Load corresponding controller class and initialize
+                CoursepassController coursepassController = childLoader.getController();
+                coursepassController.initialize(this.location, this.resources);
+                //Do something with the child node and controller
+                coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
+            } catch (IOException e) {
+                System.err.println("Coursepass could not be loaded properly!");
+            }
+        }
+    }
 
     public ArrayList<CoursePass> getCoursepass(Boolean activeState) {
         ArrayList<CoursePass> activeCoursepass = new ArrayList<CoursePass>();

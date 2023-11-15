@@ -30,31 +30,55 @@ import java.util.ResourceBundle;
 
 public class CoursepassController implements Initializable {
     CoursePass coursepass;
-    @FXML private ComboBox<CourseofStudy> cmbCourseofStudy;
-    @FXML private ComboBox<StudySection> cmbStudySections;
-    @FXML private DatePicker datStart;
-    @FXML private DatePicker datEnd;
-    @FXML private TextField txtDescription;
-    @FXML private CheckBox chkActive;
-    @FXML private Button btnBack;
-    @FXML private Button btnSave;
-    @FXML    private TableView<CoursePass> CoursepassTableview;
-    @FXML    private TableColumn<CoursePass, Long> CPID;
-    @FXML    private TableColumn<CoursePass, String> CPCOSCaption;
-    @FXML    private TableColumn<CoursePass, String> CPstudysection;
-    @FXML    private TableColumn<CoursePass, String> CPDescription;
-    @FXML    private TableColumn<CoursePass, LocalDate> CPStart;
-    @FXML    private TableColumn<CoursePass, LocalDate> CPEnd;
-    @FXML    private TableColumn<CoursePass, Boolean> CPActive;
-    @FXML    private Button btnCoursepassEdit;
-    @FXML    private Button btnCoursepassNew;
-    @FXML    private CheckBox chkToogleCoursepass;
-    @FXML    private VBox editbox;
-    @FXML private Button btnEditCLS;
-    @FXML private Button btnInitialTimetable;
-    @FXML private Button btnDeleteTimetable;
+    @FXML
+    private ComboBox<CourseofStudy> cmbCourseofStudy;
+    @FXML
+    private ComboBox<StudySection> cmbStudySections;
+    @FXML
+    private DatePicker datStart;
+    @FXML
+    private DatePicker datEnd;
+    @FXML
+    private TextField txtDescription;
+    @FXML
+    private CheckBox chkActive;
+    @FXML
+    private Button btnBack;
+    @FXML
+    private Button btnSave;
+    @FXML
+    private TableView<CoursePass> CoursepassTableview;
+    @FXML
+    private TableColumn<CoursePass, Long> CPID;
+    @FXML
+    private TableColumn<CoursePass, String> CPCOSCaption;
+    @FXML
+    private TableColumn<CoursePass, String> CPstudysection;
+    @FXML
+    private TableColumn<CoursePass, String> CPDescription;
+    @FXML
+    private TableColumn<CoursePass, LocalDate> CPStart;
+    @FXML
+    private TableColumn<CoursePass, LocalDate> CPEnd;
+    @FXML
+    private TableColumn<CoursePass, Boolean> CPActive;
+    @FXML
+    private Button btnCoursepassEdit;
+    @FXML
+    private Button btnCoursepassNew;
+    @FXML
+    private CheckBox chkToogleCoursepass;
+    @FXML
+    private VBox editbox;
+    @FXML
+    private Button btnEditCLS;
+    @FXML
+    private Button btnInitialTimetable;
+    @FXML
+    private Button btnDeleteTimetable;
+
     @Override
-    public void initialize(URL location, ResourceBundle resources)  {
+    public void initialize(URL location, ResourceBundle resources) {
 
         editbox.setVisible(false);
         // We need a StringConverter in order to ensure the selected item is displayed properly
@@ -64,7 +88,7 @@ public class CoursepassController implements Initializable {
             public String toString(StudySection studySection) {
                 if (studySection == null) {
                     return "";
-                }else{
+                } else {
                     return studySection.getDescription();
                 }
             }
@@ -85,12 +109,12 @@ public class CoursepassController implements Initializable {
             {
                 // Ensure all our column widths are constant
                 gridPane.getColumnConstraints().addAll(
-                       // new ColumnConstraints(100, 100, 100),
+                        // new ColumnConstraints(100, 100, 100),
                         new ColumnConstraints(200, 200, 200)
                 );
 
                 //gridPane.add(lblID, 0, 1, 1 ,1);
-                gridPane.add(lblDescription, 0, 1,1 ,1);
+                gridPane.add(lblDescription, 0, 1, 1, 1);
 
             }
 
@@ -122,7 +146,7 @@ public class CoursepassController implements Initializable {
             public String toString(CourseofStudy courseofStudy) {
                 if (courseofStudy == null) {
                     return "";
-                }else{
+                } else {
                     return courseofStudy.getCaption();
                 }
             }
@@ -148,7 +172,7 @@ public class CoursepassController implements Initializable {
                 );
 
                 //gridPane.add(lblID, 0, 1, 1 ,1);
-                gridPane.add(lblDescription, 0, 1,1 ,1);
+                gridPane.add(lblDescription, 0, 1, 1, 1);
 
             }
 
@@ -173,7 +197,7 @@ public class CoursepassController implements Initializable {
             }
         });
 
-        btnSave.setOnAction(event ->{
+        btnSave.setOnAction(event -> {
             this.coursepass.setStudySection(cmbStudySections.getValue());
             this.coursepass.setStart(datStart.getValue());
             this.coursepass.setEnd(datEnd.getValue());
@@ -182,7 +206,7 @@ public class CoursepassController implements Initializable {
             this.coursepass.setCourseOfStudy(cmbCourseofStudy.getValue());
             try {
                 this.coursepass.save();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             editbox.setVisible(false);
@@ -230,7 +254,7 @@ public class CoursepassController implements Initializable {
                 }
             }
         });
-        btnEditCLS.setOnAction(event ->{
+        btnEditCLS.setOnAction(event -> {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
@@ -255,16 +279,16 @@ public class CoursepassController implements Initializable {
             if (selectedItems.size() > 0) {
                 //System.out.println(selectedItems.get(0).getId());
                 this.coursepass = selectedItems.get(0);
-                try{
+                try {
                     cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
                     cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                try{
+                try {
                     cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
                     cmbStudySections.setValue(this.coursepass.getStudySection());
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 datStart.setValue(this.coursepass.getStart());
@@ -278,17 +302,17 @@ public class CoursepassController implements Initializable {
         });
 
         btnCoursepassNew.setOnAction(event -> {
-            try{
+            try {
                 this.coursepass = new CoursePass(0L);
-                try{
+                try {
                     cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
                     cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
-                try{
+                try {
                     cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 datStart.setValue(this.coursepass.getStart());
@@ -298,7 +322,7 @@ public class CoursepassController implements Initializable {
 //                cmbCourseofStudy.setEditable(false);
                 editbox.setVisible(true);
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -334,15 +358,15 @@ public class CoursepassController implements Initializable {
                 alert.setTitle("Want to delete Timetable for " + coursepass.getDescription());
                 alert.setHeaderText("");
                 alert.setContentText("Realy want to delete the Timetable for " + coursepass.getCourseOfStudy().getCaption()
-                + " " + coursepass.getStudySection().getDescription() + "?");
+                        + " " + coursepass.getStudySection().getDescription() + "?");
                 alert.showAndWait().ifPresent(rs -> {
-                    if ( rs == ButtonType.OK){
+                    if (rs == ButtonType.OK) {
                         Timetable timetable = new Timetable(coursepass);
                         timetable.deleteTimetable();
 
                         alert.setAlertType(Alert.AlertType.INFORMATION);
                         alert.setTitle("Success");
-                        alert.setContentText("The Timetable for "+ coursepass.getCourseOfStudy().getCaption()
+                        alert.setContentText("The Timetable for " + coursepass.getCourseOfStudy().getCaption()
                                 + " " + coursepass.getStudySection().getDescription() + " has been deleted.");
                         alert.show();
 
@@ -357,6 +381,10 @@ public class CoursepassController implements Initializable {
         return coursepass;
     }
 
+    /**
+     * ToDo should this mark the row in the tableView and open the edit space automatically
+     * @param coursepass selected coursePass
+     */
     public void setCoursepass(CoursePass coursepass) {
         this.coursepass = coursepass;
     }
