@@ -56,6 +56,7 @@ public class HomeController implements Initializable {
 
     private ResourceBundle resources;
     private URL location;
+    private AnchorPane childContainer;
 
     public void initialize(URL location, ResourceBundle resources) {
         // ToDo: Read prefered language out of config.properties file
@@ -76,20 +77,22 @@ public class HomeController implements Initializable {
 //        lblActiveCoursepasses.setText(resources.getString("currency"));
 
         CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
-        CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
-        CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPStudySection"));
-        CPDescription.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("description"));
+        CPCOSCaption.setCellValueFactory(
+                new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
+        CPstudysection.setCellValueFactory(
+                new PropertyValueFactory<CoursePass, String>("CPStudySection"));
+        CPDescription.setCellValueFactory(
+                new PropertyValueFactory<CoursePass, String>("description"));
         CPStart.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("start"));
         CPEnd.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("end"));
         CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
 
         CoursepassTableview.getItems().setAll(getCoursepass(true));
 
-        //ToDo double click on TableView opens edit menu but currently btnCoursePassEdit doesn't exist!!!!!
         CoursepassTableview.setOnMouseClicked(click -> {
             //DoubleClick: Editor is opened
             if (click.getClickCount() == 2) {
-                btnCoursepassEdit.fire();
+                editCoursePass();
             }
 
         });
@@ -105,14 +108,17 @@ public class HomeController implements Initializable {
      *  item allowed
      */
     public void showTimetable() {
-        TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+        TableView.TableViewSelectionModel<CoursePass> selectionModel =
+                CoursepassTableview.getSelectionModel();
         ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
+        FXMLLoader loader =
+                new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
         Stage stage = new Stage(StageStyle.DECORATED);
 
-        stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
-                selectedItems.get(0).getStudySection().getDescription());
+        stage.setTitle(
+                "Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
+                        selectedItems.get(0).getStudySection().getDescription());
         URL url = Main.class.getResource("fxml/TimetableView.fxml");
         loader.setLocation(url);
         try {
@@ -127,11 +133,11 @@ public class HomeController implements Initializable {
 
     /**
      * Open the coursePass menu and set the id of the selected coursePass
-     * @param childContainer the coursePass include is loaded into this anchorPane
      */
-    public void editCoursePass(AnchorPane childContainer) {
+    public void editCoursePass() {
         //Get the selected items from tableView
-        TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+        TableView.TableViewSelectionModel<CoursePass> selectionModel =
+                CoursepassTableview.getSelectionModel();
         ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
         //Check if exactly one column is selected
 
@@ -143,8 +149,8 @@ public class HomeController implements Initializable {
                                 this.resources);
                 Pane childNode = childLoader.load();
                 //Add include
-                childContainer.getChildren().clear();
-                childContainer.getChildren().add(childNode);
+                this.childContainer.getChildren().clear();
+                this.childContainer.getChildren().add(childNode);
                 //Load corresponding controller class and initialize
                 CoursepassController coursepassController = childLoader.getController();
                 coursepassController.initialize(this.location, this.resources);
@@ -213,5 +219,9 @@ public class HomeController implements Initializable {
 
     public Label getLblActiveCoursePasses() {
         return lblActiveCoursepasses;
+    }
+
+    public void setChildContainer(AnchorPane childContainer) {
+        this.childContainer = childContainer;
     }
 }

@@ -154,8 +154,9 @@ public class BackgroundController implements Initializable {
     private void openCourseOfStudy() {
         try {
             //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/CourseofStudy.fxml"),
-                    this.resourceBundle);
+            FXMLLoader childLoader =
+                    new FXMLLoader(getClass().getResource("../fxml/CourseofStudy.fxml"),
+                            this.resourceBundle);
             Pane childNode = childLoader.load();
             //Add include
             this.childContainer.getChildren().clear();
@@ -181,11 +182,11 @@ public class BackgroundController implements Initializable {
             this.childContainer.getChildren().add(childNode);
             //Load corresponding Controller
             HomeController homeController = childLoader.getController();
-            homeController.initialize(this.location, this.resourceBundle);
+            //homeController.initialize(this.location, this.resourceBundle);
             //Do something with the child node and controller:
-
+            homeController.setChildContainer(this.childContainer);
             //Set up top menu buttons
-            btnEdit.setOnAction(e -> homeController.editCoursePass(childContainer));
+            btnEdit.setOnAction(e -> homeController.editCoursePass());
             btnNew.setDisable(true);
             //Open the selected timetable in a new window
             btnShow.setOnAction(e -> homeController.showTimetable());
