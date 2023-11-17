@@ -70,7 +70,7 @@ public class BackgroundController implements Initializable {
 
         //Initially home view is displayed
         openHome();
-
+        menuClose.setVisible(false);
         slider.setTranslateX(-176);
         menu.setOnMouseClicked(event -> {
             TranslateTransition slide = new TranslateTransition();

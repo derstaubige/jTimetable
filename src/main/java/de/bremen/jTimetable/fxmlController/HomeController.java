@@ -77,12 +77,9 @@ public class HomeController implements Initializable {
 //        lblActiveCoursepasses.setText(resources.getString("currency"));
 
         CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
-        CPCOSCaption.setCellValueFactory(
-                new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
-        CPstudysection.setCellValueFactory(
-                new PropertyValueFactory<CoursePass, String>("CPStudySection"));
-        CPDescription.setCellValueFactory(
-                new PropertyValueFactory<CoursePass, String>("description"));
+        CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
+        CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPStudySection"));
+        CPDescription.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("description"));
         CPStart.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("start"));
         CPEnd.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("end"));
         CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
@@ -108,17 +105,14 @@ public class HomeController implements Initializable {
      *  item allowed
      */
     public void showTimetable() {
-        TableView.TableViewSelectionModel<CoursePass> selectionModel =
-                CoursepassTableview.getSelectionModel();
+        TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
         ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
 
-        FXMLLoader loader =
-                new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
         Stage stage = new Stage(StageStyle.DECORATED);
 
-        stage.setTitle(
-                "Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
-                        selectedItems.get(0).getStudySection().getDescription());
+        stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
+                selectedItems.get(0).getStudySection().getDescription());
         URL url = Main.class.getResource("fxml/TimetableView.fxml");
         loader.setLocation(url);
         try {
