@@ -1,52 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="de.bremen.jTimetable.fxmlController.StudySectionController"
-            prefHeight="400.0" prefWidth="800.0" minWidth="800">
-    <ScrollPane>
-        <VBox >
-            <children>
-                <Label text="%studysection.title"></Label>
-                <HBox>
-                    <children>
-                        <TableView fx:id="StudySectionTableview" minWidth="800">
-                            <columns>
-                                <TableColumn text="%studysection.StudySectionTableview.ID" fx:id="ID" visible="false"></TableColumn>
-                                <TableColumn text="%studysection.StudySectionTableview.Description" fx:id="Description"></TableColumn>
-                                <TableColumn text="%studysection.StudySectionTableview.Active" fx:id="Active"></TableColumn>
-                            </columns>
-                        </TableView>
-                        <VBox minWidth="200">
-
-                            <Button fx:id="btnStudySectionEdit" text="%button.edit"></Button>
-                            <Button fx:id="btnStudySectionNew" text="%button.new"></Button>
-                            <CheckBox fx:id="chkToogleStudySection" text="%chkbox.ToogleInactive"></CheckBox>
-
-                        </VBox>
-                    </children>
+<AnchorPane prefHeight="663.0" prefWidth="808.0" stylesheets="@../styles/includeStyles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.StudySectionController">
+    <VBox prefHeight="663.0" prefWidth="808.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <children>
+            <HBox spacing="5.0">
+                <children>
+                    <Label text="%studysection.title" />
+                    <CheckBox fx:id="chkToogleStudySection" text="%chkbox.ToogleInactive" />
+                </children>
+                <padding>
+                    <Insets bottom="2.0" />
+                </padding>
+            </HBox>
+            <ScrollPane prefHeight="400.0" prefWidth="808.0">
+                <TableView fx:id="StudySectionTableview" minWidth="800" prefHeight="500.0" prefWidth="884.0">
+                    <columns>
+                        <TableColumn fx:id="ID" text="%studysection.StudySectionTableview.ID" visible="false" />
+                        <TableColumn fx:id="Description" text="%studysection.StudySectionTableview.Description" />
+                        <TableColumn fx:id="Active" text="%studysection.StudySectionTableview.Active" />
+                    </columns>
+                </TableView>
+            </ScrollPane>
+            <VBox fx:id="editbox">
+                <HBox spacing="5.0">
+                    <Label text="%studysection.editbox.ID" />
+                    <TextField fx:id="txtID" />
+                    <padding>
+                        <Insets bottom="2.0" />
+                    </padding>
                 </HBox>
-                <VBox fx:id="editbox">
-
-                    <HBox>
-                        <Label text="%studysection.editbox.ID"></Label><TextField fx:id="txtID"></TextField>
-                    </HBox>
-                    <HBox>
-                        <Label text="%studysection.editbox.Description"></Label><TextField fx:id="txtDescription"></TextField>
-                    </HBox>
-                    <HBox>
-                        <Label text="%studysection.editbox.Active"></Label><CheckBox fx:id="chkActive"></CheckBox>
-                    </HBox>
-                    <HBox>
-                        <Button fx:id="btnSave" text="%button.save"></Button>
-                    </HBox>
-
-                </VBox>
-            </children>
-        </VBox>
-    </ScrollPane>
-
+                <HBox spacing="5.0">
+                    <Label text="%studysection.editbox.Description" />
+                    <TextField fx:id="txtDescription" />
+                    <padding>
+                        <Insets bottom="2.0" />
+                    </padding>
+                </HBox>
+                <HBox spacing="5.0">
+                    <Label text="%studysection.editbox.Active" />
+                    <CheckBox fx:id="chkActive" />
+                    <padding>
+                        <Insets bottom="2.0" />
+                    </padding>
+                </HBox>
+                <HBox spacing="5.0">
+                    <Button fx:id="btnSave" text="%button.save" />
+                    <padding>
+                        <Insets bottom="2.0" />
+                    </padding>
+                </HBox>
+            </VBox>
+        </children>
+    </VBox>
 </AnchorPane>

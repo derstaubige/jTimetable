@@ -27,7 +27,6 @@ import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.*;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -36,13 +35,20 @@ public class LecturerController implements Initializable {
     Lecturer lecturer;
     ResourceBundle resourceBundle;
 
-    @FXML private TableView<Lecturer> LecturerTableview;
-    @FXML private TableColumn<Lecturer, Long> ID;
-    @FXML private TableColumn<Lecturer, String> Firstname;
-    @FXML private TableColumn<Lecturer, String> Lastname;
-    @FXML private TableColumn<de.bremen.jTimetable.Classes.Location, String> Location;
-    @FXML private TableColumn<Lecturer, Boolean> Active;
-    @FXML private TableView<ResourcesBlocked> LecturerBlockedTableview;
+    @FXML
+    private TableView<Lecturer> LecturerTableview;
+    @FXML
+    private TableColumn<Lecturer, Long> ID;
+    @FXML
+    private TableColumn<Lecturer, String> Firstname;
+    @FXML
+    private TableColumn<Lecturer, String> Lastname;
+    @FXML
+    private TableColumn<de.bremen.jTimetable.Classes.Location, String> Location;
+    @FXML
+    private TableColumn<Lecturer, Boolean> Active;
+    @FXML
+    private TableView<ResourcesBlocked> LecturerBlockedTableview;
     @FXML
     private TableColumn<ResourcesBlocked, Long> LecturerBlockedTableviewID;
     @FXML
@@ -61,25 +67,31 @@ public class LecturerController implements Initializable {
     private TableColumn<ResourcesBlocked, String> LecturerBlockedTableviewDESCRIPTION;
     @FXML
     private TableColumn<ResourcesBlocked, Void> LecturerBlockedTableviewDelete;
-    @FXML private Button LecturerBlockedAdd;
-    @FXML private Button LecturerBlockedPermaAdd;
-    @FXML private Button btnLecturerEdit;
-    @FXML private Button btnLecturerNew;
-    @FXML private CheckBox chkToogleLecturer;
-    @FXML private VBox editbox;
-    @FXML private TextField txtID;
-    @FXML private TextField txtFirstname;
-    @FXML private TextField txtLastname;
-    @FXML private ComboBox<de.bremen.jTimetable.Classes.Location> cmbLocation;
-    @FXML private CheckBox chkActive;
-    @FXML private Button btnSave;
     @FXML
-    private Button btnShowTimetable;
+    private Button LecturerBlockedAdd;
     @FXML
-    private ScrollPane scrollPane;
+    private Button LecturerBlockedPermaAdd;
+    @FXML
+    private CheckBox chkToogleLecturer;
+    @FXML
+    private VBox editbox;
+    @FXML
+    private TextField txtID;
+    @FXML
+    private TextField txtFirstname;
+    @FXML
+    private TextField txtLastname;
+    @FXML
+    private ComboBox<de.bremen.jTimetable.Classes.Location> cmbLocation;
+    @FXML
+    private CheckBox chkActive;
+    @FXML
+    private Button btnSave;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.resourceBundle = resources;
+
         editbox.setVisible(false);
         // We need a StringConverter in order to ensure the selected item is displayed properly
         // For this sample, we only want the Person's name to be displayed
@@ -168,7 +180,7 @@ public class LecturerController implements Initializable {
             public void handle(MouseEvent click) {
                 //SingleClick: Editor is opened
                 if (click.getClickCount() == 1) {
-                    btnLecturerEdit.fire();
+                    editLecturer();
                 }
             }
         });
@@ -189,7 +201,7 @@ public class LecturerController implements Initializable {
                     e.getTableView().getItems().get(e.getTablePosition().getRow()).setStartDate(e.getNewValue());
                     e.getTableView().getItems().get(e.getTablePosition().getRow()).save();
                 });
-                
+
         LecturerBlockedTableviewENDDATE
                 .setCellValueFactory(new PropertyValueFactory<ResourcesBlocked, LocalDate>("endDate"));
         LecturerBlockedTableviewENDDATE.setCellFactory(cellData -> {
@@ -236,11 +248,11 @@ public class LecturerController implements Initializable {
                         public String toString(String str) {
                             return str;
                         }
-                
+
                         public String fromString(String str) {
                             return str;
                         }
-            });
+                    });
             return textFieldTableCell;
         });
         LecturerBlockedTableviewDESCRIPTION.setOnEditCommit(
@@ -248,7 +260,7 @@ public class LecturerController implements Initializable {
                     e.getTableView().getItems().get(e.getTablePosition().getRow()).setDescription(e.getNewValue());
                     e.getTableView().getItems().get(e.getTablePosition().getRow()).save();
                 });
-        
+
         LecturerBlockedTableviewDelete
                 .setCellFactory(new Callback<TableColumn<ResourcesBlocked, Void>, TableCell<ResourcesBlocked, Void>>() {
                     @Override
@@ -256,7 +268,7 @@ public class LecturerController implements Initializable {
                         final TableCell<ResourcesBlocked, Void> cell = new TableCell<ResourcesBlocked, Void>() {
 
                             private final Button btn = new Button(resources.getString("lecturer.LecturerBlockedTableview.Delete"));
-                            
+
                             {
                                 btn.setOnAction((ActionEvent event) -> {
                                     Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -270,10 +282,10 @@ public class LecturerController implements Initializable {
                                                 resourcesblocked.delete();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
-                                            }      
-                                            LecturerBlockedTableview.getItems().remove(resourcesblocked); 
+                                            }
+                                            LecturerBlockedTableview.getItems().remove(resourcesblocked);
                                         }
-                                    });                                                               
+                                    });
                                 });
                             }
 
@@ -293,8 +305,8 @@ public class LecturerController implements Initializable {
 
         LecturerBlockedTableview.setEditable(true);
 
-        LecturerBlockedAdd.setOnAction(event ->{
-            try {                
+        LecturerBlockedAdd.setOnAction(event -> {
+            try {
                 ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L);
                 resourcesblocked.setReResourceID(lecturer.getId());
                 resourcesblocked.setResourceName(ResourceNames.LECTURER);
@@ -308,12 +320,14 @@ public class LecturerController implements Initializable {
 
         });
 
-        LecturerBlockedPermaAdd.setOnAction(event ->{
+        LecturerBlockedPermaAdd.setOnAction(event -> {
             //System.out.println(selectedItems.get(0).getId());
             Stage stageTheEventSourceNodeBelongs = (Stage) LecturerBlockedPermaAdd.getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/LecturerBlocks.fxml"), resources);
+
             TableView.TableViewSelectionModel<Lecturer> selectionModel = LecturerTableview.getSelectionModel();
             ObservableList<Lecturer> selectedItems = selectionModel.getSelectedItems();
+
             try {
                 AnchorPane anchorPane = loader.<AnchorPane>load();
                 LecturerBlocksController lecturerBlocksController = loader.<LecturerBlocksController>getController();
@@ -326,79 +340,91 @@ public class LecturerController implements Initializable {
                 e.printStackTrace();
             }
         });
-        
-        btnLecturerEdit.setOnAction(event -> {
-            TableView.TableViewSelectionModel<Lecturer> selectionModel = LecturerTableview.getSelectionModel();
-            ObservableList<Lecturer> selectedItems = selectionModel.getSelectedItems();
-            if (selectedItems.size() > 0) {
-                //System.out.println(selectedItems.get(0).getId());
-                this.lecturer = selectedItems.get(0);
-                try {
-                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
-                    cmbLocation.setValue(this.lecturer.getLocation());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                txtID.setText(this.lecturer.getId().toString());
-                txtID.setEditable(false);
-                txtFirstname.setText(this.lecturer.getFirstname());
-                txtLastname.setText(this.lecturer.getLastname());
-                cmbLocation.setValue(this.lecturer.getLocation());
-                chkActive.setSelected(this.lecturer.getActive());
-
-                LecturerBlockedTableview.getItems().setAll(ResourcesBlocked
-                        .getArrayListofResourcesblocked(this.lecturer.getId(), ResourceNames.LECTURER));
-                editbox.setVisible(true);
-            }
-
-        });
-
-        btnLecturerNew.setOnAction(event -> {
-            try {
-                this.lecturer = new Lecturer(0L);
-                try {
-                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
-                    cmbLocation.setValue(this.lecturer.getLocation());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                txtID.setText(this.lecturer.getId().toString());
-                txtID.setEditable(false);
-                txtFirstname.setText(this.lecturer.getFirstname());
-                txtLastname.setText(this.lecturer.getLastname());
-                cmbLocation.setValue(this.lecturer.getLocation());
-                chkActive.setSelected(this.lecturer.getActive());
-
-                editbox.setVisible(true);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        });
 
         chkToogleLecturer.setOnAction(event -> {
             LecturerTableview.getItems().setAll(getLecturer(!chkToogleLecturer.isSelected()));
         });
 
-        btnShowTimetable.setOnAction(event -> {
-            Lecturer lecturer = LecturerTableview.getSelectionModel().getSelectedItem();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
-            Stage stage = new Stage(StageStyle.DECORATED);
-            stage.setTitle("Timetable for " + lecturer.getLecturerFullName());
-            loader.setLocation(Main.class.getResource("fxml/TimetableView.fxml"));
-            try {
-                stage.setScene(new Scene(loader.load()));
-                TimetableViewController controller = loader.getController();
-                controller.initDataTimetable(new Timetable(lecturer));
-                stage.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
-        });
     }
 
+    /**
+     * Create a new lecturer and open editBox to set values.
+     */
+    public void newLecturer() {
+        try {
+            this.lecturer = new Lecturer(0L);
+
+            cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
+            cmbLocation.setValue(this.lecturer.getLocation());
+
+            txtID.setText(this.lecturer.getId().toString());
+            txtID.setEditable(false);
+            txtFirstname.setText(this.lecturer.getFirstname());
+            txtLastname.setText(this.lecturer.getLastname());
+            cmbLocation.setValue(this.lecturer.getLocation());
+            chkActive.setSelected(this.lecturer.getActive());
+
+            editbox.setVisible(true);
+
+        } catch (Exception e) {
+            System.err.println("A new Lecturer could not be created.");
+        }
+    }
+
+    /**
+     * Edit the selected lecturer and their blocks.
+     */
+    public void editLecturer() {
+        TableView.TableViewSelectionModel<Lecturer> selectionModel = LecturerTableview.getSelectionModel();
+        ObservableList<Lecturer> selectedItems = selectionModel.getSelectedItems();
+        if (selectedItems.size() == 1) {
+            this.lecturer = selectedItems.get(0);
+            try {
+                cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
+                cmbLocation.setValue(this.lecturer.getLocation());
+            } catch (Exception e) {
+                System.err.println("Getting/setting locations in editLecturer failed.");
+            }
+            txtID.setText(this.lecturer.getId().toString());
+            txtID.setEditable(false);
+            txtFirstname.setText(this.lecturer.getFirstname());
+            txtLastname.setText(this.lecturer.getLastname());
+            cmbLocation.setValue(this.lecturer.getLocation());
+            chkActive.setSelected(this.lecturer.getActive());
+
+            LecturerBlockedTableview.getItems().setAll(ResourcesBlocked
+                    .getArrayListofResourcesblocked(this.lecturer.getId(), ResourceNames.LECTURER));
+            editbox.setVisible(true);
+        }
+    }
+
+    /**
+     * Show timetable for selected lecturer in a separate window.
+     */
+    public void showLecturerTimetable() {
+        Lecturer lecturer = LecturerTableview.getSelectionModel().getSelectedItem();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), this.resourceBundle);
+        Stage stage = new Stage(StageStyle.DECORATED);
+        //ToDo title in resources
+        stage.setTitle("Timetable for " + lecturer.getLecturerFullName());
+        loader.setLocation(Main.class.getResource("fxml/TimetableView.fxml"));
+        try {
+            stage.setScene(new Scene(loader.load()));
+            TimetableViewController controller = loader.getController();
+            controller.initDataTimetable(new Timetable(lecturer));
+            stage.show();
+        } catch (Exception e) {
+            System.err.println("Opening timetable for selected lecturer failed.");
+        }
+    }
+
+    /**
+     * Get an arrayList of all lecturers.
+     *
+     * @param activeState true: only return active lecturers; false: only return inactive lecturers
+     * @return all active OR all inactive lecturers
+     */
     public ArrayList<Lecturer> getLecturer(Boolean activeState) {
         return Lecturer.getAllLecturer(activeState);
     }

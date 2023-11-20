@@ -30,8 +30,18 @@ import java.util.ResourceBundle;
 
 public class BackgroundController implements Initializable {
 
+    ResourceBundle resourceBundle;
+    URL location;
+
+    /**
+     * FXML Elements:
+     */
     @FXML
-    public Button btnCoursePassEdit;
+    private Label menu;
+    @FXML
+    private Label menuClose;
+    @FXML
+    private AnchorPane slider;
     @FXML
     public Button btnNew;
     @FXML
@@ -42,26 +52,10 @@ public class BackgroundController implements Initializable {
     public AnchorPane childContainer;
     @FXML
     public Button btnEdit;
+    @FXML
     public Button btnShow;
-
-    ResourceBundle resourceBundle;
-    URL location;
-
-    /**
-     * FXML Elements:
-     */
     @FXML
-    private MenuBar menuBar;
-
-    @FXML
-    private Label menu;
-
-    @FXML
-    private Label menuClose;
-
-    @FXML
-    private AnchorPane slider;
-
+    public Button btnCreateIniTimetable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -70,6 +64,8 @@ public class BackgroundController implements Initializable {
 
         //Initially home view is displayed
         openHome();
+
+        //set methods to open and close side menu
         menuClose.setVisible(false);
         slider.setTranslateX(-176);
         menu.setOnMouseClicked(event -> {
@@ -87,7 +83,6 @@ public class BackgroundController implements Initializable {
                 menuClose.setVisible(true);
             });
         });
-
         menuClose.setOnMouseClicked(event -> {
             TranslateTransition slide = new TranslateTransition();
             slide.setDuration(Duration.seconds(0.4));
@@ -103,14 +98,10 @@ public class BackgroundController implements Initializable {
                 menuClose.setVisible(false);
             });
         });
-
-
     }
-
 
     /**
      * Handle action related to "About" menu item.
-     * TODO was included in help menu which we don't have atm
      *
      * @param event Event on "About" menu item.
      */
@@ -150,26 +141,9 @@ public class BackgroundController implements Initializable {
         System.exit(0);
     }
 
-    @FXML
-    private void openCourseOfStudy() {
-        try {
-            //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader =
-                    new FXMLLoader(getClass().getResource("../fxml/CourseofStudy.fxml"),
-                            this.resourceBundle);
-            Pane childNode = childLoader.load();
-            //Add include
-            this.childContainer.getChildren().clear();
-            this.childContainer.getChildren().add(childNode);
-            //Load corresponding Controller
-            CourseofStudyController courseofStudyController = childLoader.getController();
-            courseofStudyController.initialize(this.location, this.resourceBundle);
-            //Do something with the child node and controller:
-        } catch (Exception e) {
-            System.err.println("CourseOfStudy could not be loaded properly!");
-        }
-    }
-
+    /**
+     * Open include for home view and set buttons accordingly.
+     */
     @FXML
     private void openHome() {
         try {
@@ -186,6 +160,7 @@ public class BackgroundController implements Initializable {
             //Do something with the child node and controller:
             homeController.setChildContainer(this.childContainer);
             //Set up top menu buttons
+            btnCreateIniTimetable.setVisible(false);
             btnEdit.setOnAction(e -> homeController.editCoursePass());
             btnNew.setDisable(true);
             //Open the selected timetable in a new window
@@ -196,6 +171,64 @@ public class BackgroundController implements Initializable {
         }
     }
 
+    /**
+     * Open include for lecturer and set buttons accordingly.
+     */
+    @FXML
+    private void openLecturer() {
+        try {
+            //Load fmxl that will be included in center of brdrPnAll
+            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/Lecturer.fxml"),
+                    this.resourceBundle);
+            Pane childNode = childLoader.load();
+            //Add include
+            this.childContainer.getChildren().clear();
+            this.childContainer.getChildren().add(childNode);
+            //Load corresponding controller class and initialize
+            LecturerController lecturerController = childLoader.getController();
+            lecturerController.initialize(this.location, this.resourceBundle);
+            //Do something with the child node and controller
+            btnNew.setDisable(false);
+            btnNew.setOnAction(event -> lecturerController.newLecturer());
+            btnEdit.setOnAction(event -> lecturerController.editLecturer());
+            //Show timetable of lecturer
+            btnShow.setOnAction(event -> lecturerController.showLecturerTimetable());
+        } catch (IOException e) {
+            System.err.println("Lecturer could not be loaded properly!");
+        }
+    }
+
+    /**
+     * Open include for study section and set buttons accordingly.
+     */
+    @FXML
+    private void openStudySection() {
+        try {
+            //Load fmxl that will be included in center of brdrPnAll
+            FXMLLoader childLoader =
+                    new FXMLLoader(getClass().getResource("../fxml/StudySection.fxml"),
+                            this.resourceBundle);
+            Pane childNode = childLoader.load();
+            //Add include
+            this.childContainer.getChildren().clear();
+            this.childContainer.getChildren().add(childNode);
+            //Load corresponding controller class and initialize
+            StudySectionController studySectionController = childLoader.getController();
+            studySectionController.initialize(this.location, this.resourceBundle);
+            //Do something with the child node and controller
+            btnNew.setDisable(false);
+            btnShow.setDisable(true);
+            btnNew.setOnAction(event -> studySectionController.newStudySection());
+            btnEdit.setOnAction(event -> studySectionController.editStudySection());
+        } catch (IOException e) {
+            System.err.println("StudySection could not be loaded properly!");
+        }
+    }
+
+    /**
+     * Open include for coursePass and set buttons accordingly.
+     * ToDo
+     */
     @FXML
     private void openCoursePass() {
         try {
@@ -211,30 +244,42 @@ public class BackgroundController implements Initializable {
             CoursepassController coursepassController = childLoader.getController();
             coursepassController.initialize(this.location, this.resourceBundle);
             //Do something with the child node and controller
+            btnNew.setDisable(false);
+            btnShow.setDisable(true);
+            btnNew.setOnAction(event -> coursepassController.newCoursePass());
+            btnEdit.setOnAction(event -> coursepassController.editCoursePass());
         } catch (IOException e) {
-            System.err.println("Coursepass could not be loaded properly!");
+            System.err.println("CoursePass could not be loaded properly!");
         }
     }
 
+    /**
+     * Open include for course of study and set buttons accordingly.
+     * ToDo
+     */
     @FXML
-    private void openLecturer() {
+    private void openCourseOfStudy() {
         try {
             //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/Lecturer.fxml"),
-                    this.resourceBundle);
+            FXMLLoader childLoader =
+                    new FXMLLoader(getClass().getResource("../fxml/CourseofStudy.fxml"), this.resourceBundle);
             Pane childNode = childLoader.load();
             //Add include
             this.childContainer.getChildren().clear();
             this.childContainer.getChildren().add(childNode);
-            //Load corresponding controller class and initialize
-            LecturerController lecturerController = childLoader.getController();
-            lecturerController.initialize(this.location, this.resourceBundle);
-            //Do something with the child node and controller
-        } catch (IOException e) {
-            System.err.println("Lecturer could not be loaded properly!");
+            //Load corresponding Controller
+            CourseofStudyController courseofStudyController = childLoader.getController();
+            courseofStudyController.initialize(this.location, this.resourceBundle);
+            //Do something with the child node and controller:
+        } catch (Exception e) {
+            System.err.println("CourseOfStudy could not be loaded properly!");
         }
     }
 
+    /**
+     * Open include for subject and set buttons accordingly.
+     * ToDo
+     */
     @FXML
     private void openSubject() {
         try {
@@ -254,6 +299,10 @@ public class BackgroundController implements Initializable {
         }
     }
 
+    /**
+     * Open include for room and set buttons accordingly.
+     * ToDo
+     */
     @FXML
     private void openRoom() {
         try {
@@ -273,6 +322,10 @@ public class BackgroundController implements Initializable {
         }
     }
 
+    /**
+     * Open include for location and set buttons accordingly.
+     * ToDo
+     */
     @FXML
     private void openLocation() {
         try {
@@ -289,26 +342,6 @@ public class BackgroundController implements Initializable {
             //Do something with the child node and controller
         } catch (IOException e) {
             System.err.println("Location could not be loaded properly!");
-        }
-    }
-
-    @FXML
-    private void openStudySection() {
-        try {
-            //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader =
-                    new FXMLLoader(getClass().getResource("../fxml/StudySection.fxml"),
-                            this.resourceBundle);
-            Pane childNode = childLoader.load();
-            //Add include
-            this.childContainer.getChildren().clear();
-            this.childContainer.getChildren().add(childNode);
-            //Load corresponding controller class and initialize
-            StudySectionController studySectionController = childLoader.getController();
-            studySectionController.initialize(this.location, this.resourceBundle);
-            //Do something with the child node and controller
-        } catch (IOException e) {
-            System.err.println("StudySection could not be loaded properly!");
         }
     }
 }

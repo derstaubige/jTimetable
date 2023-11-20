@@ -3,20 +3,20 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane minWidth="1000" prefHeight="800.0" prefWidth="1000.0" stylesheets="@../styles/includeStyles.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.HomeController">
+<AnchorPane prefHeight="663.0" prefWidth="808.0" stylesheets="@../styles/includeStyles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.HomeController">
     <!-- <ScrollPane prefHeight="640.0" prefWidth="829.0" styleClass="vbx" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">-->
-    <VBox prefHeight="796.0" prefWidth="984.0" styleClass="vbx" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+    <VBox prefHeight="663.0" prefWidth="808.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
         <children>
             <HBox>
                 <children>
                     <Label fx:id="lblActiveCoursepasses" text="%home.lblActiveCoursepasses" />
-                    <CheckBox fx:id="chkToogleCoursepass" style="-fx-background-color: rgba(255,255,255,50);" text="%chkbox.ToogleInactive" />
+                    <CheckBox fx:id="chkToogleCoursepass" text="%chkbox.ToogleInactive" />
                 </children>
             </HBox>
-            <HBox prefHeight="761.0" prefWidth="1000.0">
+            <HBox prefHeight="663.0" prefWidth="808.0">
                 <children>
-                    <ScrollPane>
-                        <TableView fx:id="CoursepassTableview" minWidth="800" prefHeight="724.0" prefWidth="800.0">
+                    <ScrollPane prefHeight="663.0" prefWidth="808.0">
+                        <TableView fx:id="CoursepassTableview" prefHeight="663.0" prefWidth="808.0">
                             <columns>
                                 <TableColumn fx:id="CPID" maxWidth="-1.0" prefWidth="-1.0" text="%home.CoursepassTableview.CPID" visible="false" />
                                 <TableColumn fx:id="CPCOSCaption" text="%home.CoursepassTableview.CPCOSCaption" />
@@ -28,13 +28,6 @@
                             </columns>
                         </TableView>
                     </ScrollPane>
-                    <!--                    <VBox minWidth="200">-->
-                    <!--                        &lt;!&ndash; <Button fx:id="btnCoursepassEdit" text="%button.edit" />&ndash;&gt;-->
-                    <!--                        <Button fx:id="btnTimetableShow" text="%home.btnShowTimetable" />-->
-                    <!--                        <ImageView id="boxImage" layoutX="800" layoutY="10">-->
-                    <!--                            <Image url="@/de/bremen/jTimetable/img/icon.png" />-->
-                    <!--                        </ImageView>-->
-                    <!--                    </VBox>-->
                 </children>
             </HBox>
         </children>

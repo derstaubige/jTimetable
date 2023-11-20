@@ -63,10 +63,6 @@ public class CoursepassController implements Initializable {
     @FXML
     private TableColumn<CoursePass, Boolean> CPActive;
     @FXML
-    private Button btnCoursepassEdit;
-    @FXML
-    private Button btnCoursepassNew;
-    @FXML
     private CheckBox chkToogleCoursepass;
     @FXML
     private VBox editbox;
@@ -217,7 +213,6 @@ public class CoursepassController implements Initializable {
 
         });
 
-
         CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
         CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
         CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPStudySection"));
@@ -232,7 +227,7 @@ public class CoursepassController implements Initializable {
             public void handle(MouseEvent click) {
                 //SingleClick: Editor is opened
                 if (click.getClickCount() == 1) {
-                    btnCoursepassEdit.fire();
+                    editCoursePass();
                 }
                 //DoubleClick: Timetable is shown
                 if (click.getClickCount() == 2) {
@@ -254,10 +249,11 @@ public class CoursepassController implements Initializable {
                 }
             }
         });
+
         btnEditCLS.setOnAction(event -> {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            if (selectedItems.size() > 0) {
+            if (!selectedItems.isEmpty()) {
                 Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/CoursepassLecturerSubject.fxml"), resources);
                 try {
@@ -273,62 +269,6 @@ public class CoursepassController implements Initializable {
             }
         });
 
-        btnCoursepassEdit.setOnAction(event -> {
-            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            if (selectedItems.size() > 0) {
-                //System.out.println(selectedItems.get(0).getId());
-                this.coursepass = selectedItems.get(0);
-                try {
-                    cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
-                    cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                try {
-                    cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
-                    cmbStudySections.setValue(this.coursepass.getStudySection());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                datStart.setValue(this.coursepass.getStart());
-                datEnd.setValue(this.coursepass.getEnd());
-                txtDescription.setText(this.coursepass.getDescription());
-                chkActive.setSelected(this.coursepass.getActive());
-//                cmbCourseofStudy.setEditable(false);
-
-                editbox.setVisible(true);
-            }
-        });
-
-        btnCoursepassNew.setOnAction(event -> {
-            try {
-                this.coursepass = new CoursePass(0L);
-                try {
-                    cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
-                    cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                try {
-                    cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                datStart.setValue(this.coursepass.getStart());
-                datEnd.setValue(this.coursepass.getEnd());
-                txtDescription.setText(this.coursepass.getDescription());
-                chkActive.setSelected(this.coursepass.getActive());
-//                cmbCourseofStudy.setEditable(false);
-                editbox.setVisible(true);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-        });
-
         chkToogleCoursepass.setOnAction(event -> {
             CoursepassTableview.getItems().setAll(getCoursepass(!chkToogleCoursepass.isSelected()));
         });
@@ -336,7 +276,7 @@ public class CoursepassController implements Initializable {
         btnInitialTimetable.setOnAction(event -> {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            if (selectedItems.size() > 0) {
+            if (!selectedItems.isEmpty()) {
                 this.coursepass = selectedItems.get(0);
 
                 Resourcemanager resourcemanager = new Resourcemanager();
@@ -352,7 +292,7 @@ public class CoursepassController implements Initializable {
         btnDeleteTimetable.setOnAction(event -> {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            if (selectedItems.size() > 0) {
+            if (!selectedItems.isEmpty()) {
                 this.coursepass = selectedItems.get(0);
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setTitle("Want to delete Timetable for " + coursepass.getDescription());
@@ -377,25 +317,90 @@ public class CoursepassController implements Initializable {
         });
     }
 
+    /**
+     * Create a new coursePass.
+     */
+    public void newCoursePass() {
+        try {
+            this.coursepass = new CoursePass(0L);
+
+            cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
+            cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
+
+            cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
+
+            datStart.setValue(this.coursepass.getStart());
+            datEnd.setValue(this.coursepass.getEnd());
+            txtDescription.setText(this.coursepass.getDescription());
+            chkActive.setSelected(this.coursepass.getActive());
+            //cmbCourseofStudy.setEditable(false);
+            editbox.setVisible(true);
+
+        } catch (Exception e) {
+            System.err.println("New coursePass could not be created in controller.");
+        }
+    }
+
+    /**
+     * Open editBox to edit selected coursePass.
+     */
+    public void editCoursePass() {
+        TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+        ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+        if (selectedItems.size() == 1) {
+            //System.out.println(selectedItems.get(0).getId());
+            this.coursepass = selectedItems.get(0);
+            try {
+                cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
+                cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
+
+                cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
+                cmbStudySections.setValue(this.coursepass.getStudySection());
+            } catch (Exception e) {
+                System.err.println(" StudySections or courses of study could not be fetched therefor coursePass " +
+                        "can't be edited.");
+            }
+            datStart.setValue(this.coursepass.getStart());
+            datEnd.setValue(this.coursepass.getEnd());
+            txtDescription.setText(this.coursepass.getDescription());
+            chkActive.setSelected(this.coursepass.getActive());
+            //cmbCourseofStudy.setEditable(false);
+
+            editbox.setVisible(true);
+        }
+    }
+
+    /**
+     * Getter.
+     *
+     * @return current coursePass
+     */
     public CoursePass getCoursepass() {
         return coursepass;
     }
 
     /**
+     * Setter.
      * ToDo should this mark the row in the tableView and open the edit space automatically
+     *
      * @param coursepass selected coursePass
      */
     public void setCoursepass(CoursePass coursepass) {
         this.coursepass = coursepass;
     }
 
+    /**
+     * Getter for arrayList of all coursePasses
+     *
+     * @param activeState true: return all active coursePasses; false: return all inactive coursePasses
+     * @return returns all active OR inactive coursePasses
+     */
     public ArrayList<CoursePass> getCoursepass(Boolean activeState) {
-        ArrayList<CoursePass> activeCoursepass = new ArrayList<CoursePass>();
+        ArrayList<CoursePass> activeCoursepass = new ArrayList<>();
         try {
-            activeCoursepass = new CoursePass(0L).getCoursePasses(activeState);
+            activeCoursepass = CoursePass.getCoursePasses(activeState);
         } catch (SQLException e) {
-            //TODo: better error handling
-            System.out.println(e);
+            System.err.println("Get all coursePasses failed because of an SQLException.");
         }
         return activeCoursepass;
     }
