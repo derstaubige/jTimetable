@@ -11,10 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
@@ -29,6 +26,8 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class CoursepassController implements Initializable {
+
+    private BackgroundController backgroundController;
     CoursePass coursepass;
     @FXML
     private ComboBox<CourseofStudy> cmbCourseofStudy;
@@ -68,10 +67,6 @@ public class CoursepassController implements Initializable {
     private VBox editbox;
     @FXML
     private Button btnEditCLS;
-    @FXML
-    private Button btnInitialTimetable;
-    @FXML
-    private Button btnDeleteTimetable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -251,21 +246,10 @@ public class CoursepassController implements Initializable {
         });
 
         btnEditCLS.setOnAction(event -> {
-            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = this.CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (!selectedItems.isEmpty()) {
-                Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/CoursepassLecturerSubject.fxml"), resources);
-                try {
-                    AnchorPane anchorPane = loader.<AnchorPane>load();
-                    CoursepassLecturerSubjectController coursepassLecturerSubjectController = loader.<CoursepassLecturerSubjectController>getController();
-                    coursepassLecturerSubjectController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
-                    Scene scene = new Scene(anchorPane);
-                    stageTheEventSourceNodeBelongs.setScene(scene);
-                } catch (Exception e) {
-                    //TODo: Propper Error handling
-                    e.printStackTrace();
-                }
+                backgroundController.openCoursePassLecturerSubject(selectedItems);
             }
         });
 
@@ -273,48 +257,6 @@ public class CoursepassController implements Initializable {
             CoursepassTableview.getItems().setAll(getCoursepass(!chkToogleCoursepass.isSelected()));
         });
 
-        btnInitialTimetable.setOnAction(event -> {
-            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            if (!selectedItems.isEmpty()) {
-                this.coursepass = selectedItems.get(0);
-
-                Resourcemanager resourcemanager = new Resourcemanager();
-                try {
-                    this.coursepass.updateCoursePassLecturerSubjects();
-                    resourcemanager.generateInitialTimetable(this.coursepass);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        btnDeleteTimetable.setOnAction(event -> {
-            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
-            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-            if (!selectedItems.isEmpty()) {
-                this.coursepass = selectedItems.get(0);
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Want to delete Timetable for " + coursepass.getDescription());
-                alert.setHeaderText("");
-                alert.setContentText("Realy want to delete the Timetable for " + coursepass.getCourseOfStudy().getCaption()
-                        + " " + coursepass.getStudySection().getDescription() + "?");
-                alert.showAndWait().ifPresent(rs -> {
-                    if (rs == ButtonType.OK) {
-                        Timetable timetable = new Timetable(coursepass);
-                        timetable.deleteTimetable();
-
-                        alert.setAlertType(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Success");
-                        alert.setContentText("The Timetable for " + coursepass.getCourseOfStudy().getCaption()
-                                + " " + coursepass.getStudySection().getDescription() + " has been deleted.");
-                        alert.show();
-
-                    }
-                });
-
-            }
-        });
     }
 
     /**
@@ -324,17 +266,17 @@ public class CoursepassController implements Initializable {
         try {
             this.coursepass = new CoursePass(0L);
 
-            cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
-            cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
+            this.cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
+            this.cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
 
-            cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
+            this.cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
 
-            datStart.setValue(this.coursepass.getStart());
-            datEnd.setValue(this.coursepass.getEnd());
-            txtDescription.setText(this.coursepass.getDescription());
-            chkActive.setSelected(this.coursepass.getActive());
+            this.datStart.setValue(this.coursepass.getStart());
+            this.datEnd.setValue(this.coursepass.getEnd());
+            this.txtDescription.setText(this.coursepass.getDescription());
+            this.chkActive.setSelected(this.coursepass.getActive());
             //cmbCourseofStudy.setEditable(false);
-            editbox.setVisible(true);
+            this.editbox.setVisible(true);
 
         } catch (Exception e) {
             System.err.println("New coursePass could not be created in controller.");
@@ -345,28 +287,77 @@ public class CoursepassController implements Initializable {
      * Open editBox to edit selected coursePass.
      */
     public void editCoursePass() {
-        TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+        TableView.TableViewSelectionModel<CoursePass> selectionModel = this.CoursepassTableview.getSelectionModel();
         ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
         if (selectedItems.size() == 1) {
             //System.out.println(selectedItems.get(0).getId());
             this.coursepass = selectedItems.get(0);
             try {
-                cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
-                cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
+                this.cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
+                this.cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
 
-                cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
-                cmbStudySections.setValue(this.coursepass.getStudySection());
+                this.cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
+                this.cmbStudySections.setValue(this.coursepass.getStudySection());
             } catch (Exception e) {
                 System.err.println(" StudySections or courses of study could not be fetched therefor coursePass " +
                         "can't be edited.");
             }
-            datStart.setValue(this.coursepass.getStart());
-            datEnd.setValue(this.coursepass.getEnd());
-            txtDescription.setText(this.coursepass.getDescription());
-            chkActive.setSelected(this.coursepass.getActive());
+            this.datStart.setValue(this.coursepass.getStart());
+            this.datEnd.setValue(this.coursepass.getEnd());
+            this.txtDescription.setText(this.coursepass.getDescription());
+            this.chkActive.setSelected(this.coursepass.getActive());
             //cmbCourseofStudy.setEditable(false);
 
-            editbox.setVisible(true);
+            this.editbox.setVisible(true);
+        }
+    }
+
+    /**
+     * Creates the initial timetable for a coursePass.
+     */
+    public void createInitialTimetable() {
+        TableView.TableViewSelectionModel<CoursePass> selectionModel = this.CoursepassTableview.getSelectionModel();
+        ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+        if (!selectedItems.isEmpty()) {
+            this.coursepass = selectedItems.get(0);
+
+            Resourcemanager resourcemanager = new Resourcemanager();
+            try {
+                this.coursepass.updateCoursePassLecturerSubjects();
+                resourcemanager.generateInitialTimetable(this.coursepass);
+            } catch (Exception e) {
+                System.err.println("Creating initial timetable didn't work.");
+            }
+        }
+    }
+
+    /**
+     * Delete the saved timetable.
+     */
+    public void deleteTimetable() {
+        TableView.TableViewSelectionModel<CoursePass> selectionModel = this.CoursepassTableview.getSelectionModel();
+        ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+        if (!selectedItems.isEmpty()) {
+            this.coursepass = selectedItems.get(0);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Want to delete Timetable for " + this.coursepass.getDescription());
+            alert.setHeaderText("");
+            alert.setContentText("Really want to delete the Timetable for " + this.coursepass.getCourseOfStudy().getCaption()
+                    + " " + this.coursepass.getStudySection().getDescription() + "?");
+            alert.showAndWait().ifPresent(rs -> {
+                if (rs == ButtonType.OK) {
+                    Timetable timetable = new Timetable(this.coursepass);
+                    timetable.deleteTimetable();
+
+                    alert.setAlertType(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Success");
+                    alert.setContentText("The Timetable for " + this.coursepass.getCourseOfStudy().getCaption()
+                            + " " + this.coursepass.getStudySection().getDescription() + " has been deleted.");
+                    alert.show();
+
+                }
+            });
+
         }
     }
 
@@ -376,7 +367,7 @@ public class CoursepassController implements Initializable {
      * @return current coursePass
      */
     public CoursePass getCoursepass() {
-        return coursepass;
+        return this.coursepass;
     }
 
     /**
@@ -387,6 +378,15 @@ public class CoursepassController implements Initializable {
      */
     public void setCoursepass(CoursePass coursepass) {
         this.coursepass = coursepass;
+    }
+
+    /**
+     * Setter.
+     *
+     * @param backgroundController controller of background needs to be accessed to load coursePassLecturerSubject.
+     */
+    public void setBackgroundController(BackgroundController backgroundController) {
+        this.backgroundController = backgroundController;
     }
 
     /**

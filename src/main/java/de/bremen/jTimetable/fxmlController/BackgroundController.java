@@ -56,6 +56,8 @@ public class BackgroundController implements Initializable {
     public Button btnShow;
     @FXML
     public Button btnCreateIniTimetable;
+    @FXML
+    public Button btnDelTimetable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -156,13 +158,15 @@ public class BackgroundController implements Initializable {
             this.childContainer.getChildren().add(childNode);
             //Load corresponding Controller
             HomeController homeController = childLoader.getController();
-            //homeController.initialize(this.location, this.resourceBundle);
+            //ToDo do we really not need this? --> seems that location and resources are set automatically as well
+            homeController.initialize(this.location, this.resourceBundle);
             //Do something with the child node and controller:
-            homeController.setChildContainer(this.childContainer);
+            homeController.setBackgroundController(this);
             //Set up top menu buttons
-            btnCreateIniTimetable.setVisible(false);
-            btnEdit.setOnAction(e -> homeController.editCoursePass());
+            btnCreateIniTimetable.setDisable(true);
+            btnDelTimetable.setDisable(true);
             btnNew.setDisable(true);
+            btnEdit.setOnAction(e -> homeController.editCoursePass());
             //Open the selected timetable in a new window
             btnShow.setOnAction(e -> homeController.showTimetable());
 
@@ -188,6 +192,8 @@ public class BackgroundController implements Initializable {
             LecturerController lecturerController = childLoader.getController();
             lecturerController.initialize(this.location, this.resourceBundle);
             //Do something with the child node and controller
+            btnCreateIniTimetable.setDisable(true);
+            btnDelTimetable.setDisable(true);
             btnNew.setDisable(false);
             btnNew.setOnAction(event -> lecturerController.newLecturer());
             btnEdit.setOnAction(event -> lecturerController.editLecturer());
@@ -216,6 +222,8 @@ public class BackgroundController implements Initializable {
             StudySectionController studySectionController = childLoader.getController();
             studySectionController.initialize(this.location, this.resourceBundle);
             //Do something with the child node and controller
+            btnCreateIniTimetable.setDisable(true);
+            btnDelTimetable.setDisable(true);
             btnNew.setDisable(false);
             btnShow.setDisable(true);
             btnNew.setOnAction(event -> studySectionController.newStudySection());
@@ -226,11 +234,20 @@ public class BackgroundController implements Initializable {
     }
 
     /**
+     * Overloaded method to open a coursePass and automatically saving the selected item.
+     *
+     * @param selectedItem the item that was selected in the tableView
+     */
+    public void openCoursePass(ObservableList<CoursePass> selectedItem) {
+        CoursepassController coursepassController = openCoursePass();
+        coursepassController.setCoursepass(new CoursePass(selectedItem.get(0).getId()));
+    }
+
+    /**
      * Open include for coursePass and set buttons accordingly.
-     * ToDo
      */
     @FXML
-    private void openCoursePass() {
+    public CoursepassController openCoursePass() {
         try {
             //Load fmxl that will be included in center of brdrPnAll
             FXMLLoader childLoader =
@@ -243,13 +260,56 @@ public class BackgroundController implements Initializable {
             //Load corresponding controller class and initialize
             CoursepassController coursepassController = childLoader.getController();
             coursepassController.initialize(this.location, this.resourceBundle);
+            coursepassController.setBackgroundController(this);
             //Do something with the child node and controller
+            btnCreateIniTimetable.setDisable(false);
+            btnDelTimetable.setDisable(false);
             btnNew.setDisable(false);
             btnShow.setDisable(true);
             btnNew.setOnAction(event -> coursepassController.newCoursePass());
             btnEdit.setOnAction(event -> coursepassController.editCoursePass());
+            btnCreateIniTimetable.setOnAction(event -> coursepassController.createInitialTimetable());
+            btnDelTimetable.setOnAction(event -> coursepassController.deleteTimetable());
+
+            return coursepassController;
         } catch (IOException e) {
             System.err.println("CoursePass could not be loaded properly!");
+        }
+
+        return null;
+    }
+
+    /**
+     * Open coursePassLecturerSubject as an include to edit
+     * ToDo
+     * @param selectedItem the coursePassLecturerSubject items will be set for this coursePass that was selected in the
+     *                     tableView
+     */
+    public void openCoursePassLecturerSubject(ObservableList<CoursePass> selectedItem) {
+        try {
+            //Load fmxl that will be included in center of brdrPnAll
+            FXMLLoader childLoader =
+                    new FXMLLoader(getClass().getResource("../fxml/CoursepassLecturerSubject.fxml"), this.resourceBundle);
+            //ToDo why does this throw an exception? --> LoadException
+            // this worked before, whats different?
+            Pane childNode = childLoader.load();
+            //Add include
+            this.childContainer.getChildren().clear();
+            this.childContainer.getChildren().add(childNode);
+            //Load corresponding Controller
+            CoursepassLecturerSubjectController coursepassLecturerSubjectController = childLoader.getController();
+            coursepassLecturerSubjectController.initialize(this.location, this.resourceBundle);
+            //ToDo this is different but fails before this
+            coursepassLecturerSubjectController.setCoursepass(new CoursePass(selectedItem.get(0).getId()));
+            //Do something with the child node and controller
+            btnCreateIniTimetable.setDisable(true);
+            btnDelTimetable.setDisable(true);
+            btnNew.setDisable(false);
+            btnShow.setDisable(true);
+//            btnNew.setOnAction();
+//            btnEdit.setOnAction();
+        } catch (Exception e) {
+            System.err.println("Subjects for this coursePass can't be set.");
         }
     }
 

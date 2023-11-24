@@ -56,7 +56,8 @@ public class HomeController implements Initializable {
 
     private ResourceBundle resources;
     private URL location;
-    private AnchorPane childContainer;
+    //private AnchorPane childContainer;
+    private BackgroundController backgroundController;
 
     public void initialize(URL location, ResourceBundle resources) {
         // ToDo: Read prefered language out of config.properties file
@@ -134,35 +135,18 @@ public class HomeController implements Initializable {
                 CoursepassTableview.getSelectionModel();
         ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
         //Check if exactly one column is selected
-
         if (selectedItems.size() == 1) {
-            try {
-                //Load fmxl that will be included in center of brdrPnAll
-                FXMLLoader childLoader =
-                        new FXMLLoader(getClass().getResource("../fxml/Coursepass.fxml"),
-                                this.resources);
-                Pane childNode = childLoader.load();
-                //Add include
-                this.childContainer.getChildren().clear();
-                this.childContainer.getChildren().add(childNode);
-                //Load corresponding controller class and initialize
-                CoursepassController coursepassController = childLoader.getController();
-                coursepassController.initialize(this.location, this.resources);
-                //Do something with the child node and controller
-                coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
-            } catch (IOException e) {
-                System.err.println("Coursepass could not be loaded properly!");
-            }
+            //Load fxml that will be included in background with setting coursePass
+            backgroundController.openCoursePass(selectedItems);
         }
     }
 
     public ArrayList<CoursePass> getCoursepass(Boolean activeState) {
-        ArrayList<CoursePass> activeCoursepass = new ArrayList<CoursePass>();
+        ArrayList<CoursePass> activeCoursepass = new ArrayList<>();
         try {
-            activeCoursepass = new CoursePass(0L).getCoursePasses(activeState);
+            activeCoursepass = CoursePass.getCoursePasses(activeState);
         } catch (SQLException e) {
-            //TODo: better error handling
-            System.out.println(e);
+            System.err.println("ArrayList of all coursePasses in homeController couldn't be returned.");
         }
         return activeCoursepass;
     }
@@ -215,7 +199,12 @@ public class HomeController implements Initializable {
         return lblActiveCoursepasses;
     }
 
-    public void setChildContainer(AnchorPane childContainer) {
-        this.childContainer = childContainer;
+    /**
+     * Setter.
+     *
+     * @param backgroundController Controller for the background buttons that needs to be accessed in editCoursePass
+     */
+    public void setBackgroundController(BackgroundController backgroundController) {
+        this.backgroundController = backgroundController;
     }
 }

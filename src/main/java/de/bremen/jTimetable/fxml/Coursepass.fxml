@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="663.0" prefWidth="808.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.CoursepassController">
+<AnchorPane prefHeight="663.0" prefWidth="808.0" stylesheets="@../styles/includeStyles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.CoursepassController">
 <!--    <ScrollPane>-->
-        <VBox AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+        <VBox prefHeight="663.0" prefWidth="808.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <children>
-                <HBox>
+                <HBox spacing="5.0">
                     <Label text="%coursepass.title" />
                     <CheckBox fx:id="chkToogleCoursepass" text="%chkbox.ToogleInactive" />
+                    <Button fx:id="btnEditCLS" text="%coursepass.btnEditCLS" />
+            <padding>
+               <Insets bottom="5.0" />
+            </padding>
                 </HBox>
                 <HBox>
                     <children>
-                        <ScrollPane>
-                            <TableView fx:id="CoursepassTableview" minWidth="800">
+                        <ScrollPane prefWidth="808.0">
+                            <TableView fx:id="CoursepassTableview" minWidth="800" prefWidth="808.0">
                                 <columns>
                                     <TableColumn fx:id="CPID" text="%coursepass.CoursepassTableview.id" visible="false" />
                                     <TableColumn fx:id="CPCOSCaption" text="%coursepass.CoursepassTableview.courseofstudy" />
@@ -26,40 +31,56 @@
                                 </columns>
                             </TableView>
                         </ScrollPane>
-                        <VBox minWidth="200">
-                            <Button fx:id="btnEditCLS" text="%coursepass.btnEditCLS" />
-                            <Button fx:id="btnInitialTimetable" text="%coursepass.btnInitialTimetable" />
-                            <Button fx:id="btnDeleteTimetable" text="%coursepass.btnDeleteTimetable" />
-                        </VBox>
                     </children>
                 </HBox>
-                <VBox fx:id="editbox">
-                    <HBox>
+                <VBox fx:id="editbox" prefWidth="808.0">
+                    <HBox prefWidth="808.0" spacing="5.0">
                         <Label text="%coursepass.editbox.courseofstudy" />
                         <ComboBox fx:id="cmbCourseofStudy" />
+               <padding>
+                  <Insets bottom="2.0" />
+               </padding>
                     </HBox>
-                    <HBox>
+                    <HBox spacing="5.0">
                         <Label text="%coursepass.editbox.studySection" />
                         <ComboBox fx:id="cmbStudySections" minWidth="400" />
+               <padding>
+                  <Insets bottom="2.0" />
+               </padding>
                     </HBox>
-                    <HBox>
+                    <HBox spacing="5.0">
                         <Label text="%coursepass.editbox.start" />
                         <DatePicker fx:id="datStart" />
+               <padding>
+                  <Insets bottom="2.0" />
+               </padding>
                     </HBox>
-                    <HBox>
+                    <HBox spacing="5.0">
                         <Label text="%coursepass.editbox.end" />
                         <DatePicker fx:id="datEnd" />
+               <padding>
+                  <Insets bottom="2.0" />
+               </padding>
                     </HBox>
-                    <HBox>
+                    <HBox spacing="5.0">
                         <Label text="%coursepass.editbox.description" />
                         <TextField fx:id="txtDescription" />
+               <padding>
+                  <Insets bottom="2.0" />
+               </padding>
                     </HBox>
-                    <HBox>
+                    <HBox spacing="5.0">
                         <Label text="%coursepass.editbox.active" />
                         <CheckBox fx:id="chkActive" />
+               <padding>
+                  <Insets bottom="2.0" />
+               </padding>
                     </HBox>
-                    <HBox>
+                    <HBox spacing="5.0">
                         <Button fx:id="btnSave" text="%button.save" />
+               <padding>
+                  <Insets bottom="2.0" />
+               </padding>
                     </HBox>
 
                 </VBox>
