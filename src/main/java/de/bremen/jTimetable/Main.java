@@ -11,14 +11,13 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import de.bremen.jTimetable.Classes.*;
+import de.bremen.jTimetable.fxmlController.BackgroundController;
 import javafx.stage.StageStyle;
 
 
 public class Main extends Application {
     double x, y =0;
     public static void main(String[] args){
-
-        // https://jenkov.com/tutorials/javafx/your-first-javafx-application.html
         try( SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();){
             sqlConnectionManager.Migrate();
         }catch (Exception e){
@@ -45,23 +44,8 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
-//
-//        Parent root = FXMLLoader.load(getClass().getResource("fxml/Background.fxml"));
-//        primaryStage.initStyle(StageStyle.UNDECORATED);
-//
-//
-//        root.setOnMousePressed(event -> {
-//            x = event.getSceneX();
-//            y = event.getSceneY();
-//        });
-//
-//        root.setOnMouseDragged(event -> {
-//            primaryStage.setX(event.getScreenX() - x);
-//            primaryStage.setY(event.getScreenY() - y);
-//        });
-//
-//        primaryStage.setScene(new Scene(root, 700, 400));
-//        primaryStage.show();
+        BackgroundController backgroundController = loader.getController();
+        backgroundController.openHomeFXML();
     }
 
 }

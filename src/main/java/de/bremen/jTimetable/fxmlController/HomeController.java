@@ -12,14 +12,18 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.CoursePass;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -64,18 +68,6 @@ public class HomeController implements Initializable {
 
         this.resources = resources;
         this.location = location;
-
-        System.out.println("Initialize Home!");
-//        Config config = new Config();
-//        Locale locale = new Locale(config.getLocalLang(),config.getLocaCountry());
-//        System.out.println(config.getLocaCountry() + config.getLocalLang());
-//        ResourceBundle resourceBundle = ResourceBundle.getBundle("de.bremen.jTimetable.Resources.Resources", locale);
-//        ResourceBundle resourceBundle = ResourceBundle.getBundle("de.bremen.jTimetable.Resources.Resources");
-//
-//        System.out.println(resources.getString("currency"));
-//
-//        // Translate everything
-//        lblActiveCoursepasses.setText(resources.getString("currency"));
 
         CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
         CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
@@ -126,6 +118,40 @@ public class HomeController implements Initializable {
         }
     }
 
+    public void addTopmenuButtons(Scene scene){
+        HBox topmenu = (HBox) scene.lookup("#topmenu");
+        
+        Button btnShowTimetable = new Button("Alphabetical");
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/data1.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnShowTimetable.setGraphic(imageView);
+            btnShowTimetable.setOnAction(e -> this.showTimetable());
+            btnShowTimetable.getStyleClass().add("menuItem");
+            btnShowTimetable.setText(resources.getString("home.btnShowTimetable"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Button btnClose = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/exit.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnClose.setGraphic(imageView);
+            btnClose.setOnAction(e -> System.exit(0));
+            btnClose.getStyleClass().add("menuItem");
+            btnClose.setText(resources.getString("menu.file.exit"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        topmenu.getChildren().clear();
+        topmenu.getChildren().addAll(btnShowTimetable, btnClose);
+    }
+
     /**
      * Open the coursePass menu and set the id of the selected coursePass
      */
@@ -137,7 +163,7 @@ public class HomeController implements Initializable {
         //Check if exactly one column is selected
         if (selectedItems.size() == 1) {
             //Load fxml that will be included in background with setting coursePass
-            backgroundController.openCoursePass(selectedItems);
+            // backgroundController.openCoursePass(selectedItems);
         }
     }
 

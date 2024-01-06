@@ -4,8 +4,11 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import de.bremen.jTimetable.Classes.CourseofStudy;
@@ -18,6 +21,7 @@ import java.util.ResourceBundle;
 
 public class CourseofStudyController implements Initializable {
     CourseofStudy cos;
+    ResourceBundle resources;
 
     @FXML
     private TextField txtID;
@@ -55,7 +59,7 @@ public class CourseofStudyController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        this.resources = resources;
         editbox.setVisible(false);
 
         COSID.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Long>("id"));
@@ -140,5 +144,25 @@ public class CourseofStudyController implements Initializable {
             System.out.println(e);
         }
         return activeCoursesofStudy;
+    }
+    
+    public void addTopmenuButtons(Scene scene){
+        HBox topmenu = (HBox) scene.lookup("#topmenu");
+        
+        Button btnClose = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/exit.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnClose.setGraphic(imageView);
+            btnClose.setOnAction(e -> System.exit(0));
+            btnClose.getStyleClass().add("menuItem");
+            btnClose.setText(resources.getString("menu.file.exit"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        topmenu.getChildren().clear();
+        topmenu.getChildren().addAll(btnClose);
     }
 }

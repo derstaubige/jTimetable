@@ -12,10 +12,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -33,7 +36,7 @@ import java.util.ResourceBundle;
 
 public class LecturerController implements Initializable {
     Lecturer lecturer;
-    ResourceBundle resourceBundle;
+    ResourceBundle resources;
 
     @FXML
     private TableView<Lecturer> LecturerTableview;
@@ -87,10 +90,10 @@ public class LecturerController implements Initializable {
     private CheckBox chkActive;
     @FXML
     private Button btnSave;
-
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.resourceBundle = resources;
+        this.resources = resources;
 
         editbox.setVisible(false);
         // We need a StringConverter in order to ensure the selected item is displayed properly
@@ -348,6 +351,69 @@ public class LecturerController implements Initializable {
 
     }
 
+    public void addTopmenuButtons(Scene scene){
+        HBox topmenu = (HBox) scene.lookup("#topmenu");
+        
+        Button btnNew = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/add1.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnNew.setGraphic(imageView);
+            btnNew.setOnAction(e -> this.newLecturer());
+            btnNew.getStyleClass().add("menuItem");
+            btnNew.setText(resources.getString("menu.actions.new"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        Button btnEdit = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/add1.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnEdit.setGraphic(imageView);
+            btnEdit.setOnAction(e -> this.editLecturer());
+            btnEdit.getStyleClass().add("menuItem");
+            btnEdit.setText(resources.getString("menu.actions.edit"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        
+        Button btnShowLecturerTimetable = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/data1.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnShowLecturerTimetable.setGraphic(imageView);
+            btnShowLecturerTimetable.setOnAction(e -> this.editLecturer());
+            btnShowLecturerTimetable.getStyleClass().add("menuItem");
+            btnShowLecturerTimetable.setText(resources.getString("menu.actions.Show"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Button btnClose = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/exit.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnClose.setGraphic(imageView);
+            btnClose.setOnAction(e -> System.exit(0));
+            btnClose.getStyleClass().add("menuItem");
+            btnClose.setText(resources.getString("menu.file.exit"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        topmenu.getChildren().clear();
+        topmenu.getChildren().addAll(btnNew, btnEdit, btnShowLecturerTimetable, btnClose);
+    }
+
     /**
      * Create a new lecturer and open editBox to set values.
      */
@@ -404,7 +470,7 @@ public class LecturerController implements Initializable {
      */
     public void showLecturerTimetable() {
         Lecturer lecturer = LecturerTableview.getSelectionModel().getSelectedItem();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), this.resourceBundle);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), this.resources);
         Stage stage = new Stage(StageStyle.DECORATED);
         //ToDo title in resources
         stage.setTitle("Timetable for " + lecturer.getLecturerFullName());

@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="703.0" prefWidth="848.0" stylesheets="@../styles/includeStyles.css"
+<AnchorPane prefHeight="703.0" prefWidth="848.0" stylesheets="/de/bremen/jTimetable/styles/includeStyles.css"
             xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.bremen.jTimetable.fxmlController.CoursepassLecturerSubjectController">
     <VBox prefHeight="663.0" prefWidth="808.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0"

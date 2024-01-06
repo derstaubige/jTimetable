@@ -10,6 +10,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -29,6 +31,8 @@ public class CoursepassController implements Initializable {
 
     private BackgroundController backgroundController;
     CoursePass coursepass;
+    ResourceBundle resources;
+
     @FXML
     private ComboBox<CourseofStudy> cmbCourseofStudy;
     @FXML
@@ -70,7 +74,7 @@ public class CoursepassController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
+        this.resources = resources;
         editbox.setVisible(false);
         // We need a StringConverter in order to ensure the selected item is displayed properly
         // For this sample, we only want the Person's name to be displayed
@@ -249,7 +253,7 @@ public class CoursepassController implements Initializable {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = this.CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (!selectedItems.isEmpty()) {
-                backgroundController.openCoursePassLecturerSubject(selectedItems);
+                // backgroundController.openCoursePassLecturerSubject(selectedItems);
             }
         });
 
@@ -404,4 +408,83 @@ public class CoursepassController implements Initializable {
         }
         return activeCoursepass;
     }
+
+    
+    public void addTopmenuButtons(Scene scene){
+        HBox topmenu = (HBox) scene.lookup("#topmenu");
+        
+        Button btnNew = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/add1.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnNew.setGraphic(imageView);
+            btnNew.setOnAction(e -> this.newCoursePass());
+            btnNew.getStyleClass().add("menuItem");
+            btnNew.setText(resources.getString("menu.actions.new"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        Button btnEdit = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/add1.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnEdit.setGraphic(imageView);
+            btnEdit.setOnAction(e -> this.editCoursePass());
+            btnEdit.getStyleClass().add("menuItem");
+            btnEdit.setText(resources.getString("menu.actions.edit"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        Button btncreateInitialTimetable = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/data1.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btncreateInitialTimetable.setGraphic(imageView);
+            btncreateInitialTimetable.setOnAction(e -> this.createInitialTimetable());
+            btncreateInitialTimetable.getStyleClass().add("menuItem");
+            btncreateInitialTimetable.setText(resources.getString("menu.actions.edit"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }        
+        
+        Button btndeleteTimetable = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/data1.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btndeleteTimetable.setGraphic(imageView);
+            btndeleteTimetable.setOnAction(e -> this.deleteTimetable());
+            btndeleteTimetable.getStyleClass().add("menuItem");
+            btndeleteTimetable.setText(resources.getString("menu.actions.edit"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        Button btnClose = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/exit.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnClose.setGraphic(imageView);
+            btnClose.setOnAction(e -> System.exit(0));
+            btnClose.getStyleClass().add("menuItem");
+            btnClose.setText(resources.getString("menu.file.exit"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        topmenu.getChildren().clear();
+        topmenu.getChildren().addAll(btnNew, btnEdit, btncreateInitialTimetable, btndeleteTimetable, btnClose);
+    }
+
 }
+

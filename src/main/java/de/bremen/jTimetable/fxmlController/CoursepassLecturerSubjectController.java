@@ -5,11 +5,15 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import de.bremen.jTimetable.Classes.*;
@@ -22,6 +26,7 @@ import java.util.ResourceBundle;
 public class CoursepassLecturerSubjectController implements Initializable {
     CoursePass coursepass = new CoursePass(0L);
     CoursepassLecturerSubject coursepassLecturerSubject;
+    ResourceBundle resources;
 
     @FXML    public TableView<CoursepassLecturerSubject> CLSTableview;
     @FXML    public TableColumn<CoursepassLecturerSubject, Long> TCID;
@@ -45,6 +50,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
+        this.resources = resources;
         TCID.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("id"));
         TCLecturer.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("LecturerFullname"));
         TCSubject.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("SubjectCaption"));
@@ -272,4 +278,26 @@ public class CoursepassLecturerSubjectController implements Initializable {
     public void setCoursepass(CoursePass pCoursepass){
         coursepass = pCoursepass;
     }
+
+       
+    public void addTopmenuButtons(Scene scene){
+        HBox topmenu = (HBox) scene.lookup("#topmenu");
+        
+        Button btnClose = new Button();
+        try {
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/exit.png");
+            Image image  = new Image(url.toExternalForm());
+            ImageView imageView = new ImageView(image);
+            btnClose.setGraphic(imageView);
+            btnClose.setOnAction(e -> System.exit(0));
+            btnClose.getStyleClass().add("menuItem");
+            btnClose.setText(resources.getString("menu.file.exit"));
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        topmenu.getChildren().clear();
+        topmenu.getChildren().addAll( btnClose);
+    }
+
 }

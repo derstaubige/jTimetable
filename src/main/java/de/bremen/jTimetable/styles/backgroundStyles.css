@@ -1,9 +1,15 @@
 .root {
-    -fx-background-image: url("../img/HdR_Schraeg_von_vorne.jpg");
+    -fx-background-image: url("/de/bremen/jTimetable/img/HdR_Schraeg_von_vorne.jpg");
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
 }
 
 #image {
     -fx-opacity: 0.4;
+}
+
+.menuItem {
+    -fx-font-size: 8pt;
+    -fx-pref-height: 38pt;
+    -fx-max-width: 136pt;
 }

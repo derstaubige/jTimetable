@@ -3,6 +3,7 @@ package de.bremen.jTimetable.fxmlController;
 import de.bremen.jTimetable.Classes.CoursePass;
 import de.bremen.jTimetable.Main;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,7 +30,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class BackgroundController implements Initializable {
-
+//https://stackoverflow.com/a/61531318
     ResourceBundle resourceBundle;
     URL location;
 
@@ -43,29 +44,16 @@ public class BackgroundController implements Initializable {
     @FXML
     private AnchorPane slider;
     @FXML
-    public Button btnNew;
-    @FXML
     public BorderPane brdrPnAll;
     @FXML
     public Button btnLecturer;
     @FXML
     public AnchorPane childContainer;
-    @FXML
-    public Button btnEdit;
-    @FXML
-    public Button btnShow;
-    @FXML
-    public Button btnCreateIniTimetable;
-    @FXML
-    public Button btnDelTimetable;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.resourceBundle = resources;
         this.location = location;
-
-        //Initially home view is displayed
-        openHome();
 
         //set methods to open and close side menu
         menuClose.setVisible(false);
@@ -103,76 +91,11 @@ public class BackgroundController implements Initializable {
     }
 
     /**
-     * Handle action related to "About" menu item.
-     *
-     * @param event Event on "About" menu item.
-     */
-    @FXML
-    private void handleAboutAction(final ActionEvent event) {
-        provideAboutFunctionality();
-    }
-
-    /**
-     * Handle action related to input (in this case specifically only responds to
-     * keyboard event CTRL-A).
-     *
-     * @param event Input event.
-     */
-    @FXML
-    private void handleKeyInput(final InputEvent event) {
-        if (event instanceof KeyEvent) {
-            final KeyEvent keyEvent = (KeyEvent) event;
-            if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.A) {
-                provideAboutFunctionality();
-            }
-        }
-    }
-
-    /**
-     * Perform functionality associated with "About" menu selection or CTRL-A.
-     */
-    private void provideAboutFunctionality() {
-        System.out.println("You clicked on About!");
-    }
-
-    /**
-     * Closes the entire program.
-     */
-    @FXML
-    private void closeButtonAction() {
-        System.exit(0);
-    }
-
-    /**
      * Open include for home view and set buttons accordingly.
      */
     @FXML
     private void openHome() {
-        try {
-            //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/Home.fxml"),
-                    this.resourceBundle);
-            Pane childNode = childLoader.load();
-            //Add include
-            this.childContainer.getChildren().clear();
-            this.childContainer.getChildren().add(childNode);
-            //Load corresponding Controller
-            HomeController homeController = childLoader.getController();
-            //ToDo do we really not need this? --> seems that location and resources are set automatically as well
-            homeController.initialize(this.location, this.resourceBundle);
-            //Do something with the child node and controller:
-            homeController.setBackgroundController(this);
-            //Set up top menu buttons
-            btnCreateIniTimetable.setDisable(true);
-            btnDelTimetable.setDisable(true);
-            btnNew.setDisable(true);
-            btnEdit.setOnAction(e -> homeController.editCoursePass());
-            //Open the selected timetable in a new window
-            btnShow.setOnAction(e -> homeController.showTimetable());
-
-        } catch (IOException e) {
-            System.err.println("Home could not be loaded properly!");
-        }
+        openHomeFXML();
     }
 
     /**
@@ -180,28 +103,7 @@ public class BackgroundController implements Initializable {
      */
     @FXML
     private void openLecturer() {
-        try {
-            //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/Lecturer.fxml"),
-                    this.resourceBundle);
-            Pane childNode = childLoader.load();
-            //Add include
-            this.childContainer.getChildren().clear();
-            this.childContainer.getChildren().add(childNode);
-            //Load corresponding controller class and initialize
-            LecturerController lecturerController = childLoader.getController();
-            lecturerController.initialize(this.location, this.resourceBundle);
-            //Do something with the child node and controller
-            btnCreateIniTimetable.setDisable(true);
-            btnDelTimetable.setDisable(true);
-            btnNew.setDisable(false);
-            btnNew.setOnAction(event -> lecturerController.newLecturer());
-            btnEdit.setOnAction(event -> lecturerController.editLecturer());
-            //Show timetable of lecturer
-            btnShow.setOnAction(event -> lecturerController.showLecturerTimetable());
-        } catch (IOException e) {
-            System.err.println("Lecturer could not be loaded properly!");
-        }
+        openLecturerFXML();
     }
 
     /**
@@ -209,74 +111,15 @@ public class BackgroundController implements Initializable {
      */
     @FXML
     private void openStudySection() {
-        try {
-            //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader =
-                    new FXMLLoader(getClass().getResource("../fxml/StudySection.fxml"),
-                            this.resourceBundle);
-            Pane childNode = childLoader.load();
-            //Add include
-            this.childContainer.getChildren().clear();
-            this.childContainer.getChildren().add(childNode);
-            //Load corresponding controller class and initialize
-            StudySectionController studySectionController = childLoader.getController();
-            studySectionController.initialize(this.location, this.resourceBundle);
-            //Do something with the child node and controller
-            btnCreateIniTimetable.setDisable(true);
-            btnDelTimetable.setDisable(true);
-            btnNew.setDisable(false);
-            btnShow.setDisable(true);
-            btnNew.setOnAction(event -> studySectionController.newStudySection());
-            btnEdit.setOnAction(event -> studySectionController.editStudySection());
-        } catch (IOException e) {
-            System.err.println("StudySection could not be loaded properly!");
-        }
-    }
-
-    /**
-     * Overloaded method to open a coursePass and automatically saving the selected item.
-     *
-     * @param selectedItem the item that was selected in the tableView
-     */
-    public void openCoursePass(ObservableList<CoursePass> selectedItem) {
-        CoursepassController coursepassController = openCoursePass();
-        coursepassController.setCoursepass(new CoursePass(selectedItem.get(0).getId()));
+        openStudySectionFXML();
     }
 
     /**
      * Open include for coursePass and set buttons accordingly.
      */
     @FXML
-    public CoursepassController openCoursePass() {
-        try {
-            //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader =
-                    new FXMLLoader(getClass().getResource("../fxml/Coursepass.fxml"),
-                            this.resourceBundle);
-            Pane childNode = childLoader.load();
-            //Add include
-            this.childContainer.getChildren().clear();
-            this.childContainer.getChildren().add(childNode);
-            //Load corresponding controller class and initialize
-            CoursepassController coursepassController = childLoader.getController();
-            coursepassController.initialize(this.location, this.resourceBundle);
-            coursepassController.setBackgroundController(this);
-            //Do something with the child node and controller
-            btnCreateIniTimetable.setDisable(false);
-            btnDelTimetable.setDisable(false);
-            btnNew.setDisable(false);
-            btnShow.setDisable(true);
-            btnNew.setOnAction(event -> coursepassController.newCoursePass());
-            btnEdit.setOnAction(event -> coursepassController.editCoursePass());
-            btnCreateIniTimetable.setOnAction(event -> coursepassController.createInitialTimetable());
-            btnDelTimetable.setOnAction(event -> coursepassController.deleteTimetable());
-
-            return coursepassController;
-        } catch (IOException e) {
-            System.err.println("CoursePass could not be loaded properly!");
-        }
-
-        return null;
+    public void openCoursePass() {
+        openCoursePassFXML();
     }
 
     /**
@@ -285,32 +128,8 @@ public class BackgroundController implements Initializable {
      * @param selectedItem the coursePassLecturerSubject items will be set for this coursePass that was selected in the
      *                     tableView
      */
-    public void openCoursePassLecturerSubject(ObservableList<CoursePass> selectedItem) {
-        try {
-            //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader =
-                    new FXMLLoader(getClass().getResource("../fxml/CoursepassLecturerSubject.fxml"), this.resourceBundle);
-            //ToDo why does this throw an exception? --> LoadException
-            // this worked before, whats different?
-            Pane childNode = childLoader.load();
-            //Add include
-            this.childContainer.getChildren().clear();
-            this.childContainer.getChildren().add(childNode);
-            //Load corresponding Controller
-            CoursepassLecturerSubjectController coursepassLecturerSubjectController = childLoader.getController();
-            coursepassLecturerSubjectController.initialize(this.location, this.resourceBundle);
-            //ToDo this is different but fails before this
-            coursepassLecturerSubjectController.setCoursepass(new CoursePass(selectedItem.get(0).getId()));
-            //Do something with the child node and controller
-            btnCreateIniTimetable.setDisable(true);
-            btnDelTimetable.setDisable(true);
-            btnNew.setDisable(false);
-            btnShow.setDisable(true);
-//            btnNew.setOnAction();
-//            btnEdit.setOnAction();
-        } catch (Exception e) {
-            System.err.println("Subjects for this coursePass can't be set.");
-        }
+    public void openCoursePassLecturerSubject() {
+        openCoursePassLecturerSubjectFXML();
     }
 
     /**
@@ -319,21 +138,7 @@ public class BackgroundController implements Initializable {
      */
     @FXML
     private void openCourseOfStudy() {
-        try {
-            //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader =
-                    new FXMLLoader(getClass().getResource("../fxml/CourseofStudy.fxml"), this.resourceBundle);
-            Pane childNode = childLoader.load();
-            //Add include
-            this.childContainer.getChildren().clear();
-            this.childContainer.getChildren().add(childNode);
-            //Load corresponding Controller
-            CourseofStudyController courseofStudyController = childLoader.getController();
-            courseofStudyController.initialize(this.location, this.resourceBundle);
-            //Do something with the child node and controller:
-        } catch (Exception e) {
-            System.err.println("CourseOfStudy could not be loaded properly!");
-        }
+        openCourseOfStudyFXML();
     }
 
     /**
@@ -344,7 +149,7 @@ public class BackgroundController implements Initializable {
     private void openSubject() {
         try {
             //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/Subject.fxml"),
+            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("/de/bremen/jTimetable/fxml/Subject.fxml"),
                     this.resourceBundle);
             Pane childNode = childLoader.load();
             //Add include
@@ -367,7 +172,7 @@ public class BackgroundController implements Initializable {
     private void openRoom() {
         try {
             //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/Room.fxml"),
+            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("/de/bremen/jTimetable/fxml/Room.fxml"),
                     this.resourceBundle);
             Pane childNode = childLoader.load();
             //Add include
@@ -390,7 +195,7 @@ public class BackgroundController implements Initializable {
     private void openLocation() {
         try {
             //Load fmxl that will be included in center of brdrPnAll
-            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("../fxml/Location.fxml"),
+            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("/de/bremen/jTimetable/fxml/Location.fxml"),
                     this.resourceBundle);
             Pane childNode = childLoader.load();
             //Add include
@@ -402,6 +207,133 @@ public class BackgroundController implements Initializable {
             //Do something with the child node and controller
         } catch (IOException e) {
             System.err.println("Location could not be loaded properly!");
+        }
+    }
+
+    public void openHomeFXML(){
+        try {
+            //Load fmxl that will be included in center of brdrPnAll
+            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("/de/bremen/jTimetable/fxml/Home.fxml"),
+                    this.resourceBundle);
+            Pane childNode = childLoader.load();
+            //Add include
+            this.childContainer.getChildren().clear();
+            this.childContainer.getChildren().add(childNode);
+
+            //Load corresponding Controller
+            HomeController homeController = childLoader.getController();
+            
+            //Do something with the child node and controller:
+            homeController.setBackgroundController(this);
+            //Set up top menu buttons
+            Scene scene = this.brdrPnAll.getScene();
+            homeController.addTopmenuButtons(scene);
+
+        } catch (IOException e) {
+            System.err.println("Home could not be loaded properly!");
+        }
+    }
+
+    private void openLecturerFXML(){
+        try {
+            //Load fmxl that will be included in center of brdrPnAll
+            FXMLLoader childLoader = new FXMLLoader(getClass().getResource("/de/bremen/jTimetable/fxml/Lecturer.fxml"),
+                    this.resourceBundle);
+            Pane childNode = childLoader.load();
+            //Add include
+            this.childContainer.getChildren().clear();
+            this.childContainer.getChildren().add(childNode);
+            //Load corresponding controller class and initialize
+            LecturerController lecturerController = childLoader.getController();
+            
+            //Do something with the child node and controller
+            Scene scene = this.brdrPnAll.getScene();
+            lecturerController.addTopmenuButtons(scene);
+        } catch (IOException e) {
+            System.err.println("Lecturer could not be loaded properly!");
+        }
+    }
+
+    private void openStudySectionFXML(){
+        try {
+            //Load fmxl that will be included in center of brdrPnAll
+            FXMLLoader childLoader =
+                    new FXMLLoader(getClass().getResource("/de/bremen/jTimetable/fxml/StudySection.fxml"),
+                            this.resourceBundle);
+            Pane childNode = childLoader.load();
+            //Add include
+            this.childContainer.getChildren().clear();
+            this.childContainer.getChildren().add(childNode);
+            //Load corresponding controller class and initialize
+            StudySectionController studySectionController = childLoader.getController();
+            
+            //Do something with the child node and controller
+            Scene scene = this.brdrPnAll.getScene();
+            studySectionController.addTopmenuButtons(scene);
+        } catch (IOException e) {
+            System.err.println("StudySection could not be loaded properly!");
+        }
+    }
+
+    private void openCoursePassFXML(){
+        try {
+            //Load fmxl that will be included in center of brdrPnAll
+            FXMLLoader childLoader =
+                    new FXMLLoader(getClass().getResource("/de/bremen/jTimetable/fxml/Coursepass.fxml"),
+                            this.resourceBundle);
+            Pane childNode = childLoader.load();
+            //Add include
+            this.childContainer.getChildren().clear();
+            this.childContainer.getChildren().add(childNode);
+            //Load corresponding controller class and initialize
+            CoursepassController coursepassController = childLoader.getController();
+            
+            coursepassController.setBackgroundController(this);
+            //Do something with the child node and controller
+            Scene scene = this.brdrPnAll.getScene();
+            coursepassController.addTopmenuButtons(scene);
+            
+        } catch (IOException e) {
+            System.err.println("CoursePass could not be loaded properly!");
+        }
+    }
+
+    private void openCoursePassLecturerSubjectFXML(){
+        try {
+            //Load fmxl that will be included in center of brdrPnAll
+            FXMLLoader childLoader =
+                    new FXMLLoader(getClass().getResource("/de/bremen/jTimetable/fxml/CoursepassLecturerSubject.fxml"), this.resourceBundle);
+            Pane childNode = childLoader.load();
+            //Add include
+            this.childContainer.getChildren().clear();
+            this.childContainer.getChildren().add(childNode);
+            //Load corresponding Controller
+            CoursepassLecturerSubjectController coursepassLecturerSubjectController = childLoader.getController();
+            
+            //Do something with the child node and controller
+            Scene scene = this.brdrPnAll.getScene();
+            coursepassLecturerSubjectController.addTopmenuButtons(scene);
+        } catch (Exception e) {
+            System.err.println("Subjects for this coursePass can't be set.");
+        }
+    }
+
+    private void openCourseOfStudyFXML(){        
+        try {
+            //Load fmxl that will be included in center of brdrPnAll
+            FXMLLoader childLoader =
+                    new FXMLLoader(getClass().getResource("/de/bremen/jTimetable/fxml/CourseofStudy.fxml"), this.resourceBundle);
+            Pane childNode = childLoader.load();
+            //Add include
+            this.childContainer.getChildren().clear();
+            this.childContainer.getChildren().add(childNode);
+            //Load corresponding Controller
+            CourseofStudyController courseofStudyController = childLoader.getController();
+            //Do something with the child node and controller:            
+            Scene scene = this.brdrPnAll.getScene();
+            courseofStudyController.addTopmenuButtons(scene);
+        } catch (Exception e) {
+            System.err.println("CourseOfStudy could not be loaded properly!");
         }
     }
 }
