@@ -6,7 +6,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -429,7 +428,7 @@ public class CoursepassController implements Initializable {
         
         Button btnEdit = new Button();
         try {
-            URL url = getClass().getResource("/de/bremen/jTimetable/img/add1.png");
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/edit1.png");
             Image image  = new Image(url.toExternalForm());
             ImageView imageView = new ImageView(image);
             btnEdit.setGraphic(imageView);

@@ -135,7 +135,7 @@
             </AnchorPane>
         </left>
         <center>
-            <AnchorPane fx:id="childContainer" prefHeight="703.0" prefWidth="848.0">
+            <AnchorPane fx:id="childContainer" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             </AnchorPane>
         </center>
     </BorderPane>

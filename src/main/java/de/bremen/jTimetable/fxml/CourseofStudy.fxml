@@ -7,6 +7,7 @@
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <children>
             <Label text="%cos.title"></Label>
+            <CheckBox fx:id="chkToogleActiveCourseofStudy" text="%chkbox.ToogleInactive"></CheckBox>
             <HBox>
             <children>
                 <TableView fx:id="ActiveCoursesofStudyTableview" minWidth="800">
@@ -18,13 +19,6 @@
                         <TableColumn text="%cos.ActiveCoursesofStudyTableview.active" fx:id="COSActive"></TableColumn>
                     </columns>
                 </TableView>
-                <VBox minWidth="200">
-
-                    <Button fx:id="ActiveCoursesofStudyButton" text="%button.edit"></Button>
-                    <Button fx:id="ActiveCoursesofStudyButtonNew" text="%button.new"></Button>
-                    <CheckBox fx:id="chkToogleActiveCourseofStudy" text="%chkbox.ToogleInactive"></CheckBox>
-
-                </VBox>
 
             </children>
             </HBox>

@@ -11,6 +11,8 @@
         <VBox >
             <children>
                 <Label text="%location.title"></Label>
+                <CheckBox fx:id="chkToogleLocation" text="%chkbox.ToogleInactive"></CheckBox>
+
                 <HBox>
                     <children>
                         <TableView fx:id="LocationTableview" minWidth="800">
@@ -20,13 +22,6 @@
                                 <TableColumn text="%location.LocationTableview.active" fx:id="Active"></TableColumn>
                             </columns>
                         </TableView>
-                        <VBox minWidth="200">
-
-                            <Button fx:id="btnLocationEdit" text="%button.edit"></Button>
-                            <Button fx:id="btnLocationNew" text="%button.new"></Button>
-                            <CheckBox fx:id="chkToogleLocation" text="%chkbox.ToogleInactive"></CheckBox>
-
-                        </VBox>
                     </children>
                 </HBox>
                 <VBox fx:id="editbox">

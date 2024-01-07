@@ -11,6 +11,8 @@
         <VBox >
             <children>
                 <Label text="%room.title"></Label>
+                <CheckBox fx:id="chkToogleRoom" text="%chkbox.ToogleInactive"></CheckBox>
+
                 <HBox>
                     <children>
                         <TableView fx:id="RoomTableview" minWidth="800">
@@ -21,13 +23,6 @@
                                 <TableColumn text="%room.RoomTableview.active" fx:id="Active"></TableColumn>
                             </columns>
                         </TableView>
-                        <VBox minWidth="200">
-
-                            <Button fx:id="btnRoomEdit" text="%button.edit"></Button>
-                            <Button fx:id="btnRoomNew" text="%button.new"></Button>
-                            <CheckBox fx:id="chkToogleRoom" text="%chkbox.ToogleInactive"></CheckBox>
-
-                        </VBox>
                     </children>
                 </HBox>
                 <VBox fx:id="editbox">

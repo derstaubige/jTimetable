@@ -11,6 +11,8 @@
         <VBox >
             <children>
                 <Label text="%subject.title"></Label>
+                <CheckBox fx:id="chkToogleSubject" text="%chkbox.ToogleInactive"></CheckBox>
+
                 <HBox>
                     <children>
                         <TableView fx:id="SubjectTableview" minWidth="800">
@@ -20,13 +22,6 @@
                                 <TableColumn text="%subject.SubjectTableview.active" fx:id="Active"></TableColumn>
                             </columns>
                         </TableView>
-                        <VBox minWidth="200">
-
-                            <Button fx:id="btnSubjectEdit" text="%button.edit">Edit</Button>
-                            <Button fx:id="btnSubjectNew" text="%button.new">New</Button>
-                            <CheckBox fx:id="chkToogleSubject" text="%chkbox.ToogleInactive"></CheckBox>
-
-                        </VBox>
                     </children>
                 </HBox>
                 <VBox fx:id="editbox">

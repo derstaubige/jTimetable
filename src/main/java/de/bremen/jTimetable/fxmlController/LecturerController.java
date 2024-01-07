@@ -370,7 +370,7 @@ public class LecturerController implements Initializable {
         
         Button btnEdit = new Button();
         try {
-            URL url = getClass().getResource("/de/bremen/jTimetable/img/add1.png");
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/edit1.png");
             Image image  = new Image(url.toExternalForm());
             ImageView imageView = new ImageView(image);
             btnEdit.setGraphic(imageView);
@@ -391,7 +391,7 @@ public class LecturerController implements Initializable {
             btnShowLecturerTimetable.setGraphic(imageView);
             btnShowLecturerTimetable.setOnAction(e -> this.editLecturer());
             btnShowLecturerTimetable.getStyleClass().add("menuItem");
-            btnShowLecturerTimetable.setText(resources.getString("menu.actions.Show"));
+            btnShowLecturerTimetable.setText(resources.getString("menu.actions.show"));
             
         } catch (Exception e) {
             e.printStackTrace();

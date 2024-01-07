@@ -70,9 +70,9 @@ public class StudySectionController implements Initializable {
 
         StudySectionTableview.getItems().setAll(getStudySection(true));
         StudySectionTableview.setOnMouseClicked(click -> {
-            //SingleClick: Editor is opened
-            if (click.getClickCount() == 1) {
-                newStudySection();
+            //Double Click: Editor is opened
+            if (click.getClickCount() == 2) {
+                editStudySection();
             }
         });
         chkToogleStudySection.setOnAction(event -> {
@@ -153,7 +153,7 @@ public class StudySectionController implements Initializable {
         
         Button btnEdit = new Button();
         try {
-            URL url = getClass().getResource("/de/bremen/jTimetable/img/add1.png");
+            URL url = getClass().getResource("/de/bremen/jTimetable/img/edit1.png");
             Image image  = new Image(url.toExternalForm());
             ImageView imageView = new ImageView(image);
             btnEdit.setGraphic(imageView);
