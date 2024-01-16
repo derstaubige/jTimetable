@@ -84,15 +84,14 @@ public class FileResourcesUtils {
         List<Path> result;
 
         // get path of the current running JAR
-        String jarPath = getClass().getProtectionDomain()
+        URI jarPath = getClass().getProtectionDomain()
                 .getCodeSource()
                 .getLocation()
-                .toURI()
-                .getPath();
-        System.out.println("JAR Path :" + jarPath);
+                .toURI();
+        System.out.println("JAR Path : " + jarPath);
 
         // file walks JAR
-        URI uri = URI.create("jar:file:" + jarPath);
+        URI uri = URI.create("jar:" + jarPath);
         try (FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
             result = Files.walk(fs.getPath(folder))
                     .filter(Files::isRegularFile)
