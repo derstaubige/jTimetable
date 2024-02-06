@@ -201,6 +201,11 @@ public class Lecturer {
         int startTimeslot;
         int endTimeslot;
 
+        //if lecturerID == 0 (= FREETIME) we should return true
+        if(lecturerID == 0){
+            return true;
+        }
+
         // Check if the Lecturer is generall not available at this day and timestamp
         if (new Lecturer(lecturerID).checkifLecturerisBlocked(date, timeslot) == true) {
             return false;
