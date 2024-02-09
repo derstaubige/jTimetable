@@ -38,7 +38,11 @@ public class Lecturer {
      */
     private Boolean active;
 
+    // Array list of Blocks for this Lecturer. Does not contain ressources blocked
     private ArrayList<LecturerBlock> lecturerBlocks;
+
+    // Array list of Ressorces Blocked (Classes and HOlidays and so on)
+    private ArrayList<ResourcesBlocked> lecturerResourcesBlocked;
 
     public boolean checkifLecturerisBlocked(Integer dayoftheweek, Integer timeslot) {
         for (LecturerBlock lecturerBlock : lecturerBlocks) {
@@ -91,6 +95,26 @@ public class Lecturer {
             }
         }
 
+    }
+
+    public void updateLecturerResourcesBlocked(){
+        ArrayList<ResourcesBlocked> lecturerResourcesBlocks = new ArrayList<ResourcesBlocked>();
+        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
+            SQLValues.add(new SQLValueLong(getId()));
+            SQLValues.add(new SQLValueDate(LocalDate.now()));
+
+            ResultSet rs = sqlConnectionManager
+                    .select("Select * from T_RESOURCESBLOCKED  where REFRESOURCEID = ? and RESOURCENAME  = 'LECTURER' and enddate >= ?;", SQLValues);
+
+            while (rs.next()) {
+                lecturerResourcesBlocks.add(new ResourcesBlocked(rs.getLong("id")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        setLecturerResourcesBlocked(lecturerResourcesBlocks);
     }
 
     public void addLecturerBlocks(DayOfWeek dow, Integer timeslot) {
@@ -421,4 +445,13 @@ public class Lecturer {
         this.lecturerBlocks = lecturerBlocks;
     }
 
+    public ArrayList<ResourcesBlocked> getLecturerResourcesBlocked() {
+        return lecturerResourcesBlocked;
+    }
+
+    public void setLecturerResourcesBlocked(ArrayList<ResourcesBlocked> lecturerResourcesBlocked) {
+        this.lecturerResourcesBlocked = lecturerResourcesBlocked;
+    }
+
+    
 }

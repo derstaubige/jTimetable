@@ -28,7 +28,6 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
-import java.util.List;
 
 public class TimetableViewController implements Initializable {
 
@@ -106,27 +105,9 @@ public class TimetableViewController implements Initializable {
                         // them
                         List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
                                 JavaFXTimetableHourText.class);
-                        for (int i = 0; i < timetableHourTexts.size(); i++) {
-                            CoursepassLecturerSubject tmpCoursepassLecturerSubject = timetableHourTexts.get(i)
-                                    .getCoursepassLecturerSubject();
-                            try {
-                                if (tmpCoursepassLecturerSubject.cangetExchanged(
-                                        tmpText.getCoursepassLecturerSubject(),
-                                        tmpText.getDay(), tmpText.getTimeslot(),
-                                        timetableHourTexts.get(i).getCoursepassLecturerSubject(),
-                                        timetableHourTexts.get(i).getDay(),
-                                        timetableHourTexts.get(i).getTimeslot()) == true) {
-                                    timetableHourTexts.get(i).setFill(Color.GREEN);
-                                } else {
-                                    timetableHourTexts.get(i).setFill(Color.RED);
-                                }
-                            } catch (Exception e) {
-                                System.out
-                                        .println("Error while determing if a Lectrurer is availdable at a given date");
-                                e.printStackTrace();
-                            }
 
-                        }
+                        this.markSwitchableCLS(timetableHourTexts, tmpText);
+                        
                         mouseEvent.consume();
                     });
 
@@ -452,5 +433,16 @@ public class TimetableViewController implements Initializable {
                 "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                 SQLValues);
         sqlConnectionManager.close();
+    }
+
+    public void markSwitchableCLS(List<JavaFXTimetableHourText> timetableHourTexts, JavaFXTimetableHourText tmpText) {
+        // get list of all lecturers -> done, this.timetable.lecturers
+        // get list of all blocks for "giving" lecturer
+        // check if all lectures are avaidable at the "giving" time
+        // if not put lecturer in notavaidable list
+
+        for (int i = 0; i < timetableHourTexts.size(); i++) {
+            timetableHourTexts.get(i).setFill(Color.GREEN);
+        }
     }
 }

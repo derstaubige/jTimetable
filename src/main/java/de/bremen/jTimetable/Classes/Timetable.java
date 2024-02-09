@@ -1,5 +1,6 @@
 package de.bremen.jTimetable.Classes;
 
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
@@ -8,6 +9,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.IntStream;
 
 /**
@@ -30,6 +32,9 @@ public class Timetable {
      * Lecturer for which this timetable is for.
      */
     private Lecturer lecturer;
+    // List of Lectureres that are currently planed for this timetable
+    private ArrayList<Lecturer> lecturers;
+
     // Set the maximum Timeslotcount to fill the timetable with freetimes
     private Integer maxTimeslots = 9;
 
@@ -45,7 +50,7 @@ public class Timetable {
         try {
             getTimetable(coursePass);
         } catch (SQLException e) {
-            System.err.println("Timetable for lecturer couldn't load correctly.");
+            System.err.println("Timetable for coursePass couldn't load correctly.");
             e.printStackTrace();
         }
     }
@@ -118,6 +123,7 @@ public class Timetable {
                 }
             }
         }
+
         sqlConnectionManager.close();
     }
 
@@ -165,7 +171,31 @@ public class Timetable {
                 tmpTimetableday.addToSlot(timeslotIterator.next(), new CoursepassLecturerSubject(0L));
             }
         }
+
+        // grap all lecturers that are currently in this timetable
+        this.lecturers = getAllLecturers();
         sqlConnectionManager.close();
+    }
+
+    private ArrayList<Lecturer> getAllLecturers(){
+        ArrayList<Lecturer> lecturers = new ArrayList<Lecturer>();
+        try {
+            // Create new SQLValues that are used for the following select statement
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
+            SQLValues.add(new SQLValueLong(this.coursepass.getId()));
+            // Create new Connection to database
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+
+            ResultSet rs = sqlConnectionManager.select("SELECT DISTINCT reflecturer FROM T_TIMETABLES where refcoursepass = ?;", SQLValues);
+
+            while (rs.next()) {
+                lecturers.add(new Lecturer(rs.getLong("reflecturer")));
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        return lecturers;
     }
 
     /**
