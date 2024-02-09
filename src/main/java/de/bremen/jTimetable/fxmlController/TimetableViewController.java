@@ -107,7 +107,7 @@ public class TimetableViewController implements Initializable {
                                 JavaFXTimetableHourText.class);
 
                         this.markSwitchableCLS(timetableHourTexts, tmpText);
-                        
+
                         mouseEvent.consume();
                     });
 
@@ -436,13 +436,69 @@ public class TimetableViewController implements Initializable {
     }
 
     public void markSwitchableCLS(List<JavaFXTimetableHourText> timetableHourTexts, JavaFXTimetableHourText tmpText) {
-        // get list of all lecturers -> done, this.timetable.lecturers
-        // get list of all blocks for "giving" lecturer
-        // check if all lectures are avaidable at the "giving" time
-        // if not put lecturer in notavaidable list
+        // get list of all lecturers -> done, this.timetable.getlecturers()
 
-        for (int i = 0; i < timetableHourTexts.size(); i++) {
-            timetableHourTexts.get(i).setFill(Color.GREEN);
+        // get list of all blocks for "giving" lecturer, can get called
+        // lecturer->updatelecturerresourcesblocked
+        Lecturer givingLecturer = tmpText.getCoursepassLecturerSubject().getLecturer();
+        givingLecturer.updateLecturerResourcesBlocked();
+
+        ArrayList<Lecturer> freeLecturers = new ArrayList<Lecturer>();
+        ArrayList<Lecturer> blockedLecturers = new ArrayList<Lecturer>();
+        for (Lecturer lecturer : this.timetable.getLecturers()) {
+            // the giving lecturer is allways free
+            if(lecturer.getId() == givingLecturer.getId()){
+                freeLecturers.add(lecturer);
+                continue;
+            }
+
+            try {
+                // check if all lectures are avaidable at the "giving" time
+                if (Lecturer.checkLecturerAvailability(lecturer.getId(), tmpText.getDay(), tmpText.getTimeslot())) {
+                    freeLecturers.add(lecturer);
+                }else{
+                    // if not put lecturer in notavaidable list
+                    blockedLecturers.add(lecturer);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (JavaFXTimetableHourText checkingTimetableHourText : timetableHourTexts) {
+
+        CoursepassLecturerSubject tmpCoursepassLecturerSubject = checkingTimetableHourText.getCoursepassLecturerSubject();
+
+            //check if lecturer is in freeLecturers, check if day and timeslot is in givingLecturer.lecturerresourcesblocked or givinglecturer.lecturerblocked
+            Boolean givingLecturerResourcesBlocked = false;
+            for(ResourcesBlocked resourcesBlocked : givingLecturer.getLecturerResourcesBlocked()){
+                if(resourcesBlocked.getStartDate().isBefore(checkingTimetableHourText.getDay()) && resourcesBlocked.getEndDate().isAfter(checkingTimetableHourText.getDay())){
+                    givingLecturerResourcesBlocked = true;
+                    break;
+                }
+
+                if(resourcesBlocked.getStartDate().isEqual(checkingTimetableHourText.getDay()) && resourcesBlocked.getEndDate().isEqual(checkingTimetableHourText.getDay()) 
+                && resourcesBlocked.getStartTimeslot().equals(checkingTimetableHourText.getTimeslot())){
+                    givingLecturerResourcesBlocked = true;
+                    break;
+                }               
+            }
+
+            // TODO: Check for lectruer Blocked
+
+            if (freeLecturers.contains(tmpCoursepassLecturerSubject.getLecturer()) || givingLecturerResourcesBlocked) {
+                // if one or both are true, set red
+                checkingTimetableHourText.setFill(Color.RED);
+            } else {
+                // if not set green
+                checkingTimetableHourText.setFill(Color.GREEN);
+            }
+
+            
+           
+
+
         }
     }
 }

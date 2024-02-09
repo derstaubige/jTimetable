@@ -416,4 +416,8 @@ public class Timetable {
         return arrayTimetableDays;
     }
 
+    public ArrayList<Lecturer> getLecturers() {
+        return lecturers;
+    }
+
 }
