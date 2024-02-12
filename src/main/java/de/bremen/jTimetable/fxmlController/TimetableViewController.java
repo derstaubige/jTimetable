@@ -216,12 +216,9 @@ public class TimetableViewController implements Initializable {
             // Labels for the Timetableview
             Integer tmpRowIdx = 0;
             Integer tmpColIdx = 0;
-            // try {
+
             coursepass.updateCoursePassLecturerSubjects();
-            // TODO Exception handling is now earlier
-            // } catch (SQLException e) {
-            // throw new RuntimeException(e);
-            // }
+
             for (CoursepassLecturerSubject cls : coursepass.getArrayCoursePassLecturerSubject()) {
                 Text tmpText = new JavaFXCoursepassLecturerSubjectText(cls);
 
@@ -242,20 +239,8 @@ public class TimetableViewController implements Initializable {
                     // them
                     List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
                             JavaFXTimetableHourText.class);
-                    for (int i = 0; i < timetableHourTexts.size(); i++) {
-                        timetableHourTexts.get(i).getCoursepassLecturerSubject();
-                        try {
-                            if (CoursepassLecturerSubject.isFreeTarget(cls, timetableHourTexts.get(i).getDay(),
-                                    timetableHourTexts.get(i).getTimeslot()) == true) {
-                                timetableHourTexts.get(i).setFill(Color.GREEN);
-                            } else {
-                                timetableHourTexts.get(i).setFill(Color.RED);
-                            }
-                        } catch (Exception e) {
-                            System.out.println("Error while determing if a Lectrurer is availdable at a given date");
-                            e.printStackTrace();
-                        }
-                    }
+
+                    this.markNewCLS(timetableHourTexts, cls.getLecturer());
                     mouseEvent.consume();
                 });
 
@@ -435,6 +420,50 @@ public class TimetableViewController implements Initializable {
         sqlConnectionManager.close();
     }
 
+    public void markNewCLS(List<JavaFXTimetableHourText> timetableHourTexts, Lecturer givingLecturer){
+        givingLecturer.updateLecturerResourcesBlocked();
+        for (JavaFXTimetableHourText checkingTimetableHourText : timetableHourTexts) {
+
+            CoursepassLecturerSubject tmpCoursepassLecturerSubject = checkingTimetableHourText
+                    .getCoursepassLecturerSubject();
+
+            // check if lecturer is in freeLecturers, check if day and timeslot is in
+            // givingLecturer.lecturerresourcesblocked or givinglecturer.lecturerblocked
+            Boolean givingLecturerResourcesBlocked = false;
+            for (ResourcesBlocked resourcesBlocked : givingLecturer.getLecturerResourcesBlocked()) {
+                if (resourcesBlocked.getStartDate().isBefore(checkingTimetableHourText.getDay())
+                        && resourcesBlocked.getEndDate().isAfter(checkingTimetableHourText.getDay())) {
+                    givingLecturerResourcesBlocked = true;
+                    break;
+                }
+
+                if (resourcesBlocked.getStartDate().isEqual(checkingTimetableHourText.getDay())
+                        && resourcesBlocked.getEndDate().isEqual(checkingTimetableHourText.getDay())
+                        && resourcesBlocked.getStartTimeslot().equals(checkingTimetableHourText.getTimeslot())) {
+                    givingLecturerResourcesBlocked = true;
+                    break;
+                }
+            }
+
+            // Check for lectruer Blocked
+            Boolean givingLecturerBlocked = false;
+            for (LecturerBlock lecturerBlock : givingLecturer.getLecturerBlocks()) {
+                if (checkingTimetableHourText.getDay().getDayOfWeek().equals(lecturerBlock.getDayNr())) {
+                    givingLecturerBlocked = true;
+                    break;
+                }
+            }
+
+            if (givingLecturerResourcesBlocked || givingLecturerBlocked) {
+                // if one or both are true, set red
+                checkingTimetableHourText.setFill(Color.RED);
+            } else {
+                // if not set green
+                checkingTimetableHourText.setFill(Color.GREEN);
+            }
+        }
+    }
+
     public void markSwitchableCLS(List<JavaFXTimetableHourText> timetableHourTexts, JavaFXTimetableHourText tmpText) {
         // get list of all lecturers -> done, this.timetable.getlecturers()
 
@@ -447,7 +476,7 @@ public class TimetableViewController implements Initializable {
         ArrayList<Lecturer> blockedLecturers = new ArrayList<Lecturer>();
         for (Lecturer lecturer : this.timetable.getLecturers()) {
             // the giving lecturer is allways free
-            if(lecturer.getId() == givingLecturer.getId()){
+            if (lecturer.getId() == givingLecturer.getId()) {
                 freeLecturers.add(lecturer);
                 continue;
             }
@@ -456,7 +485,7 @@ public class TimetableViewController implements Initializable {
                 // check if all lectures are avaidable at the "giving" time
                 if (Lecturer.checkLecturerAvailability(lecturer.getId(), tmpText.getDay(), tmpText.getTimeslot())) {
                     freeLecturers.add(lecturer);
-                }else{
+                } else {
                     // if not put lecturer in notavaidable list
                     blockedLecturers.add(lecturer);
                 }
@@ -468,36 +497,44 @@ public class TimetableViewController implements Initializable {
 
         for (JavaFXTimetableHourText checkingTimetableHourText : timetableHourTexts) {
 
-        CoursepassLecturerSubject tmpCoursepassLecturerSubject = checkingTimetableHourText.getCoursepassLecturerSubject();
+            CoursepassLecturerSubject tmpCoursepassLecturerSubject = checkingTimetableHourText
+                    .getCoursepassLecturerSubject();
 
-            //check if lecturer is in freeLecturers, check if day and timeslot is in givingLecturer.lecturerresourcesblocked or givinglecturer.lecturerblocked
+            // check if lecturer is in freeLecturers, check if day and timeslot is in
+            // givingLecturer.lecturerresourcesblocked or givinglecturer.lecturerblocked
             Boolean givingLecturerResourcesBlocked = false;
-            for(ResourcesBlocked resourcesBlocked : givingLecturer.getLecturerResourcesBlocked()){
-                if(resourcesBlocked.getStartDate().isBefore(checkingTimetableHourText.getDay()) && resourcesBlocked.getEndDate().isAfter(checkingTimetableHourText.getDay())){
+            for (ResourcesBlocked resourcesBlocked : givingLecturer.getLecturerResourcesBlocked()) {
+                if (resourcesBlocked.getStartDate().isBefore(checkingTimetableHourText.getDay())
+                        && resourcesBlocked.getEndDate().isAfter(checkingTimetableHourText.getDay())) {
                     givingLecturerResourcesBlocked = true;
                     break;
                 }
 
-                if(resourcesBlocked.getStartDate().isEqual(checkingTimetableHourText.getDay()) && resourcesBlocked.getEndDate().isEqual(checkingTimetableHourText.getDay()) 
-                && resourcesBlocked.getStartTimeslot().equals(checkingTimetableHourText.getTimeslot())){
+                if (resourcesBlocked.getStartDate().isEqual(checkingTimetableHourText.getDay())
+                        && resourcesBlocked.getEndDate().isEqual(checkingTimetableHourText.getDay())
+                        && resourcesBlocked.getStartTimeslot().equals(checkingTimetableHourText.getTimeslot())) {
                     givingLecturerResourcesBlocked = true;
                     break;
-                }               
+                }
             }
 
-            // TODO: Check for lectruer Blocked
+            // Check for lectruer Blocked
+            Boolean givingLecturerBlocked = false;
+            for (LecturerBlock lecturerBlock : givingLecturer.getLecturerBlocks()) {
+                if (checkingTimetableHourText.getDay().getDayOfWeek().equals(lecturerBlock.getDayNr())) {
+                    givingLecturerBlocked = true;
+                    break;
+                }
+            }
 
-            if (freeLecturers.contains(tmpCoursepassLecturerSubject.getLecturer()) || givingLecturerResourcesBlocked) {
+            if (freeLecturers.contains(tmpCoursepassLecturerSubject.getLecturer()) || givingLecturerResourcesBlocked
+                    || givingLecturerBlocked) {
                 // if one or both are true, set red
                 checkingTimetableHourText.setFill(Color.RED);
             } else {
                 // if not set green
                 checkingTimetableHourText.setFill(Color.GREEN);
             }
-
-            
-           
-
 
         }
     }
