@@ -33,10 +33,13 @@ public class SubjectController implements Initializable {
     @FXML private TextField txtCaption;
     @FXML private CheckBox chkActive;
     @FXML private Button btnSave;
-
+    @FXML 
+    private MenuController mainMenuController;
+    
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
         Platform.runLater(() -> {
+            mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             editbox.setVisible(false);
             ID.setCellValueFactory(new PropertyValueFactory<Subject, Long>("id"));
             Caption.setCellValueFactory(new PropertyValueFactory<Subject, String>("caption"));

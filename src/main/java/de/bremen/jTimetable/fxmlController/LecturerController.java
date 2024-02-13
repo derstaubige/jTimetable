@@ -96,10 +96,13 @@ public class LecturerController implements Initializable {
     private Button btnShowTimetable;
     @FXML
     private ScrollPane scrollPane;
-
+    @FXML 
+    private MenuController mainMenuController;
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Platform.runLater(() -> {
+            mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             editbox.setVisible(false);
             ID.setCellValueFactory(new PropertyValueFactory<Lecturer, Long>("id"));
             Firstname.setCellValueFactory(new PropertyValueFactory<Lecturer, String>("Firstname"));

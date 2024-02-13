@@ -43,10 +43,13 @@ public class CoursepassLecturerSubjectController implements Initializable {
     @FXML public TextField txtShouldHours;
     @FXML public CheckBox chkActive;
     @FXML public Button btnSave;
-
+    @FXML 
+    private MenuController mainMenuController;
+    
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
         Platform.runLater(() -> {
+            mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             TCID.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("id"));
             TCLecturer.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("LecturerFullname"));
             TCSubject.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("SubjectCaption"));

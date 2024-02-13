@@ -13,7 +13,8 @@
     <ScrollPane>
         <VBox >
             <children>
-                <fx:include source="Menu.fxml" fillWidth="true" />
+                <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+
                 <Label text="%subject.title"></Label>
                 <HBox>
                     <children>

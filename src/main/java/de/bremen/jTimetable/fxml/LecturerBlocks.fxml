@@ -15,7 +15,8 @@
     <ScrollPane fx:id="scrollPane" hbarPolicy="NEVER" prefHeight="768" prefWidth="1024" vbarPolicy="ALWAYS">
         <VBox>
             <children>
-                <fx:include fillWidth="true" source="Menu.fxml" />
+                <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+
                 <Label text="%lecturer.title" />
                 <ScrollPane hbarPolicy="NEVER" prefHeight="600.0" prefWidth="1024.0" vbarPolicy="ALWAYS">
                        <content>

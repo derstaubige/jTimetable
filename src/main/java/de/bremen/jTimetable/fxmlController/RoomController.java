@@ -39,11 +39,14 @@ public class RoomController implements Initializable {
     @FXML private ComboBox<Location> cmbLocation;
     @FXML private CheckBox chkActive;
     @FXML private Button btnSave;
-
+    @FXML 
+    private MenuController mainMenuController;
+    
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
         
         Platform.runLater(() -> {
+            mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             editbox.setVisible(false);
             ID.setCellValueFactory(new PropertyValueFactory<Room, Long>("id"));
             Caption.setCellValueFactory(new PropertyValueFactory<Room, String>("caption"));

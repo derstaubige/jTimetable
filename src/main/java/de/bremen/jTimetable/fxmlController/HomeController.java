@@ -17,6 +17,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.CoursePass;
 import de.bremen.jTimetable.Classes.SQLConnectionManager;
@@ -54,12 +55,15 @@ public class HomeController implements Initializable {
     private CheckBox chkToogleCoursepass;
     @FXML
     private Label lblActiveCoursepasses;
+    @FXML 
+    private MenuController mainMenuController;
 
     private SQLConnectionManager sqlConnectionManager;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Platform.runLater(() -> {
+            mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
             CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
             CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPStudySection"));
