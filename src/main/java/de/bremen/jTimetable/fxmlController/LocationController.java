@@ -45,10 +45,13 @@ public class LocationController implements Initializable {
     private CheckBox chkActive;
     @FXML
     private Button btnSave;
-
+    @FXML 
+    private MenuController mainMenuController;
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Platform.runLater(() -> {
+            mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             editbox.setVisible(false);
             ID.setCellValueFactory(new PropertyValueFactory<Location, Long>("id"));
             Caption.setCellValueFactory(new PropertyValueFactory<Location, String>("Caption"));

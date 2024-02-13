@@ -45,10 +45,13 @@ public class StudySectionController implements Initializable {
     private CheckBox chkActive;
     @FXML
     private Button btnSave;
-
+    @FXML 
+    private MenuController mainMenuController;
+    
     @Override
     public void initialize(URL StudySection, ResourceBundle resources) {
         Platform.runLater(() -> {
+            mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             editbox.setVisible(false);
             ID.setCellValueFactory(new PropertyValueFactory<StudySection, Long>("id"));
             Description.setCellValueFactory(new PropertyValueFactory<StudySection, String>("description"));

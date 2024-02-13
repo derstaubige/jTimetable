@@ -53,12 +53,14 @@ public class CourseofStudyController implements Initializable {
     private CheckBox chkToogleActiveCourseofStudy;
     @FXML
     private HBox editbox;
+    @FXML 
+    private MenuController mainMenuController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Platform.runLater(() -> {
+            mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             editbox.setVisible(false);
-
             COSID.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Long>("id"));
             COSDescription.setCellValueFactory(new PropertyValueFactory<CourseofStudy, String>("caption"));
             COSBegin.setCellValueFactory(new PropertyValueFactory<CourseofStudy, LocalDate>("begin"));

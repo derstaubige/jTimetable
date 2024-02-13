@@ -77,11 +77,14 @@ public class CoursepassController implements Initializable {
     private Button btnInitialTimetable;
     @FXML
     private Button btnDeleteTimetable;
-
+    @FXML 
+    private MenuController mainMenuController;
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         Platform.runLater(() -> {
+            mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             editbox.setVisible(false);
             CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
             CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));

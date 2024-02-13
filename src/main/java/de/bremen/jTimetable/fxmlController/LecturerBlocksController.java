@@ -26,7 +26,9 @@ public class LecturerBlocksController implements Initializable{
     private GridPane grdpn_LecturerBlock;
     @FXML
     private Button btnSave;
-
+    @FXML 
+    private MenuController mainMenuController;
+    
     /**
      * @param location
      * @param resources
@@ -34,6 +36,7 @@ public class LecturerBlocksController implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         btnSave.setOnAction(event -> {
+            mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             lecturer.setLecturerBlocks(new ArrayList<LecturerBlock>());
             List<CheckBox> listCheckBoxs = getNodesOfType(grdpn_LecturerBlock, CheckBox.class);
             for (CheckBox checkBox : listCheckBoxs) {

@@ -2,6 +2,7 @@ package de.bremen.jTimetable.fxmlController;
 
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -60,8 +61,10 @@ public class MenuController implements Initializable {
 
     @Override
     public void initialize(java.net.URL arg0, ResourceBundle arg1) {
-        menuBar.setFocusTraversable(true);
-        this.resourceBundle = arg1;
+        Platform.runLater(() ->{
+            menuBar.setFocusTraversable(true);
+            this.resourceBundle = arg1;
+        });        
     }
 
     @FXML
