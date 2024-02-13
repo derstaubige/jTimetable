@@ -16,13 +16,15 @@ public class LecturerBlock {
     private LocalDate BlockEnd;
     private int timeslot;
     private boolean active;
+    private SQLConnectionManager sqlConnectionManager;
 
-    public LecturerBlock(){
-        this(0L);
+    public LecturerBlock(SQLConnectionManager sqlConnectionManager){
+        this(0L, sqlConnectionManager);
     }
 
-    public LecturerBlock(long id){
+    public LecturerBlock(long id, SQLConnectionManager sqlConnectionManager){
         setId(id);
+        setSqlConnectionManager(sqlConnectionManager);
 
         if (getId() == 0L){
             setRefLecturerID(0L);
@@ -33,7 +35,7 @@ public class LecturerBlock {
             setActive(true);
         }else{
             //load object from db
-            try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            try {
                 
                 ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
                 SQLValues.add(new SQLValueLong(getId()));
@@ -54,7 +56,6 @@ public class LecturerBlock {
     }
 
     public void save() throws SQLException {
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
         SQLValues.add(new SQLValueLong(getRefLecturerID()));
@@ -76,7 +77,7 @@ public class LecturerBlock {
             sqlConnectionManager.execute("update `T_LECTURERBLOCKS` set `RefLecturerID` = ?, `DayNr` = ?, " +
                     "`BlockStart` = ?, `BlockEnd` = ?,`timeslot` = ?, `ACTIVE` = ? where `id` = ?;", SQLValues);
         }
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
     }
 
     public long getId() {
@@ -142,6 +143,14 @@ public class LecturerBlock {
 
     public void setTimeslot(int timeslot) {
         this.timeslot = timeslot;
+    }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
     }
 
 }

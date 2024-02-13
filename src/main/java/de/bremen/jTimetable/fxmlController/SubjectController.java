@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 import de.bremen.jTimetable.Classes.Subject;
 
 import java.net.URL;
@@ -18,6 +19,7 @@ import java.util.ResourceBundle;
 
 public class SubjectController implements Initializable {
     Subject subject;
+    SQLConnectionManager sqlConnectionManager;
 
     @FXML    private TableView<Subject> SubjectTableview;
     @FXML    private TableColumn<Subject, Long> ID;
@@ -34,7 +36,14 @@ public class SubjectController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
-        editbox.setVisible(false);
+        Platform.runLater(() -> {
+            editbox.setVisible(false);
+            ID.setCellValueFactory(new PropertyValueFactory<Subject, Long>("id"));
+            Caption.setCellValueFactory(new PropertyValueFactory<Subject, String>("caption"));
+            Active.setCellValueFactory(new PropertyValueFactory<Subject, Boolean>("active"));
+    
+            SubjectTableview.getItems().setAll(getSubject(true));
+        });   
         // We need a StringConverter in order to ensure the selected item is displayed properly
         // For this sample, we only want the Person's name to be displayed
        
@@ -50,15 +59,9 @@ public class SubjectController implements Initializable {
             SubjectTableview.getItems().setAll(getSubject(!chkToogleSubject.isSelected()));
         });
 
-        Platform.runLater(() -> {
 
-        });
 
-        ID.setCellValueFactory(new PropertyValueFactory<Subject, Long>("id"));
-        Caption.setCellValueFactory(new PropertyValueFactory<Subject, String>("caption"));
-        Active.setCellValueFactory(new PropertyValueFactory<Subject, Boolean>("active"));
-
-        SubjectTableview.getItems().setAll(getSubject(true));
+       
         SubjectTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
@@ -86,7 +89,7 @@ public class SubjectController implements Initializable {
 
         btnSubjectNew.setOnAction(event -> {
             try{
-                this.subject = new Subject(0L);
+                this.subject = new Subject(0L, getSqlConnectionManager());
 
                 txtID.setText(this.subject.getId().toString());
                 txtID.setEditable(false);
@@ -110,11 +113,20 @@ public class SubjectController implements Initializable {
     public ArrayList<Subject> getSubject(Boolean activeState) {
         ArrayList<Subject> activeSubject = new ArrayList<Subject>();
         try {
-            activeSubject = Subject.getAllSubjects(activeState);
+            activeSubject = Subject.getAllSubjects(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();
         }
         return activeSubject;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

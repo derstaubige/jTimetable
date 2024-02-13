@@ -13,17 +13,18 @@ public class Location {
 
     public String caption;
     public Boolean active;
+    private SQLConnectionManager sqlConnectionManager;
 
-    public Location(Long id) {
+    public Location(Long id, SQLConnectionManager sqlConnectionManager) {
         this.id = id;
-
+        setSqlConnectionManager(sqlConnectionManager);
         if (this.id == 0){
             //load dummy object
             this.caption = "";
             this.active = Boolean.TRUE;
         }else{
             //load object from db
-            try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+            try {
                 
                 ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
                 SQLValues.add(new SQLValueLong(id));
@@ -42,22 +43,20 @@ public class Location {
 
     }
 
-    public static ArrayList<Location> getAllLocations(Boolean pActivestate) throws  SQLException{
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+    public static ArrayList<Location> getAllLocations(Boolean pActivestate, SQLConnectionManager sqlConnectionManager) throws  SQLException{
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
         SQLValues.add(new SQLValueBoolean(pActivestate));
         ResultSet rs = sqlConnectionManager.select("Select * from T_Locations where active = ?",SQLValues);
         ArrayList<Location> returnList = new ArrayList<Location>();
         while( rs.next() ){
-            returnList.add(new Location(rs.getLong("id")));
+            returnList.add(new Location(rs.getLong("id"), sqlConnectionManager));
         }
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
         return returnList;
     }
 
     public void save() throws SQLException{
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
         SQLValues.add(new SQLValueString(this.caption));
@@ -73,7 +72,7 @@ public class Location {
             SQLValues.add(new SQLValueLong(this.id));
             sqlConnectionManager.execute("update `T_Locations` set `caption` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
         }
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
     }
 
     public String getCaption() {
@@ -95,4 +94,13 @@ public class Location {
     public Long getId() {
         return id;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

@@ -10,17 +10,15 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import de.bremen.jTimetable.Classes.*;
+import de.bremen.jTimetable.fxmlController.HomeController;
 
 
 public class Main extends Application {
+    private SQLConnectionManager sqlConnectionManager;
     public static void main(String[] args){
 
         // https://jenkov.com/tutorials/javafx/your-first-javafx-application.html
-        try( SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();){
-            sqlConnectionManager.Migrate();
-        }catch (Exception e){
-            System.out.println(e);
-        } 
+
 
             Application.launch(args);
     }
@@ -28,12 +26,18 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        sqlConnectionManager = new SQLConnectionManager();
+        sqlConnectionManager.Migrate();
+
         FXMLLoader loader = new FXMLLoader();
         loader.setResources(ResourceBundle.getBundle("Resources"));
         URL url = Main.class.getResource("fxml/Home.fxml");
         loader.setLocation(url);
         AnchorPane anchorPane = loader.<AnchorPane>load();
 
+        HomeController homeController = loader.getController();
+        homeController.setSqlConnectionManager(sqlConnectionManager);
+        
         Scene scene = new Scene(anchorPane);
         primaryStage.getIcons().add(new Image("/de/bremen/jTimetable/img/icon.png"));
         primaryStage.setTitle("jTimetable");

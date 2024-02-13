@@ -8,40 +8,41 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionMana
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueBoolean;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
+
 public class Room {
     Long id;
     String caption;
     Location location;
     Boolean active;
-//    String locationCaption;
+    // String locationCaption;
+    private SQLConnectionManager sqlConnectionManager;
 
-    public Room(Long id) throws SQLException {
+    public Room(Long id, SQLConnectionManager sqlConnectionManager) throws SQLException {
         this.id = id;
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        setSqlConnectionManager(sqlConnectionManager);
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
-        if (this.id == 0){
-            //load dummy object
+        if (this.id == 0) {
+            // load dummy object
             this.caption = "";
-            this.location = new Location(0L);
+            this.location = new Location(0L, getSqlConnectionManager());
             this.active = Boolean.TRUE;
-        }else{
-            //load object from db
+        } else {
+            // load object from db
             SQLValues.add(new SQLValueLong(id));
 
-            ResultSet rs = sqlConnectionManager.select("Select * from T_Rooms where id = ?;",SQLValues);
+            ResultSet rs = sqlConnectionManager.select("Select * from T_Rooms where id = ?;", SQLValues);
             rs.first();
             this.id = rs.getLong("id");
             this.caption = rs.getString("roomcaption");
-            this.location = new Location(rs.getLong("refLocationID"));
+            this.location = new Location(rs.getLong("refLocationID"), getSqlConnectionManager());
             this.active = rs.getBoolean("active");
 
         }
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
     }
 
-    public void save() throws SQLException{
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+    public void save() throws SQLException {
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
         SQLValues.add(new SQLValueString(this.caption));
@@ -50,15 +51,31 @@ public class Room {
 
         if (this.id == 0) {
             // its a new object, we have to insert it
-            ResultSet rs = sqlConnectionManager.execute("Insert Into `T_Rooms` (`roomcaption`, `refLocationID`, `ACTIVE`) values (?, ?, ?)",SQLValues);
+            ResultSet rs = sqlConnectionManager.execute(
+                    "Insert Into `T_Rooms` (`roomcaption`, `refLocationID`, `ACTIVE`) values (?, ?, ?)", SQLValues);
             rs.first();
             this.id = rs.getLong(1);
-        }else{
+        } else {
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
-            sqlConnectionManager.execute("update `T_Rooms` set `roomcaption` = ?, `refLocationID` = ?, `ACTIVE` = ? where `id` = ?;",SQLValues);
+            sqlConnectionManager.execute(
+                    "update `T_Rooms` set `roomcaption` = ?, `refLocationID` = ?, `ACTIVE` = ? where `id` = ?;",
+                    SQLValues);
         }
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
+    }
+
+    public static ArrayList<Room> getAllRooms(Boolean pActivestate, SQLConnectionManager sqlConnectionManager) throws SQLException {
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+
+        SQLValues.add(new SQLValueBoolean(pActivestate));
+        ResultSet rs = sqlConnectionManager.select("Select * from T_Rooms where active = ?", SQLValues);
+        ArrayList<Room> returnList = new ArrayList<Room>();
+        while (rs.next()) {
+            returnList.add(new Room(rs.getLong("id"), sqlConnectionManager));
+        }
+        // sqlConnectionManager.close();
+        return returnList;
     }
 
     public Long getId() {
@@ -92,20 +109,17 @@ public class Room {
     public void setActive(Boolean active) {
         this.active = active;
     }
-    public static ArrayList<Room> getAllRooms(Boolean pActivestate) throws  SQLException{
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
-        SQLValues.add(new SQLValueBoolean(pActivestate));
-        ResultSet rs = sqlConnectionManager.select("Select * from T_Rooms where active = ?",SQLValues);
-        ArrayList<Room> returnList = new ArrayList<Room>();
-        while( rs.next() ){
-            returnList.add(new Room(rs.getLong("id")));
-        }
-        sqlConnectionManager.close();
-        return returnList;
-    }
-    public String getLocationCaption(){
+    public String getLocationCaption() {
         return location.getCaption();
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+
 }

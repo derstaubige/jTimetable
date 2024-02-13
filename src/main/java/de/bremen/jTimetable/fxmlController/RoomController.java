@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import de.bremen.jTimetable.Classes.Location;
 import de.bremen.jTimetable.Classes.Room;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -22,6 +23,7 @@ import java.util.ResourceBundle;
 
 public class RoomController implements Initializable {
     Room room;
+    SQLConnectionManager sqlConnectionManager;
 
     @FXML    private TableView<Room> RoomTableview;
     @FXML    private TableColumn<Room, Long> ID;
@@ -40,7 +42,17 @@ public class RoomController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
-        editbox.setVisible(false);
+        
+        Platform.runLater(() -> {
+            editbox.setVisible(false);
+            ID.setCellValueFactory(new PropertyValueFactory<Room, Long>("id"));
+            Caption.setCellValueFactory(new PropertyValueFactory<Room, String>("caption"));
+            TCLocation.setCellValueFactory(new PropertyValueFactory<Location, String>("locationCaption"));
+            Active.setCellValueFactory(new PropertyValueFactory<Room, Boolean>("active"));
+    
+            RoomTableview.getItems().setAll(getRoom(true));
+        });
+        
         // We need a StringConverter in order to ensure the selected item is displayed properly
         // For this sample, we only want the Person's name to be displayed
         cmbLocation.setConverter(new StringConverter<de.bremen.jTimetable.Classes.Location>() {
@@ -113,16 +125,6 @@ public class RoomController implements Initializable {
             RoomTableview.getItems().setAll(getRoom(!chkToogleRoom.isSelected()));
         });
 
-        Platform.runLater(() -> {
-
-        });
-
-        ID.setCellValueFactory(new PropertyValueFactory<Room, Long>("id"));
-        Caption.setCellValueFactory(new PropertyValueFactory<Room, String>("caption"));
-        TCLocation.setCellValueFactory(new PropertyValueFactory<Location, String>("locationCaption"));
-        Active.setCellValueFactory(new PropertyValueFactory<Room, Boolean>("active"));
-
-        RoomTableview.getItems().setAll(getRoom(true));
         RoomTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
@@ -140,7 +142,7 @@ public class RoomController implements Initializable {
                 //System.out.println(selectedItems.get(0).getId());
                 this.room = selectedItems.get(0);
                 try{
-                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
+                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true, getSqlConnectionManager()));
                     cmbLocation.setValue(this.room.getLocation());
                 }catch (Exception e){
                     e.printStackTrace();
@@ -157,9 +159,9 @@ public class RoomController implements Initializable {
 
         btnRoomNew.setOnAction(event -> {
             try{
-                this.room = new Room(0L);
+                this.room = new Room(0L, getSqlConnectionManager());
                 try{
-                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
+                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true, getSqlConnectionManager()));
                     cmbLocation.setValue(this.room.getLocation());
                 }catch (Exception e){
                     e.printStackTrace();
@@ -187,11 +189,20 @@ public class RoomController implements Initializable {
     public ArrayList<Room> getRoom(Boolean activeState) {
         ArrayList<Room> activeRoom = new ArrayList<Room>();
         try {
-            activeRoom = Room.getAllRooms(activeState);
+            activeRoom = Room.getAllRooms(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();
         }
         return activeRoom;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

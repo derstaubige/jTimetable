@@ -18,6 +18,11 @@ public class Resourcemanager {
     int positionInCoursepassLecturerSubjectStack;
     int tmppositionInCoursepassLecturerSubjectStack;
     int maxCoursepassLecturerSubjectStack;
+    private SQLConnectionManager sqlConnectionManager;    
+
+    public Resourcemanager(SQLConnectionManager sqlConnectionManager) {
+        setSqlConnectionManager(sqlConnectionManager);
+    }
 
     public void generateInitialTimetable(CoursePass coursepass) throws SQLException {
         LocalDate startdate = coursepass.getStart();
@@ -27,7 +32,6 @@ public class Resourcemanager {
         int WorkingHours = 0;
         int MaxTimeslotsperDay = 3;
 
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues =
                 new ArrayList<>(Collections.singleton(new SQLValueLong(coursepass.getId())));
         ResultSet rs = sqlConnectionManager.select("Select * from T_TIMETABLES where REFCOURSEPASS = ?;",
@@ -44,7 +48,7 @@ public class Resourcemanager {
             // check if enddate is after startdate, if not exit funktion and inform user
             // the value 0 if the argument Date is equal to this Date; a value less than 0 if this Date is before the Date argument; and a value greater than 0 if this Date is after the Date argument.
             if(enddate.compareTo(startdate) < 0){
-                sqlConnectionManager.close();
+                // sqlConnectionManager.close();
                 return;
             }
 
@@ -54,7 +58,7 @@ public class Resourcemanager {
 
             //check if there are days in with there could be education and inform user
             if(arrayTimetabledays.size() == 0){
-                sqlConnectionManager.close();
+                // sqlConnectionManager.close();
                 return;
             }
             WorkingDays = arrayTimetabledays.size();
@@ -101,9 +105,9 @@ public class Resourcemanager {
                                 refCoursepassLecturerSubjectId, refRoomId, refLecturerId,
                                 refSubjectId, idxTimeslot);
                         //block lecturer and room
-                        ResourcesBlocked.setResourcesBlocked(refLecturerId, ResourceNames.LECTURER, "LESSON", Timetableday, Timetableday, idxTimeslot, idxTimeslot);
+                        ResourcesBlocked.setResourcesBlocked(refLecturerId, ResourceNames.LECTURER, "LESSON", Timetableday, Timetableday, idxTimeslot, idxTimeslot, getSqlConnectionManager());
                         ResourcesBlocked.setResourcesBlocked(refRoomId, ResourceNames.ROOM
-                                        , "LESSON", Timetableday, Timetableday, idxTimeslot, idxTimeslot);
+                                        , "LESSON", Timetableday, Timetableday, idxTimeslot, idxTimeslot, getSqlConnectionManager());
 
                         //add to the is hours count
                         this.arraycoursepasslecturersubject.get(
@@ -138,14 +142,13 @@ public class Resourcemanager {
 
             }
         }
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
     }
 
     private void setEntryInTimetable(LocalDate TimetableDay, Long refcoursepassID,
                                      Long refCoursepassLecturerSubjectId, Long refRoomId,
                                      Long refLecturerId, Long refSubjectId, int timeslot)
             throws SQLException {
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues =
                 new ArrayList<SQLConnectionManagerValues>();
 
@@ -160,7 +163,7 @@ public class Resourcemanager {
         sqlConnectionManager.execute(
                 "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                 SQLValues);
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
     }
 
     private boolean EvaluateCoursepassLecturerSubject(int idxDay, int idxTimeslot)
@@ -177,7 +180,7 @@ public class Resourcemanager {
 
         if (Lecturer.checkLecturerAvailability(this.arraycoursepasslecturersubject.get(
                         positionInCoursepassLecturerSubjectStack).lecturer.getId(),
-                arrayTimetabledays.get(idxDay).getDate(), idxTimeslot) &&
+                arrayTimetabledays.get(idxDay).getDate(), idxTimeslot, getSqlConnectionManager()) &&
                 tmpshouldhours > (tmpishours + tmpplanedhours)) {
             //Lecturer is Available and there are hours left to plan
             return true;
@@ -243,7 +246,7 @@ public class Resourcemanager {
 
                 arrayTimetabledays.add(new TimetableDay(
                         LocalDateTime.ofInstant(startCal.toInstant(), defaultZoneId)
-                                .toLocalDate(),4 ));
+                                .toLocalDate(),4, getSqlConnectionManager() ));
                 //                ++workDays;
             }
             startCal.add(Calendar.DAY_OF_MONTH, 1);
@@ -287,4 +290,13 @@ public class Resourcemanager {
     public boolean isHoliday(LocalDate date) {
         return getHolydaysMap(date.getYear()).containsKey(date);
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

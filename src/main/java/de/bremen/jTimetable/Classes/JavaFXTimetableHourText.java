@@ -10,18 +10,21 @@ public class JavaFXTimetableHourText extends Text {
     CoursepassLecturerSubject coursepassLecturerSubject;
     LocalDate day;
     int timeslot;
-    public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLexturerSubject, LocalDate pday, int ptimeslot){
-        this(pCoursepassLexturerSubject, pday, ptimeslot, false);
+    private SQLConnectionManager sqlConnectionManager;
+
+    public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLexturerSubject, LocalDate pday, int ptimeslot, SQLConnectionManager sqlConnectionManager){
+        this(pCoursepassLexturerSubject, pday, ptimeslot, false, sqlConnectionManager);
     }
     public void deleteCLS(){
         this.coursepassLecturerSubject.deleteCLS(this.day,this.timeslot);
     }
 
-    public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLexturerSubject, LocalDate pday, int ptimeslot, Boolean showClassname){
+    public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLexturerSubject, LocalDate pday, int ptimeslot, Boolean showClassname, SQLConnectionManager sqlConnectionManager){
         super();
         this.coursepassLecturerSubject = pCoursepassLexturerSubject;
         this.day = pday;
         this.timeslot = ptimeslot;
+        setSqlConnectionManager(sqlConnectionManager);
         if(showClassname == true){
             super.setText(pCoursepassLexturerSubject.getCoursepass().getDescription() + "\r\n" + pCoursepassLexturerSubject.getSubjectCaption()
                     + "\r\n" + pCoursepassLexturerSubject.getRoom().getCaption());
@@ -43,4 +46,11 @@ public class JavaFXTimetableHourText extends Text {
     public CoursepassLecturerSubject getCoursepassLecturerSubject() {
         return coursepassLecturerSubject;
     }
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

@@ -1,5 +1,7 @@
 package de.bremen.jTimetable.fxmlController;
 
+import javafx.application.Platform;
+
 //import de.bremen.jTimetable.Resources.Resources_de;
 
 import javafx.collections.ObservableList;
@@ -17,6 +19,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.CoursePass;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 
 import java.io.IOException;
 import java.net.URL;
@@ -52,30 +55,23 @@ public class HomeController implements Initializable {
     @FXML
     private Label lblActiveCoursepasses;
 
+    private SQLConnectionManager sqlConnectionManager;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(() -> {
+            CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
+            CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
+            CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPStudySection"));
+            CPDescription.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("description"));
+            CPStart.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("start"));
+            CPEnd.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("end"));
+            CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
+
+            CoursepassTableview.getItems().setAll(getCoursepass(true));
+        });
         // ToDo: Read prefered language out of config.properties file
 
-//        Config config = new Config();
-//        Locale locale = new Locale(config.getLocalLang(),config.getLocaCountry());
-//        System.out.println(config.getLocaCountry() + config.getLocalLang());
-//        ResourceBundle resourceBundle = ResourceBundle.getBundle("de.bremen.jTimetable.Resources.Resources", locale);
-//        ResourceBundle resourceBundle = ResourceBundle.getBundle("de.bremen.jTimetable.Resources.Resources");
-//
-//        System.out.println(resources.getString("currency"));
-//
-//        // Translate everything
-//        lblActiveCoursepasses.setText(resources.getString("currency"));
-
-        CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
-        CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
-        CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPStudySection"));
-        CPDescription.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("description"));
-        CPStart.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("start"));
-        CPEnd.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("end"));
-        CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
-
-        CoursepassTableview.getItems().setAll(getCoursepass(true));
         btnTimetableShow.setOnAction(event -> {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
@@ -87,8 +83,10 @@ public class HomeController implements Initializable {
             loader.setLocation(url);
             try {
                 stage.setScene(new Scene(loader.load()));
-                TimetableViewController controller = loader.getController();
-                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
+                TimetableViewController timetableViewController = loader.getController();
+                timetableViewController.setSqlConnectionManager(getSqlConnectionManager());
+                timetableViewController
+                        .initDataCoursepass(new CoursePass((selectedItems.get(0).getId()), getSqlConnectionManager()));
                 stage.show();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -97,7 +95,7 @@ public class HomeController implements Initializable {
         CoursepassTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
-                //DoubleClick: Editor is opened
+                // DoubleClick: Editor is opened
                 if (click.getClickCount() == 2) {
                     btnCoursepassEdit.fire();
                 }
@@ -109,18 +107,19 @@ public class HomeController implements Initializable {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
-                //System.out.println(selectedItems.get(0).getId());
+                // System.out.println(selectedItems.get(0).getId());
                 Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
 
                 try {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
                     CoursepassController coursepassController = loader.<CoursepassController>getController();
-                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
+                    coursepassController
+                            .setCoursepass(new CoursePass(selectedItems.get(0).getId(), getSqlConnectionManager()));
                     Scene scene = new Scene(anchorPane);
                     stageTheEventSourceNodeBelongs.setScene(scene);
                 } catch (Exception e) {
-                    //TODo: Propper Error handling
+                    // TODo: Propper Error handling
                     e.printStackTrace();
                 }
             }
@@ -132,15 +131,24 @@ public class HomeController implements Initializable {
 
     }
 
-
     public ArrayList<CoursePass> getCoursepass(Boolean activeState) {
         ArrayList<CoursePass> activeCoursepass = new ArrayList<CoursePass>();
         try {
-            activeCoursepass = new CoursePass(0L).getCoursePasses(activeState);
+            activeCoursepass = CoursePass.getCoursePasses(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
-            //TODo: better error handling
-            System.out.println(e);
+            // TODo: better error handling
+            e.printStackTrace();
+
         }
         return activeCoursepass;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+
 }

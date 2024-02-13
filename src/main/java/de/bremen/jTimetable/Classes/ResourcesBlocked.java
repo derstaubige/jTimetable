@@ -1,12 +1,9 @@
 package de.bremen.jTimetable.Classes;
 
 import java.sql.ResultSet;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Locale.Category;
-import java.util.concurrent.ExecutionException;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
@@ -50,6 +47,7 @@ public class ResourcesBlocked {
      * "LESSON" or "VACATION")
      */
     private String description;
+    private SQLConnectionManager sqlConnectionManager;
 
     /**
      * Constructor that only sets the ID.
@@ -57,10 +55,11 @@ public class ResourcesBlocked {
      * @param resourcesBlockedID id the object has in database (0 if it's not stored
      *                           in the db yet)
      */
-    public ResourcesBlocked(Long resourcesBlockedID) {
+    public ResourcesBlocked(Long resourcesBlockedID, SQLConnectionManager sqlConnectionManager) {
         this.ID = resourcesBlockedID;
+        setSqlConnectionManager(sqlConnectionManager);
         // establish connection
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+        try  {
 
             // id == 0 if object doesn't exist in database
             if (this.ID == 0) {
@@ -100,7 +99,7 @@ public class ResourcesBlocked {
     }
 
     public void save() {
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();) {
+        try  {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
@@ -133,13 +132,12 @@ public class ResourcesBlocked {
 
     public void delete() throws SQLException {
         if (this.ID != 0) {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             SQLValues.add(new SQLValueLong(this.ID));
             sqlConnectionManager.execute(
                     "delete from `T_RESOURCESBLOCKED` where `id` = ?;",
                     SQLValues);
-            sqlConnectionManager.close();
+            // sqlConnectionManager.close();
         }
     }
 
@@ -159,8 +157,8 @@ public class ResourcesBlocked {
      */
     public static void setResourcesBlocked(Long REFRESOURCEID, ResourceNames RESOURCENAME, String DESCRIPTION,
             LocalDate STARTDATE, LocalDate ENDDATE, int STARTTIMESLOT,
-            int ENDTIMESLOT) throws SQLException {
-        ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L);
+            int ENDTIMESLOT, SQLConnectionManager sqlConnectionManager) throws SQLException {
+        ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L, sqlConnectionManager);
         resourcesblocked.setReResourceID(REFRESOURCEID);
         resourcesblocked.setResourceName(RESOURCENAME);
         resourcesblocked.setDescription(DESCRIPTION);
@@ -173,15 +171,15 @@ public class ResourcesBlocked {
     }
 
     public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
-            ResourceNames resourcename) {
-        return getArrayListofResourcesblocked(resourceID, resourcename, false, true);
+            ResourceNames resourcename, SQLConnectionManager sqlConnectionManager) {
+        return getArrayListofResourcesblocked(resourceID, resourcename, false, true, sqlConnectionManager);
     }
 
     public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
-            ResourceNames resourcename, Boolean showPassed, Boolean withoutLesson) {
+            ResourceNames resourcename, Boolean showPassed, Boolean withoutLesson, SQLConnectionManager sqlConnectionManager) {
         ArrayList<ResourcesBlocked> returnListe = new ArrayList<ResourcesBlocked>();
 
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+        try  {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             SQLValues.add(new SQLValueLong(resourceID));
@@ -202,7 +200,7 @@ public class ResourcesBlocked {
             ResultSet rs = sqlConnectionManager.select(SQLString, SQLValues);
 
             while (rs.next()) {
-                returnListe.add(new ResourcesBlocked(rs.getLong("ID")));
+                returnListe.add(new ResourcesBlocked(rs.getLong("ID"), sqlConnectionManager));
             }
 
         } catch (Exception e) {
@@ -214,7 +212,7 @@ public class ResourcesBlocked {
 
     public void get(Long resourceID, ResourceNames resourcename, LocalDate startDate, LocalDate endDate,
             Integer startTimeslot, Integer endTimeslot) {
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+        try  {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             SQLValues.add(new SQLValueLong(resourceID));
@@ -312,6 +310,14 @@ public class ResourcesBlocked {
 
     public void setDescription(String dESCRIPTION) {
         description = dESCRIPTION;
+    }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
     }
 
 }

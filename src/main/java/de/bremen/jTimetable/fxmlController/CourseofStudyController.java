@@ -1,5 +1,6 @@
 package de.bremen.jTimetable.fxmlController;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -9,6 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import de.bremen.jTimetable.Classes.CourseofStudy;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -18,7 +20,7 @@ import java.util.ResourceBundle;
 
 public class CourseofStudyController implements Initializable {
     CourseofStudy cos;
-
+    SQLConnectionManager sqlConnectionManager;
     @FXML
     private TextField txtID;
     @FXML
@@ -52,19 +54,20 @@ public class CourseofStudyController implements Initializable {
     @FXML
     private HBox editbox;
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(() -> {
+            editbox.setVisible(false);
 
-        editbox.setVisible(false);
+            COSID.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Long>("id"));
+            COSDescription.setCellValueFactory(new PropertyValueFactory<CourseofStudy, String>("caption"));
+            COSBegin.setCellValueFactory(new PropertyValueFactory<CourseofStudy, LocalDate>("begin"));
+            COSEnd.setCellValueFactory(new PropertyValueFactory<CourseofStudy, LocalDate>("end"));
+            COSActive.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Boolean>("active"));
 
-        COSID.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Long>("id"));
-        COSDescription.setCellValueFactory(new PropertyValueFactory<CourseofStudy, String>("caption"));
-        COSBegin.setCellValueFactory(new PropertyValueFactory<CourseofStudy, LocalDate>("begin"));
-        COSEnd.setCellValueFactory(new PropertyValueFactory<CourseofStudy, LocalDate>("end"));
-        COSActive.setCellValueFactory(new PropertyValueFactory<CourseofStudy, Boolean>("active"));
+            ActiveCoursesofStudyTableview.getItems().setAll(getCoursesofStudy(true));
+        });
 
-        ActiveCoursesofStudyTableview.getItems().setAll(getCoursesofStudy(true));
         ActiveCoursesofStudyTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
@@ -75,7 +78,8 @@ public class CourseofStudyController implements Initializable {
         });
 
         ActiveCoursesofStudyButton.setOnAction(event -> {
-            TableView.TableViewSelectionModel<CourseofStudy> selectionModel = ActiveCoursesofStudyTableview.getSelectionModel();
+            TableView.TableViewSelectionModel<CourseofStudy> selectionModel = ActiveCoursesofStudyTableview
+                    .getSelectionModel();
             ObservableList<CourseofStudy> selectedItems = selectionModel.getSelectedItems();
 
             if (selectedItems.size() > 0) {
@@ -91,7 +95,7 @@ public class CourseofStudyController implements Initializable {
         });
 
         ActiveCoursesofStudyButtonNew.setOnAction(event -> {
-            try{
+            try {
                 this.cos = new CourseofStudy(0L);
                 txtID.setText("" + this.cos.getId());
                 txtCaption.setText(this.cos.getCaption());
@@ -100,14 +104,15 @@ public class CourseofStudyController implements Initializable {
                 chkActive.setSelected(this.cos.isActive());
                 txtID.setEditable(false);
                 editbox.setVisible(true);
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
         });
 
         chkToogleActiveCourseofStudy.setOnAction(event -> {
-            ActiveCoursesofStudyTableview.getItems().setAll(getCoursesofStudy(!chkToogleActiveCourseofStudy.isSelected()));
+            ActiveCoursesofStudyTableview.getItems()
+                    .setAll(getCoursesofStudy(!chkToogleActiveCourseofStudy.isSelected()));
         });
 
         btnSave.setOnAction(event -> {
@@ -116,29 +121,40 @@ public class CourseofStudyController implements Initializable {
             this.cos.setEnd(datEnd.getValue());
             this.cos.setActive(chkActive.isSelected());
 
-            //save changes
+            // save changes
             try {
                 this.cos.save();
             } catch (Exception e) {
-                //TODo: Propper Error handling
+                // TODo: Propper Error handling
                 e.printStackTrace();
             }
             editbox.setVisible(false);
-            ActiveCoursesofStudyTableview.getItems().setAll(getCoursesofStudy(!chkToogleActiveCourseofStudy.isSelected()));
+            ActiveCoursesofStudyTableview.getItems()
+                    .setAll(getCoursesofStudy(!chkToogleActiveCourseofStudy.isSelected()));
         });
     }
 
     public void setID(CourseofStudy cos) {
         this.cos = cos;
     }
+
     public ArrayList<CourseofStudy> getCoursesofStudy(Boolean activeState) {
         ArrayList<CourseofStudy> activeCoursesofStudy = new ArrayList<CourseofStudy>();
         try {
             activeCoursesofStudy = new CourseofStudy(0L).getCoursesofStudy(activeState);
         } catch (SQLException e) {
-            //TODo: better error handling
+            // TODo: better error handling
             System.out.println(e);
         }
         return activeCoursesofStudy;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+
 }

@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 public class CoursepassLecturerSubjectController implements Initializable {
     CoursePass coursepass;
     CoursepassLecturerSubject coursepassLecturerSubject;
+    SQLConnectionManager sqlConnectionManager;
 
     @FXML    public TableView<CoursepassLecturerSubject> CLSTableview;
     @FXML    public TableColumn<CoursepassLecturerSubject, Long> TCID;
@@ -45,15 +46,18 @@ public class CoursepassLecturerSubjectController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
-        TCID.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("id"));
-        TCLecturer.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("LecturerFullname"));
-        TCSubject.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("SubjectCaption"));
-        TCShouldHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("shouldHours"));
-        TCisHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("isHours"));
-        TCPlanedHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("planedHours"));
-        CPActive.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Boolean>("active"));
+        Platform.runLater(() -> {
+            TCID.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("id"));
+            TCLecturer.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("LecturerFullname"));
+            TCSubject.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("SubjectCaption"));
+            TCShouldHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("shouldHours"));
+            TCisHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("isHours"));
+            TCPlanedHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("planedHours"));
+            CPActive.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Boolean>("active"));
+        });
 
         editbox.setVisible(false);
+
         cmbSubject.setConverter(new StringConverter<Subject>() {
             @Override
             public String toString(Subject subject) {
@@ -69,6 +73,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 return null;
             }
         });
+
         cmbSubject.setCellFactory(cell -> new ListCell<Subject>() {
 
             // Create our layout here to be reused for each ListCell
@@ -107,6 +112,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 }
             }
         });
+
         cmbLecturer.setConverter(new StringConverter<Lecturer>() {
             @Override
             public String toString(Lecturer lecturer) {
@@ -122,6 +128,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 return null;
             }
         });
+
         cmbLecturer.setCellFactory(cell -> new ListCell<Lecturer>() {
 
             // Create our layout here to be reused for each ListCell
@@ -173,18 +180,18 @@ public class CoursepassLecturerSubjectController implements Initializable {
 
         btnCLSNew.setOnAction(event -> {
             try{
-                this.coursepassLecturerSubject = new CoursepassLecturerSubject(0L);
+                this.coursepassLecturerSubject = new CoursepassLecturerSubject(0L, getSqlConnectionManager());
 
                 txtID.setText(this.coursepassLecturerSubject.getId().toString());
                 txtID.setEditable(false);
                 try{
-                    cmbLecturer.getItems().setAll(Lecturer.getAllLecturer(Boolean.TRUE));
+                    cmbLecturer.getItems().setAll(Lecturer.getAllLecturer(Boolean.TRUE, getSqlConnectionManager()));
                     cmbLecturer.setValue(this.coursepassLecturerSubject.getLecturer());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
                 try{
-                    cmbSubject.getItems().setAll(Subject.getAllSubjects(Boolean.TRUE));
+                    cmbSubject.getItems().setAll(Subject.getAllSubjects(Boolean.TRUE, getSqlConnectionManager()));
                     cmbSubject.setValue(this.coursepassLecturerSubject.getSubject());
                 }catch (Exception e){
                     e.printStackTrace();
@@ -210,13 +217,13 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 txtID.setEditable(false);
 
                 try{
-                    cmbLecturer.getItems().setAll(Lecturer.getAllLecturer(Boolean.TRUE));
+                    cmbLecturer.getItems().setAll(Lecturer.getAllLecturer(Boolean.TRUE, getSqlConnectionManager()));
                     cmbLecturer.setValue(this.coursepassLecturerSubject.getLecturer());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
                 try{
-                    cmbSubject.getItems().setAll(Subject.getAllSubjects(Boolean.TRUE));
+                    cmbSubject.getItems().setAll(Subject.getAllSubjects(Boolean.TRUE, getSqlConnectionManager()));
                     cmbSubject.setValue(this.coursepassLecturerSubject.getSubject());
                 }catch (Exception e){
                     e.printStackTrace();
@@ -272,4 +279,13 @@ public class CoursepassLecturerSubjectController implements Initializable {
     public void setCoursepass(CoursePass pCoursepass){
         coursepass = pCoursepass;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

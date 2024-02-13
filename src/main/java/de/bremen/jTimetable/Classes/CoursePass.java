@@ -50,6 +50,7 @@ public class CoursePass {
      * List with all CoursePassLecturerSubjects associated with this CoursePass.
      */
     public ArrayList<CoursepassLecturerSubject> arrayCoursePassLecturerSubject = new ArrayList<>();
+    private SQLConnectionManager sqlConnectionManager;
 
     /**
      * Constructor that creates a dummy object if the id is 0 or loads an already existing object from the
@@ -57,21 +58,22 @@ public class CoursePass {
      *
      * @param id if id = 0 dummy object is created otherwise object with this id is loaded
      */
-    public CoursePass(long id) {
+    public CoursePass(long id, SQLConnectionManager sqlConnectionManager) {
         this.id = id;
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()){
+        setSqlConnectionManager(sqlConnectionManager);
+        try {
             
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
             if (this.id == 0) {
                 //load dummy object
-                this.courseOfStudy = new CourseofStudy(0L);
-                this.studySection = new StudySection(0L);
+                this.courseOfStudy = new CourseofStudy(0L, getSqlConnectionManager());
+                this.studySection = new StudySection(0L, getSqlConnectionManager());
                 this.start = LocalDate.of(1990, 1, 1);
                 this.end = LocalDate.of(1990, 1, 1);
                 this.active = Boolean.TRUE;
                 this.description = "";
-                this.room = new Room(0L);
+                this.room = new Room(0L, getSqlConnectionManager());
             } else {
                 //load object from db
                 SQLValues.add(new SQLValueLong(id));
@@ -79,13 +81,13 @@ public class CoursePass {
                 ResultSet rs = sqlConnectionManager.select("Select * from T_Coursepasses where id = ?;", SQLValues);
                 rs.first();
                 this.id = rs.getLong("id");
-                this.courseOfStudy = new CourseofStudy(rs.getLong("REFCOURSEOFSTUDYID"));
-                this.studySection = new StudySection(rs.getLong("REFSTUDYSECTIONID"));
+                this.courseOfStudy = new CourseofStudy(rs.getLong("REFCOURSEOFSTUDYID"), getSqlConnectionManager());
+                this.studySection = new StudySection(rs.getLong("REFSTUDYSECTIONID"), getSqlConnectionManager());
                 this.start = rs.getDate("start").toLocalDate();
                 this.end = rs.getDate("end").toLocalDate();
                 this.active = rs.getBoolean("active");
                 this.description = rs.getString("description");
-                this.room = new Room(rs.getLong("refRoomID"));
+                this.room = new Room(rs.getLong("refRoomID"), getSqlConnectionManager());
             }
         } catch (SQLException e) {
             System.err.println("The CoursePass with the id: " + this.id +
@@ -105,7 +107,7 @@ public class CoursePass {
         //Empty arrayList
         this.arrayCoursePassLecturerSubject = new ArrayList<>();
 
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();){
+        try {
             
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
@@ -116,7 +118,7 @@ public class CoursePass {
 
             while (rsCoursePassLecturerSubjects.next()) {
                 arrayCoursePassLecturerSubject.add
-                        (new CoursepassLecturerSubject(rsCoursePassLecturerSubjects.getLong("id")));
+                        (new CoursepassLecturerSubject(rsCoursePassLecturerSubjects.getLong("id"), getSqlConnectionManager()));
             }
         } catch (SQLException e) {
             System.err.println("Updating the CoursePassLecturerSubjects of CoursePass with the id: "
@@ -145,7 +147,7 @@ public class CoursePass {
         SQLValues.add(new SQLValueString(this.description));
         SQLValues.add(new SQLValueLong(this.room.id));
 
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();){
+        try {
             
             if (this.id == 0) {
                 //It's a new object, we have to insert it
@@ -175,17 +177,16 @@ public class CoursePass {
      * @return list of active or inactive CoursePasses
      * @throws SQLException is thrown if database query to get CoursePasses fails
      */
-    public static ArrayList<CoursePass> getCoursePasses(Boolean activeStatus) throws SQLException {
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+    public static ArrayList<CoursePass> getCoursePasses(Boolean activeStatus, SQLConnectionManager sqlConnectionManager) throws SQLException {
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
         SQLValues.add(new SQLValueBoolean(activeStatus));
         ResultSet rs = sqlConnectionManager.select("Select * from T_Coursepasses where active = ?", SQLValues);
         ArrayList<CoursePass> returnList = new ArrayList<>();
 
         while (rs.next()) {
-            returnList.add(new CoursePass(rs.getLong("id")));
+            returnList.add(new CoursePass(rs.getLong("id"), sqlConnectionManager));
         }
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
         return returnList;
     }
 
@@ -197,16 +198,15 @@ public class CoursePass {
      * @throws SQLException is thrown if database query to get coursePassLecturerSubjects fails
      */
     public ArrayList<CoursepassLecturerSubject> getAllCLS(Boolean activeStatus) throws SQLException {
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
         SQLValues.add(new SQLValueBoolean(activeStatus));
         SQLValues.add(new SQLValueLong(this.id));
         ResultSet rs = sqlConnectionManager.select("Select * from  T_COURSEPASSESLECTURERSUBJECT  where active = ? and REFCOURSEPASSID = ?", SQLValues);
         ArrayList<CoursepassLecturerSubject> returnList = new ArrayList<>();
         while (rs.next()) {
-            returnList.add(new CoursepassLecturerSubject(rs.getLong("id")));
+            returnList.add(new CoursepassLecturerSubject(rs.getLong("id"), getSqlConnectionManager()));
         }
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
         return returnList;
     }
 
@@ -398,4 +398,13 @@ public class CoursePass {
     public void setCPStudySection(String CPStudySection) {
         this.studySection.setDescription(CPStudySection);
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 
 import de.bremen.jTimetable.Classes.Lecturer;
 import de.bremen.jTimetable.Classes.LecturerBlock;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -16,12 +17,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 
 public class LecturerBlocksController implements Initializable{
     ResourceBundle resources;
     Lecturer lecturer;
-
+    SQLConnectionManager sqlConnectionManager;
     @FXML
     private GridPane grdpn_LecturerBlock;
     @FXML
@@ -82,6 +82,14 @@ public class LecturerBlocksController implements Initializable{
 
     public void setLecturer(Lecturer lecturer){
         this.lecturer = lecturer;
+    }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
     }
 
 }
