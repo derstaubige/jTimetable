@@ -3,6 +3,8 @@ package de.bremen.jTimetable.Classes;
 import javafx.stage.FileChooser;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
+import static java.sql.Types.NULL;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -347,6 +349,9 @@ public class Timetable {
         // Loop through all Days and Hours and Delete ResourceBlocked and Timetable
         for (TimetableDay arrayTimetableDay : arrayTimetableDays) {
             for (TimetableHour timetableHour : arrayTimetableDay.getArrayTimetableDay()) {
+                if(timetableHour == null){
+                    continue;
+                }
                 deleteResourceBlocked(timetableHour.coursepassLecturerSubject.getLecturerID(),
                         ResourceNames.LECTURER, arrayTimetableDay.getDate(),
                         arrayTimetableDay.getDate(), timetableHour.getTimeslot(), timetableHour.getTimeslot(), getSqlConnectionManager());
