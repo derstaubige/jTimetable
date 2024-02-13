@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 public class CoursepassLecturerSubjectController implements Initializable {
     CoursePass coursepass;
     CoursepassLecturerSubject coursepassLecturerSubject;
+    SQLConnectionManager sqlConnectionManager;
 
     @FXML    public TableView<CoursepassLecturerSubject> CLSTableview;
     @FXML    public TableColumn<CoursepassLecturerSubject, Long> TCID;
@@ -272,4 +273,13 @@ public class CoursepassLecturerSubjectController implements Initializable {
     public void setCoursepass(CoursePass pCoursepass){
         coursepass = pCoursepass;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

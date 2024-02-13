@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
 
 public class CoursepassController implements Initializable {
     CoursePass coursepass;
+    SQLConnectionManager sqlConnectionManager;
     @FXML private ComboBox<CourseofStudy> cmbCourseofStudy;
     @FXML private ComboBox<StudySection> cmbStudySections;
     @FXML private DatePicker datStart;
@@ -371,4 +372,13 @@ public class CoursepassController implements Initializable {
         }
         return activeCoursepass;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

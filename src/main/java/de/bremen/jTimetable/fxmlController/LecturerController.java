@@ -35,6 +35,7 @@ import java.util.ResourceBundle;
 public class LecturerController implements Initializable {
     Lecturer lecturer;
     ResourceBundle resourceBundle;
+    SQLConnectionManager sqlConnectionManager;
 
     @FXML private TableView<Lecturer> LecturerTableview;
     @FXML private TableColumn<Lecturer, Long> ID;
@@ -402,4 +403,13 @@ public class LecturerController implements Initializable {
     public ArrayList<Lecturer> getLecturer(Boolean activeState) {
         return Lecturer.getAllLecturer(activeState);
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 import de.bremen.jTimetable.Classes.StudySection;
 
 import java.net.URL;
@@ -18,6 +19,7 @@ import java.util.ResourceBundle;
 
 public class StudySectionController implements Initializable {
     StudySection studySection;
+    SQLConnectionManager sqlConnectionManager;
 
     @FXML    private TableView<StudySection> StudySectionTableview;
     @FXML    private TableColumn<StudySection, Long> ID;
@@ -117,4 +119,13 @@ public class StudySectionController implements Initializable {
         }
         return activeStudySection;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

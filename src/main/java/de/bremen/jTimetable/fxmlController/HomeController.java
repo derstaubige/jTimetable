@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.CoursePass;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 
 import java.io.IOException;
 import java.net.URL;
@@ -52,20 +53,11 @@ public class HomeController implements Initializable {
     @FXML
     private Label lblActiveCoursepasses;
 
+    private SQLConnectionManager sqlConnectionManager;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // ToDo: Read prefered language out of config.properties file
-
-//        Config config = new Config();
-//        Locale locale = new Locale(config.getLocalLang(),config.getLocaCountry());
-//        System.out.println(config.getLocaCountry() + config.getLocalLang());
-//        ResourceBundle resourceBundle = ResourceBundle.getBundle("de.bremen.jTimetable.Resources.Resources", locale);
-//        ResourceBundle resourceBundle = ResourceBundle.getBundle("de.bremen.jTimetable.Resources.Resources");
-//
-//        System.out.println(resources.getString("currency"));
-//
-//        // Translate everything
-//        lblActiveCoursepasses.setText(resources.getString("currency"));
 
         CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
         CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
@@ -143,4 +135,16 @@ public class HomeController implements Initializable {
         }
         return activeCoursepass;
     }
+
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+
+    
 }

@@ -10,6 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import de.bremen.jTimetable.Classes.Location;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -18,6 +19,7 @@ import java.util.ResourceBundle;
 
 public class LocationController implements Initializable {
     Location location;
+    SQLConnectionManager sqlConnectionManager;
 
     @FXML    private TableView<Location> LocationTableview;
     @FXML    private TableColumn<Location, Long> ID;
@@ -117,4 +119,13 @@ public class LocationController implements Initializable {
         }
         return activeLocation;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

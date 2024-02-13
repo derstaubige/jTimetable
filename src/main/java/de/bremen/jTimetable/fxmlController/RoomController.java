@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import de.bremen.jTimetable.Classes.Location;
 import de.bremen.jTimetable.Classes.Room;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -22,6 +23,7 @@ import java.util.ResourceBundle;
 
 public class RoomController implements Initializable {
     Room room;
+    SQLConnectionManager sqlConnectionManager;
 
     @FXML    private TableView<Room> RoomTableview;
     @FXML    private TableColumn<Room, Long> ID;
@@ -194,4 +196,13 @@ public class RoomController implements Initializable {
         }
         return activeRoom;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

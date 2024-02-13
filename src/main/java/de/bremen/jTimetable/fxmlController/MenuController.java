@@ -14,11 +14,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import de.bremen.jTimetable.Main;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 
 
 public class MenuController implements Initializable {
     @FXML
     private MenuBar menuBar;
+
+    private SQLConnectionManager sqlConnectionManager;
 
     ResourceBundle resourceBundle;
 
@@ -79,7 +82,7 @@ public class MenuController implements Initializable {
         try {
             AnchorPane anchorPane = loader.<AnchorPane>load();
             loader.<CourseofStudyController>getController();
-            //courseofStudyController.setID(new CourseofStudy(selectedItems.get(0).getId()));
+
             Scene scene = new Scene(anchorPane);
             stageTheEventSourceNodeBelongs.setScene(scene);
         } catch (Exception e) {
@@ -192,4 +195,14 @@ public class MenuController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+
+    
 }

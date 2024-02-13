@@ -44,6 +44,7 @@ public class TimetableViewController implements Initializable {
 
     private Timetable timetable;
     private CoursePass coursepass;
+    private SQLConnectionManager sqlConnectionManager;
 
     /**
      * Can be called to hand parameters from the calling class to this controller.
@@ -538,4 +539,13 @@ public class TimetableViewController implements Initializable {
 
         }
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

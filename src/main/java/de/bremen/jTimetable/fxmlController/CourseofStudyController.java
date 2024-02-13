@@ -9,6 +9,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import de.bremen.jTimetable.Classes.CourseofStudy;
+import de.bremen.jTimetable.Classes.SQLConnectionManager;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -18,7 +19,7 @@ import java.util.ResourceBundle;
 
 public class CourseofStudyController implements Initializable {
     CourseofStudy cos;
-
+    SQLConnectionManager sqlConnectionManager;
     @FXML
     private TextField txtID;
     @FXML
@@ -141,4 +142,13 @@ public class CourseofStudyController implements Initializable {
         }
         return activeCoursesofStudy;
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }
