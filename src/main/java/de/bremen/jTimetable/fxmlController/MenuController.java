@@ -14,6 +14,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import de.bremen.jTimetable.Main;
+import de.bremen.jTimetable.Classes.Location;
+import de.bremen.jTimetable.Classes.Room;
 import de.bremen.jTimetable.Classes.SQLConnectionManager;
 
 
@@ -75,10 +77,10 @@ public class MenuController implements Initializable {
 
     @FXML
     private void openCourseofStudy() {
-        //System.out.println(selectedItems.get(0).getId());
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/CourseofStudy.fxml"), this.resourceBundle);
-
+        CourseofStudyController courseofStudyController = loader.getController();
+        courseofStudyController.setSqlConnectionManager(getSqlConnectionManager());
         try {
             AnchorPane anchorPane = loader.<AnchorPane>load();
             loader.<CourseofStudyController>getController();
@@ -95,7 +97,8 @@ public class MenuController implements Initializable {
     private void openHome() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Home.fxml"), this.resourceBundle);
-
+        HomeController homeController = loader.getController();
+        homeController.setSqlConnectionManager(getSqlConnectionManager());
         try {
             AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
@@ -110,7 +113,8 @@ public class MenuController implements Initializable {
     private void openCoursepass() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), this.resourceBundle);
-
+        CoursepassController coursepassController = loader.getController();
+        coursepassController.setSqlConnectionManager(getSqlConnectionManager());
         try {
             AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
@@ -125,7 +129,8 @@ public class MenuController implements Initializable {
     private void openLecturer() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Lecturer.fxml"), this.resourceBundle);
-
+        LecturerController lecturerController = loader.getController();
+        lecturerController.setSqlConnectionManager(getSqlConnectionManager());
         try {
             AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
@@ -140,7 +145,8 @@ public class MenuController implements Initializable {
     private void openSubject() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Subject.fxml"), this.resourceBundle);
-
+        SubjectController subjectController = loader.getController();
+        subjectController.setSqlConnectionManager(getSqlConnectionManager());
         try {
             AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
@@ -155,7 +161,8 @@ public class MenuController implements Initializable {
     private void openRoom() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Room.fxml"), this.resourceBundle);
-
+        RoomController roomController = loader.getController();
+        roomController.setSqlConnectionManager(getSqlConnectionManager());
         try {
             AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
@@ -170,7 +177,8 @@ public class MenuController implements Initializable {
     private void openLocation() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Location.fxml"), this.resourceBundle);
-
+        LocationController locationController = loader.getController();
+        locationController.setSqlConnectionManager(getSqlConnectionManager());
         try {
             AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);
@@ -185,7 +193,8 @@ public class MenuController implements Initializable {
     private void openStudySection() {
         Stage stageTheEventSourceNodeBelongs = (Stage) menuBar.getScene().getWindow();
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/StudySection.fxml"), this.resourceBundle);
-
+        StudySectionController studySectionController = loader.getController();
+        studySectionController.setSqlConnectionManager(getSqlConnectionManager());
         try {
             AnchorPane anchorPane = loader.<AnchorPane>load();
             Scene scene = new Scene(anchorPane);

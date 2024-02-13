@@ -6,16 +6,17 @@ public class TimetableHour {
     String subjectCaption;
     String roomCaption;
     CoursepassLecturerSubject coursepassLecturerSubject;
+    SQLConnectionManager sqlConnectionManager;
 
-    public TimetableHour(int timeslot, CoursepassLecturerSubject coursepassLecturerSubject, Long RoomID ){
+    public TimetableHour(int timeslot, CoursepassLecturerSubject coursepassLecturerSubject, Long RoomID, SQLConnectionManager sqlConnectionManager ){
         this.timeslot = timeslot;
         this.coursepassLecturerSubject = coursepassLecturerSubject;
         this.lecturerName = this.coursepassLecturerSubject.lecturer.getLecturerFullName();
         this.subjectCaption = this.coursepassLecturerSubject.subject.getCaption();
         this.roomCaption = this.coursepassLecturerSubject.getRoom().getCaption();
     }
-    public TimetableHour(int timeslot, CoursepassLecturerSubject coursepassLecturerSubject) {
-        this(timeslot, coursepassLecturerSubject, 0L );
+    public TimetableHour(int timeslot, CoursepassLecturerSubject coursepassLecturerSubject, SQLConnectionManager sqlConnectionManager) {
+        this(timeslot, coursepassLecturerSubject, 0L , sqlConnectionManager);
     }
 
     public int getTimeslot() {
@@ -53,4 +54,11 @@ public class TimetableHour {
     public CoursepassLecturerSubject getCoursepassLecturerSubject() {
         return coursepassLecturerSubject;
     }
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

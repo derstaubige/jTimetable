@@ -19,14 +19,15 @@ public class TimetableDay {
      *
      */
     private ArrayList<TimetableHour> arrayTimetableDay;
+    private SQLConnectionManager sqlConnectionManager;
 
     /**
      * TODO problematic use of this constructor because we
      * @param date
      */
-    public TimetableDay(LocalDate date){
+    public TimetableDay(LocalDate date, SQLConnectionManager sqlConnectionManager){
         // a default day has 3 timeslots
-        this(date, 3);
+        this(date, 3, sqlConnectionManager);
     }
 
     /**
@@ -34,7 +35,7 @@ public class TimetableDay {
      * @param date
      * @param timeslots
      */
-    public TimetableDay(LocalDate date, int timeslots){
+    public TimetableDay(LocalDate date, int timeslots, SQLConnectionManager sqlConnectionManager){
         this.date = date;
         this.timeslots = timeslots;
         this.arrayTimetableDay = new ArrayList<>(this.timeslots);
@@ -51,12 +52,12 @@ public class TimetableDay {
         // if timeslot > arrayTimetableDay.size add as many
         while(this.arrayTimetableDay.size() < timeslot){
             try{
-                this.arrayTimetableDay.add(new TimetableHour(this.arrayTimetableDay.size() + 1, new CoursepassLecturerSubject(0L)));                
+                this.arrayTimetableDay.add(new TimetableHour(this.arrayTimetableDay.size() + 1, new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));                
             }catch(Exception e){
                 e.printStackTrace();
             }
         }
-        this.arrayTimetableDay.add(timeslot, new TimetableHour(timeslot, coursepassLecturerSubject));
+        this.arrayTimetableDay.add(timeslot, new TimetableHour(timeslot, coursepassLecturerSubject, getSqlConnectionManager()));
     }
 
     private boolean checkIfSlotIsFree(int timeslot){
@@ -93,7 +94,7 @@ public class TimetableDay {
         while(this.arrayTimetableDay.size() <= timeslots) {
             try {
                 this.arrayTimetableDay.add
-                        (new TimetableHour(this.arrayTimetableDay.size(), new CoursepassLecturerSubject(0L)));
+                        (new TimetableHour(this.arrayTimetableDay.size(), new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -114,7 +115,7 @@ public class TimetableDay {
 
     public void removeTimetableHourFromArrayTimetableDay(int timeslot){
         try{
-            arrayTimetableDay.set(timeslot, new TimetableHour(timeslot, new CoursepassLecturerSubject(0L)));
+            arrayTimetableDay.set(timeslot, new TimetableHour(timeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -129,4 +130,13 @@ public class TimetableDay {
         arrayTimetableDay.set(timeslot, timetableHour);
         timetableHour.setTimeslot(timeslot);
     }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

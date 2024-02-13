@@ -142,7 +142,7 @@ public class RoomController implements Initializable {
                 //System.out.println(selectedItems.get(0).getId());
                 this.room = selectedItems.get(0);
                 try{
-                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
+                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true, getSqlConnectionManager()));
                     cmbLocation.setValue(this.room.getLocation());
                 }catch (Exception e){
                     e.printStackTrace();
@@ -159,9 +159,9 @@ public class RoomController implements Initializable {
 
         btnRoomNew.setOnAction(event -> {
             try{
-                this.room = new Room(0L);
+                this.room = new Room(0L, getSqlConnectionManager());
                 try{
-                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
+                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true, getSqlConnectionManager()));
                     cmbLocation.setValue(this.room.getLocation());
                 }catch (Exception e){
                     e.printStackTrace();
@@ -189,7 +189,7 @@ public class RoomController implements Initializable {
     public ArrayList<Room> getRoom(Boolean activeState) {
         ArrayList<Room> activeRoom = new ArrayList<Room>();
         try {
-            activeRoom = Room.getAllRooms(activeState);
+            activeRoom = Room.getAllRooms(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();

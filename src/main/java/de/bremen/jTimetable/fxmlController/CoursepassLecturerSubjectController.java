@@ -174,18 +174,18 @@ public class CoursepassLecturerSubjectController implements Initializable {
 
         btnCLSNew.setOnAction(event -> {
             try{
-                this.coursepassLecturerSubject = new CoursepassLecturerSubject(0L);
+                this.coursepassLecturerSubject = new CoursepassLecturerSubject(0L, getSqlConnectionManager());
 
                 txtID.setText(this.coursepassLecturerSubject.getId().toString());
                 txtID.setEditable(false);
                 try{
-                    cmbLecturer.getItems().setAll(Lecturer.getAllLecturer(Boolean.TRUE));
+                    cmbLecturer.getItems().setAll(Lecturer.getAllLecturer(Boolean.TRUE, getSqlConnectionManager()));
                     cmbLecturer.setValue(this.coursepassLecturerSubject.getLecturer());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
                 try{
-                    cmbSubject.getItems().setAll(Subject.getAllSubjects(Boolean.TRUE));
+                    cmbSubject.getItems().setAll(Subject.getAllSubjects(Boolean.TRUE, getSqlConnectionManager()));
                     cmbSubject.setValue(this.coursepassLecturerSubject.getSubject());
                 }catch (Exception e){
                     e.printStackTrace();
@@ -211,13 +211,13 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 txtID.setEditable(false);
 
                 try{
-                    cmbLecturer.getItems().setAll(Lecturer.getAllLecturer(Boolean.TRUE));
+                    cmbLecturer.getItems().setAll(Lecturer.getAllLecturer(Boolean.TRUE, getSqlConnectionManager()));
                     cmbLecturer.setValue(this.coursepassLecturerSubject.getLecturer());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
                 try{
-                    cmbSubject.getItems().setAll(Subject.getAllSubjects(Boolean.TRUE));
+                    cmbSubject.getItems().setAll(Subject.getAllSubjects(Boolean.TRUE, getSqlConnectionManager()));
                     cmbSubject.setValue(this.coursepassLecturerSubject.getSubject());
                 }catch (Exception e){
                     e.printStackTrace();

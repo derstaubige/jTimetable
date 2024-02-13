@@ -223,7 +223,7 @@ public class CoursepassController implements Initializable {
                         stage.setScene(new Scene(loader.load()));
                         stage.setTitle("Timetable");
                         TimetableViewController controller = loader.getController();
-                        controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
+                        controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId()), getSqlConnectionManager()));
                         stage.show();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -240,7 +240,7 @@ public class CoursepassController implements Initializable {
                 try {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
                     CoursepassLecturerSubjectController coursepassLecturerSubjectController = loader.<CoursepassLecturerSubjectController>getController();
-                    coursepassLecturerSubjectController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
+                    coursepassLecturerSubjectController.setCoursepass(new CoursePass(selectedItems.get(0).getId(), getSqlConnectionManager()));
                     Scene scene = new Scene(anchorPane);
                     stageTheEventSourceNodeBelongs.setScene(scene);
                 } catch (Exception e) {
@@ -263,7 +263,7 @@ public class CoursepassController implements Initializable {
                     e.printStackTrace();
                 }
                 try{
-                    cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
+                    cmbStudySections.getItems().setAll(StudySection.getStudySections(true, getSqlConnectionManager()));
                     cmbStudySections.setValue(this.coursepass.getStudySection());
                 }catch (Exception e){
                     e.printStackTrace();
@@ -280,7 +280,7 @@ public class CoursepassController implements Initializable {
 
         btnCoursepassNew.setOnAction(event -> {
             try{
-                this.coursepass = new CoursePass(0L);
+                this.coursepass = new CoursePass(0L, getSqlConnectionManager());
                 try{
                     cmbCourseofStudy.getItems().setAll(this.coursepass.getCourseOfStudy().getCoursesofStudy(true));
                     cmbCourseofStudy.setValue(this.coursepass.getCourseOfStudy());
@@ -288,7 +288,7 @@ public class CoursepassController implements Initializable {
                     e.printStackTrace();
                 }
                 try{
-                    cmbStudySections.getItems().setAll(StudySection.getStudySections(true));
+                    cmbStudySections.getItems().setAll(StudySection.getStudySections(true, getSqlConnectionManager()));
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -316,7 +316,7 @@ public class CoursepassController implements Initializable {
             if (selectedItems.size() > 0) {
                 this.coursepass = selectedItems.get(0);
 
-                Resourcemanager resourcemanager = new Resourcemanager();
+                Resourcemanager resourcemanager = new Resourcemanager(getSqlConnectionManager());
                 try {
                     this.coursepass.updateCoursePassLecturerSubjects();
                     resourcemanager.generateInitialTimetable(this.coursepass);
@@ -338,7 +338,7 @@ public class CoursepassController implements Initializable {
                 + " " + coursepass.getStudySection().getDescription() + "?");
                 alert.showAndWait().ifPresent(rs -> {
                     if ( rs == ButtonType.OK){
-                        Timetable timetable = new Timetable(coursepass);
+                        Timetable timetable = new Timetable(coursepass, getSqlConnectionManager());
                         timetable.deleteTimetable();
 
                         alert.setAlertType(Alert.AlertType.INFORMATION);
@@ -365,7 +365,7 @@ public class CoursepassController implements Initializable {
     public ArrayList<CoursePass> getCoursepass(Boolean activeState) {
         ArrayList<CoursePass> activeCoursepass = new ArrayList<CoursePass>();
         try {
-            activeCoursepass = new CoursePass(0L).getCoursePasses(activeState);
+            activeCoursepass = CoursePass.getCoursePasses(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
             //TODo: better error handling
             System.out.println(e);

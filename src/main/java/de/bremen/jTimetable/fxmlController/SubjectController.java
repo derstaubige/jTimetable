@@ -88,7 +88,7 @@ public class SubjectController implements Initializable {
 
         btnSubjectNew.setOnAction(event -> {
             try{
-                this.subject = new Subject(0L);
+                this.subject = new Subject(0L, getSqlConnectionManager());
 
                 txtID.setText(this.subject.getId().toString());
                 txtID.setEditable(false);
@@ -112,7 +112,7 @@ public class SubjectController implements Initializable {
     public ArrayList<Subject> getSubject(Boolean activeState) {
         ArrayList<Subject> activeSubject = new ArrayList<Subject>();
         try {
-            activeSubject = Subject.getAllSubjects(activeState);
+            activeSubject = Subject.getAllSubjects(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();

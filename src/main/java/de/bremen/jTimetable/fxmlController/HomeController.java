@@ -79,8 +79,9 @@ public class HomeController implements Initializable {
             loader.setLocation(url);
             try {
                 stage.setScene(new Scene(loader.load()));
-                TimetableViewController controller = loader.getController();
-                controller.initDataCoursepass(new CoursePass((selectedItems.get(0).getId())));
+                TimetableViewController timetableViewController = loader.getController();
+                timetableViewController.setSqlConnectionManager(getSqlConnectionManager());
+                timetableViewController.initDataCoursepass(new CoursePass((selectedItems.get(0).getId()),getSqlConnectionManager()));
                 stage.show();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -108,7 +109,7 @@ public class HomeController implements Initializable {
                 try {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
                     CoursepassController coursepassController = loader.<CoursepassController>getController();
-                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId()));
+                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId(), getSqlConnectionManager()));
                     Scene scene = new Scene(anchorPane);
                     stageTheEventSourceNodeBelongs.setScene(scene);
                 } catch (Exception e) {
@@ -128,10 +129,11 @@ public class HomeController implements Initializable {
     public ArrayList<CoursePass> getCoursepass(Boolean activeState) {
         ArrayList<CoursePass> activeCoursepass = new ArrayList<CoursePass>();
         try {
-            activeCoursepass = new CoursePass(0L).getCoursePasses(activeState);
+            activeCoursepass = CoursePass.getCoursePasses(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
             //TODo: better error handling
-            System.out.println(e);
+            e.printStackTrace();
+
         }
         return activeCoursepass;
     }

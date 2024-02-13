@@ -12,12 +12,12 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 public class Subject {
     Long id;
     String caption;
-
     Boolean active;
+    private SQLConnectionManager sqlConnectionManager;
 
-    public Subject(Long id) throws SQLException {
+    public Subject(Long id, SQLConnectionManager sqlConnectionManager) throws SQLException {
         this.id = id;
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        setSqlConnectionManager(sqlConnectionManager);
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
         if (this.id == 0) {
@@ -34,11 +34,10 @@ public class Subject {
             this.caption = rs.getString("caption");
             this.active = rs.getBoolean("active");
         }
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
     }
 
     public void save() throws SQLException {
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
         SQLValues.add(new SQLValueString(this.caption));
@@ -56,9 +55,21 @@ public class Subject {
             sqlConnectionManager.execute("update `T_Subjects` set `caption` = ?, `ACTIVE` = ? where `id` = ?;",
                     SQLValues);
         }
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
     }
+    
+    public static ArrayList<Subject> getAllSubjects(Boolean pActivestate, SQLConnectionManager sqlConnectionManager) throws SQLException {
+        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
+        SQLValues.add(new SQLValueBoolean(pActivestate));
+        ResultSet rs = sqlConnectionManager.select("Select * from T_Subjects where active = ?", SQLValues);
+        ArrayList<Subject> returnList = new ArrayList<Subject>();
+        while (rs.next()) {
+            returnList.add(new Subject(rs.getLong("id"), sqlConnectionManager));
+        }
+        // sqlConnectionManager.close();
+        return returnList;
+    }
     public Long getId() {
         return id;
     }
@@ -83,17 +94,13 @@ public class Subject {
         this.active = active;
     }
 
-    public static ArrayList<Subject> getAllSubjects(Boolean pActivestate) throws SQLException {
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
-        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
-        SQLValues.add(new SQLValueBoolean(pActivestate));
-        ResultSet rs = sqlConnectionManager.select("Select * from T_Subjects where active = ?", SQLValues);
-        ArrayList<Subject> returnList = new ArrayList<Subject>();
-        while (rs.next()) {
-            returnList.add(new Subject(rs.getLong("id")));
-        }
-        sqlConnectionManager.close();
-        return returnList;
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
     }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
+    }
+    
 }

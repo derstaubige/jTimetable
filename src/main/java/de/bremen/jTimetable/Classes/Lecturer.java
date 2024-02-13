@@ -43,6 +43,7 @@ public class Lecturer {
 
     // Array list of Ressorces Blocked (Classes and HOlidays and so on)
     private ArrayList<ResourcesBlocked> lecturerResourcesBlocked;
+    private SQLConnectionManager sqlConnectionManager;
 
     public boolean checkifLecturerisBlocked(Integer dayoftheweek, Integer timeslot) {
         for (LecturerBlock lecturerBlock : lecturerBlocks) {
@@ -64,18 +65,19 @@ public class Lecturer {
      *
      * @param id the lecturer has in database, 0 if not saved in database yet
      */
-    public Lecturer(Long id) {
+    public Lecturer(Long id, SQLConnectionManager sqlConnectionManager) {
         this.id = id;
+        setSqlConnectionManager(sqlConnectionManager);
 
         if (this.id == 0) {
             // load dummy object
             this.firstname = "";
             this.lastname = "";
-            this.location = new Location(0L);
+            this.location = new Location(0L, getSqlConnectionManager());
             this.active = Boolean.TRUE;
         } else {
             // load object from db
-            try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+            try  {
 
                 ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
                 SQLValues.add(new SQLValueLong(id));
@@ -85,7 +87,7 @@ public class Lecturer {
                 this.id = rs.getLong("id");
                 this.firstname = rs.getString("firstname").trim();
                 this.lastname = rs.getString("lastname").trim();
-                this.location = new Location(rs.getLong("reflocationID"));
+                this.location = new Location(rs.getLong("reflocationID"), getSqlConnectionManager());
                 this.active = rs.getBoolean("active");
 
                 updateLecturerBlocks();
@@ -99,7 +101,7 @@ public class Lecturer {
 
     public void updateLecturerResourcesBlocked(){
         ArrayList<ResourcesBlocked> lecturerResourcesBlocks = new ArrayList<ResourcesBlocked>();
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+        try  {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
             SQLValues.add(new SQLValueLong(getId()));
@@ -109,7 +111,7 @@ public class Lecturer {
                     .select("Select * from T_RESOURCESBLOCKED  where REFRESOURCEID = ? and RESOURCENAME  = 'LECTURER' and enddate >= ?;", SQLValues);
 
             while (rs.next()) {
-                lecturerResourcesBlocks.add(new ResourcesBlocked(rs.getLong("id")));
+                lecturerResourcesBlocks.add(new ResourcesBlocked(rs.getLong("id"), getSqlConnectionManager()));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,7 +120,7 @@ public class Lecturer {
     }
 
     public void addLecturerBlocks(DayOfWeek dow, Integer timeslot) {
-        LecturerBlock lecturerBlock = new LecturerBlock(0L);
+        LecturerBlock lecturerBlock = new LecturerBlock(0L, getSqlConnectionManager());
         lecturerBlock.setDayNr(dow);
         lecturerBlock.setTimeslot(timeslot);
         lecturerBlock.setRefLecturerID(id);
@@ -131,7 +133,7 @@ public class Lecturer {
      */
     private void updateLecturerBlocks() {
         ArrayList<LecturerBlock> lecturerBlocks = new ArrayList<LecturerBlock>();
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+        try  {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
             SQLValues.add(new SQLValueLong(getId()));
@@ -141,7 +143,7 @@ public class Lecturer {
                     .select("Select * from T_LECTURERBLOCKS where refLecturerID = ? and BlockEnd >= ?;", SQLValues);
 
             while (rs.next()) {
-                lecturerBlocks.add(new LecturerBlock(rs.getLong("id")));
+                lecturerBlocks.add(new LecturerBlock(rs.getLong("id"), getSqlConnectionManager()));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,7 +160,7 @@ public class Lecturer {
      *                      entry doesn't work
      */
     public void save() throws SQLException {
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+        try  {
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
             SQLValues.add(new SQLValueString(this.firstname));
@@ -184,6 +186,8 @@ public class Lecturer {
             for (LecturerBlock lecturerBlock : lecturerBlocks) {
                 lecturerBlock.save();
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -191,12 +195,12 @@ public class Lecturer {
      * Naiv LecturerBlocks handeling
      */
     private void deleteLecturerBlocks() {
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+        try  {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
             SQLValues.add(new SQLValueLong(getId()));
-            ResultSet rs = sqlConnectionManager.execute("Delete From `T_LECTURERBLOCKS` where `RefLecturerID` = ?",
+            sqlConnectionManager.execute("Delete From `T_LECTURERBLOCKS` where `RefLecturerID` = ?",
                     SQLValues);
 
         } catch (Exception e) {
@@ -217,7 +221,7 @@ public class Lecturer {
      * @throws SQLException will be thrown if select statement doesn't work or
      *                      accessing resultSet is invalid
      */
-    public static boolean checkLecturerAvailability(long lecturerID, LocalDate date, int timeslot)
+    public static boolean checkLecturerAvailability(long lecturerID, LocalDate date, int timeslot, SQLConnectionManager sqlConnectionManager)
             throws SQLException {
 
         LocalDate startDate;
@@ -231,12 +235,11 @@ public class Lecturer {
         }
 
         // Check if the Lecturer is generall not available at this day and timestamp
-        if (new Lecturer(lecturerID).checkifLecturerisBlocked(date, timeslot) == true) {
+        if (new Lecturer(lecturerID, sqlConnectionManager).checkifLecturerisBlocked(date, timeslot) == true) {
             return false;
         }
 
         // Database query
-        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
         SQLValues.add(new SQLValueLong(lecturerID));
         SQLValues.add(new SQLValueDate(date));
@@ -264,7 +267,7 @@ public class Lecturer {
                         // to teach at 3rd timeslot
                         continue;
                     } else {
-                        sqlConnectionManager.close();
+                        // sqlConnectionManager.close();
                         return false;
                     }
                 } else {
@@ -277,17 +280,17 @@ public class Lecturer {
             // blocking ends before the timestamp we want to reserve
             if (endDate.compareTo(date) == 0) {
                 if (timeslot <= endTimeslot) {
-                    sqlConnectionManager.close();
+                    // sqlConnectionManager.close();
                     return false;
                 } else {
                     continue;
                 }
             }
-            sqlConnectionManager.close();
+            // sqlConnectionManager.close();
             return false;
         }
         // There is no blocking
-        sqlConnectionManager.close();
+        // sqlConnectionManager.close();
         return true;
     }
 
@@ -299,15 +302,15 @@ public class Lecturer {
      *                     (true = active; false = inactive)
      * @return ArrayList with all lecturers of the given status
      */
-    public static ArrayList<Lecturer> getAllLecturer(Boolean activeStatus) {
-        try (SQLConnectionManager sqlConnectionManager = new SQLConnectionManager()) {
+    public static ArrayList<Lecturer> getAllLecturer(Boolean activeStatus, SQLConnectionManager sqlConnectionManager) {
+        try  {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
             SQLValues.add(new SQLValueBoolean(activeStatus));
             ResultSet rs = sqlConnectionManager.select("Select * from T_Lecturers where active = ?", SQLValues);
             ArrayList<Lecturer> returnList = new ArrayList<Lecturer>();
             while (rs.next()) {
-                returnList.add(new Lecturer(rs.getLong("id")));
+                returnList.add(new Lecturer(rs.getLong("id"), sqlConnectionManager));
             }
             return returnList;
         } catch (SQLException e) {
@@ -322,7 +325,7 @@ public class Lecturer {
      * @return arrayList of blocked resources by this lecturer
      */
     public ArrayList<ResourcesBlocked> getArrayListOfResourcesBlocked() {
-        return ResourcesBlocked.getArrayListofResourcesblocked(this.id, ResourceNames.LECTURER);
+        return ResourcesBlocked.getArrayListofResourcesblocked(this.id, ResourceNames.LECTURER, getSqlConnectionManager());
     }
 
     /**
@@ -451,6 +454,14 @@ public class Lecturer {
 
     public void setLecturerResourcesBlocked(ArrayList<ResourcesBlocked> lecturerResourcesBlocked) {
         this.lecturerResourcesBlocked = lecturerResourcesBlocked;
+    }
+
+    public SQLConnectionManager getSqlConnectionManager() {
+        return sqlConnectionManager;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
     }
 
     

@@ -88,7 +88,7 @@ public class LocationController implements Initializable {
 
         btnLocationNew.setOnAction(event -> {
             try{
-                this.location = new Location(0L);
+                this.location = new Location(0L, getSqlConnectionManager());
 
                 txtID.setText(this.location.getId().toString());
                 txtID.setEditable(false);
@@ -112,7 +112,7 @@ public class LocationController implements Initializable {
     public ArrayList<Location> getLocation(Boolean activeState) {
         ArrayList<Location> activeLocation = new ArrayList<Location>();
         try {
-            activeLocation = Location.getAllLocations(activeState);
+            activeLocation = Location.getAllLocations(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
             //TODo: better error handling
             e.printStackTrace();

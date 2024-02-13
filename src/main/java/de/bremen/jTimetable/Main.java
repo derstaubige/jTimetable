@@ -10,6 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import de.bremen.jTimetable.Classes.*;
+import de.bremen.jTimetable.fxmlController.HomeController;
 
 
 public class Main extends Application {
@@ -33,7 +34,9 @@ public class Main extends Application {
         URL url = Main.class.getResource("fxml/Home.fxml");
         loader.setLocation(url);
         AnchorPane anchorPane = loader.<AnchorPane>load();
-
+        SQLConnectionManager sqlConnectionManager = new SQLConnectionManager();
+        HomeController homeController = loader.getController();
+        homeController.setSqlConnectionManager(sqlConnectionManager);
         Scene scene = new Scene(anchorPane);
         primaryStage.getIcons().add(new Image("/de/bremen/jTimetable/img/icon.png"));
         primaryStage.setTitle("jTimetable");

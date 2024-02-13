@@ -21,31 +21,44 @@ public class StudySectionController implements Initializable {
     StudySection studySection;
     SQLConnectionManager sqlConnectionManager;
 
-    @FXML    private TableView<StudySection> StudySectionTableview;
-    @FXML    private TableColumn<StudySection, Long> ID;
-    @FXML    private TableColumn<StudySection, String> Description;
-    @FXML    private TableColumn<StudySection, Boolean> Active;
-    @FXML    private Button btnStudySectionEdit;
-    @FXML    private Button btnStudySectionNew;
-    @FXML    private CheckBox chkToogleStudySection;
-    @FXML    private VBox editbox;
-    @FXML private TextField txtID;
-    @FXML private TextField txtDescription;
-    @FXML private CheckBox chkActive;
-    @FXML private Button btnSave;
+    @FXML
+    private TableView<StudySection> StudySectionTableview;
+    @FXML
+    private TableColumn<StudySection, Long> ID;
+    @FXML
+    private TableColumn<StudySection, String> Description;
+    @FXML
+    private TableColumn<StudySection, Boolean> Active;
+    @FXML
+    private Button btnStudySectionEdit;
+    @FXML
+    private Button btnStudySectionNew;
+    @FXML
+    private CheckBox chkToogleStudySection;
+    @FXML
+    private VBox editbox;
+    @FXML
+    private TextField txtID;
+    @FXML
+    private TextField txtDescription;
+    @FXML
+    private CheckBox chkActive;
+    @FXML
+    private Button btnSave;
 
     @Override
-    public void initialize(URL StudySection, ResourceBundle resources)  {
+    public void initialize(URL StudySection, ResourceBundle resources) {
         editbox.setVisible(false);
-        // We need a StringConverter in order to ensure the selected item is displayed properly
+        // We need a StringConverter in order to ensure the selected item is displayed
+        // properly
         // For this sample, we only want the Person's name to be displayed
-       
-        btnSave.setOnAction(event ->{
+
+        btnSave.setOnAction(event -> {
             this.studySection.setDescription(txtDescription.getText());
             this.studySection.setActive(chkActive.isSelected());
             try {
                 this.studySection.save();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             editbox.setVisible(false);
@@ -64,7 +77,7 @@ public class StudySectionController implements Initializable {
         StudySectionTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
-                //SingleClick: Editor is opened
+                // SingleClick: Editor is opened
                 if (click.getClickCount() == 1) {
                     btnStudySectionEdit.fire();
                 }
@@ -87,8 +100,8 @@ public class StudySectionController implements Initializable {
         });
 
         btnStudySectionNew.setOnAction(event -> {
-            try{
-                this.studySection = new StudySection(0L);
+            try {
+                this.studySection = new StudySection(0L, getSqlConnectionManager());
 
                 txtID.setText(this.studySection.getId().toString());
                 txtID.setEditable(false);
@@ -97,10 +110,9 @@ public class StudySectionController implements Initializable {
 
                 editbox.setVisible(true);
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-
 
         });
 
@@ -112,9 +124,9 @@ public class StudySectionController implements Initializable {
     public ArrayList<StudySection> getStudySection(Boolean activeState) {
         ArrayList<StudySection> activeStudySection = new ArrayList<StudySection>();
         try {
-            activeStudySection = StudySection.getAllStudySections(activeState);
+            activeStudySection = StudySection.getAllStudySections(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
-            //TODo: better error handling
+            // TODo: better error handling
             e.printStackTrace();
         }
         return activeStudySection;
@@ -127,5 +139,5 @@ public class StudySectionController implements Initializable {
     public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
     }
-    
+
 }

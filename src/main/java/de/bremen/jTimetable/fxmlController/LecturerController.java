@@ -27,7 +27,6 @@ import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.*;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -296,7 +295,7 @@ public class LecturerController implements Initializable {
 
         LecturerBlockedAdd.setOnAction(event ->{
             try {                
-                ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L);
+                ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L, getSqlConnectionManager());
                 resourcesblocked.setReResourceID(lecturer.getId());
                 resourcesblocked.setResourceName(ResourceNames.LECTURER);
                 resourcesblocked.setStartDate(LocalDate.now());
@@ -335,7 +334,7 @@ public class LecturerController implements Initializable {
                 //System.out.println(selectedItems.get(0).getId());
                 this.lecturer = selectedItems.get(0);
                 try {
-                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
+                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true, getSqlConnectionManager()));
                     cmbLocation.setValue(this.lecturer.getLocation());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -348,7 +347,7 @@ public class LecturerController implements Initializable {
                 chkActive.setSelected(this.lecturer.getActive());
 
                 LecturerBlockedTableview.getItems().setAll(ResourcesBlocked
-                        .getArrayListofResourcesblocked(this.lecturer.getId(), ResourceNames.LECTURER));
+                        .getArrayListofResourcesblocked(this.lecturer.getId(), ResourceNames.LECTURER, getSqlConnectionManager()));
                 editbox.setVisible(true);
             }
 
@@ -356,9 +355,9 @@ public class LecturerController implements Initializable {
 
         btnLecturerNew.setOnAction(event -> {
             try {
-                this.lecturer = new Lecturer(0L);
+                this.lecturer = new Lecturer(0L, getSqlConnectionManager());
                 try {
-                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true));
+                    cmbLocation.getItems().setAll(de.bremen.jTimetable.Classes.Location.getAllLocations(true, getSqlConnectionManager()));
                     cmbLocation.setValue(this.lecturer.getLocation());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -391,7 +390,7 @@ public class LecturerController implements Initializable {
             try {
                 stage.setScene(new Scene(loader.load()));
                 TimetableViewController controller = loader.getController();
-                controller.initDataTimetable(new Timetable(lecturer));
+                controller.initDataTimetable(new Timetable(lecturer, getSqlConnectionManager()));
                 stage.show();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -401,7 +400,7 @@ public class LecturerController implements Initializable {
     }
 
     public ArrayList<Lecturer> getLecturer(Boolean activeState) {
-        return Lecturer.getAllLecturer(activeState);
+        return Lecturer.getAllLecturer(activeState, getSqlConnectionManager());
     }
 
     public SQLConnectionManager getSqlConnectionManager() {
