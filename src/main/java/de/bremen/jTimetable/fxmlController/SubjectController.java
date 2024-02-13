@@ -36,7 +36,14 @@ public class SubjectController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
-        editbox.setVisible(false);
+        Platform.runLater(() -> {
+            editbox.setVisible(false);
+            ID.setCellValueFactory(new PropertyValueFactory<Subject, Long>("id"));
+            Caption.setCellValueFactory(new PropertyValueFactory<Subject, String>("caption"));
+            Active.setCellValueFactory(new PropertyValueFactory<Subject, Boolean>("active"));
+    
+            SubjectTableview.getItems().setAll(getSubject(true));
+        });   
         // We need a StringConverter in order to ensure the selected item is displayed properly
         // For this sample, we only want the Person's name to be displayed
        
@@ -52,15 +59,9 @@ public class SubjectController implements Initializable {
             SubjectTableview.getItems().setAll(getSubject(!chkToogleSubject.isSelected()));
         });
 
-        Platform.runLater(() -> {
 
-        });
 
-        ID.setCellValueFactory(new PropertyValueFactory<Subject, Long>("id"));
-        Caption.setCellValueFactory(new PropertyValueFactory<Subject, String>("caption"));
-        Active.setCellValueFactory(new PropertyValueFactory<Subject, Boolean>("active"));
-
-        SubjectTableview.getItems().setAll(getSubject(true));
+       
         SubjectTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {

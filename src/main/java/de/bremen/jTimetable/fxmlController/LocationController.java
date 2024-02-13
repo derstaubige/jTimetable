@@ -21,50 +21,62 @@ public class LocationController implements Initializable {
     Location location;
     SQLConnectionManager sqlConnectionManager;
 
-    @FXML    private TableView<Location> LocationTableview;
-    @FXML    private TableColumn<Location, Long> ID;
-    @FXML    private TableColumn<Location, String> Caption;
-    @FXML    private TableColumn<Location, Boolean> Active;
-    @FXML    private Button btnLocationEdit;
-    @FXML    private Button btnLocationNew;
-    @FXML    private CheckBox chkToogleLocation;
-    @FXML    private VBox editbox;
-    @FXML private TextField txtID;
-    @FXML private TextField txtCaption;
-    @FXML private CheckBox chkActive;
-    @FXML private Button btnSave;
+    @FXML
+    private TableView<Location> LocationTableview;
+    @FXML
+    private TableColumn<Location, Long> ID;
+    @FXML
+    private TableColumn<Location, String> Caption;
+    @FXML
+    private TableColumn<Location, Boolean> Active;
+    @FXML
+    private Button btnLocationEdit;
+    @FXML
+    private Button btnLocationNew;
+    @FXML
+    private CheckBox chkToogleLocation;
+    @FXML
+    private VBox editbox;
+    @FXML
+    private TextField txtID;
+    @FXML
+    private TextField txtCaption;
+    @FXML
+    private CheckBox chkActive;
+    @FXML
+    private Button btnSave;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources)  {
-        editbox.setVisible(false);
-        // We need a StringConverter in order to ensure the selected item is displayed properly
+    public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(() -> {
+            editbox.setVisible(false);
+            ID.setCellValueFactory(new PropertyValueFactory<Location, Long>("id"));
+            Caption.setCellValueFactory(new PropertyValueFactory<Location, String>("Caption"));
+            Active.setCellValueFactory(new PropertyValueFactory<Location, Boolean>("active"));
+
+            LocationTableview.getItems().setAll(getLocation(true));
+        });
+
+        // We need a StringConverter in order to ensure the selected item is displayed
+        // properly
         // For this sample, we only want the Person's name to be displayed
-       
-        btnSave.setOnAction(event ->{
+
+        btnSave.setOnAction(event -> {
             this.location.setCaption(txtCaption.getText());
             this.location.setActive(chkActive.isSelected());
             try {
                 this.location.save();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             editbox.setVisible(false);
             LocationTableview.getItems().setAll(getLocation(!chkToogleLocation.isSelected()));
         });
 
-        Platform.runLater(() -> {
-
-        });
-
-        ID.setCellValueFactory(new PropertyValueFactory<Location, Long>("id"));
-        Caption.setCellValueFactory(new PropertyValueFactory<Location, String>("Caption"));
-        Active.setCellValueFactory(new PropertyValueFactory<Location, Boolean>("active"));
-
-        LocationTableview.getItems().setAll(getLocation(true));
         LocationTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
-                //SingleClick: Editor is opened
+                // SingleClick: Editor is opened
                 if (click.getClickCount() == 1) {
                     btnLocationEdit.fire();
                 }
@@ -87,7 +99,7 @@ public class LocationController implements Initializable {
         });
 
         btnLocationNew.setOnAction(event -> {
-            try{
+            try {
                 this.location = new Location(0L, getSqlConnectionManager());
 
                 txtID.setText(this.location.getId().toString());
@@ -97,10 +109,9 @@ public class LocationController implements Initializable {
 
                 editbox.setVisible(true);
 
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-
 
         });
 
@@ -114,7 +125,7 @@ public class LocationController implements Initializable {
         try {
             activeLocation = Location.getAllLocations(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
-            //TODo: better error handling
+            // TODo: better error handling
             e.printStackTrace();
         }
         return activeLocation;
@@ -127,5 +138,5 @@ public class LocationController implements Initializable {
     public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
     }
-    
+
 }

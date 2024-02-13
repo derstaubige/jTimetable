@@ -1,5 +1,7 @@
 package de.bremen.jTimetable.fxmlController;
 
+import javafx.application.Platform;
+
 //import de.bremen.jTimetable.Resources.Resources_de;
 
 import javafx.collections.ObservableList;
@@ -57,17 +59,19 @@ public class HomeController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        Platform.runLater(() -> {
+            CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
+            CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
+            CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPStudySection"));
+            CPDescription.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("description"));
+            CPStart.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("start"));
+            CPEnd.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("end"));
+            CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
+
+            CoursepassTableview.getItems().setAll(getCoursepass(true));
+        });
         // ToDo: Read prefered language out of config.properties file
 
-        CPID.setCellValueFactory(new PropertyValueFactory<CoursePass, Long>("id"));
-        CPCOSCaption.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("courseOfStudyCaption"));
-        CPstudysection.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("CPStudySection"));
-        CPDescription.setCellValueFactory(new PropertyValueFactory<CoursePass, String>("description"));
-        CPStart.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("start"));
-        CPEnd.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("end"));
-        CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
-
-        CoursepassTableview.getItems().setAll(getCoursepass(true));
         btnTimetableShow.setOnAction(event -> {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
@@ -81,7 +85,8 @@ public class HomeController implements Initializable {
                 stage.setScene(new Scene(loader.load()));
                 TimetableViewController timetableViewController = loader.getController();
                 timetableViewController.setSqlConnectionManager(getSqlConnectionManager());
-                timetableViewController.initDataCoursepass(new CoursePass((selectedItems.get(0).getId()),getSqlConnectionManager()));
+                timetableViewController
+                        .initDataCoursepass(new CoursePass((selectedItems.get(0).getId()), getSqlConnectionManager()));
                 stage.show();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -90,7 +95,7 @@ public class HomeController implements Initializable {
         CoursepassTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
-                //DoubleClick: Editor is opened
+                // DoubleClick: Editor is opened
                 if (click.getClickCount() == 2) {
                     btnCoursepassEdit.fire();
                 }
@@ -102,18 +107,19 @@ public class HomeController implements Initializable {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
             if (selectedItems.size() > 0) {
-                //System.out.println(selectedItems.get(0).getId());
+                // System.out.println(selectedItems.get(0).getId());
                 Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
 
                 try {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
                     CoursepassController coursepassController = loader.<CoursepassController>getController();
-                    coursepassController.setCoursepass(new CoursePass(selectedItems.get(0).getId(), getSqlConnectionManager()));
+                    coursepassController
+                            .setCoursepass(new CoursePass(selectedItems.get(0).getId(), getSqlConnectionManager()));
                     Scene scene = new Scene(anchorPane);
                     stageTheEventSourceNodeBelongs.setScene(scene);
                 } catch (Exception e) {
-                    //TODo: Propper Error handling
+                    // TODo: Propper Error handling
                     e.printStackTrace();
                 }
             }
@@ -125,28 +131,24 @@ public class HomeController implements Initializable {
 
     }
 
-
     public ArrayList<CoursePass> getCoursepass(Boolean activeState) {
         ArrayList<CoursePass> activeCoursepass = new ArrayList<CoursePass>();
         try {
             activeCoursepass = CoursePass.getCoursePasses(activeState, getSqlConnectionManager());
         } catch (SQLException e) {
-            //TODo: better error handling
+            // TODo: better error handling
             e.printStackTrace();
 
         }
         return activeCoursepass;
     }
 
-
     public SQLConnectionManager getSqlConnectionManager() {
         return sqlConnectionManager;
     }
-
 
     public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
     }
 
-    
 }

@@ -48,7 +48,14 @@ public class StudySectionController implements Initializable {
 
     @Override
     public void initialize(URL StudySection, ResourceBundle resources) {
-        editbox.setVisible(false);
+        Platform.runLater(() -> {
+            editbox.setVisible(false);
+            ID.setCellValueFactory(new PropertyValueFactory<StudySection, Long>("id"));
+            Description.setCellValueFactory(new PropertyValueFactory<StudySection, String>("description"));
+            Active.setCellValueFactory(new PropertyValueFactory<StudySection, Boolean>("active"));
+    
+            StudySectionTableview.getItems().setAll(getStudySection(true));
+        });
         // We need a StringConverter in order to ensure the selected item is displayed
         // properly
         // For this sample, we only want the Person's name to be displayed
@@ -65,15 +72,6 @@ public class StudySectionController implements Initializable {
             StudySectionTableview.getItems().setAll(getStudySection(!chkToogleStudySection.isSelected()));
         });
 
-        Platform.runLater(() -> {
-
-        });
-
-        ID.setCellValueFactory(new PropertyValueFactory<StudySection, Long>("id"));
-        Description.setCellValueFactory(new PropertyValueFactory<StudySection, String>("description"));
-        Active.setCellValueFactory(new PropertyValueFactory<StudySection, Boolean>("active"));
-
-        StudySectionTableview.getItems().setAll(getStudySection(true));
         StudySectionTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {

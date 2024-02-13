@@ -46,15 +46,18 @@ public class CoursepassLecturerSubjectController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources)  {
-        TCID.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("id"));
-        TCLecturer.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("LecturerFullname"));
-        TCSubject.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("SubjectCaption"));
-        TCShouldHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("shouldHours"));
-        TCisHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("isHours"));
-        TCPlanedHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("planedHours"));
-        CPActive.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Boolean>("active"));
+        Platform.runLater(() -> {
+            TCID.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("id"));
+            TCLecturer.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("LecturerFullname"));
+            TCSubject.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("SubjectCaption"));
+            TCShouldHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("shouldHours"));
+            TCisHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("isHours"));
+            TCPlanedHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("planedHours"));
+            CPActive.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Boolean>("active"));
+        });
 
         editbox.setVisible(false);
+
         cmbSubject.setConverter(new StringConverter<Subject>() {
             @Override
             public String toString(Subject subject) {
@@ -70,6 +73,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 return null;
             }
         });
+
         cmbSubject.setCellFactory(cell -> new ListCell<Subject>() {
 
             // Create our layout here to be reused for each ListCell
@@ -108,6 +112,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 }
             }
         });
+
         cmbLecturer.setConverter(new StringConverter<Lecturer>() {
             @Override
             public String toString(Lecturer lecturer) {
@@ -123,6 +128,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 return null;
             }
         });
+
         cmbLecturer.setCellFactory(cell -> new ListCell<Lecturer>() {
 
             // Create our layout here to be reused for each ListCell
