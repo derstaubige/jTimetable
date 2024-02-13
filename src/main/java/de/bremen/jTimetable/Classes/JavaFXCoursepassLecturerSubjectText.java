@@ -1,14 +1,18 @@
 package de.bremen.jTimetable.Classes;
 
+import java.util.ResourceBundle;
+
 import javafx.scene.text.Text;
 
 public class JavaFXCoursepassLecturerSubjectText extends Text {
 
     CoursepassLecturerSubject coursepassLecturerSubject;
+    private ResourceBundle resourceBundle;
 
-    public JavaFXCoursepassLecturerSubjectText(CoursepassLecturerSubject pCoursepassLexturerSubject){
+    public JavaFXCoursepassLecturerSubjectText(CoursepassLecturerSubject pCoursepassLexturerSubject, ResourceBundle resourceBundle){
         super("");
         this.coursepassLecturerSubject = pCoursepassLexturerSubject;
+        this.resourceBundle = resourceBundle;
         super.setText(getTimetableTexts());
     }
 
@@ -20,10 +24,10 @@ public class JavaFXCoursepassLecturerSubjectText extends Text {
         Long tmpSumHours = coursepassLecturerSubject.getShouldHours() - coursepassLecturerSubject.getIsHours() -
                 coursepassLecturerSubject.getPlanedHours();
         String tmp = coursepassLecturerSubject.subject.getCaption() + "\r\n" +
-                coursepassLecturerSubject.lecturer.getLecturerFullName() + "\r\n Shouldhours " +
-                coursepassLecturerSubject.getShouldHours() + "\r\n Is Hours " +
-                coursepassLecturerSubject.getIsHours() + "\r\n Planed Hours " +
-                coursepassLecturerSubject.getPlanedHours() + "\r\n Not planned Hours " + tmpSumHours;
+                coursepassLecturerSubject.lecturer.getLecturerFullName() + "\r\n " + resourceBundle.getString("javaFXCoursepassLecturerSubjectText.shouldHours") + " " +
+                coursepassLecturerSubject.getShouldHours() + "\r\n " + resourceBundle.getString("javaFXCoursepassLecturerSubjectText.isHours") + " " +
+                coursepassLecturerSubject.getIsHours() + "\r\n " + resourceBundle.getString("javaFXCoursepassLecturerSubjectText.planedHours") + " " +
+                coursepassLecturerSubject.getPlanedHours() + "\r\n " + resourceBundle.getString("javaFXCoursepassLecturerSubjectText.notplanedHours") + " " + tmpSumHours;
 //        System.out.println(tmp);
         return tmp;
     }

@@ -45,6 +45,7 @@ public class TimetableViewController implements Initializable {
     private Timetable timetable;
     private CoursePass coursepass;
     private SQLConnectionManager sqlConnectionManager;
+    private ResourceBundle resourceBundle;
 
     /**
      * Can be called to hand parameters from the calling class to this controller.
@@ -221,7 +222,7 @@ public class TimetableViewController implements Initializable {
             coursepass.updateCoursePassLecturerSubjects();
 
             for (CoursepassLecturerSubject cls : coursepass.getArrayCoursePassLecturerSubject()) {
-                Text tmpText = new JavaFXCoursepassLecturerSubjectText(cls);
+                Text tmpText = new JavaFXCoursepassLecturerSubjectText(cls, resourceBundle);
 
                 // enables the text to be dragged
                 // drag was detected, start a drag-and-drop gesture
@@ -363,6 +364,7 @@ public class TimetableViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
     }
 
     /**
