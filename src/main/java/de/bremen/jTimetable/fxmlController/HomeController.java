@@ -114,12 +114,12 @@ public class HomeController implements Initializable {
                 // System.out.println(selectedItems.get(0).getId());
                 Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Coursepass.fxml"), resources);
-
                 try {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
                     CoursepassController coursepassController = loader.<CoursepassController>getController();
                     coursepassController
                             .setCoursepass(new CoursePass(selectedItems.get(0).getId(), getSqlConnectionManager()));
+                    coursepassController.setSqlConnectionManager(getSqlConnectionManager());
                     Scene scene = new Scene(anchorPane);
                     stageTheEventSourceNodeBelongs.setScene(scene);
                 } catch (Exception e) {
