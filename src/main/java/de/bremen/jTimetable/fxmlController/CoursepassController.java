@@ -362,10 +362,10 @@ public class CoursepassController implements Initializable {
             if (selectedItems.size() > 0) {
                 this.coursepass = selectedItems.get(0);
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Want to delete Timetable for " + coursepass.getDescription());
+                alert.setTitle(resources.getString("coursepass.deletdialog.confirmtitle") + " " + coursepass.getDescription());
                 alert.setHeaderText("");
                 alert.setContentText(
-                        "Realy want to delete the Timetable for " + coursepass.getCourseOfStudy().getCaption()
+                        resources.getString("coursepass.deletdialog.confirmmessage") + coursepass.getCourseOfStudy().getCaption()
                                 + " " + coursepass.getStudySection().getDescription() + "?");
                 alert.showAndWait().ifPresent(rs -> {
                     if (rs == ButtonType.OK) {
@@ -373,9 +373,9 @@ public class CoursepassController implements Initializable {
                         timetable.deleteTimetable();
 
                         alert.setAlertType(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Success");
-                        alert.setContentText("The Timetable for " + coursepass.getCourseOfStudy().getCaption()
-                                + " " + coursepass.getStudySection().getDescription() + " has been deleted.");
+                        alert.setTitle(resources.getString("coursepass.deletdialog.successtitle"));
+                        alert.setContentText(resources.getString("coursepass.deletdialog.successmessage1") + " " + coursepass.getCourseOfStudy().getCaption()
+                                + " " + coursepass.getStudySection().getDescription() + " " + resources.getString("coursepass.deletdialog.successmessage2"));
                         alert.show();
 
                     }
