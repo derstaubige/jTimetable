@@ -77,9 +77,9 @@ public class CoursepassController implements Initializable {
     private Button btnInitialTimetable;
     @FXML
     private Button btnDeleteTimetable;
-    @FXML 
+    @FXML
     private MenuController mainMenuController;
-    
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -93,10 +93,10 @@ public class CoursepassController implements Initializable {
             CPStart.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("start"));
             CPEnd.setCellValueFactory(new PropertyValueFactory<CoursePass, LocalDate>("end"));
             CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
-    
+
             CoursepassTableview.getItems().setAll(getCoursepass(true));
         });
-        
+
         // We need a StringConverter in order to ensure the selected item is displayed
         // properly
         // For this sample, we only want the Person's name to be displayed
@@ -229,7 +229,6 @@ public class CoursepassController implements Initializable {
             CoursepassTableview.getItems().setAll(getCoursepass(!chkToogleCoursepass.isSelected()));
         });
 
-        
         CoursepassTableview.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
@@ -242,19 +241,22 @@ public class CoursepassController implements Initializable {
                     TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview
                             .getSelectionModel();
                     ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
                     Stage stage = new Stage(StageStyle.DECORATED);
+                    stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
+                            selectedItems.get(0).getStudySection().getDescription());
                     URL url = Main.class.getResource("fxml/TimetableView.fxml");
                     loader.setLocation(url);
                     try {
                         stage.setScene(new Scene(loader.load()));
-                        stage.setTitle("Timetable");
-                        TimetableViewController controller = loader.getController();
-                        controller.initDataCoursepass(
-                                new CoursePass((selectedItems.get(0).getId()), getSqlConnectionManager()));
+                        TimetableViewController timetableViewController = loader.getController();
+                        timetableViewController.setSqlConnectionManager(getSqlConnectionManager());
+                        timetableViewController
+                                .initDataCoursepass(
+                                        new CoursePass((selectedItems.get(0).getId()), getSqlConnectionManager()));
                         stage.show();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -270,6 +272,7 @@ public class CoursepassController implements Initializable {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
                     CoursepassLecturerSubjectController coursepassLecturerSubjectController = loader
                             .<CoursepassLecturerSubjectController>getController();
+                    coursepassLecturerSubjectController.setSqlConnectionManager(getSqlConnectionManager());
                     coursepassLecturerSubjectController
                             .setCoursepass(new CoursePass(selectedItems.get(0).getId(), getSqlConnectionManager()));
                     Scene scene = new Scene(anchorPane);
@@ -353,6 +356,11 @@ public class CoursepassController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle(resources.getString("coursepass.inittimetable.successtitle"));
+                alert.setContentText(resources.getString("coursepass.inittimetable.successmessage"));
+                alert.show();
             }
         });
 
@@ -362,10 +370,12 @@ public class CoursepassController implements Initializable {
             if (selectedItems.size() > 0) {
                 this.coursepass = selectedItems.get(0);
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle(resources.getString("coursepass.deletdialog.confirmtitle") + " " + coursepass.getDescription());
+                alert.setTitle(
+                        resources.getString("coursepass.deletdialog.confirmtitle") + " " + coursepass.getDescription());
                 alert.setHeaderText("");
                 alert.setContentText(
-                        resources.getString("coursepass.deletdialog.confirmmessage") + coursepass.getCourseOfStudy().getCaption()
+                        resources.getString("coursepass.deletdialog.confirmmessage")
+                                + coursepass.getCourseOfStudy().getCaption()
                                 + " " + coursepass.getStudySection().getDescription() + "?");
                 alert.showAndWait().ifPresent(rs -> {
                     if (rs == ButtonType.OK) {
@@ -374,8 +384,10 @@ public class CoursepassController implements Initializable {
 
                         alert.setAlertType(Alert.AlertType.INFORMATION);
                         alert.setTitle(resources.getString("coursepass.deletdialog.successtitle"));
-                        alert.setContentText(resources.getString("coursepass.deletdialog.successmessage1") + " " + coursepass.getCourseOfStudy().getCaption()
-                                + " " + coursepass.getStudySection().getDescription() + " " + resources.getString("coursepass.deletdialog.successmessage2"));
+                        alert.setContentText(resources.getString("coursepass.deletdialog.successmessage1") + " "
+                                + coursepass.getCourseOfStudy().getCaption()
+                                + " " + coursepass.getStudySection().getDescription() + " "
+                                + resources.getString("coursepass.deletdialog.successmessage2"));
                         alert.show();
 
                     }
