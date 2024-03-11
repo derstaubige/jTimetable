@@ -26,7 +26,7 @@
                         <rowConstraints>
                             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                         </rowConstraints>
-                        <Label fx:id="savetofile" onMouseClicked="#savetoFileClicked" minHeight="122.0" minWidth="112.0" text="%timetableview.btnsavetofile" textAlignment="CENTER" GridPane.columnIndex="0">
+                        <Label fx:id="savetofile" onMouseClicked="#savetoFileClicked" text="%timetableview.btnsavetofile" textAlignment="CENTER" GridPane.columnIndex="0">
                             <font>
                                 <Font size="14.0" />
                             </font>

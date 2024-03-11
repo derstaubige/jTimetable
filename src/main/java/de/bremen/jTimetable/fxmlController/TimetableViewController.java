@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import de.bremen.jTimetable.Classes.*;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
@@ -28,19 +29,23 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TimetableViewController implements Initializable {
 
     @FXML
     public GridPane grdpn_TimetableView;
-    @FXML public ScrollPane scrollpane_TimetableView;
+    @FXML
+    public ScrollPane scrollpane_TimetableView;
     @FXML
     public AnchorPane anchorpane_Editbox;
     @FXML
     public GridPane grdpn_Editbox;
     @FXML
     public Label savetofile;
+    @FXML
+    private Label lbl_Slot1;
 
     private Timetable timetable;
     private CoursePass coursepass;
@@ -191,7 +196,8 @@ public class TimetableViewController implements Initializable {
                                 grdpn_TimetableView.getChildren().remove(target);
                                 grdpn_TimetableView
                                         .add(new JavaFXTimetableHourText(source.getCoursepassLecturerSubject(),
-                                                target.getDay(), target.getTimeslot(), getSqlConnectionManager()), TargetCol, TargetRow);
+                                                target.getDay(), target.getTimeslot(), getSqlConnectionManager()),
+                                                TargetCol, TargetRow);
                                 updateEditboxItems();
                             }
                         }
@@ -291,13 +297,15 @@ public class TimetableViewController implements Initializable {
                     LocalDate tmpDate = source.getDay();
                     Integer tmpTimeslot = source.getTimeslot();
                     try {
-                        CoursepassLecturerSubject tmpcoursepassLecturerSubject = new CoursepassLecturerSubject(0L, getSqlConnectionManager());
+                        CoursepassLecturerSubject tmpcoursepassLecturerSubject = new CoursepassLecturerSubject(0L,
+                                getSqlConnectionManager());
                         tmpcoursepassLecturerSubject
                                 .setCoursepass(source.getCoursepassLecturerSubject().getCoursepass());
                         grdpn_TimetableView.getChildren().remove(source);
 
                         grdpn_TimetableView.add(
-                                new JavaFXTimetableHourText(tmpcoursepassLecturerSubject, tmpDate, tmpTimeslot, getSqlConnectionManager()),
+                                new JavaFXTimetableHourText(tmpcoursepassLecturerSubject, tmpDate, tmpTimeslot,
+                                        getSqlConnectionManager()),
                                 SourceCol, SourceRow);
 
                         // save freetime
@@ -319,6 +327,11 @@ public class TimetableViewController implements Initializable {
         // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
+        LocalDate date = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        fileChooser.setInitialFileName(coursepass.getCourseOfStudyCaption() + "_" + date.format(formatter));
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Text Files", "*.csv"));
         File file = fileChooser.showSaveDialog(new Stage());
         if (file != null) {
             try {
@@ -422,7 +435,7 @@ public class TimetableViewController implements Initializable {
         // sqlConnectionManager.close();
     }
 
-    public void markNewCLS(List<JavaFXTimetableHourText> timetableHourTexts, Lecturer givingLecturer){
+    public void markNewCLS(List<JavaFXTimetableHourText> timetableHourTexts, Lecturer givingLecturer) {
         givingLecturer.updateLecturerResourcesBlocked();
         for (JavaFXTimetableHourText checkingTimetableHourText : timetableHourTexts) {
 
@@ -485,7 +498,8 @@ public class TimetableViewController implements Initializable {
 
             try {
                 // check if all lectures are avaidable at the "giving" time
-                if (Lecturer.checkLecturerAvailability(lecturer.getId(), tmpText.getDay(), tmpText.getTimeslot(), getSqlConnectionManager())) {
+                if (Lecturer.checkLecturerAvailability(lecturer.getId(), tmpText.getDay(), tmpText.getTimeslot(),
+                        getSqlConnectionManager())) {
                     freeLecturers.add(lecturer);
                 } else {
                     // if not put lecturer in notavaidable list
@@ -548,5 +562,5 @@ public class TimetableViewController implements Initializable {
     public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
     }
-    
+
 }

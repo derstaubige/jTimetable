@@ -280,6 +280,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 coursepassController.setSqlConnectionManager(getSqlConnectionManager());
                 Scene scene = new Scene(anchorPane);
                 stageTheEventSourceNodeBelongs.setScene(scene);
+                coursepassController.setCoursepass(coursepass);
             } catch (Exception e) {
                 // TODo: Propper Error handling
                 e.printStackTrace();
