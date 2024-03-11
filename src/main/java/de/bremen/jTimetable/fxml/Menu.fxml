@@ -9,10 +9,6 @@
             <Menu styleClass="MenuItem" text="%menu.file">
                 <items>
                     <MenuItem onAction="#openHome" text="%menu.file.home" />
-<!--                    <MenuItem text="Open"/>-->
-<!--                    <MenuItem text="Save"/>-->
-<!--                    <MenuItem text="Save As"/>-->
-<!--                    <SeparatorMenuItem  />-->
                     <MenuItem onAction="#closeButtonAction" text="%menu.file.exit" />
                 </items>
             </Menu>
@@ -25,14 +21,6 @@
                 <MenuItem onAction="#openLocation" text="%menu.entitiys.locations" />
                 <MenuItem onAction="#openStudySection" text="%menu.entitiys.StudySections" />
             </Menu>
-<!--            <Menu text="Help">-->
-<!--                <items>-->
-<!--                    <MenuItem text="Search" disable="true"/>-->
-<!--                    <MenuItem text="Online Manual" visible="false"/>-->
-<!--                    <SeparatorMenuItem />-->
-<!--                    <MenuItem text="About"  onAction="#handleAboutAction"/>-->
-<!--                </items>-->
-<!--            </Menu>-->
         </menus>
     </MenuBar>
 </VBox>
