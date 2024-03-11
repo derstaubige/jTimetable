@@ -31,6 +31,7 @@ import java.util.ResourceBundle;
 public class CoursepassController implements Initializable {
     CoursePass coursepass;
     SQLConnectionManager sqlConnectionManager;
+
     @FXML
     private ComboBox<CourseofStudy> cmbCourseofStudy;
     @FXML
@@ -97,6 +98,12 @@ public class CoursepassController implements Initializable {
             CPActive.setCellValueFactory(new PropertyValueFactory<CoursePass, Boolean>("active"));
 
             CoursepassTableview.getItems().setAll(getCoursepass(true));
+
+            // We should mark the selected Coursepass now
+            if (this.coursepass != null) {
+                markCoursepass(coursepass);
+                btnCoursepassEdit.fire();
+            }
         });
 
         // We need a StringConverter in order to ensure the selected item is displayed
@@ -425,6 +432,18 @@ public class CoursepassController implements Initializable {
 
     public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
+    }
+
+    private void markCoursepass(CoursePass coursePass) {
+        ObservableList<CoursePass> itemList = CoursepassTableview.getItems();
+        TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
+        CoursepassTableview.requestFocus();
+        for (int i = 0; i < itemList.size(); i++) {
+            if (coursePass.equals(itemList.get(i))) {
+                selectionModel.select(i);
+            }
+        }
+        CoursepassTableview.getFocusModel().focus(0);
     }
 
 }

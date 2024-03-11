@@ -135,6 +135,6 @@ public class SQLConnectionManager implements AutoCloseable{
         } catch (Exception e) {
             //TODO handle exception
             e.printStackTrace();
-        }
+        } 
     }
 }

@@ -407,4 +407,7 @@ public class CoursePass {
         this.sqlConnectionManager = sqlConnectionManager;
     }
     
+    @Override public boolean equals(Object o) {
+        return (o instanceof CoursePass) && (this.id == ((CoursePass) o).id);
+    }    
 }
