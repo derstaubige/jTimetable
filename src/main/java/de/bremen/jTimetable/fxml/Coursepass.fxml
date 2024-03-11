@@ -34,6 +34,7 @@
                             <Button fx:id="btnCoursepassEdit" text="%button.edit"></Button>
                             <Button fx:id="btnCoursepassNew" text="%button.new"></Button>
                             <CheckBox fx:id="chkToogleCoursepass" text="%chkbox.ToogleInactive"></CheckBox>
+                            <Button fx:id="btnShowTimetable" text="%coursepass.btnShowTimetable"></Button>
                             <Button fx:id="btnEditCLS" text="%coursepass.btnEditCLS"></Button>
                             <Button fx:id="btnInitialTimetable" text="%coursepass.btnInitialTimetable"></Button>
                             <Button fx:id="btnDeleteTimetable" text="%coursepass.btnDeleteTimetable"></Button>
