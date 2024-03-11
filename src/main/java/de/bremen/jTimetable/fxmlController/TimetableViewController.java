@@ -258,7 +258,7 @@ public class TimetableViewController implements Initializable {
 
                 grdpn_Editbox.add(tmpText, tmpColIdx, tmpRowIdx);
                 tmpColIdx++;
-                if (tmpColIdx > 9) {
+                if (tmpColIdx > timetable.getMaxTimeslots()) {
                     tmpColIdx = 0;
                     tmpRowIdx++;
                 }
