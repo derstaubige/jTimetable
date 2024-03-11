@@ -94,8 +94,6 @@ public class LecturerController implements Initializable {
     private Button btnSave;
     @FXML
     private Button btnShowTimetable;
-    @FXML
-    private ScrollPane scrollPane;
     @FXML 
     private MenuController mainMenuController;
     

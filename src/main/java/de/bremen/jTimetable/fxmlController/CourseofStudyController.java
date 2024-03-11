@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import de.bremen.jTimetable.Classes.CourseofStudy;
 import de.bremen.jTimetable.Classes.SQLConnectionManager;
 
@@ -55,9 +56,12 @@ public class CourseofStudyController implements Initializable {
     private HBox editbox;
     @FXML 
     private MenuController mainMenuController;
+    @FXML private VBox vBox;
+    @FXML private HBox hBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        
         Platform.runLater(() -> {
             mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             editbox.setVisible(false);

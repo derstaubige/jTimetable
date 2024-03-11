@@ -8,7 +8,7 @@
 
     <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
-    <VBox prefHeight="796.0" prefWidth="984.0" styleClass="vbx" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+    <VBox AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
         <children>
             <Label fx:id="lblActiveCoursepasses" text="%home.lblActiveCoursepasses" />
             <HBox prefHeight="761.0" prefWidth="1000.0">

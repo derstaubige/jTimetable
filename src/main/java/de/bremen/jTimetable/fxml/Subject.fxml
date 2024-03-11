@@ -10,13 +10,13 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="de.bremen.jTimetable.fxmlController.SubjectController"
             prefHeight="400.0" prefWidth="800.0" minWidth="800">
-    <ScrollPane>
-        <VBox >
-            <children>
+
                 <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <VBox spacing="10.0"  AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+            <children>
 
                 <Label text="%subject.title"></Label>
-                <HBox>
+                <HBox spacing="10">
                     <children>
                         <TableView fx:id="SubjectTableview" minWidth="800">
                             <columns>
@@ -25,7 +25,7 @@
                                 <TableColumn text="%subject.SubjectTableview.active" fx:id="Active"></TableColumn>
                             </columns>
                         </TableView>
-                        <VBox minWidth="200">
+                        <VBox minWidth="200" spacing="10">
 
                             <Button fx:id="btnSubjectEdit" text="%button.edit">Edit</Button>
                             <Button fx:id="btnSubjectNew" text="%button.new">New</Button>
@@ -34,24 +34,23 @@
                         </VBox>
                     </children>
                 </HBox>
-                <VBox fx:id="editbox">
+                <VBox fx:id="editbox" spacing="10">
 
-                    <HBox>
+                    <HBox spacing="10">
                         <Label text="%subject.editbox.id"></Label><TextField fx:id="txtID"></TextField>
                     </HBox>
-                    <HBox>
+                    <HBox spacing="10">
                         <Label text="%subject.editbox.caption"></Label><TextField fx:id="txtCaption"></TextField>
                     </HBox>
-                    <HBox>
+                    <HBox spacing="10">
                         <Label text="%subject.editbox.active"></Label><CheckBox fx:id="chkActive"></CheckBox>
                     </HBox>
-                    <HBox>
+                    <HBox spacing="10">
                         <Button fx:id="btnSave" text="%button.save"></Button>
                     </HBox>
 
                 </VBox>
             </children>
         </VBox>
-    </ScrollPane>
 
 </AnchorPane>
