@@ -7,17 +7,16 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.text.Text?>
-<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.CoursepassLecturerSubjectController">
-    <ScrollPane>
-        <VBox>
+<AnchorPane xmlns="http://javafx.com/javafx/8"
+    xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.CoursepassLecturerSubjectController">
+    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
+    <VBox spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
         <children>
-            <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-
             <Label text="%cls.title" fx:id="lblCoursepassName"></Label>
-            <HBox>
+            <HBox spacing="20.0">
                 <children>
-                    <TableView fx:id="CLSTableview" minWidth="800">
+                    <TableView fx:id="CLSTableview" minWidth="800.0">
                         <columns>
                             <TableColumn text="%cls.CLSTableview.id" fx:id="TCID" visible="false"></TableColumn>
                             <TableColumn text="%cls.CLSTableview.lecturer" fx:id="TCLecturer"></TableColumn>
@@ -28,38 +27,39 @@
                             <TableColumn text="%cls.CLSTableview.active" fx:id="CPActive"></TableColumn>
                         </columns>
                     </TableView>
-                    <VBox minWidth="200">
-
+                    <VBox minWidth="200.0" spacing="10.0">
                         <Button fx:id="btnCLSEdit" text="%button.edit"></Button>
                         <Button fx:id="btnCLSNew" text="%button.new"></Button>
                         <CheckBox fx:id="chkToogleCLS" text="%chkbox.ToogleInactive"></CheckBox>
-
+                        <Button fx:id="btnCLSBack" text="%button.back"></Button>
                     </VBox>
                 </children>
             </HBox>
         </children>
-            <VBox fx:id="editbox">
-                <HBox>
-                    <Label text="%cls.editbox.id"></Label><TextField fx:id="txtID"></TextField>
-                </HBox>
-                <HBox>
-                    <Label text="%cls.editbox.lecturer"></Label><ComboBox fx:id="cmbLecturer" minWidth="400"></ComboBox>
-                </HBox>
-                <HBox>
-                    <Label text="%cls.editbox.subject"></Label><ComboBox fx:id="cmbSubject" minWidth="400"></ComboBox>
-                </HBox>
-                <HBox>
-                    <Label text="%cls.editbox.shouldHours"></Label><TextField fx:id="txtShouldHours"></TextField>
-                </HBox>
-                <HBox>
-                    <Label text="%cls.editbox.active"></Label><CheckBox fx:id="chkActive"></CheckBox>
-                </HBox>
-                <HBox>
-                    <Button fx:id="btnSave" text="%button.save"></Button>
-                </HBox>
-            </VBox>
-
+        <VBox fx:id="editbox" spacing="10.0">
+            <HBox spacing="10.0">
+                <Label text="%cls.editbox.id"></Label>
+                <TextField fx:id="txtID"></TextField>
+            </HBox>
+            <HBox spacing="10.0">
+                <Label text="%cls.editbox.lecturer"></Label>
+                <ComboBox fx:id="cmbLecturer" minWidth="400"></ComboBox>
+            </HBox>
+            <HBox spacing="10.0">
+                <Label text="%cls.editbox.subject"></Label>
+                <ComboBox fx:id="cmbSubject" minWidth="400"></ComboBox>
+            </HBox>
+            <HBox spacing="10.0">
+                <Label text="%cls.editbox.shouldHours"></Label>
+                <TextField fx:id="txtShouldHours"></TextField>
+            </HBox>
+            <HBox spacing="10.0">
+                <Label text="%cls.editbox.active"></Label>
+                <CheckBox fx:id="chkActive"></CheckBox>
+            </HBox>
+            <HBox spacing="10.0">
+                <Button fx:id="btnSave" text="%button.save"></Button>
+            </HBox>
         </VBox>
-    </ScrollPane>
-
+    </VBox>
 </AnchorPane>

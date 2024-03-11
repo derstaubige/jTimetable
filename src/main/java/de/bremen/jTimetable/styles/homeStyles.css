@@ -1,5 +1,7 @@
 .root {
--fx-background-image: url("../img/HdR_Schraeg_von_vorne.jpg");
+-fx-background-image: url("../img/Finanzamt_(Haus_des_Reichs)_in_Bremen,_2023.jpg");
+-fx-background-repeat: no-repeat;
+-fx-background-size: contain;
 }
 .vbx {
 -fx-background-color: transparent;

@@ -36,7 +36,7 @@ public class Timetable {
     private ArrayList<Lecturer> lecturers;
 
     // Set the maximum Timeslotcount to fill the timetable with freetimes
-    private Integer maxTimeslots = 9;
+    private Integer maxTimeslots = 5;
     private SQLConnectionManager sqlConnectionManager;
 
     /**
@@ -430,4 +430,8 @@ public class Timetable {
         this.sqlConnectionManager = sqlConnectionManager;
     }
 
+    public Integer getMaxTimeslots() {
+        return maxTimeslots;
+    }
+    
 }

@@ -48,6 +48,8 @@ public class CoursepassController implements Initializable {
     @FXML
     private Button btnSave;
     @FXML
+    private Button btnShowTimetable;
+    @FXML
     private TableView<CoursePass> CoursepassTableview;
     @FXML
     private TableColumn<CoursePass, Long> CPID;
@@ -236,31 +238,32 @@ public class CoursepassController implements Initializable {
                 if (click.getClickCount() == 1) {
                     btnCoursepassEdit.fire();
                 }
-                // DoubleClick: Timetable is shown
-                if (click.getClickCount() == 2) {
-                    TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview
-                            .getSelectionModel();
-                    ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
-                    Stage stage = new Stage(StageStyle.DECORATED);
-                    stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
-                            selectedItems.get(0).getStudySection().getDescription());
-                    URL url = Main.class.getResource("fxml/TimetableView.fxml");
-                    loader.setLocation(url);
-                    try {
-                        stage.setScene(new Scene(loader.load()));
-                        TimetableViewController timetableViewController = loader.getController();
-                        timetableViewController.setSqlConnectionManager(getSqlConnectionManager());
-                        timetableViewController
-                                .initDataCoursepass(
-                                        new CoursePass((selectedItems.get(0).getId()), getSqlConnectionManager()));
-                        stage.show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         });
+
+        btnShowTimetable.setOnAction(event -> {
+            TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview
+                    .getSelectionModel();
+            ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resources);
+            Stage stage = new Stage(StageStyle.DECORATED);
+            stage.setTitle("Timetable for " + selectedItems.get(0).getCourseOfStudy().getCaption() + " " +
+                    selectedItems.get(0).getStudySection().getDescription());
+            URL url = Main.class.getResource("fxml/TimetableView.fxml");
+            loader.setLocation(url);
+            try {
+                stage.setScene(new Scene(loader.load()));
+                TimetableViewController timetableViewController = loader.getController();
+                timetableViewController.setSqlConnectionManager(getSqlConnectionManager());
+                timetableViewController
+                        .initDataCoursepass(
+                                new CoursePass((selectedItems.get(0).getId()), getSqlConnectionManager()));
+                stage.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
         btnEditCLS.setOnAction(event -> {
             TableView.TableViewSelectionModel<CoursePass> selectionModel = CoursepassTableview.getSelectionModel();
             ObservableList<CoursePass> selectedItems = selectionModel.getSelectedItems();

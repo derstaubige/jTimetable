@@ -7,51 +7,44 @@
 <?import javafx.scene.layout.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="de.bremen.jTimetable.fxmlController.LocationController"
-            prefHeight="400.0" prefWidth="800.0" minWidth="800">
-    <ScrollPane>
-        <VBox >
-            <children>
-                <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-
-                <Label text="%location.title"></Label>
-                <HBox>
-                    <children>
-                        <TableView fx:id="LocationTableview" minWidth="800">
-                            <columns>
-                                <TableColumn text="%location.LocationTableview.id" fx:id="ID" visible="false"></TableColumn>
-                                <TableColumn text="%location.LocationTableview.caption" fx:id="Caption"></TableColumn>
-                                <TableColumn text="%location.LocationTableview.active" fx:id="Active"></TableColumn>
-                            </columns>
-                        </TableView>
-                        <VBox minWidth="200">
-
-                            <Button fx:id="btnLocationEdit" text="%button.edit"></Button>
-                            <Button fx:id="btnLocationNew" text="%button.new"></Button>
-                            <CheckBox fx:id="chkToogleLocation" text="%chkbox.ToogleInactive"></CheckBox>
-
-                        </VBox>
-                    </children>
+    xmlns:fx="http://javafx.com/fxml" fx:controller="de.bremen.jTimetable.fxmlController.LocationController" prefHeight="400.0" prefWidth="800.0" minWidth="800">
+    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    <VBox spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+        <children>
+            <Label text="%location.title"></Label>
+            <HBox spacing="20.0">
+                <children>
+                    <TableView fx:id="LocationTableview" minWidth="800.0">
+                        <columns>
+                            <TableColumn text="%location.LocationTableview.id" fx:id="ID" visible="false"></TableColumn>
+                            <TableColumn text="%location.LocationTableview.caption" fx:id="Caption"></TableColumn>
+                            <TableColumn text="%location.LocationTableview.active" fx:id="Active"></TableColumn>
+                        </columns>
+                    </TableView>
+                    <VBox minWidth="200.0" spacing="10">
+                        <Button fx:id="btnLocationEdit" text="%button.edit"></Button>
+                        <Button fx:id="btnLocationNew" text="%button.new"></Button>
+                        <CheckBox fx:id="chkToogleLocation" text="%chkbox.ToogleInactive"></CheckBox>
+                    </VBox>
+                </children>
+            </HBox>
+            <VBox fx:id="editbox" spacing="10">
+                <HBox spacing="10">
+                    <Label text="%location.editbox.id"></Label>
+                    <TextField fx:id="txtID"></TextField>
                 </HBox>
-                <VBox fx:id="editbox">
-
-                    <HBox>
-                        <Label text="%location.editbox.id"></Label><TextField fx:id="txtID"></TextField>
-                    </HBox>
-                    <HBox>
-                        <Label text="%location.editbox.caption"></Label><TextField fx:id="txtCaption"></TextField>
-                    </HBox>
-                    <HBox>
-                        <Label text="%location.editbox.active"></Label><CheckBox fx:id="chkActive"></CheckBox>
-                    </HBox>
-                    <HBox>
-                        <Button fx:id="btnSave" text="%button.save"></Button>
-                    </HBox>
-
-                </VBox>
-            </children>
-        </VBox>
-    </ScrollPane>
-
+                <HBox spacing="10">
+                    <Label text="%location.editbox.caption"></Label>
+                    <TextField fx:id="txtCaption"></TextField>
+                </HBox>
+                <HBox spacing="10">
+                    <Label text="%location.editbox.active"></Label>
+                    <CheckBox fx:id="chkActive"></CheckBox>
+                </HBox>
+                <HBox spacing="10">
+                    <Button fx:id="btnSave" text="%button.save"></Button>
+                </HBox>
+            </VBox>
+        </children>
+    </VBox>
 </AnchorPane>

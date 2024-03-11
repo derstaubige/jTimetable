@@ -29,7 +29,7 @@ public class JavaFXTimetableHourText extends Text {
             super.setText(pCoursepassLexturerSubject.getCoursepass().getDescription() + "\r\n" + pCoursepassLexturerSubject.getSubjectCaption()
                     + "\r\n" + pCoursepassLexturerSubject.getRoom().getCaption());
         }else{
-            super.setText(pCoursepassLexturerSubject.getLecturerFullname() + "\r\n" + pCoursepassLexturerSubject.getSubjectCaption()
+            super.setText(pCoursepassLexturerSubject.getSubjectCaption() + "\r\n" + pCoursepassLexturerSubject.getLecturerFullname()
                     + "\r\n" + pCoursepassLexturerSubject.getRoom().getCaption());
         }
 

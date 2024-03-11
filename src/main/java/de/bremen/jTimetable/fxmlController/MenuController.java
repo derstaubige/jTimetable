@@ -62,7 +62,7 @@ public class MenuController implements Initializable {
     @Override
     public void initialize(java.net.URL arg0, ResourceBundle arg1) {
         Platform.runLater(() ->{
-            menuBar.setFocusTraversable(true);
+            // menuBar.setFocusTraversable(true);
             this.resourceBundle = arg1;
         });        
     }

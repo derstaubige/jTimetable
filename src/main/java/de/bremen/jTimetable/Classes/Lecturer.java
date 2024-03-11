@@ -39,7 +39,7 @@ public class Lecturer {
     private Boolean active;
 
     // Array list of Blocks for this Lecturer. Does not contain ressources blocked
-    private ArrayList<LecturerBlock> lecturerBlocks;
+    private ArrayList<LecturerBlock> lecturerBlocks = new ArrayList<LecturerBlock>();
 
     // Array list of Ressorces Blocked (Classes and HOlidays and so on)
     private ArrayList<ResourcesBlocked> lecturerResourcesBlocked;
@@ -77,7 +77,7 @@ public class Lecturer {
             this.active = Boolean.TRUE;
         } else {
             // load object from db
-            try  {
+            try {
 
                 ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
                 SQLValues.add(new SQLValueLong(id));
@@ -99,16 +99,17 @@ public class Lecturer {
 
     }
 
-    public void updateLecturerResourcesBlocked(){
+    public void updateLecturerResourcesBlocked() {
         ArrayList<ResourcesBlocked> lecturerResourcesBlocks = new ArrayList<ResourcesBlocked>();
-        try  {
+        try {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
             SQLValues.add(new SQLValueLong(getId()));
             SQLValues.add(new SQLValueDate(LocalDate.now()));
 
             ResultSet rs = sqlConnectionManager
-                    .select("Select * from T_RESOURCESBLOCKED  where REFRESOURCEID = ? and RESOURCENAME  = 'LECTURER' and enddate >= ?;", SQLValues);
+                    .select("Select * from T_RESOURCESBLOCKED  where REFRESOURCEID = ? and RESOURCENAME  = 'LECTURER' and enddate >= ?;",
+                            SQLValues);
 
             while (rs.next()) {
                 lecturerResourcesBlocks.add(new ResourcesBlocked(rs.getLong("id"), getSqlConnectionManager()));
@@ -133,7 +134,7 @@ public class Lecturer {
      */
     private void updateLecturerBlocks() {
         ArrayList<LecturerBlock> lecturerBlocks = new ArrayList<LecturerBlock>();
-        try  {
+        try {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
             SQLValues.add(new SQLValueLong(getId()));
@@ -160,7 +161,7 @@ public class Lecturer {
      *                      entry doesn't work
      */
     public void save() throws SQLException {
-        try  {
+        try {
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
             SQLValues.add(new SQLValueString(this.firstname));
@@ -183,10 +184,12 @@ public class Lecturer {
 
             deleteLecturerBlocks();
 
-            for (LecturerBlock lecturerBlock : lecturerBlocks) {
-                lecturerBlock.save();
+            if (lecturerBlocks != null) {
+                for (LecturerBlock lecturerBlock : lecturerBlocks) {
+                    lecturerBlock.save();
+                }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -195,7 +198,7 @@ public class Lecturer {
      * Naiv LecturerBlocks handeling
      */
     private void deleteLecturerBlocks() {
-        try  {
+        try {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
@@ -221,7 +224,8 @@ public class Lecturer {
      * @throws SQLException will be thrown if select statement doesn't work or
      *                      accessing resultSet is invalid
      */
-    public static boolean checkLecturerAvailability(long lecturerID, LocalDate date, int timeslot, SQLConnectionManager sqlConnectionManager)
+    public static boolean checkLecturerAvailability(long lecturerID, LocalDate date, int timeslot,
+            SQLConnectionManager sqlConnectionManager)
             throws SQLException {
 
         LocalDate startDate;
@@ -229,8 +233,8 @@ public class Lecturer {
         int startTimeslot;
         int endTimeslot;
 
-        //if lecturerID == 0 (= FREETIME) we should return true
-        if(lecturerID == 0){
+        // if lecturerID == 0 (= FREETIME) we should return true
+        if (lecturerID == 0) {
             return true;
         }
 
@@ -303,7 +307,7 @@ public class Lecturer {
      * @return ArrayList with all lecturers of the given status
      */
     public static ArrayList<Lecturer> getAllLecturer(Boolean activeStatus, SQLConnectionManager sqlConnectionManager) {
-        try  {
+        try {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
             SQLValues.add(new SQLValueBoolean(activeStatus));
@@ -325,7 +329,8 @@ public class Lecturer {
      * @return arrayList of blocked resources by this lecturer
      */
     public ArrayList<ResourcesBlocked> getArrayListOfResourcesBlocked() {
-        return ResourcesBlocked.getArrayListofResourcesblocked(this.id, ResourceNames.LECTURER, getSqlConnectionManager());
+        return ResourcesBlocked.getArrayListofResourcesblocked(this.id, ResourceNames.LECTURER,
+                getSqlConnectionManager());
     }
 
     /**
@@ -464,5 +469,4 @@ public class Lecturer {
         this.sqlConnectionManager = sqlConnectionManager;
     }
 
-    
 }
