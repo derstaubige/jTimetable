@@ -33,6 +33,7 @@
                         <Button fx:id="btnCLSEdit" text="%button.edit"></Button>
                         <Button fx:id="btnCLSNew" text="%button.new"></Button>
                         <CheckBox fx:id="chkToogleCLS" text="%chkbox.ToogleInactive"></CheckBox>
+                        <Button fx:id="btnCLSBack" text="%button.back"></Button>
 
                     </VBox>
                 </children>
