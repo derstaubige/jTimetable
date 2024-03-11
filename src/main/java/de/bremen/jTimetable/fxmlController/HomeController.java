@@ -117,11 +117,11 @@ public class HomeController implements Initializable {
                 try {
                     AnchorPane anchorPane = loader.<AnchorPane>load();
                     CoursepassController coursepassController = loader.<CoursepassController>getController();
-                    coursepassController
-                            .setCoursepass(new CoursePass(selectedItems.get(0).getId(), getSqlConnectionManager()));
                     coursepassController.setSqlConnectionManager(getSqlConnectionManager());
                     Scene scene = new Scene(anchorPane);
                     stageTheEventSourceNodeBelongs.setScene(scene);
+                    coursepassController
+                            .setCoursepass(new CoursePass(selectedItems.get(0).getId(), getSqlConnectionManager()));
                 } catch (Exception e) {
                     // TODo: Propper Error handling
                     e.printStackTrace();

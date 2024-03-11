@@ -468,5 +468,7 @@ public class Lecturer {
     public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
     }
-
+    @Override public boolean equals(Object o) {
+        return (o instanceof Lecturer) && (this.id == ((Lecturer) o).id);
+    }    
 }

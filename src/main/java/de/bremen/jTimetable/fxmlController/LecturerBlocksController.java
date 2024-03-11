@@ -66,6 +66,7 @@ public class LecturerBlocksController implements Initializable {
                 AnchorPane anchorPane = loader.<AnchorPane>load();
                 LecturerController lecturerController = loader.getController();
                 lecturerController.setSqlConnectionManager(getSqlConnectionManager());
+                lecturerController.setLecturer(lecturer);
                 Scene scene = new Scene(anchorPane);
                 stageTheEventSourceNodeBelongs.setScene(scene);
             } catch (Exception e) {

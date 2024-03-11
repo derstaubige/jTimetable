@@ -111,6 +111,12 @@ public class LecturerController implements Initializable {
     
             LecturerTableview.getItems().setAll(getLecturer(true));
             LecturerBlockedTableview.setEditable(true);
+
+            // We should mark the selected Lecturer now
+            if (this.lecturer != null) {
+                markLecturer(lecturer);
+                btnLecturerEdit.fire();
+            }
         });
         // We need a StringConverter in order to ensure the selected item is displayed
         // properly
@@ -443,5 +449,25 @@ public class LecturerController implements Initializable {
     public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
     }
+
+    private void markLecturer(Lecturer coursePass) {
+        ObservableList<Lecturer> itemList = LecturerTableview.getItems();
+        TableView.TableViewSelectionModel<Lecturer> selectionModel = LecturerTableview.getSelectionModel();
+        LecturerTableview.requestFocus();
+        for (int i = 0; i < itemList.size(); i++) {
+            if (coursePass.equals(itemList.get(i))) {
+                selectionModel.select(i);
+            }
+        }
+        LecturerTableview.getFocusModel().focus(0);
+    }
+
+
+
+    public void setLecturer(Lecturer lecturer) {
+        this.lecturer = lecturer;
+    }
+
+    
 
 }
