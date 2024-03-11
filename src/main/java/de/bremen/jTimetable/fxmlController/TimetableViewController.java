@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -33,8 +34,7 @@ public class TimetableViewController implements Initializable {
 
     @FXML
     public GridPane grdpn_TimetableView;
-    @FXML
-    public AnchorPane anchorpane_TimetableView;
+    @FXML public ScrollPane scrollpane_TimetableView;
     @FXML
     public AnchorPane anchorpane_Editbox;
     @FXML
