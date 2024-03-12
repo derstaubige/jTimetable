@@ -17,7 +17,6 @@ import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.Window;
 import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.CoursePass;
 import de.bremen.jTimetable.Classes.SQLConnectionManager;

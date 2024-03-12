@@ -3,7 +3,6 @@ package de.bremen.jTimetable.Classes;
 import javafx.stage.FileChooser;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
-import static java.sql.Types.NULL;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

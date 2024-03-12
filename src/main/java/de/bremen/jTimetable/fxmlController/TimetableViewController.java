@@ -438,10 +438,6 @@ public class TimetableViewController implements Initializable {
     public void markNewCLS(List<JavaFXTimetableHourText> timetableHourTexts, Lecturer givingLecturer) {
         givingLecturer.updateLecturerResourcesBlocked();
         for (JavaFXTimetableHourText checkingTimetableHourText : timetableHourTexts) {
-
-            CoursepassLecturerSubject tmpCoursepassLecturerSubject = checkingTimetableHourText
-                    .getCoursepassLecturerSubject();
-
             // check if lecturer is in freeLecturers, check if day and timeslot is in
             // givingLecturer.lecturerresourcesblocked or givinglecturer.lecturerblocked
             Boolean givingLecturerResourcesBlocked = false;

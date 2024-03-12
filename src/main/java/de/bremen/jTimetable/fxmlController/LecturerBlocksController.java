@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import de.bremen.jTimetable.Main;
-import de.bremen.jTimetable.Classes.CoursePass;
 import de.bremen.jTimetable.Classes.Lecturer;
 import de.bremen.jTimetable.Classes.LecturerBlock;
 import de.bremen.jTimetable.Classes.SQLConnectionManager;
