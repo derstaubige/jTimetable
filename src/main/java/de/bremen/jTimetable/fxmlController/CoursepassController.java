@@ -21,7 +21,6 @@ import javafx.util.StringConverter;
 import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.*;
 
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
