@@ -26,11 +26,11 @@
                         <rowConstraints>
                             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                         </rowConstraints>
-                        <Label fx:id="savetofile" onMouseClicked="#savetoFileClicked" text="%timetableview.btnsavetofile" textAlignment="CENTER" GridPane.columnIndex="0">
+                        <Button fx:id="savetofile" onMouseClicked="#savetoFileClicked" text="%timetableview.btnsavetofile" textAlignment="CENTER" GridPane.columnIndex="0">
                             <font>
                                 <Font size="14.0" />
                             </font>
-                        </Label>
+                        </Button>
                         <Label fx:id="lbl_Slot1" text="%timetableview.slot1" textAlignment="CENTER" GridPane.columnIndex="1">
                             <font>
                                 <Font size="14.0" />
@@ -62,7 +62,11 @@
             <AnchorPane minHeight="100.0" minWidth="160.0" fx:id="anchorpane_Editbox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <children>
                     <GridPane fx:id="grdpn_Editbox" gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-
+                        <Button fx:id="distributeUnplanedHours" onMouseClicked="#distributeUnplanedHoursClicked" text="%timetableview.btndistributeUnplanedHours" textAlignment="CENTER" GridPane.columnIndex="0">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </Button>
                     </GridPane>
                 </children>
             </AnchorPane>
