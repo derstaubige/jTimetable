@@ -3,12 +3,12 @@ package de.bremen.jTimetable.Classes;
 import javafx.stage.FileChooser;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 import java.util.stream.IntStream;
 
 /**
@@ -16,8 +16,51 @@ import java.util.stream.IntStream;
  */
 public class Timetable {
 
-    public void distributeUnplanedHours(){
+    public void distributeUnplanedHours() {
+
         this.coursepass.updateCoursePassLecturerSubjects();
+        ArrayList<CoursepassLecturerSubject> clsToAddArrayList = new ArrayList<CoursepassLecturerSubject>();
+        for (CoursepassLecturerSubject cls : this.coursepass.getArrayCoursePassLecturerSubject()) {
+            if (cls.getUnplanedHours() > 0) {
+                clsToAddArrayList.add(cls);
+            }
+        }
+
+        if (clsToAddArrayList.size() > 0) {
+            // Loop through the Timetable and Check all Timeslots for Freetime
+            for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
+                for (TimetableHour timetableHour : timetableDay.getArrayTimetableDay()) {
+                    if (timetableHour.getCoursepassLecturerSubject().getCoursepass().getId() == 0L) {
+                        // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
+                        // here
+                        for (CoursepassLecturerSubject cls : clsToAddArrayList) {
+                            if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
+                                    timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
+                                // LEcturer and Room are free, we can place it here
+                                // delete the entry in the timetable table
+                                Timetable.deleteTimetable(timetableHour.getCoursepassLecturerSubject().getId(),
+                                        timetableDay.getDate(), timetableHour.getTimeslot(), getSqlConnectionManager());
+
+                                // save the new timetablehour
+                                TimetableHour tmptimetableHour = new TimetableHour(timetableHour.getTimeslot(),
+                                        cls, getSqlConnectionManager());
+                                this.addSingleHour(tmptimetableHour, timetableDay.getDate(),
+                                        timetableHour.getTimeslot());
+
+                                // check if we now have distributed all unplaned hours
+                                cls.updateallHours();
+                                if (cls.getUnplanedHours() <= 0) {
+                                    // no unplaned hours left, remove this cls from clsToAddArrayList
+                                    clsToAddArrayList.remove(cls);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // redraw timetable
+        }
     }
 
     /**
@@ -51,6 +94,7 @@ public class Timetable {
             throw new RuntimeException(e);
         }
     }
+
     /**
      * Method deletes timetable entries in database specified by coursePass, date
      * and timeslot.
@@ -59,8 +103,9 @@ public class Timetable {
      * @param timetableDay given date
      * @param timeslot     given timeslot
      */
-    public static void deleteTimetable(long coursePassID, LocalDate timetableDay, int timeslot, SQLConnectionManager sqlConnectionManager) {
-        try  {
+    public static void deleteTimetable(long coursePassID, LocalDate timetableDay, int timeslot,
+            SQLConnectionManager sqlConnectionManager) {
+        try {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
 
@@ -75,6 +120,7 @@ public class Timetable {
             throw new RuntimeException(e);
         }
     }
+
     /**
      * Array that contains single TimetableDay objects that each represent one day
      * in this timetable and consists of the
@@ -98,7 +144,7 @@ public class Timetable {
     // Set the maximum Timeslotcount to fill the timetable with freetimes
     private Integer maxTimeslots = 5;
 
-    private SQLConnectionManager sqlConnectionManager;    
+    private SQLConnectionManager sqlConnectionManager;
 
     /**
      * Constructor.
@@ -199,15 +245,17 @@ public class Timetable {
         // Loop through all Days and Hours and Delete ResourceBlocked and Timetable
         for (TimetableDay arrayTimetableDay : arrayTimetableDays) {
             for (TimetableHour timetableHour : arrayTimetableDay.getArrayTimetableDay()) {
-                if(timetableHour == null){
+                if (timetableHour == null) {
                     continue;
                 }
                 deleteResourceBlocked(timetableHour.coursepassLecturerSubject.getLecturerID(),
                         ResourceNames.LECTURER, arrayTimetableDay.getDate(),
-                        arrayTimetableDay.getDate(), timetableHour.getTimeslot(), timetableHour.getTimeslot(), getSqlConnectionManager());
+                        arrayTimetableDay.getDate(), timetableHour.getTimeslot(), timetableHour.getTimeslot(),
+                        getSqlConnectionManager());
                 deleteResourceBlocked(timetableHour.coursepassLecturerSubject.getLecturerID(),
                         ResourceNames.ROOM, arrayTimetableDay.getDate(),
-                        arrayTimetableDay.getDate(), timetableHour.getTimeslot(), timetableHour.getTimeslot(), getSqlConnectionManager());
+                        arrayTimetableDay.getDate(), timetableHour.getTimeslot(), timetableHour.getTimeslot(),
+                        getSqlConnectionManager());
             }
         }
         deleteTimetable(coursepass.getId());
@@ -286,7 +334,8 @@ public class Timetable {
             ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
             Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
             while (timeslotIterator.hasNext()) {
-                tmpArrayList.add(new TimetableHour(timeslotIterator.next(), new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
+                tmpArrayList.add(new TimetableHour(timeslotIterator.next(),
+                        new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
             }
             this.arrayTimetableDays.add(tmpTimetableDay);
         }
@@ -299,12 +348,14 @@ public class Timetable {
                 Integer tmpTimeslot = timeslotIterator.next();
                 while (tmpTimetableday.getArrayTimetableDay().size() <= tmpTimeslot) {
                     tmpTimetableday.getArrayTimetableDay().add(tmpTimetableday.getArrayTimetableDay().size(),
-                            new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
+                            new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()),
+                                    getSqlConnectionManager()));
                 }
                 // if this timeslot is null we add a freetime
                 if (tmpTimetableday.getArrayTimetableDay().get(tmpTimeslot) == null) {
                     tmpTimetableday.getArrayTimetableDay().set(tmpTimeslot,
-                            new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
+                            new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()),
+                                    getSqlConnectionManager()));
                 }
             }
         }
@@ -341,7 +392,8 @@ public class Timetable {
                 ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
                 Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
                 while (timeslotIterator.hasNext()) {
-                    tmpArrayList.add(new TimetableHour(timeslotIterator.next(), new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
+                    tmpArrayList.add(new TimetableHour(timeslotIterator.next(),
+                            new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
                 }
                 tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
             }
@@ -352,7 +404,8 @@ public class Timetable {
             // loop through all possible timeslots and check if there is already a subject
             Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
             while (timeslotIterator.hasNext()) {
-                tmpTimetableday.addToSlot(timeslotIterator.next(), new CoursepassLecturerSubject(0L, getSqlConnectionManager()));
+                tmpTimetableday.addToSlot(timeslotIterator.next(),
+                        new CoursepassLecturerSubject(0L, getSqlConnectionManager()));
             }
         }
 
@@ -361,7 +414,7 @@ public class Timetable {
         // sqlConnectionManager.close();
     }
 
-    private ArrayList<Lecturer> getAllLecturers(){
+    private ArrayList<Lecturer> getAllLecturers() {
         ArrayList<Lecturer> lecturers = new ArrayList<Lecturer>();
         try {
             // Create new SQLValues that are used for the following select statement
@@ -369,7 +422,8 @@ public class Timetable {
             SQLValues.add(new SQLValueLong(this.coursepass.getId()));
             // Create new Connection to database
 
-            ResultSet rs = sqlConnectionManager.select("SELECT DISTINCT reflecturer FROM T_TIMETABLES where refcoursepass = ?;", SQLValues);
+            ResultSet rs = sqlConnectionManager
+                    .select("SELECT DISTINCT reflecturer FROM T_TIMETABLES where refcoursepass = ?;", SQLValues);
 
             while (rs.next()) {
                 lecturers.add(new Lecturer(rs.getLong("reflecturer"), getSqlConnectionManager()));
@@ -433,9 +487,11 @@ public class Timetable {
             // System.out.println(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"));
             // add this timeslot/TimetableHour to our tmpDayObject
             tmpDayObject.getArrayTimetableDay().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
-                    new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"), getSqlConnectionManager()), getSqlConnectionManager() ));
+                    new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
+                            getSqlConnectionManager()),
+                    getSqlConnectionManager()));
 
         }
     }
-    
+
 }

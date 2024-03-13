@@ -432,4 +432,8 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         this.sqlConnectionManager = sqlConnectionManager;
     }
 
+    public Long getUnplanedHours(){
+        return this.getShouldHours() - this.getIsHours() - this.getPlanedHours();
+    }
+
 }

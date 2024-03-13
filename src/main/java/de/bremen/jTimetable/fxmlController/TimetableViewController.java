@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -47,7 +48,8 @@ public class TimetableViewController implements Initializable {
     public Button savetofile;
     @FXML
     private Label lbl_Slot1;
-    @FXML private Button distributeUnplanedHours;
+    @FXML
+    private Button distributeUnplanedHours;
 
     private Timetable timetable;
     private CoursePass coursepass;
@@ -326,7 +328,13 @@ public class TimetableViewController implements Initializable {
 
     @FXML
     private void distributeUnplanedHoursClicked() {
+        this.timetable.distributeUnplanedHours();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(resourceBundle.getString("coursepass.inittimetable.successtitle"));
+        alert.setContentText(resourceBundle.getString("coursepass.inittimetable.successmessage"));
+        alert.show();
     };
+
     @FXML
     private void savetoFileClicked() {
         // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
