@@ -1,9 +1,14 @@
 package de.bremen.jTimetable.fxmlController;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
@@ -16,6 +21,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.*;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueDate;
@@ -24,6 +31,7 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
 import javafx.scene.text.Font;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.sql.SQLException;
@@ -43,9 +51,11 @@ public class TimetableViewController implements Initializable {
     @FXML
     public GridPane grdpn_Editbox;
     @FXML
-    public Label savetofile;
+    public Button savetofile;
     @FXML
     private Label lbl_Slot1;
+    @FXML
+    private Button btnDistributeUnplanedHours;
 
     private Timetable timetable;
     private CoursePass coursepass;
@@ -223,7 +233,7 @@ public class TimetableViewController implements Initializable {
             // Read all CoursepassLecturerSubject Objects from Coursepass and generate the
             // Labels for the Timetableview
             Integer tmpRowIdx = 0;
-            Integer tmpColIdx = 0;
+            Integer tmpColIdx = 1;
 
             coursepass.updateCoursePassLecturerSubjects();
 
@@ -323,6 +333,35 @@ public class TimetableViewController implements Initializable {
     }
 
     @FXML
+    private void distributeUnplanedHoursClicked(ActionEvent event) {
+        this.timetable.distributeUnplanedHours();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(resourceBundle.getString("coursepass.inittimetable.successtitle"));
+        alert.setContentText(resourceBundle.getString("coursepass.inittimetable.successmessage"));
+        alert.show();
+        this.reloadWindow(event);
+    };
+
+    private void reloadWindow(ActionEvent event) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/TimetableView.fxml"), resourceBundle);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setTitle("Timetable for " + coursepass.getCourseOfStudy().getCaption() + " " +
+                coursepass.getStudySection().getDescription());
+        URL url = Main.class.getResource("fxml/TimetableView.fxml");
+        loader.setLocation(url);
+        try {
+            stage.setScene(new Scene(loader.load()));
+            TimetableViewController timetableViewController = loader.getController();
+            timetableViewController.setSqlConnectionManager(getSqlConnectionManager());
+            timetableViewController
+                    .initDataCoursepass(new CoursePass((coursepass.getId()), getSqlConnectionManager()));
+            stage.show();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
     private void savetoFileClicked() {
         // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
         FileChooser fileChooser = new FileChooser();
@@ -378,6 +417,9 @@ public class TimetableViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.resourceBundle = resourceBundle;
+        btnDistributeUnplanedHours.setOnAction(event -> {
+            this.distributeUnplanedHoursClicked(event);
+        });
     }
 
     /**

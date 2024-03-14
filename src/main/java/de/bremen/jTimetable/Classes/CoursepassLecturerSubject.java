@@ -206,10 +206,10 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             // query the planed hours
             SQLValues.clear();
             SQLValues.add(new SQLValueLong(this.coursepass.getId()));
-            SQLValues.add(new SQLValueLong(this.subject.id));
+            SQLValues.add(new SQLValueLong(this.getId()));
             SQLValues.add(new SQLValueDate(today));
             ResultSet rs = sqlConnectionManager.select(
-                    "Select count(id) from T_Timetables where refcoursepass = ? and refsubject = ? and timetableday > ?;",
+                    "Select count(id) from T_Timetables where refcoursepass = ? and REFCOURSEPASSLECTURERSUBJECT = ? and timetableday > ?;",
                     SQLValues);
             rs.first();
             this.planedHours = rs.getLong(1);
@@ -430,6 +430,10 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
+    }
+
+    public Long getUnplanedHours(){
+        return this.getShouldHours() - this.getIsHours() - this.getPlanedHours();
     }
 
 }
