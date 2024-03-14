@@ -30,14 +30,15 @@ public class Timetable {
             // Loop through the Timetable and Check all Timeslots for Freetime
             for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
                 for (TimetableHour timetableHour : timetableDay.getArrayTimetableDay()) {
-                    if (timetableHour.getCoursepassLecturerSubject().getCoursepass().getId() == 0L) {
+                    if (timetableHour != null
+                            && timetableHour.getCoursepassLecturerSubject().getCoursepass().getId() == 0L) {
                         // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
                         // here
                         for (CoursepassLecturerSubject cls : clsToAddArrayList) {
                             if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
                                     timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
                                 // LEcturer and Room are free, we can place it here
-                                // delete the entry in the timetable table
+                                // delete the entry in the timetable table 
                                 Timetable.deleteTimetable(timetableHour.getCoursepassLecturerSubject().getId(),
                                         timetableDay.getDate(), timetableHour.getTimeslot(), getSqlConnectionManager());
 
@@ -53,6 +54,7 @@ public class Timetable {
                                     // no unplaned hours left, remove this cls from clsToAddArrayList
                                     clsToAddArrayList.remove(cls);
                                 }
+                                break;
                             }
                         }
                     }
