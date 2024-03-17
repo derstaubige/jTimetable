@@ -120,11 +120,13 @@ public class Resourcemanager {
                         this.arrayCoursepassLecturerSubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).planedHours++;
 
-                        Long tmpLastCLSID = this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getId();
+                        Long tmpLastCLSID = this.arrayCoursepassLecturerSubject
+                                .get(positionInCoursepassLecturerSubjectStack).getId();
                         // resort the arraycoursepasslecturersubject
                         Collections.sort(this.arrayCoursepassLecturerSubject,
                                 (o1, o2) -> o2.getUnplanedHours().compareTo(o1.getUnplanedHours()));
-                        if (tmpLastCLSID == this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getId()) {
+                        if (tmpLastCLSID == this.arrayCoursepassLecturerSubject
+                                .get(positionInCoursepassLecturerSubjectStack).getId()) {
                             // its still the same cls ontop of the stack. we dont want 2 cls in a arrow
                             // reset the position in stack
                             this.tmppositionInCoursepassLecturerSubjectStack = 1;
@@ -193,8 +195,13 @@ public class Resourcemanager {
         if (Lecturer.checkLecturerAvailability(this.arrayCoursepassLecturerSubject.get(
                 positionInCoursepassLecturerSubjectStack).lecturer.getId(),
                 arrayTimetabledays.get(idxDay).getDate(), idxTimeslot, getSqlConnectionManager()) &&
+                Room.checkRoomAvailability(
+                        this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getRoom()
+                                .getId(),
+                        arrayTimetabledays.get(idxDay).getDate(), idxTimeslot, getSqlConnectionManager())
+                &&
                 tmpshouldhours > (tmpishours + tmpplanedhours)) {
-            // Lecturer is Available and there are hours left to plan
+            // Lecturer and Room are Available and there are hours left to plan
             return true;
         }
 

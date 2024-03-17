@@ -24,7 +24,9 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             if (!Lecturer.checkLecturerAvailability(cls.getLecturerID(), targetDay, targetTimeslot, sqlConnectionManager)) {
                 return false;
             }
-            // TODO Check Rooms!
+            if (!Room.checkRoomAvailability(cls.getRoom().getId(), targetDay, targetTimeslot, sqlConnectionManager)){
+                return false;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
