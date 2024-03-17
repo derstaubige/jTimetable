@@ -1,5 +1,6 @@
 package de.bremen.jTimetable.fxmlController;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -61,6 +62,7 @@ public class TimetableViewController implements Initializable {
     private CoursePass coursepass;
     private SQLConnectionManager sqlConnectionManager;
     private ResourceBundle resourceBundle;
+    private Boolean isLecturer = false;
 
     /**
      * Can be called to hand parameters from the calling class to this controller.
@@ -80,6 +82,7 @@ public class TimetableViewController implements Initializable {
 
     public void initDataTimetable(Timetable timetable) {
         this.timetable = timetable;
+        this.isLecturer = true;
         this.drawTimetable(timetable, false);
     }
 
@@ -368,7 +371,11 @@ public class TimetableViewController implements Initializable {
         fileChooser.setTitle("Open Resource File");
         LocalDate date = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        fileChooser.setInitialFileName(coursepass.getCourseOfStudyCaption() + "_" + date.format(formatter));
+        if(this.isLecturer){
+            fileChooser.setInitialFileName(this.timetable.getLecturer().getLecturerFullName() + "_" + date.format(formatter));
+        }else{
+            fileChooser.setInitialFileName(coursepass.getCourseOfStudyCaption() + "_" + date.format(formatter));
+        }
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("Text Files", "*.csv"));
         File file = fileChooser.showSaveDialog(new Stage());
@@ -420,6 +427,11 @@ public class TimetableViewController implements Initializable {
         btnDistributeUnplanedHours.setOnAction(event -> {
             this.distributeUnplanedHoursClicked(event);
         });
+        Platform.runLater(() ->{
+            if(this.isLecturer){
+                anchorpane_Editbox.setVisible(false);
+            }
+        });  
     }
 
     /**

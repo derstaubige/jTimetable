@@ -14,11 +14,11 @@
             <Label text="%location.title"></Label>
             <HBox spacing="20.0">
                 <children>
-                    <TableView fx:id="LocationTableview" minWidth="800.0">
+                    <TableView fx:id="LocationTableview" minWidth="800.0" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                         <columns>
                             <TableColumn text="%location.LocationTableview.id" fx:id="ID" visible="false"></TableColumn>
-                            <TableColumn text="%location.LocationTableview.caption" fx:id="Caption"></TableColumn>
-                            <TableColumn text="%location.LocationTableview.active" fx:id="Active"></TableColumn>
+                            <TableColumn text="%location.LocationTableview.caption" fx:id="Caption" minWidth="600.0"></TableColumn>
+                            <TableColumn text="%location.LocationTableview.active" fx:id="Active" visible="false"></TableColumn>
                         </columns>
                     </TableView>
                     <VBox minWidth="200.0" spacing="10">

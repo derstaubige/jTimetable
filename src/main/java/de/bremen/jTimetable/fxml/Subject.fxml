@@ -18,11 +18,11 @@
                 <Label text="%subject.title"></Label>
                 <HBox spacing="10">
                     <children>
-                        <TableView fx:id="SubjectTableview" minWidth="800">
+                        <TableView fx:id="SubjectTableview" minWidth="800" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                             <columns>
                                 <TableColumn text="%subject.SubjectTableview.id" fx:id="ID" visible="false"></TableColumn>
-                                <TableColumn text="%subject.SubjectTableview.caption" fx:id="Caption"></TableColumn>
-                                <TableColumn text="%subject.SubjectTableview.active" fx:id="Active"></TableColumn>
+                                <TableColumn text="%subject.SubjectTableview.caption" fx:id="Caption" minWidth="600.0"></TableColumn>
+                                <TableColumn text="%subject.SubjectTableview.active" fx:id="Active" visible="false"></TableColumn>
                             </columns>
                         </TableView>
                         <VBox minWidth="200" spacing="10">

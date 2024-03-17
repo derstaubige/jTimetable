@@ -496,4 +496,8 @@ public class Timetable {
         }
     }
 
+    public Lecturer getLecturer() {
+        return lecturer;
+    }
+
 }

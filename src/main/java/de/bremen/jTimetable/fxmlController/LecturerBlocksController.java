@@ -32,6 +32,8 @@ public class LecturerBlocksController implements Initializable {
     @FXML
     private Button btnSave;
     @FXML
+    private Button btnBack;
+    @FXML
     private MenuController mainMenuController;
 
     /**
@@ -40,6 +42,23 @@ public class LecturerBlocksController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        btnBack.setOnAction(event -> {
+            // change back to the overview
+            Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Lecturer.fxml"), resources);
+
+            try {
+                AnchorPane anchorPane = loader.<AnchorPane>load();
+                LecturerController lecturerController = loader.getController();
+                lecturerController.setSqlConnectionManager(getSqlConnectionManager());
+                lecturerController.setLecturer(lecturer);
+                Scene scene = new Scene(anchorPane);
+                stageTheEventSourceNodeBelongs.setScene(scene);
+            } catch (Exception e) {
+                // TODo: Propper Error handling
+                e.printStackTrace();
+            }
+        });
         btnSave.setOnAction(event -> {
             mainMenuController.setSqlConnectionManager(sqlConnectionManager);
             lecturer.setLecturerBlocks(new ArrayList<LecturerBlock>());
@@ -57,21 +76,7 @@ public class LecturerBlocksController implements Initializable {
                 e.printStackTrace();
             }
 
-            // change back to the overview
-            Stage stageTheEventSourceNodeBelongs = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader(Main.class.getResource("fxml/Lecturer.fxml"), resources);
-
-            try {
-                AnchorPane anchorPane = loader.<AnchorPane>load();
-                LecturerController lecturerController = loader.getController();
-                lecturerController.setSqlConnectionManager(getSqlConnectionManager());
-                lecturerController.setLecturer(lecturer);
-                Scene scene = new Scene(anchorPane);
-                stageTheEventSourceNodeBelongs.setScene(scene);
-            } catch (Exception e) {
-                // TODo: Propper Error handling
-                e.printStackTrace();
-            }
+            btnBack.fire();
         });
     }
 

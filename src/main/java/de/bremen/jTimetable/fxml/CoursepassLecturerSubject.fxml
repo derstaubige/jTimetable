@@ -16,15 +16,15 @@
             <Label text="%cls.title" fx:id="lblCoursepassName"></Label>
             <HBox spacing="20.0">
                 <children>
-                    <TableView fx:id="CLSTableview" minWidth="800.0">
+                    <TableView fx:id="CLSTableview" minWidth="800.0" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                         <columns>
                             <TableColumn text="%cls.CLSTableview.id" fx:id="TCID" visible="false"></TableColumn>
-                            <TableColumn text="%cls.CLSTableview.lecturer" fx:id="TCLecturer"></TableColumn>
+                            <TableColumn text="%cls.CLSTableview.lecturer" fx:id="TCLecturer" minWidth="150.0"></TableColumn>
                             <TableColumn text="%cls.CLSTableview.subject" fx:id="TCSubject"></TableColumn>
                             <TableColumn text="%cls.CLSTableview.shouldHours" fx:id="TCShouldHours"></TableColumn>
-                            <TableColumn text="%cls.CLSTableview.isHours" fx:id="TCisHours"></TableColumn>
-                            <TableColumn text="%cls.CLSTableview.planedHours" fx:id="TCPlanedHours"></TableColumn>
-                            <TableColumn text="%cls.CLSTableview.active" fx:id="CPActive"></TableColumn>
+                            <TableColumn text="%cls.CLSTableview.isHours" fx:id="TCisHours" minWidth="150.0"></TableColumn>
+                            <TableColumn text="%cls.CLSTableview.planedHours" fx:id="TCPlanedHours" minWidth="150.0"></TableColumn>
+                            <TableColumn text="%cls.CLSTableview.active" fx:id="CPActive" visible="false"></TableColumn>
                         </columns>
                     </TableView>
                     <VBox minWidth="200.0" spacing="10.0">
