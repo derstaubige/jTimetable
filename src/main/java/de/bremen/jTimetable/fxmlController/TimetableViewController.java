@@ -1,5 +1,6 @@
 package de.bremen.jTimetable.fxmlController;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -426,6 +427,11 @@ public class TimetableViewController implements Initializable {
         btnDistributeUnplanedHours.setOnAction(event -> {
             this.distributeUnplanedHoursClicked(event);
         });
+        Platform.runLater(() ->{
+            if(this.isLecturer){
+                anchorpane_Editbox.setVisible(false);
+            }
+        });  
     }
 
     /**
