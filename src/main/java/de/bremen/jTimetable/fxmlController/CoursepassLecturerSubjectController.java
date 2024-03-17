@@ -39,6 +39,8 @@ public class CoursepassLecturerSubjectController implements Initializable {
     @FXML
     public TableColumn<CoursepassLecturerSubject, String> TCSubject;
     @FXML
+    public TableColumn<CoursepassLecturerSubject, String> TCRoom;
+    @FXML
     public TableColumn<CoursepassLecturerSubject, Long> TCShouldHours;
     @FXML
     public TableColumn<CoursepassLecturerSubject, Integer> TCisHours;
@@ -65,6 +67,8 @@ public class CoursepassLecturerSubjectController implements Initializable {
     @FXML
     public ComboBox<Subject> cmbSubject;
     @FXML
+    public ComboBox<Room> cmbRoom;
+    @FXML
     public TextField txtShouldHours;
     @FXML
     public CheckBox chkActive;
@@ -80,6 +84,8 @@ public class CoursepassLecturerSubjectController implements Initializable {
             TCID.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("id"));
             TCLecturer.setCellValueFactory(
                     new PropertyValueFactory<CoursepassLecturerSubject, String>("LecturerFullname"));
+            TCRoom.setCellValueFactory(
+                    new PropertyValueFactory<CoursepassLecturerSubject, String>("RoomCaptionLocatioString"));
             TCSubject
                     .setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, String>("SubjectCaption"));
             TCShouldHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Long>("shouldHours"));
@@ -137,6 +143,61 @@ public class CoursepassLecturerSubjectController implements Initializable {
                     // Update our Labels
                     // lblID.setText(studySection.getId().toString());
                     lblDescription.setText(subject.getCaption());
+
+                    // Set this ListCell's graphicProperty to display our GridPane
+                    setGraphic(gridPane);
+                } else {
+                    // Nothing to display here
+                    setGraphic(null);
+                }
+            }
+        });
+
+        cmbRoom.setConverter(new StringConverter<Room>() {
+            @Override
+            public String toString(Room room) {
+                if (room == null) {
+                    return "";
+                } else {
+                    return room.getCaption() + ", " + room.getLocationCaption();
+                }
+            }
+
+            @Override
+            public Room fromString(String string) {
+                return null;
+            }
+        });
+        cmbRoom.setCellFactory(cell -> new ListCell<Room>() {
+
+            // Create our layout here to be reused for each ListCell
+            GridPane gridPane = new GridPane();
+            // Label lblID = new Label();
+            Label lblDescription = new Label();
+
+            // Static block to configure our layout
+            {
+                // Ensure all our column widths are constant
+                gridPane.getColumnConstraints().addAll(
+                        // new ColumnConstraints(100, 100, 100),
+                        new ColumnConstraints(200, 200, 200));
+
+                // gridPane.add(lblID, 0, 1, 1 ,1);
+                gridPane.add(lblDescription, 0, 1, 1, 1);
+
+            }
+
+            // We override the updateItem() method in order to provide our own layout for
+            // this Cell's graphicProperty
+            @Override
+            protected void updateItem(Room room, boolean empty) {
+                super.updateItem(room, empty);
+
+                if (!empty && room != null) {
+
+                    // Update our Labels
+                    // lblID.setText(studySection.getId().toString());
+                    lblDescription.setText(room.getCaption() + ", " + room.getLocationCaption());
 
                     // Set this ListCell's graphicProperty to display our GridPane
                     setGraphic(gridPane);
@@ -231,6 +292,12 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                try {
+                    cmbRoom.getItems().setAll(Room.getAllRooms(Boolean.TRUE, getSqlConnectionManager()));
+                    cmbRoom.setValue(this.coursepassLecturerSubject.getRoom());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 txtShouldHours.setText(this.coursepassLecturerSubject.getShouldHours().toString());
                 chkActive.setSelected(this.coursepass.getActive());
 
@@ -263,6 +330,12 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                try {
+                    cmbRoom.getItems().setAll(Room.getAllRooms(Boolean.TRUE, getSqlConnectionManager()));
+                    cmbRoom.setValue(this.coursepassLecturerSubject.getRoom());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 txtShouldHours.setText(this.coursepassLecturerSubject.getShouldHours().toString());
                 chkActive.setSelected(this.coursepass.getActive());
 
@@ -291,6 +364,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
             this.coursepassLecturerSubject.setCoursepass(this.coursepass);
             this.coursepassLecturerSubject.setLecturer(cmbLecturer.getValue());
             this.coursepassLecturerSubject.setSubject(cmbSubject.getValue());
+            this.coursepassLecturerSubject.setRoom(cmbRoom.getValue());
             this.coursepassLecturerSubject.setShouldHours(Long.parseLong(txtShouldHours.getText()));
             this.coursepassLecturerSubject.setActive(chkActive.isSelected());
             try {

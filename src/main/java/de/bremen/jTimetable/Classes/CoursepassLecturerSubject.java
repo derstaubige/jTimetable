@@ -319,14 +319,15 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
         SQLValues.add(new SQLValueLong(this.coursepass.getId()));
         SQLValues.add(new SQLValueLong(this.lecturer.getId()));
-        SQLValues.add(new SQLValueLong(this.subject.id));
+        SQLValues.add(new SQLValueLong(this.subject.getId()));
+        SQLValues.add(new SQLValueLong(this.room.getId()));
         SQLValues.add(new SQLValueLong(this.shouldHours));
         SQLValues.add(new SQLValueBoolean(this.active));
 
         if (this.id == 0) {
             // its a new object, we have to insert it
             ResultSet rs = sqlConnectionManager.execute(
-                    "Insert Into `T_CoursepassesLecturerSubject` (`refCoursePassID`, `refLecturerID`, `refSubjectID`, `shouldhours`, `ACTIVE`) values (?, ?, ?, ?, ?)",
+                    "Insert Into `T_CoursepassesLecturerSubject` (`refCoursePassID`, `refLecturerID`, `refSubjectID`,`REFROOMID`, `shouldhours`, `ACTIVE`) values (?, ?, ?, ?, ?, ?)",
                     SQLValues);
             rs.first();
             this.id = rs.getLong(1);
@@ -334,7 +335,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
             sqlConnectionManager.execute(
-                    "update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, `shouldhours` = ?, `ACTIVE` = ? where `id` = ?;",
+                    "update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, `REFROOMID` = ?, `shouldhours` = ?, `ACTIVE` = ? where `id` = ?;",
                     SQLValues);
         }
         // sqlConnectionManager.close();
@@ -434,6 +435,10 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     public Long getUnplanedHours(){
         return this.getShouldHours() - this.getIsHours() - this.getPlanedHours();
+    }
+
+    public String getRoomCaptionLocatioString(){
+        return this.getRoom().getCaption() + ", " + this.getRoom().getLocationCaption();
     }
 
 }
