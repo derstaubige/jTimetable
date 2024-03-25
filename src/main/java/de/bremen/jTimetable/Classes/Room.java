@@ -50,6 +50,18 @@ public class Room {
         this.roomBlocks = ResourcesBlocked.getArrayListofResourcesblocked(getId(), ResourceNames.ROOM, sqlConnectionManager);
     }
 
+    public boolean isRoomAvaidable(LocalDate date, Integer timeslot){
+        if(this.roomBlocks == null){
+            this.updateRoomBlocks();
+        }
+        for(ResourcesBlocked resourcesBlocked : this.roomBlocks){
+            if(resourcesBlocked.getStartDate() == date && resourcesBlocked.getStartTimeslot() == timeslot){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static Boolean checkRoomAvailability(Long pRoomID, LocalDate pDate, int pTimeslot,
             SQLConnectionManager sqlConnectionManager) throws SQLException {
 

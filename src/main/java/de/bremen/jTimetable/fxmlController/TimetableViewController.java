@@ -169,6 +169,8 @@ public class TimetableViewController implements Initializable {
                                         source.getCoursepassLecturerSubject(),
                                         source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
                                         target.getDay(), target.getTimeslot(), getSqlConnectionManager());
+                            }else{
+                                // System.out.println("Error switching Hours");
                             }
                         }
 
@@ -495,7 +497,7 @@ public class TimetableViewController implements Initializable {
 
         Room givingRoom = cls.getRoom();
         givingRoom.updateRoomBlocks();
-        
+
         for (JavaFXTimetableHourText checkingTimetableHourText : timetableHourTexts) {
             // check if lecturer is in freeLecturers, check if day and timeslot is in
             // givingLecturer.lecturerresourcesblocked or givinglecturer.lecturerblocked
@@ -549,7 +551,11 @@ public class TimetableViewController implements Initializable {
         // get list of all blocks for "giving" lecturer, can get called
         // lecturer->updatelecturerresourcesblocked
         Lecturer givingLecturer = tmpText.getCoursepassLecturerSubject().getLecturer();
+        Room givingRoom = tmpText.getCoursepassLecturerSubject().getRoom();
+        Room targetRoom;
+
         givingLecturer.updateLecturerResourcesBlocked();
+        givingRoom.updateRoomBlocks();
 
         ArrayList<Lecturer> freeLecturers = new ArrayList<Lecturer>();
         ArrayList<Lecturer> blockedLecturers = new ArrayList<Lecturer>();
@@ -607,12 +613,25 @@ public class TimetableViewController implements Initializable {
                 }
             }
 
+            //check if rooms are free  
+            targetRoom = checkingTimetableHourText.getCoursepassLecturerSubject().getRoom();          
+            Boolean givingRoomBlocked = false;
+            Boolean targetRoomBlocked = false;
+            if(givingRoom.isRoomAvaidable(checkingTimetableHourText.getDay(), checkingTimetableHourText.getTimeslot())){
+                givingRoomBlocked = true;
+            }
+
+            if(targetRoom.isRoomAvaidable(tmpText.getDay(), tmpText.getTimeslot())){
+                targetRoomBlocked = true;
+            }
+            
+
             if (freeLecturers.contains(tmpCoursepassLecturerSubject.getLecturer()) || givingLecturerResourcesBlocked
-                    || givingLecturerBlocked) {
-                // if one or both are true, set red
+                    || givingLecturerBlocked || givingRoomBlocked || targetRoomBlocked) {
+                // something isnt avaidable
                 checkingTimetableHourText.setFill(Color.RED);
             } else {
-                // if not set green
+                // everything is possible
                 checkingTimetableHourText.setFill(Color.GREEN);
             }
 

@@ -39,13 +39,13 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         // check if lecturer and room from source are free at target date and timeslot
         long sourceLecturerId = source.lecturer.getId();
         long targetLecturerId = target.lecturer.getId();
-        // TODO rooms not considered
+
         try {
-            if(!Room.checkRoomAvailability(target.getRoom().getId(), targetDay, targetTimeslot, sqlConnectionManager)){
+            if(!Room.checkRoomAvailability(source.getRoom().getId(), targetDay, targetTimeslot, sqlConnectionManager)){
                 return false;
             }
 
-            if(!Room.checkRoomAvailability(source.getRoom().getId(), sourceDay, sourceTimeslot, sqlConnectionManager)){
+            if(!Room.checkRoomAvailability(target.getRoom().getId(), sourceDay, sourceTimeslot, sqlConnectionManager)){
                 return false;
             }
             
