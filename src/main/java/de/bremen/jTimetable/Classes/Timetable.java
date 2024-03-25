@@ -143,6 +143,9 @@ public class Timetable {
     // List of Lectureres that are currently planed for this timetable
     private ArrayList<Lecturer> lecturers;
 
+    // List of Rooms that are currently planed for this timetable
+    private ArrayList<Room> rooms;
+
     // Set the maximum Timeslotcount to fill the timetable with freetimes
     private Integer maxTimeslots = 5;
 
@@ -413,9 +416,37 @@ public class Timetable {
 
         // grap all lecturers that are currently in this timetable
         this.lecturers = getAllLecturers();
+
+        // grap all rooms that are currently in this timetable
+        this.rooms = getAllRooms();
+        
         // sqlConnectionManager.close();
     }
 
+    private ArrayList<Room> getAllRooms() {
+        ArrayList<Room> rooms = new ArrayList<Room>();
+        try {
+            // Create new SQLValues that are used for the following select statement
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
+            SQLValues.add(new SQLValueLong(this.coursepass.getId()));
+            // Create new Connection to database
+
+            ResultSet rs = sqlConnectionManager
+                    .select("SELECT DISTINCT refroomid FROM T_TIMETABLES where refcoursepass = ?;", SQLValues);
+
+            Room tmpRoom;
+
+            while (rs.next()) {
+                tmpRoom = new Room(rs.getLong("refroomid"), getSqlConnectionManager());
+                rooms.add(tmpRoom);
+                tmpRoom.updateRoomBlocks();                
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+        return rooms;
+    }
     private ArrayList<Lecturer> getAllLecturers() {
         ArrayList<Lecturer> lecturers = new ArrayList<Lecturer>();
         try {
@@ -499,5 +530,11 @@ public class Timetable {
     public Lecturer getLecturer() {
         return lecturer;
     }
+
+    public ArrayList<Room> getRooms() {
+        return rooms;
+    }
+
+    
 
 }

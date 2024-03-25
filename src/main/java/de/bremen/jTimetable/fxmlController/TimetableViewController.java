@@ -261,7 +261,7 @@ public class TimetableViewController implements Initializable {
                     List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
                             JavaFXTimetableHourText.class);
 
-                    this.markNewCLS(timetableHourTexts, cls.getLecturer());
+                    this.markNewCLS(timetableHourTexts, cls);
                     mouseEvent.consume();
                 });
 
@@ -489,8 +489,13 @@ public class TimetableViewController implements Initializable {
         // sqlConnectionManager.close();
     }
 
-    public void markNewCLS(List<JavaFXTimetableHourText> timetableHourTexts, Lecturer givingLecturer) {
+    public void markNewCLS(List<JavaFXTimetableHourText> timetableHourTexts, CoursepassLecturerSubject cls) {
+        Lecturer givingLecturer = cls.getLecturer();
         givingLecturer.updateLecturerResourcesBlocked();
+
+        Room givingRoom = cls.getRoom();
+        givingRoom.updateRoomBlocks();
+        
         for (JavaFXTimetableHourText checkingTimetableHourText : timetableHourTexts) {
             // check if lecturer is in freeLecturers, check if day and timeslot is in
             // givingLecturer.lecturerresourcesblocked or givinglecturer.lecturerblocked
@@ -519,7 +524,16 @@ public class TimetableViewController implements Initializable {
                 }
             }
 
-            if (givingLecturerResourcesBlocked || givingLecturerBlocked) {
+            // ToDo: Check for room blocked!
+            Boolean givingRoomBlocked = false;
+            for (ResourcesBlocked roomBlock : givingRoom.getRoomBlocks()) {
+                if (checkingTimetableHourText.getDay().getDayOfWeek().equals(roomBlock.getStartDate().getDayOfWeek())) {
+                    givingRoomBlocked = true;
+                    break;
+                }
+            }
+
+            if (givingLecturerResourcesBlocked || givingLecturerBlocked || givingRoomBlocked) {
                 // if one or both are true, set red
                 checkingTimetableHourText.setFill(Color.RED);
             } else {

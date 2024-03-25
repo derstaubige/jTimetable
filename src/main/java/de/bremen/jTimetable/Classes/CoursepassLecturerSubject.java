@@ -40,6 +40,19 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         long sourceLecturerId = source.lecturer.getId();
         long targetLecturerId = target.lecturer.getId();
         // TODO rooms not considered
+        try {
+            if(!Room.checkRoomAvailability(target.getRoom().getId(), targetDay, targetTimeslot, sqlConnectionManager)){
+                return false;
+            }
+
+            if(!Room.checkRoomAvailability(source.getRoom().getId(), sourceDay, sourceTimeslot, sqlConnectionManager)){
+                return false;
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // The same lecturer can switch his/her own lessons
         if (sourceLecturerId == targetLecturerId) {
             return true;

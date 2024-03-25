@@ -18,6 +18,8 @@ public class Room {
     Boolean active;
     // String locationCaption;
     private SQLConnectionManager sqlConnectionManager;
+    // Arraylist of ResourcesBlocked for this Room
+    private ArrayList<ResourcesBlocked> roomBlocks;
 
     public Room(Long id, SQLConnectionManager sqlConnectionManager) throws SQLException {
         this.id = id;
@@ -42,6 +44,10 @@ public class Room {
 
         }
         // sqlConnectionManager.close();
+    }
+
+    public void updateRoomBlocks(){
+        this.roomBlocks = ResourcesBlocked.getArrayListofResourcesblocked(getId(), ResourceNames.ROOM, sqlConnectionManager);
     }
 
     public static Boolean checkRoomAvailability(Long pRoomID, LocalDate pDate, int pTimeslot,
@@ -191,4 +197,9 @@ public class Room {
         this.sqlConnectionManager = sqlConnectionManager;
     }
 
+    public ArrayList<ResourcesBlocked> getRoomBlocks() {
+        return roomBlocks;
+    }
+
+    
 }

@@ -99,8 +99,7 @@ public class Resourcemanager {
                                 this.positionInCoursepassLecturerSubjectStack).coursepass.getId();
                         Long refCoursepassLecturerSubjectId = this.arrayCoursepassLecturerSubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).id;
-                        // ToDO: if we want to also manage the rooms we could do it here
-                        Long refRoomId = 0L;
+                        Long refRoomId = this.arrayCoursepassLecturerSubject.get(this.positionInCoursepassLecturerSubjectStack).getRoom().getId();
                         Long refLecturerId = this.arrayCoursepassLecturerSubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).lecturer.getId();
                         Long refSubjectId = this.arrayCoursepassLecturerSubject.get(
@@ -194,7 +193,10 @@ public class Resourcemanager {
 
         if (Lecturer.checkLecturerAvailability(this.arrayCoursepassLecturerSubject.get(
                 positionInCoursepassLecturerSubjectStack).lecturer.getId(),
-                arrayTimetabledays.get(idxDay).getDate(), idxTimeslot, getSqlConnectionManager()) &&
+                arrayTimetabledays.get(idxDay).getDate(), idxTimeslot, getSqlConnectionManager()) 
+
+                &&
+
                 Room.checkRoomAvailability(
                         this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getRoom()
                                 .getId(),
