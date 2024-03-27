@@ -88,6 +88,7 @@ public class CoursePass {
                 this.active = rs.getBoolean("active");
                 this.description = rs.getString("description");
                 this.room = new Room(rs.getLong("refRoomID"), getSqlConnectionManager());
+                this.updateCoursePassLecturerSubjects();
             }
         } catch (SQLException e) {
             System.err.println("The CoursePass with the id: " + this.id +
@@ -118,7 +119,7 @@ public class CoursePass {
 
             while (rsCoursePassLecturerSubjects.next()) {
                 arrayCoursePassLecturerSubject.add
-                        (new CoursepassLecturerSubject(rsCoursePassLecturerSubjects.getLong("id"), getSqlConnectionManager()));
+                        (new CoursepassLecturerSubject(rsCoursePassLecturerSubjects.getLong("id"), getSqlConnectionManager(), this));
             }
         } catch (SQLException e) {
             System.err.println("Updating the CoursePassLecturerSubjects of CoursePass with the id: "
@@ -204,7 +205,7 @@ public class CoursePass {
         ResultSet rs = sqlConnectionManager.select("Select * from  T_COURSEPASSESLECTURERSUBJECT  where active = ? and REFCOURSEPASSID = ?", SQLValues);
         ArrayList<CoursepassLecturerSubject> returnList = new ArrayList<>();
         while (rs.next()) {
-            returnList.add(new CoursepassLecturerSubject(rs.getLong("id"), getSqlConnectionManager()));
+            returnList.add(new CoursepassLecturerSubject(rs.getLong("id"), getSqlConnectionManager(), this));
         }
         // sqlConnectionManager.close();
         return returnList;

@@ -19,12 +19,14 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     Boolean active;
     private SQLConnectionManager sqlConnectionManager;
 
-    public static boolean isFreeTarget(CoursepassLecturerSubject cls, LocalDate targetDay, int targetTimeslot, SQLConnectionManager sqlConnectionManager) {
+    public static boolean isFreeTarget(CoursepassLecturerSubject cls, LocalDate targetDay, int targetTimeslot,
+            SQLConnectionManager sqlConnectionManager) {
         try {
-            if (!Lecturer.checkLecturerAvailability(cls.getLecturerID(), targetDay, targetTimeslot, sqlConnectionManager)) {
+            if (!Lecturer.checkLecturerAvailability(cls.getLecturerID(), targetDay, targetTimeslot,
+                    sqlConnectionManager)) {
                 return false;
             }
-            if (!Room.checkRoomAvailability(cls.getRoom().getId(), targetDay, targetTimeslot, sqlConnectionManager)){
+            if (!Room.checkRoomAvailability(cls.getRoom().getId(), targetDay, targetTimeslot, sqlConnectionManager)) {
                 return false;
             }
         } catch (SQLException e) {
@@ -35,20 +37,23 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     // TODO check if course has time (if a timetable for just the lecturer is shown)
     public static boolean cangetExchanged(CoursepassLecturerSubject source, LocalDate sourceDay, int sourceTimeslot,
-            CoursepassLecturerSubject target, LocalDate targetDay, int targetTimeslot, SQLConnectionManager sqlConnectionManager) {
+            CoursepassLecturerSubject target, LocalDate targetDay, int targetTimeslot,
+            SQLConnectionManager sqlConnectionManager) {
         // check if lecturer and room from source are free at target date and timeslot
         long sourceLecturerId = source.lecturer.getId();
         long targetLecturerId = target.lecturer.getId();
 
         try {
-            if(!Room.checkRoomAvailability(source.getRoom().getId(), targetDay, targetTimeslot, sqlConnectionManager)){
+            if (!Room.checkRoomAvailability(source.getRoom().getId(), targetDay, targetTimeslot,
+                    sqlConnectionManager)) {
                 return false;
             }
 
-            if(!Room.checkRoomAvailability(target.getRoom().getId(), sourceDay, sourceTimeslot, sqlConnectionManager)){
+            if (!Room.checkRoomAvailability(target.getRoom().getId(), sourceDay, sourceTimeslot,
+                    sqlConnectionManager)) {
                 return false;
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,10 +63,12 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             return true;
         }
         try {
-            if (!Lecturer.checkLecturerAvailability(sourceLecturerId, targetDay, targetTimeslot, sqlConnectionManager)) {
+            if (!Lecturer.checkLecturerAvailability(sourceLecturerId, targetDay, targetTimeslot,
+                    sqlConnectionManager)) {
                 return false;
             }
-            if (!Lecturer.checkLecturerAvailability(targetLecturerId, sourceDay, sourceTimeslot, sqlConnectionManager)) {
+            if (!Lecturer.checkLecturerAvailability(targetLecturerId, sourceDay, sourceTimeslot,
+                    sqlConnectionManager)) {
                 return false;
             }
         } catch (SQLException e) {
@@ -177,6 +184,11 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     }
 
     public CoursepassLecturerSubject(Long id, SQLConnectionManager sqlConnectionManager) throws SQLException {
+        this(id, sqlConnectionManager, new CoursePass(0L, sqlConnectionManager));
+    }
+
+    public CoursepassLecturerSubject(Long id, SQLConnectionManager sqlConnectionManager, CoursePass coursePass)
+            throws SQLException {
         this.id = id;
         setSqlConnectionManager(sqlConnectionManager);
 
@@ -184,7 +196,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
         if (this.id == 0) {
             // load dummy object
-            this.coursepass = new CoursePass(0L, getSqlConnectionManager());
+            this.coursepass = coursePass;
             this.lecturer = new Lecturer(0L, getSqlConnectionManager());
             this.subject = new Subject(0L, getSqlConnectionManager());
             this.room = new Room(0L, getSqlConnectionManager());
@@ -200,7 +212,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                     SQLValues);
             rs.first();
             this.id = rs.getLong("id");
-            this.coursepass = new CoursePass(rs.getLong("refCoursePassID"), getSqlConnectionManager());
+            this.coursepass = coursePass;
             this.lecturer = new Lecturer(rs.getLong("refLecturerID"), getSqlConnectionManager());
             this.subject = new Subject(rs.getLong("refSubjectID"), getSqlConnectionManager());
             this.room = new Room(rs.getLong("refRoomID"), getSqlConnectionManager());
@@ -448,12 +460,16 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         this.sqlConnectionManager = sqlConnectionManager;
     }
 
-    public Long getUnplanedHours(){
+    public Long getUnplanedHours() {
         return this.getShouldHours() - this.getIsHours() - this.getPlanedHours();
     }
 
-    public String getRoomCaptionLocatioString(){
+    public String getRoomCaptionLocatioString() {
         return this.getRoom().getCaption() + ", " + this.getRoom().getLocationCaption();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return (o instanceof CoursepassLecturerSubject) && (this.id == ((CoursepassLecturerSubject) o).id);
+    }
 }

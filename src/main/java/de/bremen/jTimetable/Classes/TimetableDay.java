@@ -52,7 +52,7 @@ public class TimetableDay {
         // if timeslot > arrayTimetableDay.size add as many
         while(this.arrayTimetableDay.size() < timeslot){
             try{
-                this.arrayTimetableDay.add(new TimetableHour(this.arrayTimetableDay.size() + 1, new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));                
+                this.arrayTimetableDay.add(new TimetableHour(this.arrayTimetableDay.size() + 1, new CoursepassLecturerSubject(0L, getSqlConnectionManager(), coursepassLecturerSubject.getCoursepass()), getSqlConnectionManager()));                
             }catch(Exception e){
                 e.printStackTrace();
             }

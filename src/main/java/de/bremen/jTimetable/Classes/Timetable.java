@@ -16,6 +16,10 @@ import java.util.stream.IntStream;
  */
 public class Timetable {
 
+    public void updateCoursePassTimetable() throws Exception{
+        this.getTimetable(this.getCoursepass());
+    }
+
     public void distributeUnplanedHours() {
 
         this.coursepass.updateCoursePassLecturerSubjects();
@@ -398,7 +402,7 @@ public class Timetable {
                 Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
                 while (timeslotIterator.hasNext()) {
                     tmpArrayList.add(new TimetableHour(timeslotIterator.next(),
-                            new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
+                            new CoursepassLecturerSubject(0L, getSqlConnectionManager(), this.coursepass), getSqlConnectionManager()));
                 }
                 tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
             }
@@ -410,7 +414,7 @@ public class Timetable {
             Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
             while (timeslotIterator.hasNext()) {
                 tmpTimetableday.addToSlot(timeslotIterator.next(),
-                        new CoursepassLecturerSubject(0L, getSqlConnectionManager()));
+                        new CoursepassLecturerSubject(0L, getSqlConnectionManager(), this.coursepass));
             }
         }
 
@@ -521,7 +525,7 @@ public class Timetable {
             // add this timeslot/TimetableHour to our tmpDayObject
             tmpDayObject.getArrayTimetableDay().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
                     new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
-                            getSqlConnectionManager()),
+                            getSqlConnectionManager(), this.coursepass),
                     getSqlConnectionManager()));
 
         }
@@ -533,6 +537,10 @@ public class Timetable {
 
     public ArrayList<Room> getRooms() {
         return rooms;
+    }
+
+    public CoursePass getCoursepass() {
+        return coursepass;
     }
 
     
