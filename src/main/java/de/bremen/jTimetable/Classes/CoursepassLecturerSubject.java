@@ -77,6 +77,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         return true;
     }
 
+    // Switches two Hours
     public static void changeCoursepassLecturerSubject(CoursepassLecturerSubject source, LocalDate sourceDay,
             int sourceTimeslot, CoursepassLecturerSubject target, LocalDate targetDay, int targetTimeslot,
             SQLConnectionManager sqlConnectionManager) {
@@ -145,40 +146,34 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             }
 
             // change T_Timetables
-            // update source if the target is not 0 / freetime
-            // if(target.id != 0){
+            // update source 
             SQLValues.add(new SQLValueLong(target.id));
             SQLValues.add(new SQLValueLong(target.coursepass.getRoom().getId()));
             SQLValues.add(new SQLValueLong(target.lecturer.getId()));
-            SQLValues.add(new SQLValueLong(source.subject.getId()));
-            SQLValues.add(new SQLValueLong(
-                    source.coursepass.getId() != 0 ? source.coursepass.getId() : target.coursepass.getId()));
+            SQLValues.add(new SQLValueLong(target.subject.getId()));
+            SQLValues.add(new SQLValueLong(source.coursepass.getId()));
             SQLValues.add(new SQLValueDate(sourceDay));
             SQLValues.add(new SQLValueInt(sourceTimeslot));
             sqlConnectionManager.execute(
                     "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",
                     SQLValues);
             SQLValues = new ArrayList<SQLConnectionManagerValues>();
-            // }
 
-            // update target if the source is not 0 / freetime
-            // if(source.id != 0){
+            // update target
             SQLValues.add(new SQLValueLong(source.id));
             SQLValues.add(new SQLValueLong(source.coursepass.getRoom().getId()));
             SQLValues.add(new SQLValueLong(source.lecturer.getId()));
             SQLValues.add(new SQLValueLong(source.subject.getId()));
-            SQLValues.add(new SQLValueLong(
-                    target.coursepass.getId() != 0 ? target.coursepass.getId() : source.coursepass.getId()));
+            SQLValues.add(new SQLValueLong(target.coursepass.getId()));
             SQLValues.add(new SQLValueDate(targetDay));
             SQLValues.add(new SQLValueInt(targetTimeslot));
             sqlConnectionManager.execute(
                     "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",
                     SQLValues);
             SQLValues = new ArrayList<SQLConnectionManagerValues>();
-            // }
 
         } catch (Exception e) {
-            System.out.println("An SQLError occurred while Updating ResourceBlocked an Timetables");
+            System.out.println("An SQLError occurred while Updating ResourceBlocked and Timetables");
             e.printStackTrace();
         }
     }
@@ -294,16 +289,21 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         this.updatePlanedHours();
     }
 
+    // overrides an existing timetable entry with freetime and removes the resources blocked entrys
     public void deleteCLS(LocalDate pDate, Integer pTimestamp) {
         try {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
-            SQLValues.add(new SQLValueLong(this.id));
+            SQLValues.add(new SQLValueLong(0L));
+            SQLValues.add(new SQLValueLong(0L));
+            SQLValues.add(new SQLValueLong(0L));
+            SQLValues.add(new SQLValueLong(0L));
+            SQLValues.add(new SQLValueLong(this.getCoursepass().getId()));
             SQLValues.add(new SQLValueDate(pDate));
             SQLValues.add(new SQLValueInt(pTimestamp));
             sqlConnectionManager.execute(
-                    "Delete FROM T_TIMETABLES where REFCOURSEPASSLECTURERSUBJECT  = ? and timetableday = ? and timeslot = ?;",
+                    "UPDATE T_TIMETABLES set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT =? where REFCOURSEPASS  = ? and timetableday = ? and timeslot = ?;",
                     SQLValues);
             // delete lecturer resourceblock
             SQLValues.clear();

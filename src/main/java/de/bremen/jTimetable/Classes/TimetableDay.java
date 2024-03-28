@@ -57,7 +57,13 @@ public class TimetableDay {
                 e.printStackTrace();
             }
         }
-        this.arrayTimetableDay.add(timeslot, new TimetableHour(timeslot, coursepassLecturerSubject, getSqlConnectionManager()));
+        // check if the timeslot is already part of the array, if not add it with freetime
+        try {
+            this.getArrayTimetableDay().get(timeslot);
+            this.arrayTimetableDay.set(timeslot, new TimetableHour(timeslot, coursepassLecturerSubject, getSqlConnectionManager()));
+        } catch (Exception e) {
+            this.arrayTimetableDay.add(timeslot, new TimetableHour(timeslot, coursepassLecturerSubject, getSqlConnectionManager()));            
+        }
     }
 
     private boolean checkIfSlotIsFree(int timeslot){

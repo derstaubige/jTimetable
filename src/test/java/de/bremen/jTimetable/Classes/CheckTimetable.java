@@ -153,6 +153,7 @@ public class CheckTimetable {
             assertNotNull(timetable2);
             assertNotNull(timetable3);
 
+            sqlConnectionManager.close();
         } catch (Exception e) {
             fail(e.getStackTrace().toString());
         }
@@ -163,11 +164,53 @@ public class CheckTimetable {
         try {
             SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
+
             timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0).coursepassLecturerSubject.deleteCLS(
                     timetable3.getArrayTimetableDays().get(0).getDate(),
                     timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0).getTimeslot());
+
             timetable3.updateCoursePassTimetable();
-            assertEquals(new CoursepassLecturerSubject(0L, sqlConnectionManager), timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0).getCoursepassLecturerSubject());
+
+            assertEquals(new CoursepassLecturerSubject(0L, sqlConnectionManager), timetable3.getArrayTimetableDays()
+                    .get(0).getArrayTimetableDay().get(0).getCoursepassLecturerSubject());
+        } catch (Exception e) {
+            fail(e.getStackTrace().toString());
+        }
+    }
+
+    @Test
+    void moveHourFromTimetableCP3Day1Timeslot2L2R2toDay1Timeslot0() {
+        try {
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
+            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
+            TimetableHour source = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
+            TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2);
+
+            if (CoursepassLecturerSubject.cangetExchanged(source.getCoursepassLecturerSubject(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), source.getTimeslot(),
+                    target.getCoursepassLecturerSubject(), timetable3.getArrayTimetableDays().get(0).getDate(),
+                    target.getTimeslot(), sqlConnectionManager)) {
+                CoursepassLecturerSubject.changeCoursepassLecturerSubject(source.getCoursepassLecturerSubject(),
+                        timetable3.getArrayTimetableDays().get(0).getDate(), source.getTimeslot(),
+                        target.getCoursepassLecturerSubject(), timetable3.getArrayTimetableDays().get(0).getDate(),
+                        target.getTimeslot(), sqlConnectionManager);
+            } else {
+                fail("Problem with determining if the Freetime and the Free Lecturer and Room can be Swapped");
+            }
+
+            timetable3.updateCoursePassTimetable();
+
+            assertEquals(2, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0)
+                    .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 0 has LecturerID 2
+            assertEquals(2, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0)
+                    .getCoursepassLecturerSubject().getRoom().getId()); // check if Day 1 Slot 0 has RoomID 2
+
+            assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2)
+                    .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 2 has LecturerID 0
+            assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2)
+                    .getCoursepassLecturerSubject().getRoom().getId()); // check if Day 1 Slot 2 has RoomID 0
+            // also check rooms and the ressourceblocked!
+
         } catch (Exception e) {
             fail(e.getStackTrace().toString());
         }
@@ -175,6 +218,6 @@ public class CheckTimetable {
 
     @AfterAll
     static void removeDB() {
-        DeleteDbFiles.execute("./", "h2Test", false);
+        // DeleteDbFiles.execute("./", "h2Test", false);
     }
 }

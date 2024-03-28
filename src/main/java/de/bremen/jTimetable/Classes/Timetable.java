@@ -479,17 +479,11 @@ public class Timetable {
      */
     private void loadTimetableFromResultSet(ResultSet resultSet) throws SQLException {
         this.arrayTimetableDays = new ArrayList<>();
-        int timeslotCount = 0;
 
         while (resultSet.next()) {
 
             TimetableDay tmpDayObject = null;
             long tmpTimeslot = resultSet.getLong("Timeslot");
-            // If current timeslot is bigger than the timeslotCount current is the new
-            // maxTimeslot
-            if (tmpTimeslot > timeslotCount) {
-                timeslotCount = (int) tmpTimeslot;
-            }
             LocalDate tmpDate = resultSet.getDate("TIMETABLEDAY").toLocalDate();
 
             // Check if timetableDay object exists
@@ -497,31 +491,24 @@ public class Timetable {
                 // If exists select correct timetableDay, to add new Hours to it
                 if (day.getDate().isEqual(tmpDate)) {
                     tmpDayObject = day;
-                    // TODO another timeslot is added
-                    // necessary?
-                    timeslotCount++;
                     break;
                 }
             }
 
             // If day doesn't exist, create a new object
             if (tmpDayObject == null) {
-                tmpDayObject = new TimetableDay(tmpDate, timeslotCount, getSqlConnectionManager());
-                // reset timeslotCount for new day
-                timeslotCount = 0;
+                tmpDayObject = new TimetableDay(tmpDate, (int) tmpTimeslot, getSqlConnectionManager());
+                
                 this.arrayTimetableDays.add(tmpDayObject);
             }
 
-            // ToDo: Check if timeslot is already filled?
-
             // Check if we have to add to the max timeslots per day
-            // ToDo: i guess we will crash here if we don't fill up our array of empty
-            // TimetableHours,
-            // aka index out of bounds
-            if (tmpDayObject.getTimeslots() <= tmpTimeslot) {
+            try {
+                tmpDayObject.getArrayTimetableDay().get((int) tmpTimeslot);
+            } catch (Exception e) {
                 tmpDayObject.setTimeslots((int) tmpTimeslot);
             }
-            // System.out.println(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"));
+
             // add this timeslot/TimetableHour to our tmpDayObject
             tmpDayObject.getArrayTimetableDay().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
                     new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
