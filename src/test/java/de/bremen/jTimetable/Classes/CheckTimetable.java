@@ -240,6 +240,63 @@ public class CheckTimetable {
         }
     }
 
+    @Test
+    void checkIfHourCouldBeDeleted() {
+        try {
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
+            ResourcesBlocked resourcesBlocked;
+            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
+            TimetableHour deleteMe = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
+            deleteMe.getCoursepassLecturerSubject().deleteCLS(timetable3.getArrayTimetableDays().get(0).getDate(), 0); // delete
+                                                                                                                       // Day
+                                                                                                                       // 1
+                                                                                                                       // Timeslot
+                                                                                                                       // 0
+
+            assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0)
+                    .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 0 has LecturerID 0
+            assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0)
+                    .getCoursepassLecturerSubject().getRoom().getId()); // check if Day 1 Slot 0 has RoomID 0
+
+            resourcesBlocked = new ResourcesBlocked(0L, ResourceNames.LECTURER,
+                    timetable3.getArrayTimetableDays().get(0).getDate(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), 0, 0, sqlConnectionManager);
+            assertEquals(0, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Lecturer 0
+
+            resourcesBlocked = new ResourcesBlocked(0L, ResourceNames.ROOM,
+                    timetable3.getArrayTimetableDays().get(0).getDate(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), 0, 0, sqlConnectionManager);
+            assertEquals(0, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Room 0
+        } catch (Exception e) {
+            fail(e.getStackTrace().toString());
+        }
+    }
+
+    @Test
+    void checkIfWeCouldAddAnHour() {
+        
+    }
+
+    @Test
+    void checkIfSwappingTwoHoursFailed() {
+
+    }
+
+    @Test
+    void checkIfAddingAnHourFailed() {
+
+    }
+
+    @Test
+    void checkIfDistributingRemainingHoursWorks() {
+
+    }
+
+    @Test
+    void checkIfDeletingTimetableWorks() {
+
+    }
+
     @AfterAll
     static void removeDB() {
         // DeleteDbFiles.execute("./", "h2Test", false);
