@@ -14,6 +14,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import javafx.scene.layout.GridPane;
+
 public class CheckTimetable {
 
     @BeforeAll
@@ -216,12 +218,9 @@ public class CheckTimetable {
                     timetable3.getArrayTimetableDays().get(0).getDate(), 0, 0, sqlConnectionManager);
             assertEquals(2, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Room 2
 
-            resourcesBlocked = new ResourcesBlocked(2L, ResourceNames.LECTURER,
-                    timetable3.getArrayTimetableDays().get(0).getDate(),
-                    timetable3.getArrayTimetableDays().get(0).getDate(), 2, 2, sqlConnectionManager);
-
             assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2)
                     .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 2 has LecturerID 0
+
             assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2)
                     .getCoursepassLecturerSubject().getRoom().getId()); // check if Day 1 Slot 2 has RoomID 0
 
@@ -274,7 +273,61 @@ public class CheckTimetable {
 
     @Test
     void checkIfWeCouldAddAnHour() {
-        
+        try {
+            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
+            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
+            ResourcesBlocked resourcesBlocked;
+            TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
+            LocalDate targetDate = timetable3.getArrayTimetableDays().get(0).getDate();
+
+            CoursepassLecturerSubject source = new CoursepassLecturerSubject(8L, sqlConnectionManager);
+
+            if (CoursepassLecturerSubject.isFreeTarget(source,
+                    targetDate,
+                    target.getTimeslot(), sqlConnectionManager) == true) {
+                // check if the target was a freetime, if not we have to delete the existing cls
+                if (target.getCoursepassLecturerSubject().getSubject().getId() != 0) {
+                    // no freetime, we have to delete the resourceblocked and the entry in the
+                    // timetable
+                    Timetable.deleteResourceBlocked(
+                            target.getCoursepassLecturerSubject().getLecturerID(),
+                            ResourceNames.LECTURER, targetDate, targetDate,
+                            target.getTimeslot(),
+                            target.getTimeslot(), sqlConnectionManager);
+                    Timetable.deleteResourceBlocked(
+                            target.getCoursepassLecturerSubject().getRoom().getId(),
+                            ResourceNames.ROOM, targetDate, targetDate, target.getTimeslot(),
+                            target.getTimeslot(), sqlConnectionManager);
+                }
+                // delete the entry in the timetable table
+                Timetable.deleteTimetable(source.getId(),
+                        targetDate, target.getTimeslot(), sqlConnectionManager);
+                TimetableHour tmptimetableHour = new TimetableHour(target.getTimeslot(),
+                        source, sqlConnectionManager);
+                timetable3.addSingleHour(tmptimetableHour, targetDate, target.getTimeslot());
+                timetable3.updateCoursePassTimetable();
+            } else {
+                fail("Source isnt free");
+            }
+            assertEquals(2, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0)
+                    .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 0 has LecturerID 2
+            assertEquals(2, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0)
+                    .getCoursepassLecturerSubject().getRoom().getId()); // check if Day 1 Slot 0 has RoomID 2
+
+            resourcesBlocked = new ResourcesBlocked(2L, ResourceNames.LECTURER,
+                    timetable3.getArrayTimetableDays().get(0).getDate(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), 0, 0, sqlConnectionManager);
+            assertEquals(2, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Lecturer 2
+
+            resourcesBlocked = new ResourcesBlocked(2L, ResourceNames.ROOM,
+                    timetable3.getArrayTimetableDays().get(0).getDate(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), 0, 0, sqlConnectionManager);
+            assertEquals(2, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Room 2
+
+        } catch (Exception e) {
+            fail(e.getStackTrace().toString());
+        }
+
     }
 
     @Test
