@@ -329,7 +329,7 @@ public class LecturerController implements Initializable {
         LecturerBlockedAdd.setOnAction(event -> {
             try {
                 ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L, getSqlConnectionManager());
-                resourcesblocked.setReResourceID(lecturer.getId());
+                resourcesblocked.setRefResourceID(lecturer.getId());
                 resourcesblocked.setResourceName(ResourceNames.LECTURER);
                 resourcesblocked.setStartDate(LocalDate.now());
                 resourcesblocked.setEndDate(LocalDate.now());

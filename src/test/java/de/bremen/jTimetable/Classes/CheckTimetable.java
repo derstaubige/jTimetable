@@ -199,17 +199,41 @@ public class CheckTimetable {
             }
 
             timetable3.updateCoursePassTimetable();
+            ResourcesBlocked resourcesBlocked;
 
             assertEquals(2, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0)
                     .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 0 has LecturerID 2
             assertEquals(2, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0)
                     .getCoursepassLecturerSubject().getRoom().getId()); // check if Day 1 Slot 0 has RoomID 2
 
+            resourcesBlocked = new ResourcesBlocked(2L, ResourceNames.LECTURER,
+                    timetable3.getArrayTimetableDays().get(0).getDate(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), 0, 0, sqlConnectionManager);
+            assertEquals(2, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Lecturer 2
+
+            resourcesBlocked = new ResourcesBlocked(2L, ResourceNames.ROOM,
+                    timetable3.getArrayTimetableDays().get(0).getDate(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), 0, 0, sqlConnectionManager);
+            assertEquals(2, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Room 2
+
+            resourcesBlocked = new ResourcesBlocked(2L, ResourceNames.LECTURER,
+                    timetable3.getArrayTimetableDays().get(0).getDate(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), 2, 2, sqlConnectionManager);
+
             assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2)
                     .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 2 has LecturerID 0
             assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2)
                     .getCoursepassLecturerSubject().getRoom().getId()); // check if Day 1 Slot 2 has RoomID 0
-            // also check rooms and the ressourceblocked!
+
+            resourcesBlocked = new ResourcesBlocked(0L, ResourceNames.LECTURER,
+                    timetable3.getArrayTimetableDays().get(0).getDate(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), 2, 2, sqlConnectionManager);
+            assertEquals(0, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Lecturer 0
+
+            resourcesBlocked = new ResourcesBlocked(0L, ResourceNames.ROOM,
+                    timetable3.getArrayTimetableDays().get(0).getDate(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), 2, 2, sqlConnectionManager);
+            assertEquals(0, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Room 0
 
         } catch (Exception e) {
             fail(e.getStackTrace().toString());

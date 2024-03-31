@@ -15,13 +15,80 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 public class ResourcesBlocked {
 
     /**
+     * Static method that creates a new resourcesBlocked-instance and setts all
+     * values at once.
+     * Afterwards it calls method save() to save the changes in the database.
+     *
+     * @param REFRESOURCEID
+     * @param RESOURCENAME
+     * @param DESCRIPTION
+     * @param STARTDATE
+     * @param ENDDATE
+     * @param STARTTIMESLOT
+     * @param ENDTIMESLOT
+     * @throws SQLException
+     */
+    public static void setResourcesBlocked(Long REFRESOURCEID, ResourceNames RESOURCENAME, String DESCRIPTION,
+            LocalDate STARTDATE, LocalDate ENDDATE, int STARTTIMESLOT,
+            int ENDTIMESLOT, SQLConnectionManager sqlConnectionManager) throws SQLException {
+        ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L, sqlConnectionManager);
+        resourcesblocked.setRefResourceID(REFRESOURCEID);
+        resourcesblocked.setResourceName(RESOURCENAME);
+        resourcesblocked.setDescription(DESCRIPTION);
+        resourcesblocked.setStartDate(STARTDATE);
+        resourcesblocked.setEndDate(ENDDATE);
+        resourcesblocked.setStartTimeslot(STARTTIMESLOT);
+        resourcesblocked.setEndTimeslot(ENDTIMESLOT);
+
+        resourcesblocked.save();
+    }
+    public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
+            ResourceNames resourcename, SQLConnectionManager sqlConnectionManager) {
+        return getArrayListofResourcesblocked(resourceID, resourcename, false, true, sqlConnectionManager);
+    }
+    public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
+            ResourceNames resourcename, Boolean showPassed, Boolean withoutLesson,
+            SQLConnectionManager sqlConnectionManager) {
+        ArrayList<ResourcesBlocked> returnListe = new ArrayList<ResourcesBlocked>();
+
+        try {
+
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            SQLValues.add(new SQLValueLong(resourceID));
+            SQLValues.add(new SQLValueString(resourcename.toString()));
+
+            String SQLString = "Select * from T_Resourcesblocked where REFRESOURCEID = ? and RESOURCENAME = ?";
+
+            if (showPassed == false) {
+                SQLString = SQLString + " and ENDDATE >= '" + LocalDate.now().toString() + "'";
+            }
+
+            if (withoutLesson == true) {
+                SQLString = SQLString + " and DESCRIPTION NOT LIKE 'LESSON%'";
+            }
+
+            SQLString = SQLString + ";";
+
+            ResultSet rs = sqlConnectionManager.select(SQLString, SQLValues);
+
+            while (rs.next()) {
+                returnListe.add(new ResourcesBlocked(rs.getLong("ID"), sqlConnectionManager));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return returnListe;
+    }
+    /**
      * Primary key, not null, auto_increment --> is initially 0
      */
-    private Long ID;
+    private Long ID = 0L;
     /**
      * Reference to the resource (either Lecturer or Room)
      */
-    private Long reResourceID;
+    private Long refResourceID;
     /**
      * Type of the resource (Lecturer or Room)
      */
@@ -38,15 +105,18 @@ public class ResourcesBlocked {
      * First timeslot of the blocking.
      */
     private Integer startTimeslot;
+
     /**
      * Ending timeslot of the blocking.
      */
     private Integer endTimeslot;
+
     /**
      * Description is optional and can describe the matter of the blocking (e.g.:
      * "LESSON" or "VACATION")
      */
     private String description;
+
     private SQLConnectionManager sqlConnectionManager;
 
     /**
@@ -59,12 +129,12 @@ public class ResourcesBlocked {
         this.ID = resourcesBlockedID;
         setSqlConnectionManager(sqlConnectionManager);
         // establish connection
-        try  {
+        try {
 
             // id == 0 if object doesn't exist in database
             if (this.ID == 0) {
                 // load dummy object
-                this.reResourceID = 0L;
+                this.refResourceID = 0L;
                 this.resourceName = ResourceNames.LECTURER;
                 this.startDate = LocalDate.of(1990, 1, 1);
                 this.endDate = LocalDate.of(1990, 1, 1);
@@ -82,7 +152,7 @@ public class ResourcesBlocked {
 
                     rs.first();
                     this.ID = rs.getLong("id");
-                    this.reResourceID = rs.getLong("REFRESOURCEID");
+                    this.refResourceID = rs.getLong("REFRESOURCEID");
                     this.resourceName = ResourceNames.valueOf(rs.getString("RESOURCENAME").trim());
                     this.startDate = rs.getDate("STARTDATE").toLocalDate();
                     this.endDate = rs.getDate("ENDDATE").toLocalDate();
@@ -98,12 +168,51 @@ public class ResourcesBlocked {
         }
     }
 
+    public ResourcesBlocked(Long resourceID, ResourceNames resourcename, LocalDate startDate, LocalDate endDate,
+            Integer startTimeslot, Integer endTimeslot, SQLConnectionManager sqlConnectionManager) {
+        this.setSqlConnectionManager(sqlConnectionManager);
+        try {
+
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            SQLValues.add(new SQLValueLong(resourceID));
+            SQLValues.add(new SQLValueString(resourcename.toString()));
+            SQLValues.add(new SQLValueDate(startDate));
+            SQLValues.add(new SQLValueDate(endDate));
+            SQLValues.add(new SQLValueInt(startTimeslot));
+            SQLValues.add(new SQLValueInt(endTimeslot));
+
+            ResultSet rs = sqlConnectionManager.select(
+                    "SELECT * FROM T_RESOURCESBLOCKED where REFRESOURCEID = ? and RESOURCENAME = ? and startdate = ? and enddate = ? and starttimeslot = ? and endtimeslot = ?;",
+                    SQLValues);
+            rs.first();
+            this.setID(rs.getLong("ID"));
+            this.setRefResourceID(rs.getLong("REFRESOURCEID"));
+            this.setResourceName(ResourceNames.valueOf(rs.getString("RESOURCENAME").trim()));
+            this.setStartDate(rs.getDate("startdate").toLocalDate());
+            this.setEndDate(rs.getDate("enddate").toLocalDate());
+            this.setStartTimeslot(rs.getInt("starttimeslot"));
+            this.setEndTimeslot(rs.getInt("endtimeslot"));
+            this.setDescription(rs.getString("DESCRIPTION").trim());
+
+        } catch (Exception e) {
+            // System.err.println("Couldnt load RessourceBlocked" + resourceID + resourcename + startDate + endDate + startTimeslot + endTimeslot);
+            // load dummy object
+            this.refResourceID = resourceID;
+            this.resourceName = resourcename;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.startTimeslot = startTimeslot;
+            this.endTimeslot = endTimeslot;
+            this.description = "LESSON";
+        }
+    }
+
     public void save() {
-        try  {
+        try {
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
-            SQLValues.add(new SQLValueLong(this.reResourceID));
+            SQLValues.add(new SQLValueLong(this.refResourceID));
             SQLValues.add(new SQLValueString(this.resourceName.toString()));
             SQLValues.add(new SQLValueDate(this.startDate));
             SQLValues.add(new SQLValueDate(this.endDate));
@@ -141,103 +250,6 @@ public class ResourcesBlocked {
         }
     }
 
-    /**
-     * Static method that creates a new resourcesBlocked-instance and setts all
-     * values at once.
-     * Afterwards it calls method save() to save the changes in the database.
-     *
-     * @param REFRESOURCEID
-     * @param RESOURCENAME
-     * @param DESCRIPTION
-     * @param STARTDATE
-     * @param ENDDATE
-     * @param STARTTIMESLOT
-     * @param ENDTIMESLOT
-     * @throws SQLException
-     */
-    public static void setResourcesBlocked(Long REFRESOURCEID, ResourceNames RESOURCENAME, String DESCRIPTION,
-            LocalDate STARTDATE, LocalDate ENDDATE, int STARTTIMESLOT,
-            int ENDTIMESLOT, SQLConnectionManager sqlConnectionManager) throws SQLException {
-        ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L, sqlConnectionManager);
-        resourcesblocked.setReResourceID(REFRESOURCEID);
-        resourcesblocked.setResourceName(RESOURCENAME);
-        resourcesblocked.setDescription(DESCRIPTION);
-        resourcesblocked.setStartDate(STARTDATE);
-        resourcesblocked.setEndDate(ENDDATE);
-        resourcesblocked.setStartTimeslot(STARTTIMESLOT);
-        resourcesblocked.setEndTimeslot(ENDTIMESLOT);
-
-        resourcesblocked.save();
-    }
-
-    public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
-            ResourceNames resourcename, SQLConnectionManager sqlConnectionManager) {
-        return getArrayListofResourcesblocked(resourceID, resourcename, false, true, sqlConnectionManager);
-    }
-
-    public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
-            ResourceNames resourcename, Boolean showPassed, Boolean withoutLesson, SQLConnectionManager sqlConnectionManager) {
-        ArrayList<ResourcesBlocked> returnListe = new ArrayList<ResourcesBlocked>();
-
-        try  {
-
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-            SQLValues.add(new SQLValueLong(resourceID));
-            SQLValues.add(new SQLValueString(resourcename.toString()));
-
-            String SQLString = "Select * from T_Resourcesblocked where REFRESOURCEID = ? and RESOURCENAME = ?";
-
-            if (showPassed == false) {
-                SQLString = SQLString + " and ENDDATE >= '" + LocalDate.now().toString() + "'";
-            }
-
-            if (withoutLesson == true) {
-                SQLString = SQLString + " and DESCRIPTION NOT LIKE 'LESSON%'";
-            }
-
-            SQLString = SQLString + ";";
-
-            ResultSet rs = sqlConnectionManager.select(SQLString, SQLValues);
-
-            while (rs.next()) {
-                returnListe.add(new ResourcesBlocked(rs.getLong("ID"), sqlConnectionManager));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return returnListe;
-    }
-
-    public void get(Long resourceID, ResourceNames resourcename, LocalDate startDate, LocalDate endDate,
-            Integer startTimeslot, Integer endTimeslot) {
-        try  {
-
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-            SQLValues.add(new SQLValueLong(resourceID));
-            SQLValues.add(new SQLValueString(resourcename.toString()));
-            SQLValues.add(new SQLValueDate(startDate));
-            SQLValues.add(new SQLValueDate(endDate));
-
-            ResultSet rs = sqlConnectionManager.select(
-                    "Select * from T_Resourcesblocked where REFRESOURCEID = ? and RESOURCENAME = ? and startdate = ? and enddate = ? and starttimeslot = ? and endtimeslot = ?;",
-                    SQLValues);
-            rs.first();
-            this.setID(rs.getLong("ID"));
-            this.setReResourceID(rs.getLong("REFRESOURCEID"));
-            this.setResourceName(ResourceNames.valueOf(rs.getString("RESOURCENAME")));
-            this.setStartDate(rs.getDate("startdate").toLocalDate());
-            this.setEndDate(rs.getDate("enddate").toLocalDate());
-            this.setStartTimeslot(rs.getInt("starttimeslot"));
-            this.setEndTimeslot(rs.getInt("endtimeslot"));
-            this.setDescription(rs.getString("DESCRIPTION"));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public Long getID() {
         return this.ID;
     }
@@ -246,12 +258,12 @@ public class ResourcesBlocked {
         this.ID = iD;
     }
 
-    public Long getReResourceID() {
-        return this.reResourceID;
+    public Long getRefResourceID() {
+        return this.refResourceID;
     }
 
-    public void setReResourceID(Long rEFRESOURCEID) {
-        this.reResourceID = rEFRESOURCEID;
+    public void setRefResourceID(Long rEFRESOURCEID) {
+        this.refResourceID = rEFRESOURCEID;
     }
 
     /**

@@ -86,67 +86,50 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             // change Resourcesblocked, Lecturerer and Room ID
 
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            // get source lecturer resourcesBlocked
+            ResourcesBlocked sourceLecturer = new ResourcesBlocked(source.getLecturerID(),
+                    ResourceNames.LECTURER, sourceDay, sourceDay, sourceTimeslot, sourceTimeslot, sqlConnectionManager);
+            // get source room resourcesBlocked            
+            ResourcesBlocked sourceRoom = new ResourcesBlocked(source.getRoom().getId(),
+                    ResourceNames.ROOM, sourceDay, sourceDay, sourceTimeslot, sourceTimeslot, sqlConnectionManager);
+            // get target lecturer resourcesBlocked
+            ResourcesBlocked targetLecturer = new ResourcesBlocked(target.getLecturerID(),
+                    ResourceNames.LECTURER, targetDay, targetDay, targetTimeslot, targetTimeslot, sqlConnectionManager);
+            // get target room resourcesBlocked
+            ResourcesBlocked targetRoom = new ResourcesBlocked(target.getRoom().getId(),
+            ResourceNames.ROOM, targetDay, targetDay, targetTimeslot, targetTimeslot, sqlConnectionManager);
 
-            // update source lecturer entry if the new lecturer is not 0
-            if (target.lecturer.getId() != 0) {
-
-                SQLValues.add(new SQLValueLong(target.lecturer.getId()));
-                SQLValues.add(new SQLValueLong(source.lecturer.getId()));
-                SQLValues.add(new SQLValueDate(sourceDay));
-                SQLValues.add(new SQLValueDate(sourceDay));
-                SQLValues.add(new SQLValueInt(sourceTimeslot));
-                SQLValues.add(new SQLValueInt(sourceTimeslot));
-                sqlConnectionManager.execute(
-                        "update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Lecturer' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",
-                        SQLValues);
-                SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            //delete resourcesBlocked if the new one is 0 otherwise update it
+            if(target.lecturer.getId() == 0){
+                sourceLecturer.delete();
+            }else{
+                sourceLecturer.setRefResourceID(target.getLecturer().getId());
+                sourceLecturer.save();
             }
 
-            // update source room entry if the new room is not 0
-            if (target.coursepass.getRoom().getId() != 0) {
-                SQLValues.add(new SQLValueLong(target.coursepass.getRoom().getId()));
-                SQLValues.add(new SQLValueLong(source.coursepass.getRoom().getId()));
-                SQLValues.add(new SQLValueDate(sourceDay));
-                SQLValues.add(new SQLValueDate(sourceDay));
-                SQLValues.add(new SQLValueInt(sourceTimeslot));
-                SQLValues.add(new SQLValueInt(sourceTimeslot));
-                sqlConnectionManager.execute(
-                        "update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Room' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",
-                        SQLValues);
-                SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            if(target.room.getId() == 0){
+                sourceRoom.delete();
+            }else{
+                sourceRoom.setRefResourceID(target.getRoom().getId());
+                sourceRoom.save();
             }
 
-            // update target lecturer entry if the source lecturer is not 0
-            if (source.lecturer.getId() != 0) {
-                SQLValues.add(new SQLValueLong(source.lecturer.getId()));
-                SQLValues.add(new SQLValueLong(target.lecturer.getId()));
-                SQLValues.add(new SQLValueDate(targetDay));
-                SQLValues.add(new SQLValueDate(targetDay));
-                SQLValues.add(new SQLValueInt(targetTimeslot));
-                SQLValues.add(new SQLValueInt(targetTimeslot));
-                sqlConnectionManager.execute(
-                        "update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Lecturer' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",
-                        SQLValues);
-                SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            if(source.lecturer.getId() == 0){
+                targetLecturer.delete();
+            }else{
+                targetLecturer.setRefResourceID(source.getLecturer().getId());
+                targetLecturer.save();
             }
 
-            // update target room entry if source room is not 0
-            if (source.coursepass.getRoom().getId() != 0) {
-
-                SQLValues.add(new SQLValueLong(source.coursepass.getRoom().getId()));
-                SQLValues.add(new SQLValueLong(target.coursepass.getRoom().getId()));
-                SQLValues.add(new SQLValueDate(targetDay));
-                SQLValues.add(new SQLValueDate(targetDay));
-                SQLValues.add(new SQLValueInt(targetTimeslot));
-                SQLValues.add(new SQLValueInt(targetTimeslot));
-                sqlConnectionManager.execute(
-                        "update `T_RESOURCESBLOCKED` set `REFRESOURCEID` = ? where `RESOURCENAME` = 'Room' and `REFRESOURCEID` = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT  = ?;",
-                        SQLValues);
-                SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            if(source.room.getId() == 0){
+                targetRoom.delete();
+            }else{
+                targetRoom.setRefResourceID(source.getRoom().getId());
+                targetRoom.save();
             }
 
             // change T_Timetables
-            // update source 
+            // update source
             SQLValues.add(new SQLValueLong(target.id));
             SQLValues.add(new SQLValueLong(target.coursepass.getRoom().getId()));
             SQLValues.add(new SQLValueLong(target.lecturer.getId()));
@@ -289,7 +272,8 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         this.updatePlanedHours();
     }
 
-    // overrides an existing timetable entry with freetime and removes the resources blocked entrys
+    // overrides an existing timetable entry with freetime and removes the resources
+    // blocked entrys
     public void deleteCLS(LocalDate pDate, Integer pTimestamp) {
         try {
 
