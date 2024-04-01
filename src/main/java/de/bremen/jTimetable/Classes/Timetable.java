@@ -238,43 +238,17 @@ public class Timetable {
      */
     public void deleteTimetable() {
         // Loop through all Days and Hours and Delete ResourceBlocked and Timetable
+        TimetableEntry timetableEntry;
         for (TimetableDay arrayTimetableDay : arrayTimetableDays) {
             for (TimetableHour timetableHour : arrayTimetableDay.getArrayTimetableDay()) {
                 if (timetableHour == null) {
                     continue;
                 }
-                deleteResourceBlocked(timetableHour.coursepassLecturerSubject.getLecturerID(),
-                        ResourceNames.LECTURER, arrayTimetableDay.getDate(),
-                        arrayTimetableDay.getDate(), timetableHour.getTimeslot(), timetableHour.getTimeslot(),
-                        getSqlConnectionManager());
-                deleteResourceBlocked(timetableHour.coursepassLecturerSubject.getLecturerID(),
-                        ResourceNames.ROOM, arrayTimetableDay.getDate(),
-                        arrayTimetableDay.getDate(), timetableHour.getTimeslot(), timetableHour.getTimeslot(),
-                        getSqlConnectionManager());
+                timetableEntry = new TimetableEntry(this.getCoursepass(), arrayTimetableDay.getDate(), timetableHour.getTimeslot(), sqlConnectionManager);
+                timetableEntry.delete();
             }
         }
-        deleteTimetable(coursepass.getId());
-    }
-
-    /**
-     * Method deletes all entries that match the given coursePassID in the database
-     * table T_timetables.
-     *
-     * @param coursePassID ID of the coursePass for which the entries will be
-     *                     deleted
-     */
-    public void deleteTimetable(long coursePassID) {
-        try {
-
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
-
-            SQLValues.add(new SQLValueLong(coursePassID));
-            sqlConnectionManager.execute("DELETE FROM T_Timetables where refCoursepass = ?", SQLValues);
-        } catch (SQLException e) {
-            System.err.println("SQLException was thrown in deleteTimetable(coursePassID), therefor deleting " +
-                    "timetable entries didn't work.");
-            throw new RuntimeException(e);
-        }
+        
     }
 
     /**
