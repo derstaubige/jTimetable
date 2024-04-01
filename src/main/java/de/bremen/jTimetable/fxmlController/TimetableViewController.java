@@ -169,7 +169,7 @@ public class TimetableViewController implements Initializable {
                                         source.getCoursepassLecturerSubject(),
                                         source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
                                         target.getDay(), target.getTimeslot(), getSqlConnectionManager());
-                            }else{
+                            } else {
                                 // System.out.println("Error switching Hours");
                             }
                         }
@@ -324,7 +324,10 @@ public class TimetableViewController implements Initializable {
                                 SourceCol, SourceRow);
 
                         // save freetime
-                        setEntryInTimetable(tmpDate, tmpcoursepassLecturerSubject, tmpTimeslot);
+                        TimetableEntry timetableEntry = new TimetableEntry(tmpcoursepassLecturerSubject, tmpDate,
+                                tmpTimeslot, sqlConnectionManager);
+                        timetableEntry.save();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -373,9 +376,10 @@ public class TimetableViewController implements Initializable {
         fileChooser.setTitle("Open Resource File");
         LocalDate date = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        if(this.isLecturer){
-            fileChooser.setInitialFileName(this.timetable.getLecturer().getLecturerFullName() + "_" + date.format(formatter));
-        }else{
+        if (this.isLecturer) {
+            fileChooser.setInitialFileName(
+                    this.timetable.getLecturer().getLecturerFullName() + "_" + date.format(formatter));
+        } else {
             fileChooser.setInitialFileName(coursepass.getCourseOfStudyCaption() + "_" + date.format(formatter));
         }
         fileChooser.getExtensionFilters().addAll(
@@ -429,11 +433,11 @@ public class TimetableViewController implements Initializable {
         btnDistributeUnplanedHours.setOnAction(event -> {
             this.distributeUnplanedHoursClicked(event);
         });
-        Platform.runLater(() ->{
-            if(this.isLecturer){
+        Platform.runLater(() -> {
+            if (this.isLecturer) {
                 anchorpane_Editbox.setVisible(false);
             }
-        });  
+        });
     }
 
     /**
@@ -465,30 +469,6 @@ public class TimetableViewController implements Initializable {
                 ((JavaFXCoursepassLecturerSubjectText) node).updateText();
             }
         }
-    }
-
-    private void setEntryInTimetable(LocalDate TimetableDay, CoursepassLecturerSubject coursepassLecturerSubject,
-            int timeslot)
-            throws SQLException {
-        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-        Long refcoursepassID = coursepassLecturerSubject.getCoursepass().getId();
-        Long refCoursepassLecturerSubjectId = coursepassLecturerSubject.getId();
-        Long refRoomId = coursepassLecturerSubject.getRoom().getId();
-        Long refLecturerId = coursepassLecturerSubject.getLecturerID();
-        Long refSubjectId = coursepassLecturerSubject.getSubject().getId();
-
-        SQLValues.add(new SQLValueDate(TimetableDay));
-        SQLValues.add(new SQLValueLong(refcoursepassID));
-        SQLValues.add(new SQLValueLong(refCoursepassLecturerSubjectId));
-        SQLValues.add(new SQLValueLong(refRoomId));
-        SQLValues.add(new SQLValueLong(refLecturerId));
-        SQLValues.add(new SQLValueLong(refSubjectId));
-        SQLValues.add(new SQLValueInt(timeslot));
-
-        sqlConnectionManager.execute(
-                "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
-                SQLValues);
-        // sqlConnectionManager.close();
     }
 
     public void markNewCLS(List<JavaFXTimetableHourText> timetableHourTexts, CoursepassLecturerSubject cls) {
@@ -613,18 +593,18 @@ public class TimetableViewController implements Initializable {
                 }
             }
 
-            //check if rooms are free  
-            targetRoom = checkingTimetableHourText.getCoursepassLecturerSubject().getRoom();          
+            // check if rooms are free
+            targetRoom = checkingTimetableHourText.getCoursepassLecturerSubject().getRoom();
             Boolean givingRoomBlocked = false;
             Boolean targetRoomBlocked = false;
-            if(givingRoom.isRoomAvaidable(checkingTimetableHourText.getDay(), checkingTimetableHourText.getTimeslot())){
+            if (givingRoom.isRoomAvaidable(checkingTimetableHourText.getDay(),
+                    checkingTimetableHourText.getTimeslot())) {
                 givingRoomBlocked = true;
             }
 
-            if(targetRoom.isRoomAvaidable(tmpText.getDay(), tmpText.getTimeslot())){
+            if (targetRoom.isRoomAvaidable(tmpText.getDay(), tmpText.getTimeslot())) {
                 targetRoomBlocked = true;
             }
-            
 
             if (freeLecturers.contains(tmpCoursepassLecturerSubject.getLecturer()) || givingLecturerResourcesBlocked
                     || givingLecturerBlocked || givingRoomBlocked || targetRoomBlocked) {

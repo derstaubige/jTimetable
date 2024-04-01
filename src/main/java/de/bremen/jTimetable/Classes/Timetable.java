@@ -16,8 +16,12 @@ import java.util.stream.IntStream;
  */
 public class Timetable {
 
-    public void updateCoursePassTimetable() throws Exception{
+    public void updateCoursePassTimetable() throws Exception {
         this.getTimetable(this.getCoursepass());
+    }
+
+    private boolean checkIfDayTimeslotIsFree(LocalDate day, Integer timeslot) {
+        return true;
     }
 
     public void distributeUnplanedHours() {
@@ -42,7 +46,7 @@ public class Timetable {
                             if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
                                     timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
                                 // LEcturer and Room are free, we can place it here
-                                // delete the entry in the timetable table 
+                                // delete the entry in the timetable table
                                 Timetable.deleteTimetable(timetableHour.getCoursepassLecturerSubject().getId(),
                                         timetableDay.getDate(), timetableHour.getTimeslot(), getSqlConnectionManager());
 
@@ -220,27 +224,9 @@ public class Timetable {
             }
         }
         // save the change in the timetable table
-        try {
-
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
-
-            SQLValues.add(new SQLValueDate(day));
-            SQLValues.add(new SQLValueLong(timetableHour.getCoursepassLecturerSubject().getCoursepass().getId()));
-            SQLValues.add(new SQLValueLong(timetableHour.getCoursepassLecturerSubject().getId()));
-            SQLValues.add(new SQLValueLong(timetableHour.getCoursepassLecturerSubject().getRoom().getId()));
-            SQLValues.add(new SQLValueLong(timetableHour.getCoursepassLecturerSubject().getLecturerID()));
-            SQLValues.add(new SQLValueLong(timetableHour.getCoursepassLecturerSubject().getSubject().getId()));
-            SQLValues.add(new SQLValueInt(timeslot));
-
-            sqlConnectionManager.execute(
-                    "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, " +
-                            "REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
-                    SQLValues);
-        } catch (SQLException e) {
-            System.err.println("SQLException was thrown in addSingleHour, therefor adding the lesson to this timeslot: "
-                    + timetableHour.getTimeslot() + " was not successful.");
-            throw new RuntimeException(e);
-        }
+        TimetableEntry timetableEntry = new TimetableEntry(timetableHour.getCoursepassLecturerSubject(), day,
+                timeslot, sqlConnectionManager);
+        timetableEntry.save();
 
     }
 
@@ -402,7 +388,8 @@ public class Timetable {
                 Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
                 while (timeslotIterator.hasNext()) {
                     tmpArrayList.add(new TimetableHour(timeslotIterator.next(),
-                            new CoursepassLecturerSubject(0L, getSqlConnectionManager(), this.coursepass), getSqlConnectionManager()));
+                            new CoursepassLecturerSubject(0L, getSqlConnectionManager(), this.coursepass),
+                            getSqlConnectionManager()));
                 }
                 tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
             }
@@ -423,7 +410,7 @@ public class Timetable {
 
         // grap all rooms that are currently in this timetable
         this.rooms = getAllRooms();
-        
+
         // sqlConnectionManager.close();
     }
 
@@ -443,7 +430,7 @@ public class Timetable {
             while (rs.next()) {
                 tmpRoom = new Room(rs.getLong("refroomid"), getSqlConnectionManager());
                 rooms.add(tmpRoom);
-                tmpRoom.updateRoomBlocks();                
+                tmpRoom.updateRoomBlocks();
             }
         } catch (Exception e) {
             // TODO: handle exception
@@ -451,6 +438,7 @@ public class Timetable {
         }
         return rooms;
     }
+
     private ArrayList<Lecturer> getAllLecturers() {
         ArrayList<Lecturer> lecturers = new ArrayList<Lecturer>();
         try {
@@ -498,7 +486,7 @@ public class Timetable {
             // If day doesn't exist, create a new object
             if (tmpDayObject == null) {
                 tmpDayObject = new TimetableDay(tmpDate, (int) tmpTimeslot, getSqlConnectionManager());
-                
+
                 this.arrayTimetableDays.add(tmpDayObject);
             }
 
@@ -529,7 +517,5 @@ public class Timetable {
     public CoursePass getCoursepass() {
         return coursepass;
     }
-
-    
 
 }

@@ -84,77 +84,11 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
         try {
             // change Resourcesblocked, Lecturerer and Room ID
-
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-            // get source lecturer resourcesBlocked
-            ResourcesBlocked sourceLecturer = new ResourcesBlocked(source.getLecturerID(),
-                    ResourceNames.LECTURER, sourceDay, sourceDay, sourceTimeslot, sourceTimeslot, sqlConnectionManager);
-            // get source room resourcesBlocked            
-            ResourcesBlocked sourceRoom = new ResourcesBlocked(source.getRoom().getId(),
-                    ResourceNames.ROOM, sourceDay, sourceDay, sourceTimeslot, sourceTimeslot, sqlConnectionManager);
-            // get target lecturer resourcesBlocked
-            ResourcesBlocked targetLecturer = new ResourcesBlocked(target.getLecturerID(),
-                    ResourceNames.LECTURER, targetDay, targetDay, targetTimeslot, targetTimeslot, sqlConnectionManager);
-            // get target room resourcesBlocked
-            ResourcesBlocked targetRoom = new ResourcesBlocked(target.getRoom().getId(),
-            ResourceNames.ROOM, targetDay, targetDay, targetTimeslot, targetTimeslot, sqlConnectionManager);
-
-            //delete resourcesBlocked if the new one is 0 otherwise update it
-            if(target.lecturer.getId() == 0){
-                sourceLecturer.delete();
-            }else{
-                sourceLecturer.setRefResourceID(target.getLecturer().getId());
-                sourceLecturer.save();
-            }
-
-            if(target.room.getId() == 0){
-                sourceRoom.delete();
-            }else{
-                sourceRoom.setRefResourceID(target.getRoom().getId());
-                sourceRoom.save();
-            }
-
-            if(source.lecturer.getId() == 0){
-                targetLecturer.delete();
-            }else{
-                targetLecturer.setRefResourceID(source.getLecturer().getId());
-                targetLecturer.save();
-            }
-
-            if(source.room.getId() == 0){
-                targetRoom.delete();
-            }else{
-                targetRoom.setRefResourceID(source.getRoom().getId());
-                targetRoom.save();
-            }
-
-            // change T_Timetables
-            // update source
-            SQLValues.add(new SQLValueLong(target.id));
-            SQLValues.add(new SQLValueLong(target.coursepass.getRoom().getId()));
-            SQLValues.add(new SQLValueLong(target.lecturer.getId()));
-            SQLValues.add(new SQLValueLong(target.subject.getId()));
-            SQLValues.add(new SQLValueLong(source.coursepass.getId()));
-            SQLValues.add(new SQLValueDate(sourceDay));
-            SQLValues.add(new SQLValueInt(sourceTimeslot));
-            sqlConnectionManager.execute(
-                    "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",
-                    SQLValues);
-            SQLValues = new ArrayList<SQLConnectionManagerValues>();
-
-            // update target
-            SQLValues.add(new SQLValueLong(source.id));
-            SQLValues.add(new SQLValueLong(source.coursepass.getRoom().getId()));
-            SQLValues.add(new SQLValueLong(source.lecturer.getId()));
-            SQLValues.add(new SQLValueLong(source.subject.getId()));
-            SQLValues.add(new SQLValueLong(target.coursepass.getId()));
-            SQLValues.add(new SQLValueDate(targetDay));
-            SQLValues.add(new SQLValueInt(targetTimeslot));
-            sqlConnectionManager.execute(
-                    "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",
-                    SQLValues);
-            SQLValues = new ArrayList<SQLConnectionManagerValues>();
-
+            TimetableEntry sourceTimetableEntry = new TimetableEntry(source, sourceDay, (Integer) sourceTimeslot, sqlConnectionManager);
+            sourceTimetableEntry.update(target, sourceDay, sourceTimeslot);
+            
+            TimetableEntry targetTimetableEntry = new TimetableEntry(target, targetDay, (Integer) targetTimeslot, sqlConnectionManager);
+            targetTimetableEntry.update(source, targetDay, targetTimeslot);
         } catch (Exception e) {
             System.out.println("An SQLError occurred while Updating ResourceBlocked and Timetables");
             e.printStackTrace();
@@ -276,42 +210,8 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     // blocked entrys
     public void deleteCLS(LocalDate pDate, Integer pTimestamp) {
         try {
-
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-
-            SQLValues.add(new SQLValueLong(0L));
-            SQLValues.add(new SQLValueLong(0L));
-            SQLValues.add(new SQLValueLong(0L));
-            SQLValues.add(new SQLValueLong(0L));
-            SQLValues.add(new SQLValueLong(this.getCoursepass().getId()));
-            SQLValues.add(new SQLValueDate(pDate));
-            SQLValues.add(new SQLValueInt(pTimestamp));
-            sqlConnectionManager.execute(
-                    "UPDATE T_TIMETABLES set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT =? where REFCOURSEPASS  = ? and timetableday = ? and timeslot = ?;",
-                    SQLValues);
-            // delete lecturer resourceblock
-            SQLValues.clear();
-            SQLValues.add(new SQLValueLong(this.getLecturerID()));
-            SQLValues.add(new SQLValueString("LECTURER"));
-            SQLValues.add(new SQLValueDate(pDate));
-            SQLValues.add(new SQLValueDate(pDate));
-            SQLValues.add(new SQLValueInt(pTimestamp));
-            SQLValues.add(new SQLValueInt(pTimestamp));
-            sqlConnectionManager.execute("Delete FROM T_RESOURCESBLOCKED where REFRESOURCEID = ? and " +
-                    "RESOURCENAME = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and " +
-                    "ENDTIMESLOT = ?;", SQLValues);
-
-            // delete room resourceblock
-            SQLValues.clear();
-            SQLValues.add(new SQLValueLong(this.getRoom().getId()));
-            SQLValues.add(new SQLValueString("ROOM"));
-            SQLValues.add(new SQLValueDate(pDate));
-            SQLValues.add(new SQLValueDate(pDate));
-            SQLValues.add(new SQLValueInt(pTimestamp));
-            SQLValues.add(new SQLValueInt(pTimestamp));
-            sqlConnectionManager.execute("Delete FROM T_RESOURCESBLOCKED where REFRESOURCEID = ? and " +
-                    "RESOURCENAME = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and " +
-                    "ENDTIMESLOT = ?;", SQLValues);
+            TimetableEntry timetableEntry = new TimetableEntry(this, pDate, pTimestamp, sqlConnectionManager);
+            timetableEntry.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
