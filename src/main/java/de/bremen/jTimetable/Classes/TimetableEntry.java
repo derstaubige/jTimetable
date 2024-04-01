@@ -126,18 +126,39 @@ public class TimetableEntry {
         this.roomBlocked.save();
         try {
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            if(this.coursePass.getId() == 0){
+                throw new Exception("Coursepass cant be ID 0!");
+            }
 
-            SQLValues.add(new SQLValueDate(this.date));
-            SQLValues.add(new SQLValueLong(this.coursePass.getId()));
-            SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getId()));
-            SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getRoom().getId()));
-            SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getLecturerID()));
-            SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getSubject().getId()));
-            SQLValues.add(new SQLValueInt(this.timeslot));
-
-            sqlConnectionManager.execute(
-                    "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
+            //is this day and timeslot free?
+            if(checkIfDayTimeslotIsFree()){
+                //insert new TimetableEntry
+                SQLValues.add(new SQLValueDate(this.date));
+                SQLValues.add(new SQLValueLong(this.coursePass.getId()));
+                SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getId()));
+                SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getRoom().getId()));
+                SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getLecturerID()));
+                SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getSubject().getId()));
+                SQLValues.add(new SQLValueInt(this.timeslot));
+    
+                sqlConnectionManager.execute(
+                        "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
+                        SQLValues);
+                
+            } else {
+                //update existing entry
+                
+                SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getId()));
+                SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getRoom().getId()));
+                SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getLecturerID()));
+                SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getSubject().getId()));
+                SQLValues.add(new SQLValueLong(this.coursePass.getId()));
+                SQLValues.add(new SQLValueDate(this.date));
+                SQLValues.add(new SQLValueInt(this.timeslot));
+                sqlConnectionManager.execute(
+                    "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",
                     SQLValues);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -152,7 +173,7 @@ public class TimetableEntry {
             SQLValues.add(new SQLValueLong(coursePass.getId()));
             SQLValues.add(new SQLValueInt(timeslot));
             ResultSet rs = this.sqlConnectionManager.select(
-                    "Select count(*) from T_timetable where timetableday = ? and refCoursepass = ? and timeslot = ?;",
+                    "Select count(*) from T_timetables where timetableday = ? and refCoursepass = ? and timeslot = ?;",
                     SQLValues);
             if (rs.getLong(1) > 0) {
                 return false;
@@ -163,7 +184,7 @@ public class TimetableEntry {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return true;
 
     }
 

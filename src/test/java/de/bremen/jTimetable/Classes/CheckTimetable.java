@@ -1,11 +1,10 @@
 package de.bremen.jTimetable.Classes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -14,10 +13,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javafx.scene.layout.GridPane;
 
 public class CheckTimetable {
-
     @BeforeAll
     static void initDB() {
         DeleteDbFiles.execute("./", "h2Test", false);
@@ -151,9 +148,9 @@ public class CheckTimetable {
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
             ArrayList<TimetableDay> listTimetableHours3 = timetable3.getArrayTimetableDays();
 
-            assertNotNull(timetable1);
-            assertNotNull(timetable2);
-            assertNotNull(timetable3);
+            assertNotEquals(0, timetable1.getArrayTimetableDays().size());
+            assertNotEquals(0, timetable2.getArrayTimetableDays().size());
+            assertNotEquals(0, timetable3.getArrayTimetableDays().size());
 
             sqlConnectionManager.close();
         } catch (Exception e) {
@@ -354,6 +351,6 @@ public class CheckTimetable {
 
     @AfterAll
     static void removeDB() {
-        DeleteDbFiles.execute("./", "h2Test", false);
+        // DeleteDbFiles.execute("./", "h2Test", false);
     }
 }

@@ -133,7 +133,7 @@ public class Resourcemanager {
                     } else {
                         // we didnt find a matching coursepasslecturersubject, freetime?!
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
-                        TimetableEntry timetableEntry = new TimetableEntry(new CoursepassLecturerSubject(0L, sqlConnectionManager),
+                        TimetableEntry timetableEntry = new TimetableEntry(new CoursepassLecturerSubject(0L, sqlConnectionManager, coursepass),
                         timetableday, (Integer) idxTimeslot, sqlConnectionManager);
                         timetableEntry.save();
                     }
