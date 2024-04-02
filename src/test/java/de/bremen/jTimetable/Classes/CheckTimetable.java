@@ -12,14 +12,18 @@ import org.h2.tools.DeleteDbFiles;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 
-
+@TestMethodOrder(OrderAnnotation.class)
 public class CheckTimetable {
+    private static SQLConnectionManager sqlConnectionManager;
     @BeforeAll
     static void initDB() {
         DeleteDbFiles.execute("./", "h2Test", false);
         try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
+            sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
             sqlConnectionManager.Migrate();
 
         } catch (Exception e) {
@@ -29,10 +33,11 @@ public class CheckTimetable {
     }
 
     @Test
+    @Order(1)  
     void setupDatabase() {
         try {
 
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
+            
             // Create Some Lecturers, Rooms, Subjects, CLS and a Timetable
             for (Long i = 1L; i < 4; i++) {
                 Lecturer lecturer = new Lecturer(0L, sqlConnectionManager);
@@ -130,17 +135,7 @@ public class CheckTimetable {
             resourcemanager.generateInitialTimetable(new CoursePass(1L, sqlConnectionManager));
             resourcemanager.generateInitialTimetable(new CoursePass(2L, sqlConnectionManager));
             resourcemanager.generateInitialTimetable(new CoursePass(3L, sqlConnectionManager));
-            sqlConnectionManager.close();
-
-        } catch (Exception e) {
-            fail(e.getStackTrace().toString());
-        }
-    }
-
-    @Test
-    void loadThreeTimetables() {
-        try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
+            
             Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager);
             ArrayList<TimetableDay> listTimetableHours1 = timetable1.getArrayTimetableDays();
             Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager);
@@ -151,17 +146,16 @@ public class CheckTimetable {
             assertNotEquals(0, timetable1.getArrayTimetableDays().size());
             assertNotEquals(0, timetable2.getArrayTimetableDays().size());
             assertNotEquals(0, timetable3.getArrayTimetableDays().size());
-
-            sqlConnectionManager.close();
         } catch (Exception e) {
             fail(e.getStackTrace().toString());
         }
     }
 
     @Test
+    @Order(2)
     void deleteHourFromTimetableCP3Day1Timeslot0() {
         try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
+            
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
 
             timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0).coursepassLecturerSubject.deleteCLS(
@@ -178,9 +172,10 @@ public class CheckTimetable {
     }
 
     @Test
+    @Order(3)
     void moveHourFromTimetableCP3Day1Timeslot2L2R2toDay1Timeslot0() {
         try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
+            
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
             TimetableHour source = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
             TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2);
@@ -237,18 +232,16 @@ public class CheckTimetable {
     }
 
     @Test
+    @Order(4)
     void checkIfCP3Day1Timeslot0CouldBeDeleted() {
         try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
+            
             ResourcesBlocked resourcesBlocked;
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
             TimetableHour deleteMe = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
             deleteMe.getCoursepassLecturerSubject().deleteCLS(timetable3.getArrayTimetableDays().get(0).getDate(),
-                    0); // delete
-                        // Day
-                        // 1
-                        // Timeslot
-                        // 0
+                    0); // delete Day 1 Timeslot 0
+            timetable3.updateCoursePassTimetable();
 
             assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0)
                     .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 0 has LecturerID 0
@@ -270,9 +263,10 @@ public class CheckTimetable {
     }
 
     @Test
+    @Order(5)
     void checkIfWeCouldAddAnHourCP3Day1Timeslot0() {
         try {
-            SQLConnectionManager sqlConnectionManager = new SQLConnectionManager("jdbc:h2:./h2Test", "sa", "");
+            
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
             ResourcesBlocked resourcesBlocked;
             TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
