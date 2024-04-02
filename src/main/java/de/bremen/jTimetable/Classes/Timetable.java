@@ -248,7 +248,15 @@ public class Timetable {
                 timetableEntry.delete();
             }
         }
-        
+        try {
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
+
+            SQLValues.add(new SQLValueLong(coursepass.getId()));
+            sqlConnectionManager.execute("DELETE FROM T_Timetables where REFcoursepass = ?", SQLValues);
+            updateCoursePassTimetable();            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

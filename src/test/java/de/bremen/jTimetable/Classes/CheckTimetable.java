@@ -1,5 +1,6 @@
 package de.bremen.jTimetable.Classes;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.Order;
 @TestMethodOrder(OrderAnnotation.class)
 public class CheckTimetable {
     private static SQLConnectionManager sqlConnectionManager;
+
     @BeforeAll
     static void initDB() {
         DeleteDbFiles.execute("./", "h2Test", false);
@@ -33,11 +35,10 @@ public class CheckTimetable {
     }
 
     @Test
-    @Order(1)  
+    @Order(1)
     void setupDatabase() {
         try {
 
-            
             // Create Some Lecturers, Rooms, Subjects, CLS and a Timetable
             for (Long i = 1L; i < 4; i++) {
                 Lecturer lecturer = new Lecturer(0L, sqlConnectionManager);
@@ -135,7 +136,7 @@ public class CheckTimetable {
             resourcemanager.generateInitialTimetable(new CoursePass(1L, sqlConnectionManager));
             resourcemanager.generateInitialTimetable(new CoursePass(2L, sqlConnectionManager));
             resourcemanager.generateInitialTimetable(new CoursePass(3L, sqlConnectionManager));
-            
+
             Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager);
             ArrayList<TimetableDay> listTimetableHours1 = timetable1.getArrayTimetableDays();
             Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager);
@@ -155,7 +156,7 @@ public class CheckTimetable {
     @Order(2)
     void deleteHourFromTimetableCP3Day1Timeslot0() {
         try {
-            
+
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
 
             timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0).coursepassLecturerSubject.deleteCLS(
@@ -175,7 +176,7 @@ public class CheckTimetable {
     @Order(3)
     void moveHourFromTimetableCP3Day1Timeslot2L2R2toDay1Timeslot0() {
         try {
-            
+
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
             TimetableHour source = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
             TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2);
@@ -235,7 +236,7 @@ public class CheckTimetable {
     @Order(4)
     void checkIfCP3Day1Timeslot0CouldBeDeleted() {
         try {
-            
+
             ResourcesBlocked resourcesBlocked;
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
             TimetableHour deleteMe = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
@@ -266,7 +267,7 @@ public class CheckTimetable {
     @Order(5)
     void checkIfWeCouldAddAnHourCP3Day1Timeslot0() {
         try {
-            
+
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
             ResourcesBlocked resourcesBlocked;
             TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
@@ -324,6 +325,25 @@ public class CheckTimetable {
     }
 
     @Test
+    @Order(6)
+    void checkIfDeletingTimetableWorks() {
+        Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager);
+        Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager);
+        
+        timetable1.deleteTimetable();
+        timetable2.deleteTimetable();
+        
+        assertEquals(0, timetable1.getArrayTimetableDays().size());
+        assertEquals(0, timetable2.getArrayTimetableDays().size());
+    }
+    
+    @Test
+    @Order(7)
+    void checkIfDistributingRemainingHoursWorks() {
+
+    }
+
+    @Test
     void checkIfSwappingTwoHoursFailed() {
 
     }
@@ -333,15 +353,6 @@ public class CheckTimetable {
 
     }
 
-    @Test
-    void checkIfDistributingRemainingHoursWorks() {
-
-    }
-
-    @Test
-    void checkIfDeletingTimetableWorks() {
-
-    }
 
     @AfterAll
     static void removeDB() {
