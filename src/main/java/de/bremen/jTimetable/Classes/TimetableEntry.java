@@ -13,6 +13,7 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueInt;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
 
 public class TimetableEntry {
+    private Integer id = 0;
     private ResourcesBlocked roomBlocked;
     private ResourcesBlocked lecturerBlocked;
     private LocalDate date;
@@ -36,11 +37,8 @@ public class TimetableEntry {
         this.date = date;
         this.timeslot = timeslot;
         this.sqlConnectionManager = sqlConnectionManager;
-        this.roomBlocked = new ResourcesBlocked(coursepassLecturerSubject.getRoom().getId(),
-                ResourceNames.ROOM, date, date, timeslot, timeslot, sqlConnectionManager);
-        this.lecturerBlocked = new ResourcesBlocked(coursepassLecturerSubject.getLecturerID(),
-                ResourceNames.LECTURER, date, date, timeslot, timeslot, sqlConnectionManager);
         this.coursePass = coursepassLecturerSubject.getCoursepass();
+        loadFromDB();
     }
 
     /**
@@ -57,6 +55,11 @@ public class TimetableEntry {
         this.coursePass = coursePass;
         this.date = date;
         this.timeslot = timeslot;
+        loadFromDB();
+
+    }
+
+    private void loadFromDB() {
 
         try {
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
@@ -69,10 +72,15 @@ public class TimetableEntry {
             rs.first();
             this.coursepassLecturerSubject = new CoursepassLecturerSubject(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"),
                     sqlConnectionManager, this.coursePass);
+            this.id = rs.getInt("id");
         } catch (JdbcSQLNonTransientException e) {
-            // we didnt find a entry at this day/timestamp.... sooo its freetime
+            // we didnt find a entry at this day/timestamp.... sooo its freetime or a new
+            // entry
             try {
-                this.coursepassLecturerSubject = new CoursepassLecturerSubject(0L, sqlConnectionManager, this.coursePass);                
+                if (this.coursepassLecturerSubject == null) {
+                    this.coursepassLecturerSubject = new CoursepassLecturerSubject(0L, sqlConnectionManager,
+                            this.coursePass);
+                }
             } catch (Exception e2) {
                 e2.printStackTrace();
             }
@@ -144,7 +152,7 @@ public class TimetableEntry {
             }
 
             // is this day and timeslot free?
-            if (checkIfDayTimeslotIsFree()) {
+            if (id == 0) {
                 // insert new TimetableEntry
                 SQLValues.add(new SQLValueDate(this.date));
                 SQLValues.add(new SQLValueLong(this.coursePass.getId()));
@@ -154,9 +162,11 @@ public class TimetableEntry {
                 SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getSubject().getId()));
                 SQLValues.add(new SQLValueInt(this.timeslot));
 
-                sqlConnectionManager.execute(
+                ResultSet rs = sqlConnectionManager.execute(
                         "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
                         SQLValues);
+                rs.first();
+                this.id = rs.getInt(1);
 
             } else {
                 // update existing entry
@@ -168,40 +178,15 @@ public class TimetableEntry {
                 SQLValues.add(new SQLValueLong(this.coursePass.getId()));
                 SQLValues.add(new SQLValueDate(this.date));
                 SQLValues.add(new SQLValueInt(this.timeslot));
+                SQLValues.add(new SQLValueInt(this.id));
                 sqlConnectionManager.execute(
-                        "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",
+                        "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? , refcoursepass = ? , timetableday = ? , timeslot = ? where id = ?",
                         SQLValues);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public boolean checkIfDayTimeslotIsFree() {
-        try {
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-
-            SQLValues.add(new SQLValueDate(date));
-            SQLValues.add(new SQLValueLong(coursePass.getId()));
-            SQLValues.add(new SQLValueInt(timeslot));
-            ResultSet rs = this.sqlConnectionManager.select(
-                    "Select count(*) from T_timetables where timetableday = ? and refCoursepass = ? and timeslot = ?;",
-                    SQLValues);
-            if (rs.getLong(1) > 0) {
-                return false;
-            } else {
-                return true;
-            }
-
-        } catch (JdbcSQLNonTransientException e) {
-            // there is nothing at this day and time, so the Day/Timeslot is free
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return true;
-
     }
 
     public ResourcesBlocked getRoomBlocked() {

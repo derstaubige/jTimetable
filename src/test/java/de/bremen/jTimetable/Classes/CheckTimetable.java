@@ -276,33 +276,14 @@ public class CheckTimetable {
             TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
             LocalDate targetDate = timetable3.getArrayTimetableDays().get(0).getDate();
 
-            CoursepassLecturerSubject source = new CoursepassLecturerSubject(8L,
-                    sqlConnectionManager, new CoursePass(3L, sqlConnectionManager));
+            CoursepassLecturerSubject source = new CoursepassLecturerSubject(8L, sqlConnectionManager, target.getCoursepassLecturerSubject().getCoursepass());
+            LocalDate sourceDate = timetable3.getArrayTimetableDays().get(0).getDate();
 
             if (CoursepassLecturerSubject.isFreeTarget(source,
                     targetDate,
                     target.getTimeslot(), sqlConnectionManager) == true) {
-                // check if the target was a freetime, if not we have to delete the existing cls
-                if (target.getCoursepassLecturerSubject().getSubject().getId() != 0) {
-                    // no freetime, we have to delete the resourceblocked and the entry in the
-                    // timetable
-                    Timetable.deleteResourceBlocked(
-                            target.getCoursepassLecturerSubject().getLecturerID(),
-                            ResourceNames.LECTURER, targetDate, targetDate,
-                            target.getTimeslot(),
-                            target.getTimeslot(), sqlConnectionManager);
-                    Timetable.deleteResourceBlocked(
-                            target.getCoursepassLecturerSubject().getRoom().getId(),
-                            ResourceNames.ROOM, targetDate, targetDate, target.getTimeslot(),
-                            target.getTimeslot(), sqlConnectionManager);
-                }
-                // delete the entry in the timetable table
-                Timetable.deleteTimetable(source.getId(),
-                        targetDate, target.getTimeslot(), sqlConnectionManager);
-                TimetableHour tmptimetableHour = new TimetableHour(target.getTimeslot(),
-                        source, sqlConnectionManager);
-                timetable3.addSingleHour(tmptimetableHour, targetDate, target.getTimeslot());
-                timetable3.updateCoursePassTimetable();
+                TimetableEntry targetTimetableEntry = new TimetableEntry(target.getCoursepassLecturerSubject(), targetDate, target.getTimeslot(), sqlConnectionManager);
+                timetable3.addSingleHour(source, targetTimetableEntry);
             } else {
                 fail("Source isnt free");
             }

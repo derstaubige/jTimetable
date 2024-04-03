@@ -182,28 +182,8 @@ public class TimetableViewController implements Initializable {
                             if (CoursepassLecturerSubject.isFreeTarget(source.getCoursepassLecturerSubject(),
                                     target.getDay(),
                                     target.getTimeslot(), getSqlConnectionManager()) == true) {
-                                // check if the target was a freetime, if not we have to delete the existing cls
-                                if (target.getCoursepassLecturerSubject().getSubject().getId() != 0) {
-                                    // no freetime, we have to delete the resourceblocked and the entry in the
-                                    // timetable
-                                    Timetable.deleteResourceBlocked(
-                                            target.getCoursepassLecturerSubject().getLecturerID(),
-                                            ResourceNames.LECTURER, target.getDay(), target.getDay(),
-                                            target.getTimeslot(),
-                                            target.getTimeslot(), getSqlConnectionManager());
-                                    Timetable.deleteResourceBlocked(
-                                            target.getCoursepassLecturerSubject().getRoom().getId(),
-                                            ResourceNames.ROOM, target.getDay(), target.getDay(), target.getTimeslot(),
-                                            target.getTimeslot(), getSqlConnectionManager());
-                                }
-                                // delete the entry in the timetable table
-                                Timetable.deleteTimetable(source.getCoursepassLecturerSubject().getId(),
-                                        target.getDay(), target.getTimeslot(), getSqlConnectionManager());
-
-                                // save the new timetablehour
-                                TimetableHour tmptimetableHour = new TimetableHour(target.getTimeslot(),
-                                        source.getCoursepassLecturerSubject(), getSqlConnectionManager());
-                                timetable.addSingleHour(tmptimetableHour, target.getDay(), target.getTimeslot());
+                                TimetableEntry targetTimetableEntry = new TimetableEntry(target.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot(), sqlConnectionManager);
+                                timetable.addSingleHour(source.getCoursepassLecturerSubject(), targetTimetableEntry);
 
                                 // update visuals
                                 Integer TargetRow = GridPane.getRowIndex(target);

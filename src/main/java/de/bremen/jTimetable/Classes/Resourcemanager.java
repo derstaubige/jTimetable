@@ -95,16 +95,6 @@ public class Resourcemanager {
                     if (EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot)) {
                         // we found a matching coursepasslecturersubject object
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
-                        Long refcoursepassID = this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).coursepass.getId();
-                        Long refCoursepassLecturerSubjectId = this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).id;
-                        Long refRoomId = this.arrayCoursepassLecturerSubject
-                                .get(this.positionInCoursepassLecturerSubjectStack).getRoom().getId();
-                        Long refLecturerId = this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).lecturer.getId();
-                        Long refSubjectId = this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).subject.id;
                         
                         TimetableEntry timetableEntry = new TimetableEntry(this.arrayCoursepassLecturerSubject.get(
                             this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot, sqlConnectionManager);

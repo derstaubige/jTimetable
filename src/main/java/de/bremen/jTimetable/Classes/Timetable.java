@@ -20,10 +20,6 @@ public class Timetable {
         this.getTimetable(this.getCoursepass());
     }
 
-    private boolean checkIfDayTimeslotIsFree(LocalDate day, Integer timeslot) {
-        return true;
-    }
-
     public void distributeUnplanedHours() {
 
         this.coursepass.updateCoursePassLecturerSubjects();
@@ -46,15 +42,10 @@ public class Timetable {
                             if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
                                     timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
                                 // LEcturer and Room are free, we can place it here
+                                TimetableEntry targetTimetableEntry = new TimetableEntry(cls, timetableDay.getDate(), timetableHour.getTimeslot(), sqlConnectionManager);
                                 // delete the entry in the timetable table
-                                Timetable.deleteTimetable(timetableHour.getCoursepassLecturerSubject().getId(),
-                                        timetableDay.getDate(), timetableHour.getTimeslot(), getSqlConnectionManager());
-
                                 // save the new timetablehour
-                                TimetableHour tmptimetableHour = new TimetableHour(timetableHour.getTimeslot(),
-                                        cls, getSqlConnectionManager());
-                                this.addSingleHour(tmptimetableHour, timetableDay.getDate(),
-                                        timetableHour.getTimeslot());
+                                this.addSingleHour(cls, targetTimetableEntry);
 
                                 // check if we now have distributed all unplaned hours
                                 cls.updateallHours();
@@ -69,7 +60,7 @@ public class Timetable {
                 }
             }
             try {
-                updateCoursePassTimetable();                
+                updateCoursePassTimetable();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -219,20 +210,26 @@ public class Timetable {
      * @param day           date at which the lesson is added
      * @param timeslot      timeslot in which the lesson is added
      */
-    public void addSingleHour(TimetableHour timetableHour, LocalDate day, int timeslot) {
-        for (TimetableDay timetableDay : getArrayTimetableDays()) {
-            if (timetableDay.getDate() == day) {
-                // TODO use timetableHour.getTimeslot instead? --> one variable less
-                timetableDay.getArrayTimetableDay().set(timeslot, timetableHour);
-                break;
-            }
-        }
+    public void addSingleHour(CoursepassLecturerSubject cls, TimetableEntry targetTimetableEntry) {
+
         // save the change in the timetable table
-        TimetableEntry timetableEntry = new TimetableEntry(timetableHour.getCoursepassLecturerSubject(), day,
-                timeslot, sqlConnectionManager);
-        timetableEntry.save();
+        targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot());
+        
         try {
-            updateCoursePassTimetable();            
+            updateCoursePassTimetable();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void swapHours(TimetableEntry source, TimetableEntry target) {
+        CoursepassLecturerSubject sourceCLS = source.getCoursepassLecturerSubject();
+        CoursepassLecturerSubject targetCLS = target.getCoursepassLecturerSubject();
+
+        source.update(targetCLS, source.getDate(), source.getTimeslot());
+        target.update(sourceCLS, target.getDate(), target.getTimeslot());
+        try {
+            updateCoursePassTimetable();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -252,7 +249,8 @@ public class Timetable {
                 if (timetableHour == null) {
                     continue;
                 }
-                timetableEntry = new TimetableEntry(this.getCoursepass(), arrayTimetableDay.getDate(), timetableHour.getTimeslot(), sqlConnectionManager);
+                timetableEntry = new TimetableEntry(this.getCoursepass(), arrayTimetableDay.getDate(),
+                        timetableHour.getTimeslot(), sqlConnectionManager);
                 timetableEntry.delete();
             }
         }
@@ -261,7 +259,7 @@ public class Timetable {
 
             SQLValues.add(new SQLValueLong(coursepass.getId()));
             sqlConnectionManager.execute("DELETE FROM T_Timetables where REFcoursepass = ?", SQLValues);
-            updateCoursePassTimetable();            
+            updateCoursePassTimetable();
         } catch (Exception e) {
             e.printStackTrace();
         }
