@@ -36,9 +36,15 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     }
 
     // TODO check if course has time (if a timetable for just the lecturer is shown)
-    public static boolean cangetExchanged(CoursepassLecturerSubject source, LocalDate sourceDay, int sourceTimeslot,
-            CoursepassLecturerSubject target, LocalDate targetDay, int targetTimeslot,
+    public static boolean cangetExchanged(TimetableEntry sourceTimetableEntry, TimetableEntry targetTimetableEntry,
             SQLConnectionManager sqlConnectionManager) {
+        CoursepassLecturerSubject source = sourceTimetableEntry.getCoursepassLecturerSubject();
+        LocalDate sourceDay = sourceTimetableEntry.getDate();
+        int sourceTimeslot = sourceTimetableEntry.getTimeslot();
+        CoursepassLecturerSubject target = targetTimetableEntry.getCoursepassLecturerSubject();
+        LocalDate targetDay = targetTimetableEntry.getDate();
+        int targetTimeslot = targetTimetableEntry.getTimeslot();
+
         // check if lecturer and room from source are free at target date and timeslot
         long sourceLecturerId = source.lecturer.getId();
         long targetLecturerId = target.lecturer.getId();
@@ -84,10 +90,12 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
         try {
             // change Resourcesblocked, Lecturerer and Room ID
-            TimetableEntry sourceTimetableEntry = new TimetableEntry(source, sourceDay, (Integer) sourceTimeslot, sqlConnectionManager);
+            TimetableEntry sourceTimetableEntry = new TimetableEntry(source, sourceDay, (Integer) sourceTimeslot,
+                    sqlConnectionManager);
             sourceTimetableEntry.update(target, sourceDay, sourceTimeslot);
-            
-            TimetableEntry targetTimetableEntry = new TimetableEntry(target, targetDay, (Integer) targetTimeslot, sqlConnectionManager);
+
+            TimetableEntry targetTimetableEntry = new TimetableEntry(target, targetDay, (Integer) targetTimeslot,
+                    sqlConnectionManager);
             targetTimetableEntry.update(source, targetDay, targetTimeslot);
         } catch (Exception e) {
             System.out.println("An SQLError occurred while Updating ResourceBlocked and Timetables");

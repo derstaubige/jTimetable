@@ -1,6 +1,5 @@
 package de.bremen.jTimetable.Classes;
 
-import java.security.spec.ECFieldF2m;
 import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ArrayList;

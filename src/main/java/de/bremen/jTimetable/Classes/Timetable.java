@@ -16,122 +16,13 @@ import java.util.stream.IntStream;
  */
 public class Timetable {
 
-    public void updateCoursePassTimetable() throws Exception {
-        this.getTimetable(this.getCoursepass());
-    }
-
-    public void distributeUnplanedHours() {
-
-        this.coursepass.updateCoursePassLecturerSubjects();
-        ArrayList<CoursepassLecturerSubject> clsToAddArrayList = new ArrayList<CoursepassLecturerSubject>();
-        for (CoursepassLecturerSubject cls : this.coursepass.getArrayCoursePassLecturerSubject()) {
-            if (cls.getUnplanedHours() > 0) {
-                clsToAddArrayList.add(cls);
-            }
-        }
-
-        if (clsToAddArrayList.size() > 0) {
-            // Loop through the Timetable and Check all Timeslots for Freetime
-            for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
-                for (TimetableHour timetableHour : timetableDay.getArrayTimetableDay()) {
-                    if (timetableHour != null
-                            && timetableHour.getCoursepassLecturerSubject().getId() == 0L) {
-                        // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
-                        // here
-                        for (CoursepassLecturerSubject cls : clsToAddArrayList) {
-                            if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
-                                    timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
-                                // LEcturer and Room are free, we can place it here
-                                TimetableEntry targetTimetableEntry = new TimetableEntry(cls, timetableDay.getDate(), timetableHour.getTimeslot(), sqlConnectionManager);
-                                // delete the entry in the timetable table
-                                // save the new timetablehour
-                                this.addSingleHour(cls, targetTimetableEntry);
-
-                                // check if we now have distributed all unplaned hours
-                                cls.updateallHours();
-                                if (cls.getUnplanedHours() <= 0) {
-                                    // no unplaned hours left, remove this cls from clsToAddArrayList
-                                    clsToAddArrayList.remove(cls);
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            try {
-                updateCoursePassTimetable();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            // redraw timetable
-        }
-    }
-
-    /**
-     * Method deletes the blocking for the resource that matches the parameters.
-     *
-     * @param resourceID    ID of the resource
-     * @param resourceName  type of the resource (lecturer or room)
-     * @param startDate     start of the blocking
-     * @param endDate       end of the blocking
-     * @param startTimeslot first timeslot of the blocking
-     * @param endTimeslot   last timeslot of the blocking
-     */
-    public static void deleteResourceBlocked(long resourceID, ResourceNames resourceName, LocalDate startDate,
-            LocalDate endDate, int startTimeslot, int endTimeslot, SQLConnectionManager sqlConnectionManager) {
-        try {
-
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
-
-            SQLValues.add(new SQLValueLong(resourceID));
-            SQLValues.add(new SQLValueString(resourceName.toString()));
-            SQLValues.add(new SQLValueDate(startDate));
-            SQLValues.add(new SQLValueDate(endDate));
-            SQLValues.add(new SQLValueInt(startTimeslot));
-            SQLValues.add(new SQLValueInt(endTimeslot));
-            sqlConnectionManager.execute("DELETE FROM T_RESOURCESBLOCKED where REFRESOURCEID = ? and " +
-                    "RESOURCENAME = ? and STARTDATE = ? and ENDDATE = ? and STARTTIMESLOT = ? and ENDTIMESLOT = ?",
-                    SQLValues);
-        } catch (SQLException e) {
-            System.err.println("SQLException was thrown in deleteResourceBlocked, therefor deleting " +
-                    "timetable entries has side effects because resources are still blocked.");
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Method deletes timetable entries in database specified by coursePass, date
-     * and timeslot.
-     *
-     * @param coursePassID given coursePassID
-     * @param timetableDay given date
-     * @param timeslot     given timeslot
-     */
-    public static void deleteTimetable(long coursePassID, LocalDate timetableDay, int timeslot,
-            SQLConnectionManager sqlConnectionManager) {
-        try {
-
-            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
-
-            SQLValues.add(new SQLValueLong(coursePassID));
-            SQLValues.add(new SQLValueDate(timetableDay));
-            SQLValues.add(new SQLValueInt(timeslot));
-            sqlConnectionManager.execute("DELETE FROM T_Timetables where refCoursepass = ? AND " +
-                    "timetableday = ? AND timeslot = ?", SQLValues);
-        } catch (SQLException e) {
-            System.err.println("SQLException was thrown in deleteTimetable(coursePassID, timetableDay, timeslot)," +
-                    " therefor deleting timetable entries didn't work.");
-            throw new RuntimeException(e);
-        }
-    }
-
     /**
      * Array that contains single TimetableDay objects that each represent one day
      * in this timetable and consists of the
      * date and number of timeslots.
      */
     private ArrayList<TimetableDay> arrayTimetableDays;
+
     /**
      * CourPass for which this timetable is for. This timetable fulfills the
      * requirements the subjects and resources
@@ -148,7 +39,6 @@ public class Timetable {
 
     // List of Rooms that are currently planed for this timetable
     private ArrayList<Room> rooms;
-
     // Set the maximum Timeslotcount to fill the timetable with freetimes
     private Integer maxTimeslots = 5;
 
@@ -190,6 +80,59 @@ public class Timetable {
         }
     }
 
+    public void updateCoursePassTimetable() throws Exception {
+        this.getTimetable(this.getCoursepass());
+    }
+
+    public void distributeUnplanedHours() {
+
+        this.coursepass.updateCoursePassLecturerSubjects();
+        ArrayList<CoursepassLecturerSubject> clsToAddArrayList = new ArrayList<CoursepassLecturerSubject>();
+        for (CoursepassLecturerSubject cls : this.coursepass.getArrayCoursePassLecturerSubject()) {
+            if (cls.getUnplanedHours() > 0) {
+                clsToAddArrayList.add(cls);
+            }
+        }
+
+        if (clsToAddArrayList.size() > 0) {
+            // Loop through the Timetable and Check all Timeslots for Freetime
+            for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
+                for (TimetableHour timetableHour : timetableDay.getArrayTimetableDay()) {
+                    if (timetableHour != null
+                            && timetableHour.getCoursepassLecturerSubject().getId() == 0L) {
+                        // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
+                        // here
+                        for (CoursepassLecturerSubject cls : clsToAddArrayList) {
+                            if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
+                                    timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
+                                // LEcturer and Room are free, we can place it here
+                                TimetableEntry targetTimetableEntry = new TimetableEntry(cls, timetableDay.getDate(),
+                                        timetableHour.getTimeslot(), sqlConnectionManager);
+                                // delete the entry in the timetable table
+                                // save the new timetablehour
+                                this.addSingleHour(cls, targetTimetableEntry);
+
+                                // check if we now have distributed all unplaned hours
+                                cls.updateallHours();
+                                if (cls.getUnplanedHours() <= 0) {
+                                    // no unplaned hours left, remove this cls from clsToAddArrayList
+                                    clsToAddArrayList.remove(cls);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            try {
+                updateCoursePassTimetable();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // redraw timetable
+        }
+    }
+
     /**
      * TODO file export
      */
@@ -214,7 +157,7 @@ public class Timetable {
 
         // save the change in the timetable table
         targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot());
-        
+
         try {
             updateCoursePassTimetable();
         } catch (Exception e) {
@@ -222,16 +165,25 @@ public class Timetable {
         }
     }
 
-    public void swapHours(TimetableEntry source, TimetableEntry target) {
+    /**
+     * @param source
+     * @param target
+     *               Swap two CLS
+     */
+    public void swapHours(TimetableEntry source, TimetableEntry target) throws Exception {
         CoursepassLecturerSubject sourceCLS = source.getCoursepassLecturerSubject();
         CoursepassLecturerSubject targetCLS = target.getCoursepassLecturerSubject();
 
-        source.update(targetCLS, source.getDate(), source.getTimeslot());
-        target.update(sourceCLS, target.getDate(), target.getTimeslot());
-        try {
-            updateCoursePassTimetable();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(CoursepassLecturerSubject.isFreeTarget(targetCLS, null, 0, sqlConnectionManager)){
+            source.update(targetCLS, source.getDate(), source.getTimeslot());
+            target.update(sourceCLS, target.getDate(), target.getTimeslot());
+            try {
+                updateCoursePassTimetable();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }            
+        }else{
+            throw new Exception("Hours cant be swapped");
         }
     }
 
@@ -288,6 +240,18 @@ public class Timetable {
 
     public Integer getMaxTimeslots() {
         return maxTimeslots;
+    }
+
+    public Lecturer getLecturer() {
+        return lecturer;
+    }
+
+    public ArrayList<Room> getRooms() {
+        return rooms;
+    }
+
+    public CoursePass getCoursepass() {
+        return coursepass;
     }
 
     /**
@@ -359,8 +323,8 @@ public class Timetable {
         SQLValues.add(new SQLValueLong(coursePass.getId()));
         // Create new Connection to database
 
-        ResultSet rs = sqlConnectionManager.select("Select * From T_TIMETABLES where REFCOURSEPASS=? " +
-                "ORDER BY TIMETABLEDAY, TIMESLOT ASC;", SQLValues);
+        ResultSet rs = sqlConnectionManager.select(
+                "Select * From T_TIMETABLES where REFCOURSEPASS=? ORDER BY TIMETABLEDAY, TIMESLOT ASC;", SQLValues);
         ArrayList<TimetableDay> result = new ArrayList<>();
 
         loadTimetableFromResultSet(rs);
@@ -492,18 +456,6 @@ public class Timetable {
                     getSqlConnectionManager()));
 
         }
-    }
-
-    public Lecturer getLecturer() {
-        return lecturer;
-    }
-
-    public ArrayList<Room> getRooms() {
-        return rooms;
-    }
-
-    public CoursePass getCoursepass() {
-        return coursepass;
     }
 
 }

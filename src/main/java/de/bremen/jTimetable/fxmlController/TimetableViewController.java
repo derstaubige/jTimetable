@@ -150,9 +150,15 @@ public class TimetableViewController implements Initializable {
                             JavaFXTimetableHourText source = (JavaFXTimetableHourText) dragEvent.getGestureSource();
                             JavaFXTimetableHourText target = (JavaFXTimetableHourText) dragEvent.getGestureTarget();
 
-                            if (CoursepassLecturerSubject.cangetExchanged(source.getCoursepassLecturerSubject(),
-                                    source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
-                                    target.getDay(), target.getTimeslot(), getSqlConnectionManager()) == true) {
+                            TimetableEntry sourceTimetableEntry = new TimetableEntry(
+                                    source.getCoursepassLecturerSubject(),
+                                    source.getDay(), source.getTimeslot(), sqlConnectionManager);
+                            TimetableEntry targetTimetableEntry = new TimetableEntry(
+                                    target.getCoursepassLecturerSubject(),
+                                    target.getDay(), target.getTimeslot(), sqlConnectionManager);
+
+                            if (CoursepassLecturerSubject.cangetExchanged(sourceTimetableEntry, targetTimetableEntry,
+                                    getSqlConnectionManager()) == true) {
                                 // ger Row and Column from Source and Target
                                 Integer SourceRow = GridPane.getRowIndex(source);
                                 Integer SourceCol = GridPane.getColumnIndex(source);
@@ -182,7 +188,9 @@ public class TimetableViewController implements Initializable {
                             if (CoursepassLecturerSubject.isFreeTarget(source.getCoursepassLecturerSubject(),
                                     target.getDay(),
                                     target.getTimeslot(), getSqlConnectionManager()) == true) {
-                                TimetableEntry targetTimetableEntry = new TimetableEntry(target.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot(), sqlConnectionManager);
+                                TimetableEntry targetTimetableEntry = new TimetableEntry(
+                                        target.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot(),
+                                        sqlConnectionManager);
                                 timetable.addSingleHour(source.getCoursepassLecturerSubject(), targetTimetableEntry);
 
                                 // update visuals

@@ -184,10 +184,15 @@ public class CheckTimetable {
             TimetableHour source = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
             TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2);
 
-            if (CoursepassLecturerSubject.cangetExchanged(source.getCoursepassLecturerSubject(),
-                    timetable3.getArrayTimetableDays().get(0).getDate(), source.getTimeslot(),
-                    target.getCoursepassLecturerSubject(), timetable3.getArrayTimetableDays().get(0).getDate(),
-                    target.getTimeslot(), sqlConnectionManager)) {
+            TimetableEntry sourceTimetableEntry = new TimetableEntry(
+                    source.getCoursepassLecturerSubject(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), source.getTimeslot(), sqlConnectionManager);
+            TimetableEntry targetTimetableEntry = new TimetableEntry(
+                    target.getCoursepassLecturerSubject(),
+                    timetable3.getArrayTimetableDays().get(0).getDate(), target.getTimeslot(), sqlConnectionManager);
+
+            if (CoursepassLecturerSubject.cangetExchanged(sourceTimetableEntry, targetTimetableEntry,
+                    sqlConnectionManager)) {
                 CoursepassLecturerSubject.changeCoursepassLecturerSubject(source.getCoursepassLecturerSubject(),
                         timetable3.getArrayTimetableDays().get(0).getDate(), source.getTimeslot(),
                         target.getCoursepassLecturerSubject(), timetable3.getArrayTimetableDays().get(0).getDate(),
@@ -276,13 +281,15 @@ public class CheckTimetable {
             TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
             LocalDate targetDate = timetable3.getArrayTimetableDays().get(0).getDate();
 
-            CoursepassLecturerSubject source = new CoursepassLecturerSubject(8L, sqlConnectionManager, target.getCoursepassLecturerSubject().getCoursepass());
+            CoursepassLecturerSubject source = new CoursepassLecturerSubject(8L, sqlConnectionManager,
+                    target.getCoursepassLecturerSubject().getCoursepass());
             LocalDate sourceDate = timetable3.getArrayTimetableDays().get(0).getDate();
 
             if (CoursepassLecturerSubject.isFreeTarget(source,
                     targetDate,
                     target.getTimeslot(), sqlConnectionManager) == true) {
-                TimetableEntry targetTimetableEntry = new TimetableEntry(target.getCoursepassLecturerSubject(), targetDate, target.getTimeslot(), sqlConnectionManager);
+                TimetableEntry targetTimetableEntry = new TimetableEntry(target.getCoursepassLecturerSubject(),
+                        targetDate, target.getTimeslot(), sqlConnectionManager);
                 timetable3.addSingleHour(source, targetTimetableEntry);
             } else {
                 fail("Source isnt free");
@@ -362,8 +369,30 @@ public class CheckTimetable {
     }
 
     @Test
-    void checkIfSwappingTwoHoursFailed() {
-
+    void checkIfSwappingTwoHoursFailedWhenRoomIsBlocked() {
+        // Day 5 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
+        // CP2 Lecturer 1 Romm 3 ID 4
+        CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
+        Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager);
+        CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
+        Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager);
+        LocalDate targetDate = timetable3.getArrayTimetableDays().get(5).getDate();
+        try {
+            timetable2.addSingleHour(new CoursepassLecturerSubject(4L, sqlConnectionManager, coursePass2),
+                    new TimetableEntry(coursePass2, targetDate, 1, sqlConnectionManager));
+            CoursepassLecturerSubject cls8 = new CoursepassLecturerSubject(8L, sqlConnectionManager, coursePass3);
+            TimetableEntry sourceTimetableEntry = new TimetableEntry(
+                    timetable3.getArrayTimetableDays().get(5).getArrayTimetableDay().get(0)
+                            .getCoursepassLecturerSubject(),
+                    targetDate, 0, sqlConnectionManager);
+            TimetableEntry targetTimetableEntry = new TimetableEntry(
+                    cls8,
+                    targetDate, 1, sqlConnectionManager);
+            timetable3.swapHours(sourceTimetableEntry, targetTimetableEntry);
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Hours cant be swapped");
+        }
+        // CP2 Lecturer 3 Romm 1 ID 6
     }
 
     @Test
