@@ -39,7 +39,7 @@ public class Timetable {
             for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
                 for (TimetableHour timetableHour : timetableDay.getArrayTimetableDay()) {
                     if (timetableHour != null
-                            && timetableHour.getCoursepassLecturerSubject().getCoursepass().getId() == 0L) {
+                            && timetableHour.getCoursepassLecturerSubject().getId() == 0L) {
                         // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
                         // here
                         for (CoursepassLecturerSubject cls : clsToAddArrayList) {

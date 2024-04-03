@@ -332,28 +332,52 @@ public class CheckTimetable {
     void checkIfDeletingTimetableWorks() {
         Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager);
         Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager);
-        
+
         timetable1.deleteTimetable();
         timetable2.deleteTimetable();
-        
+
         assertEquals(0, timetable1.getArrayTimetableDays().size());
         assertEquals(0, timetable2.getArrayTimetableDays().size());
 
-        //check if ressourcesblocked are also deleted
-        assertThrows(RuntimeException.class, () -> {new ResourcesBlocked(1L, sqlConnectionManager);}); //This is the first Lecturer for CP1
-        assertThrows(RuntimeException.class, () -> {new ResourcesBlocked(2L, sqlConnectionManager);}); //This is the first Room for CP1
+        // check if ressourcesblocked are also deleted
+        assertThrows(RuntimeException.class, () -> {
+            new ResourcesBlocked(1L, sqlConnectionManager);
+        }); // This is the first Lecturer for CP1
+        assertThrows(RuntimeException.class, () -> {
+            new ResourcesBlocked(2L, sqlConnectionManager);
+        }); // This is the first Room for CP1
 
-        assertThrows(RuntimeException.class, () -> {new ResourcesBlocked(31L, sqlConnectionManager);}); //This is the first Lecturer for CP2
-        assertThrows(RuntimeException.class, () -> {new ResourcesBlocked(32L, sqlConnectionManager);}); //This is the first Room for CP2
-        
+        assertThrows(RuntimeException.class, () -> {
+            new ResourcesBlocked(31L, sqlConnectionManager);
+        }); // This is the first Lecturer for CP2
+        assertThrows(RuntimeException.class, () -> {
+            new ResourcesBlocked(32L, sqlConnectionManager);
+        }); // This is the first Room for CP2
+
     }
 
     @Test
     @Order(7)
     void checkIfDistributingRemainingHoursWorks() {
         Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
+        ResourcesBlocked resourcesBlocked;
+
         timetable3.distributeUnplanedHours();
-        System.out.println(timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(1).subjectCaption);
+
+        assertEquals(2, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(1)
+                .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 0 has LecturerID 2
+        assertEquals(2, timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(1)
+                .getCoursepassLecturerSubject().getRoom().getId()); // check if Day 1 Slot 0 has RoomID 2
+
+        resourcesBlocked = new ResourcesBlocked(2L, ResourceNames.LECTURER,
+                timetable3.getArrayTimetableDays().get(0).getDate(),
+                timetable3.getArrayTimetableDays().get(0).getDate(), 1, 1, sqlConnectionManager);
+        assertEquals(2, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Lecturer 2
+
+        resourcesBlocked = new ResourcesBlocked(2L, ResourceNames.ROOM,
+                timetable3.getArrayTimetableDays().get(0).getDate(),
+                timetable3.getArrayTimetableDays().get(0).getDate(), 1, 1, sqlConnectionManager);
+        assertEquals(2, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Room 2
     }
 
     @Test

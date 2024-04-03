@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import org.h2.jdbc.JdbcSQLNonTransientException;
+
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueDate;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueInt;
@@ -66,15 +68,22 @@ public class TimetableEntry {
                     SQLValues);
             rs.first();
             this.coursepassLecturerSubject = new CoursepassLecturerSubject(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"),
-                    sqlConnectionManager);
-            this.coursePass = this.coursepassLecturerSubject.getCoursepass();
-            this.roomBlocked = new ResourcesBlocked(coursepassLecturerSubject.getRoom().getId(),
-                    ResourceNames.ROOM, date, date, timeslot, timeslot, sqlConnectionManager);
-            this.lecturerBlocked = new ResourcesBlocked(coursepassLecturerSubject.getLecturerID(),
-                    ResourceNames.LECTURER, date, date, timeslot, timeslot, sqlConnectionManager);
+                    sqlConnectionManager, this.coursePass);
+        } catch (JdbcSQLNonTransientException e) {
+            // we didnt find a entry at this day/timestamp.... sooo its freetime
+            try {
+                this.coursepassLecturerSubject = new CoursepassLecturerSubject(0L, sqlConnectionManager, this.coursePass);                
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        this.roomBlocked = new ResourcesBlocked(coursepassLecturerSubject.getRoom().getId(),
+                ResourceNames.ROOM, date, date, timeslot, timeslot, sqlConnectionManager);
+        this.lecturerBlocked = new ResourcesBlocked(coursepassLecturerSubject.getLecturerID(),
+                ResourceNames.LECTURER, date, date, timeslot, timeslot, sqlConnectionManager);
     }
 
     public void update(CoursepassLecturerSubject coursepassLecturerSubject, LocalDate date, Integer timeslot) {
@@ -185,6 +194,9 @@ public class TimetableEntry {
                 return true;
             }
 
+        } catch (JdbcSQLNonTransientException e) {
+            // there is nothing at this day and time, so the Day/Timeslot is free
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
