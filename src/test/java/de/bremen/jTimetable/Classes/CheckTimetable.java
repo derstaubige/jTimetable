@@ -4,11 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import org.h2.jdbc.JdbcSQLNonTransientException;
 import org.h2.tools.DeleteDbFiles;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -335,12 +338,22 @@ public class CheckTimetable {
         
         assertEquals(0, timetable1.getArrayTimetableDays().size());
         assertEquals(0, timetable2.getArrayTimetableDays().size());
+
+        //check if ressourcesblocked are also deleted
+        assertThrows(RuntimeException.class, () -> {new ResourcesBlocked(1L, sqlConnectionManager);}); //This is the first Lecturer for CP1
+        assertThrows(RuntimeException.class, () -> {new ResourcesBlocked(2L, sqlConnectionManager);}); //This is the first Room for CP1
+
+        assertThrows(RuntimeException.class, () -> {new ResourcesBlocked(31L, sqlConnectionManager);}); //This is the first Lecturer for CP2
+        assertThrows(RuntimeException.class, () -> {new ResourcesBlocked(32L, sqlConnectionManager);}); //This is the first Room for CP2
+        
     }
-    
+
     @Test
     @Order(7)
     void checkIfDistributingRemainingHoursWorks() {
-
+        Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
+        timetable3.distributeUnplanedHours();
+        System.out.println(timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(1).subjectCaption);
     }
 
     @Test
@@ -352,7 +365,6 @@ public class CheckTimetable {
     void checkIfAddingAnHourFailed() {
 
     }
-
 
     @AfterAll
     static void removeDB() {

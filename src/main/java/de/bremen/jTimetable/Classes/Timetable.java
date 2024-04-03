@@ -68,7 +68,11 @@ public class Timetable {
                     }
                 }
             }
-
+            try {
+                updateCoursePassTimetable();                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             // redraw timetable
         }
     }
@@ -227,7 +231,11 @@ public class Timetable {
         TimetableEntry timetableEntry = new TimetableEntry(timetableHour.getCoursepassLecturerSubject(), day,
                 timeslot, sqlConnectionManager);
         timetableEntry.save();
-
+        try {
+            updateCoursePassTimetable();            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

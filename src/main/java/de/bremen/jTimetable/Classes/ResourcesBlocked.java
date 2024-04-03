@@ -42,10 +42,12 @@ public class ResourcesBlocked {
 
         resourcesblocked.save();
     }
+
     public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
             ResourceNames resourcename, SQLConnectionManager sqlConnectionManager) {
         return getArrayListofResourcesblocked(resourceID, resourcename, false, true, sqlConnectionManager);
     }
+
     public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
             ResourceNames resourcename, Boolean showPassed, Boolean withoutLesson,
             SQLConnectionManager sqlConnectionManager) {
@@ -81,6 +83,7 @@ public class ResourcesBlocked {
 
         return returnListe;
     }
+
     /**
      * Primary key, not null, auto_increment --> is initially 0
      */
@@ -125,46 +128,42 @@ public class ResourcesBlocked {
      * @param resourcesBlockedID id the object has in database (0 if it's not stored
      *                           in the db yet)
      */
-    public ResourcesBlocked(Long resourcesBlockedID, SQLConnectionManager sqlConnectionManager) {
+    public ResourcesBlocked(Long resourcesBlockedID, SQLConnectionManager sqlConnectionManager) throws SQLException {
         this.ID = resourcesBlockedID;
         setSqlConnectionManager(sqlConnectionManager);
         // establish connection
-        try {
 
-            // id == 0 if object doesn't exist in database
-            if (this.ID == 0) {
-                // load dummy object
-                this.refResourceID = 0L;
-                this.resourceName = ResourceNames.LECTURER;
-                this.startDate = LocalDate.of(1990, 1, 1);
-                this.endDate = LocalDate.of(1990, 1, 1);
-                this.startTimeslot = 0;
-                this.endTimeslot = 0;
-                this.description = "";
-            } else {
-                // load object from db
-                // Array with values that will be stored in the database
-                ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-                SQLValues.add(new SQLValueLong(ID));
-                try {
-                    ResultSet rs = sqlConnectionManager.select("Select * from T_Resourcesblocked where id = ?;",
-                            SQLValues);
+        // id == 0 if object doesn't exist in database
+        if (this.ID == 0) {
+            // load dummy object
+            this.refResourceID = 0L;
+            this.resourceName = ResourceNames.LECTURER;
+            this.startDate = LocalDate.of(1990, 1, 1);
+            this.endDate = LocalDate.of(1990, 1, 1);
+            this.startTimeslot = 0;
+            this.endTimeslot = 0;
+            this.description = "";
+        } else {
+            // load object from db
+            // Array with values that will be stored in the database
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            SQLValues.add(new SQLValueLong(ID));
+            try {
+                ResultSet rs = sqlConnectionManager.select("Select * from T_Resourcesblocked where id = ?;",
+                        SQLValues);
 
-                    rs.first();
-                    this.ID = rs.getLong("id");
-                    this.refResourceID = rs.getLong("REFRESOURCEID");
-                    this.resourceName = ResourceNames.valueOf(rs.getString("RESOURCENAME").trim());
-                    this.startDate = rs.getDate("STARTDATE").toLocalDate();
-                    this.endDate = rs.getDate("ENDDATE").toLocalDate();
-                    this.startTimeslot = rs.getInt("STARTTIMESLOT");
-                    this.endTimeslot = rs.getInt("ENDTIMESLOT");
-                    this.description = rs.getString("DESCRIPTION").trim();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+                rs.first();
+                this.ID = rs.getLong("id");
+                this.refResourceID = rs.getLong("REFRESOURCEID");
+                this.resourceName = ResourceNames.valueOf(rs.getString("RESOURCENAME").trim());
+                this.startDate = rs.getDate("STARTDATE").toLocalDate();
+                this.endDate = rs.getDate("ENDDATE").toLocalDate();
+                this.startTimeslot = rs.getInt("STARTTIMESLOT");
+                this.endTimeslot = rs.getInt("ENDTIMESLOT");
+                this.description = rs.getString("DESCRIPTION").trim();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -195,7 +194,8 @@ public class ResourcesBlocked {
             this.setDescription(rs.getString("DESCRIPTION").trim());
 
         } catch (Exception e) {
-            // System.err.println("Couldnt load RessourceBlocked" + resourceID + resourcename + startDate + endDate + startTimeslot + endTimeslot);
+            // System.err.println("Couldnt load RessourceBlocked" + resourceID +
+            // resourcename + startDate + endDate + startTimeslot + endTimeslot);
             // load dummy object
             this.refResourceID = resourceID;
             this.resourceName = resourcename;
@@ -209,7 +209,10 @@ public class ResourcesBlocked {
 
     public void save() {
         try {
-
+            // if this is an dummy lecturer or room we dont want to save them
+            if (this.refResourceID == 0) {
+                return;
+            }
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
             SQLValues.add(new SQLValueLong(this.refResourceID));
@@ -244,7 +247,7 @@ public class ResourcesBlocked {
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
             SQLValues.add(new SQLValueLong(this.ID));
             sqlConnectionManager.execute(
-                    "delete from `T_RESOURCESBLOCKED` where `id` = ?;",
+                    "delete from T_RESOURCESBLOCKED where id = ?;",
                     SQLValues);
             // sqlConnectionManager.close();
         }
