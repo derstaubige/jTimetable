@@ -193,7 +193,11 @@ public class TimetableViewController implements Initializable {
                                 TimetableEntry targetTimetableEntry = new TimetableEntry(
                                         target.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot(),
                                         sqlConnectionManager);
-                                timetable.addSingleHour(source.getCoursepassLecturerSubject(), targetTimetableEntry);
+                                try {
+                                    timetable.addSingleHour(source.getCoursepassLecturerSubject(), targetTimetableEntry);                                    
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
 
                                 // update visuals
                                 Integer TargetRow = GridPane.getRowIndex(target);

@@ -83,26 +83,6 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         return true;
     }
 
-    // Switches two Hours
-    public static void changeCoursepassLecturerSubject(CoursepassLecturerSubject source, LocalDate sourceDay,
-            int sourceTimeslot, CoursepassLecturerSubject target, LocalDate targetDay, int targetTimeslot,
-            SQLConnectionManager sqlConnectionManager) {
-
-        try {
-            // change Resourcesblocked, Lecturerer and Room ID
-            TimetableEntry sourceTimetableEntry = new TimetableEntry(source, sourceDay, (Integer) sourceTimeslot,
-                    sqlConnectionManager);
-            sourceTimetableEntry.update(target, sourceDay, sourceTimeslot);
-
-            TimetableEntry targetTimetableEntry = new TimetableEntry(target, targetDay, (Integer) targetTimeslot,
-                    sqlConnectionManager);
-            targetTimetableEntry.update(source, targetDay, targetTimeslot);
-        } catch (Exception e) {
-            System.out.println("An SQLError occurred while Updating ResourceBlocked and Timetables");
-            e.printStackTrace();
-        }
-    }
-
     public CoursepassLecturerSubject(Long id, SQLConnectionManager sqlConnectionManager) throws SQLException {
         this(id, sqlConnectionManager, new CoursePass(0L, sqlConnectionManager));
     }

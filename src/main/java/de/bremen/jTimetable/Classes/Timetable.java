@@ -110,7 +110,11 @@ public class Timetable {
                                         timetableHour.getTimeslot(), sqlConnectionManager);
                                 // delete the entry in the timetable table
                                 // save the new timetablehour
-                                this.addSingleHour(cls, targetTimetableEntry);
+                                try {
+                                    this.addSingleHour(cls, targetTimetableEntry);                                    
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
 
                                 // check if we now have distributed all unplaned hours
                                 cls.updateallHours();
@@ -153,16 +157,17 @@ public class Timetable {
      * @param day           date at which the lesson is added
      * @param timeslot      timeslot in which the lesson is added
      */
-    public void addSingleHour(CoursepassLecturerSubject cls, TimetableEntry targetTimetableEntry) {
+    public void addSingleHour(CoursepassLecturerSubject cls, TimetableEntry targetTimetableEntry) throws Exception{
 
         // save the change in the timetable table
-        targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot());
 
-        try {
-            updateCoursePassTimetable();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (CoursepassLecturerSubject.isFreeTarget(cls, targetTimetableEntry.getDate(),
+                targetTimetableEntry.getTimeslot(), sqlConnectionManager)) {
+            targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot());
+        } else {
+            throw new Exception("Error Placing Hour");
         }
+        updateCoursePassTimetable();
     }
 
     /**

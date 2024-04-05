@@ -194,7 +194,7 @@ public class CheckTimetable {
             if (CoursepassLecturerSubject.cangetExchanged(sourceTimetableEntry, targetTimetableEntry,
                     sqlConnectionManager)) {
 
-                        timetable3.swapHours(sourceTimetableEntry, targetTimetableEntry);
+                timetable3.swapHours(sourceTimetableEntry, targetTimetableEntry);
             } else {
                 fail("Problem with determining if the Freetime and the Free Lecturer and Room can be Swapped");
             }
@@ -369,13 +369,13 @@ public class CheckTimetable {
     @Test
     @Order(8)
     void checkIfSwappingTwoHoursFailedWhenRoomIsBlocked() {
-        // Day 5 08.04.2024 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
+        // Day 4 08.04.2024 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
         // CP2 Lecturer 1 Romm 3 ID 4
         CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
         Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager);
         CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
         Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager);
-        LocalDate targetDate = timetable3.getArrayTimetableDays().get(5).getDate();
+        LocalDate targetDate = timetable3.getArrayTimetableDays().get(4).getDate();
         try {
             timetable2.addSingleHour(new CoursepassLecturerSubject(4L, sqlConnectionManager, coursePass2),
                     new TimetableEntry(coursePass2, targetDate, 1, sqlConnectionManager));
@@ -398,13 +398,13 @@ public class CheckTimetable {
     @Test
     @Order(9)
     void checkIfSwappingTwoHoursFailedWhenLecturerIsBlocked() {
-        // Day 5 08.04.2024 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
+        // Day 4 08.04.2024 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
         // CP2 Lecturer 3 Romm 1 ID 6
         CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
         Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager);
         CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
         Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager);
-        LocalDate targetDate = timetable3.getArrayTimetableDays().get(5).getDate();
+        LocalDate targetDate = timetable3.getArrayTimetableDays().get(4).getDate();
         try {
             timetable2.addSingleHour(new CoursepassLecturerSubject(6L, sqlConnectionManager, coursePass2),
                     new TimetableEntry(coursePass2, targetDate, 1, sqlConnectionManager));
@@ -427,17 +427,58 @@ public class CheckTimetable {
     @Test
     @Order(10)
     void checkIfAddingAnHourFailedWhenRoomIsBlocked() {
+        // Day 4 08.04.2024 Timeslot 0 Lecturer 3 Room 3 ID 7, Timeslots 1 and 2 are
+        // empty
+        // CP2 Lecturer 1 Romm 3 ID 4
+        CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
+        Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager);
+        CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
+        Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager);
+        LocalDate targetDate = timetable3.getArrayTimetableDays().get(4).getDate();
+        try {
+            timetable2.addSingleHour(new CoursepassLecturerSubject(4L, sqlConnectionManager, coursePass2),
+                    new TimetableEntry(coursePass2, targetDate, 1, sqlConnectionManager));
+            CoursepassLecturerSubject cls7 = new CoursepassLecturerSubject(7L, sqlConnectionManager, coursePass3);
 
+            TimetableEntry targetTimetableEntry = new TimetableEntry(
+                    cls7,
+                    targetDate, 1, sqlConnectionManager);
+            timetable3.addSingleHour(cls7, targetTimetableEntry);
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Error Placing Hour");
+            return;
+        }
+        fail("Test should have Thrown an error");
     }
 
     @Test
     @Order(11)
     void checkIfAddingAnHourFailedWhenLecturerIsBlocked() {
+        // Day 4 08.04.2024 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
+        // CP2 Lecturer 3 Romm 1 ID 6
+        CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
+        Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager);
+        CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
+        Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager);
+        LocalDate targetDate = timetable3.getArrayTimetableDays().get(4).getDate();
+        try {
+            timetable2.addSingleHour(new CoursepassLecturerSubject(6L, sqlConnectionManager, coursePass2),
+                    new TimetableEntry(coursePass2, targetDate, 1, sqlConnectionManager));
+            CoursepassLecturerSubject cls7 = new CoursepassLecturerSubject(7L, sqlConnectionManager, coursePass3);
 
+            TimetableEntry targetTimetableEntry = new TimetableEntry(
+                    cls7,
+                    targetDate, 1, sqlConnectionManager);
+            timetable3.addSingleHour(cls7, targetTimetableEntry);
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Error Placing Hour");
+            return;
+        }
+        fail("Test should have Thrown an error");
     }
 
     @AfterAll
     static void removeDB() {
-        // DeleteDbFiles.execute("./", "h2Test", false);
+        DeleteDbFiles.execute("./", "h2Test", false);
     }
 }
