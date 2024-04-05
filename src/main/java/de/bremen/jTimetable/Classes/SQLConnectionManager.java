@@ -22,6 +22,7 @@ public class SQLConnectionManager implements AutoCloseable{
 
     public SQLConnectionManager(String jdbcString, String username, String password) throws SQLException {
         this.connect(jdbcString,username,password);
+        this.conn.setAutoCommit(true);
     }
 
     public ResultSet select(String SQLString, ArrayList<SQLConnectionManagerValues> SQLValues) throws SQLException{
@@ -76,6 +77,7 @@ public class SQLConnectionManager implements AutoCloseable{
 
     public void connect(String jdbcstring, String username, String password) throws SQLException{
         this.conn = DriverManager.getConnection(jdbcstring, username, password);
+        this.conn.setAutoCommit(true);
     }
 
     @Override

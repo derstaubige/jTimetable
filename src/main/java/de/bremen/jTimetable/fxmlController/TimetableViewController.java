@@ -150,9 +150,15 @@ public class TimetableViewController implements Initializable {
                             JavaFXTimetableHourText source = (JavaFXTimetableHourText) dragEvent.getGestureSource();
                             JavaFXTimetableHourText target = (JavaFXTimetableHourText) dragEvent.getGestureTarget();
 
-                            if (CoursepassLecturerSubject.cangetExchanged(source.getCoursepassLecturerSubject(),
-                                    source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
-                                    target.getDay(), target.getTimeslot(), getSqlConnectionManager()) == true) {
+                            TimetableEntry sourceTimetableEntry = new TimetableEntry(
+                                    source.getCoursepassLecturerSubject(),
+                                    source.getDay(), source.getTimeslot(), sqlConnectionManager);
+                            TimetableEntry targetTimetableEntry = new TimetableEntry(
+                                    target.getCoursepassLecturerSubject(),
+                                    target.getDay(), target.getTimeslot(), sqlConnectionManager);
+
+                            if (CoursepassLecturerSubject.cangetExchanged(sourceTimetableEntry, targetTimetableEntry,
+                                    getSqlConnectionManager()) == true) {
                                 // ger Row and Column from Source and Target
                                 Integer SourceRow = GridPane.getRowIndex(source);
                                 Integer SourceCol = GridPane.getColumnIndex(source);
@@ -165,10 +171,14 @@ public class TimetableViewController implements Initializable {
                                 GridPane.setRowIndex(target, SourceRow);
                                 GridPane.setColumnIndex(target, SourceCol);
 
-                                CoursepassLecturerSubject.changeCoursepassLecturerSubject(
-                                        source.getCoursepassLecturerSubject(),
-                                        source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
-                                        target.getDay(), target.getTimeslot(), getSqlConnectionManager());
+                                try{
+                                    this.timetable.swapHours(sourceTimetableEntry, targetTimetableEntry);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                
+                            } else {
+                                // System.out.println("Error switching Hours");
                             }
                         }
 
@@ -180,28 +190,14 @@ public class TimetableViewController implements Initializable {
                             if (CoursepassLecturerSubject.isFreeTarget(source.getCoursepassLecturerSubject(),
                                     target.getDay(),
                                     target.getTimeslot(), getSqlConnectionManager()) == true) {
-                                // check if the target was a freetime, if not we have to delete the existing cls
-                                if (target.getCoursepassLecturerSubject().getSubject().getId() != 0) {
-                                    // no freetime, we have to delete the resourceblocked and the entry in the
-                                    // timetable
-                                    Timetable.deleteResourceBlocked(
-                                            target.getCoursepassLecturerSubject().getLecturerID(),
-                                            ResourceNames.LECTURER, target.getDay(), target.getDay(),
-                                            target.getTimeslot(),
-                                            target.getTimeslot(), getSqlConnectionManager());
-                                    Timetable.deleteResourceBlocked(
-                                            target.getCoursepassLecturerSubject().getRoom().getId(),
-                                            ResourceNames.ROOM, target.getDay(), target.getDay(), target.getTimeslot(),
-                                            target.getTimeslot(), getSqlConnectionManager());
+                                TimetableEntry targetTimetableEntry = new TimetableEntry(
+                                        target.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot(),
+                                        sqlConnectionManager);
+                                try {
+                                    timetable.addSingleHour(source.getCoursepassLecturerSubject(), targetTimetableEntry);                                    
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                                // delete the entry in the timetable table
-                                Timetable.deleteTimetable(source.getCoursepassLecturerSubject().getId(),
-                                        target.getDay(), target.getTimeslot(), getSqlConnectionManager());
-
-                                // save the new timetablehour
-                                TimetableHour tmptimetableHour = new TimetableHour(target.getTimeslot(),
-                                        source.getCoursepassLecturerSubject(), getSqlConnectionManager());
-                                timetable.addSingleHour(tmptimetableHour, target.getDay(), target.getTimeslot());
 
                                 // update visuals
                                 Integer TargetRow = GridPane.getRowIndex(target);
@@ -261,7 +257,7 @@ public class TimetableViewController implements Initializable {
                     List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
                             JavaFXTimetableHourText.class);
 
-                    this.markNewCLS(timetableHourTexts, cls.getLecturer());
+                    this.markNewCLS(timetableHourTexts, cls);
                     mouseEvent.consume();
                 });
 
@@ -322,7 +318,10 @@ public class TimetableViewController implements Initializable {
                                 SourceCol, SourceRow);
 
                         // save freetime
-                        setEntryInTimetable(tmpDate, tmpcoursepassLecturerSubject, tmpTimeslot);
+                        TimetableEntry timetableEntry = new TimetableEntry(tmpcoursepassLecturerSubject, tmpDate,
+                                tmpTimeslot, sqlConnectionManager);
+                        timetableEntry.save();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -371,9 +370,10 @@ public class TimetableViewController implements Initializable {
         fileChooser.setTitle("Open Resource File");
         LocalDate date = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        if(this.isLecturer){
-            fileChooser.setInitialFileName(this.timetable.getLecturer().getLecturerFullName() + "_" + date.format(formatter));
-        }else{
+        if (this.isLecturer) {
+            fileChooser.setInitialFileName(
+                    this.timetable.getLecturer().getLecturerFullName() + "_" + date.format(formatter));
+        } else {
             fileChooser.setInitialFileName(coursepass.getCourseOfStudyCaption() + "_" + date.format(formatter));
         }
         fileChooser.getExtensionFilters().addAll(
@@ -427,11 +427,11 @@ public class TimetableViewController implements Initializable {
         btnDistributeUnplanedHours.setOnAction(event -> {
             this.distributeUnplanedHoursClicked(event);
         });
-        Platform.runLater(() ->{
-            if(this.isLecturer){
+        Platform.runLater(() -> {
+            if (this.isLecturer) {
                 anchorpane_Editbox.setVisible(false);
             }
-        });  
+        });
     }
 
     /**
@@ -465,32 +465,13 @@ public class TimetableViewController implements Initializable {
         }
     }
 
-    private void setEntryInTimetable(LocalDate TimetableDay, CoursepassLecturerSubject coursepassLecturerSubject,
-            int timeslot)
-            throws SQLException {
-        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-        Long refcoursepassID = coursepassLecturerSubject.getCoursepass().getId();
-        Long refCoursepassLecturerSubjectId = coursepassLecturerSubject.getId();
-        Long refRoomId = coursepassLecturerSubject.getRoom().getId();
-        Long refLecturerId = coursepassLecturerSubject.getLecturerID();
-        Long refSubjectId = coursepassLecturerSubject.getSubject().getId();
-
-        SQLValues.add(new SQLValueDate(TimetableDay));
-        SQLValues.add(new SQLValueLong(refcoursepassID));
-        SQLValues.add(new SQLValueLong(refCoursepassLecturerSubjectId));
-        SQLValues.add(new SQLValueLong(refRoomId));
-        SQLValues.add(new SQLValueLong(refLecturerId));
-        SQLValues.add(new SQLValueLong(refSubjectId));
-        SQLValues.add(new SQLValueInt(timeslot));
-
-        sqlConnectionManager.execute(
-                "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
-                SQLValues);
-        // sqlConnectionManager.close();
-    }
-
-    public void markNewCLS(List<JavaFXTimetableHourText> timetableHourTexts, Lecturer givingLecturer) {
+    public void markNewCLS(List<JavaFXTimetableHourText> timetableHourTexts, CoursepassLecturerSubject cls) {
+        Lecturer givingLecturer = cls.getLecturer();
         givingLecturer.updateLecturerResourcesBlocked();
+
+        Room givingRoom = cls.getRoom();
+        givingRoom.updateRoomBlocks();
+
         for (JavaFXTimetableHourText checkingTimetableHourText : timetableHourTexts) {
             // check if lecturer is in freeLecturers, check if day and timeslot is in
             // givingLecturer.lecturerresourcesblocked or givinglecturer.lecturerblocked
@@ -519,7 +500,16 @@ public class TimetableViewController implements Initializable {
                 }
             }
 
-            if (givingLecturerResourcesBlocked || givingLecturerBlocked) {
+            // ToDo: Check for room blocked!
+            Boolean givingRoomBlocked = false;
+            for (ResourcesBlocked roomBlock : givingRoom.getRoomBlocks()) {
+                if (checkingTimetableHourText.getDay().getDayOfWeek().equals(roomBlock.getStartDate().getDayOfWeek())) {
+                    givingRoomBlocked = true;
+                    break;
+                }
+            }
+
+            if (givingLecturerResourcesBlocked || givingLecturerBlocked || givingRoomBlocked) {
                 // if one or both are true, set red
                 checkingTimetableHourText.setFill(Color.RED);
             } else {
@@ -535,7 +525,11 @@ public class TimetableViewController implements Initializable {
         // get list of all blocks for "giving" lecturer, can get called
         // lecturer->updatelecturerresourcesblocked
         Lecturer givingLecturer = tmpText.getCoursepassLecturerSubject().getLecturer();
+        Room givingRoom = tmpText.getCoursepassLecturerSubject().getRoom();
+        Room targetRoom;
+
         givingLecturer.updateLecturerResourcesBlocked();
+        givingRoom.updateRoomBlocks();
 
         ArrayList<Lecturer> freeLecturers = new ArrayList<Lecturer>();
         ArrayList<Lecturer> blockedLecturers = new ArrayList<Lecturer>();
@@ -593,12 +587,25 @@ public class TimetableViewController implements Initializable {
                 }
             }
 
+            // check if rooms are free
+            targetRoom = checkingTimetableHourText.getCoursepassLecturerSubject().getRoom();
+            Boolean givingRoomBlocked = false;
+            Boolean targetRoomBlocked = false;
+            if (givingRoom.isRoomAvaidable(checkingTimetableHourText.getDay(),
+                    checkingTimetableHourText.getTimeslot())) {
+                givingRoomBlocked = true;
+            }
+
+            if (targetRoom.isRoomAvaidable(tmpText.getDay(), tmpText.getTimeslot())) {
+                targetRoomBlocked = true;
+            }
+
             if (freeLecturers.contains(tmpCoursepassLecturerSubject.getLecturer()) || givingLecturerResourcesBlocked
-                    || givingLecturerBlocked) {
-                // if one or both are true, set red
+                    || givingLecturerBlocked || givingRoomBlocked || targetRoomBlocked) {
+                // something isnt avaidable
                 checkingTimetableHourText.setFill(Color.RED);
             } else {
-                // if not set green
+                // everything is possible
                 checkingTimetableHourText.setFill(Color.GREEN);
             }
 

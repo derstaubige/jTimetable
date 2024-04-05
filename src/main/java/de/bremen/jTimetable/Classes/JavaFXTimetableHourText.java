@@ -12,25 +12,25 @@ public class JavaFXTimetableHourText extends Text {
     int timeslot;
     private SQLConnectionManager sqlConnectionManager;
 
-    public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLexturerSubject, LocalDate pday, int ptimeslot, SQLConnectionManager sqlConnectionManager){
-        this(pCoursepassLexturerSubject, pday, ptimeslot, false, sqlConnectionManager);
+    public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLecturerSubject, LocalDate pday, int ptimeslot, SQLConnectionManager sqlConnectionManager){
+        this(pCoursepassLecturerSubject, pday, ptimeslot, false, sqlConnectionManager);
     }
     public void deleteCLS(){
         this.coursepassLecturerSubject.deleteCLS(this.day,this.timeslot);
     }
 
-    public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLexturerSubject, LocalDate pday, int ptimeslot, Boolean showClassname, SQLConnectionManager sqlConnectionManager){
+    public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLecturerSubject, LocalDate pday, int ptimeslot, Boolean showClassname, SQLConnectionManager sqlConnectionManager){
         super();
-        this.coursepassLecturerSubject = pCoursepassLexturerSubject;
+        this.coursepassLecturerSubject = pCoursepassLecturerSubject;
         this.day = pday;
         this.timeslot = ptimeslot;
         setSqlConnectionManager(sqlConnectionManager);
         if(showClassname == true){
-            super.setText(pCoursepassLexturerSubject.getCoursepass().getDescription() + "\r\n" + pCoursepassLexturerSubject.getSubjectCaption()
-                    + "\r\n" + pCoursepassLexturerSubject.getRoom().getCaption());
+            super.setText(pCoursepassLecturerSubject.getCoursepass().getDescription() + "\r\n" + pCoursepassLecturerSubject.getSubjectCaption()
+                    + "\r\n" + pCoursepassLecturerSubject.getRoomCaptionLocatioString());
         }else{
-            super.setText(pCoursepassLexturerSubject.getSubjectCaption() + "\r\n" + pCoursepassLexturerSubject.getLecturerFullname()
-                    + "\r\n" + pCoursepassLexturerSubject.getRoom().getCaption());
+            super.setText(pCoursepassLecturerSubject.getSubjectCaption() + "\r\n" + pCoursepassLecturerSubject.getLecturerFullname()
+                    + "\r\n" + pCoursepassLecturerSubject.getRoomCaptionLocatioString());
         }
 
     }

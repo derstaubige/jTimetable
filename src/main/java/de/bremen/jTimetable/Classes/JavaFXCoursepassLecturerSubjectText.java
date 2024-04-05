@@ -24,10 +24,12 @@ public class JavaFXCoursepassLecturerSubjectText extends Text {
         Long tmpSumHours = coursepassLecturerSubject.getShouldHours() - coursepassLecturerSubject.getIsHours() -
                 coursepassLecturerSubject.getPlanedHours();
         String tmp = coursepassLecturerSubject.subject.getCaption() + "\r\n" +
-                coursepassLecturerSubject.lecturer.getLecturerFullName() + "\r\n " + resourceBundle.getString("javaFXCoursepassLecturerSubjectText.shouldHours") + " " +
-                coursepassLecturerSubject.getShouldHours() + "\r\n " + resourceBundle.getString("javaFXCoursepassLecturerSubjectText.isHours") + " " +
-                coursepassLecturerSubject.getIsHours() + "\r\n " + resourceBundle.getString("javaFXCoursepassLecturerSubjectText.planedHours") + " " +
-                coursepassLecturerSubject.getPlanedHours() + "\r\n " + resourceBundle.getString("javaFXCoursepassLecturerSubjectText.notplanedHours") + " " + tmpSumHours;
+                coursepassLecturerSubject.lecturer.getLecturerFullName() + "\r\n" + 
+                coursepassLecturerSubject.getRoomCaptionLocatioString() + "\r\n" + 
+                resourceBundle.getString("javaFXCoursepassLecturerSubjectText.shouldHours") + " " + coursepassLecturerSubject.getShouldHours() + "\r\n" + 
+                resourceBundle.getString("javaFXCoursepassLecturerSubjectText.isHours") + " " + coursepassLecturerSubject.getIsHours() + "\r\n" + 
+                resourceBundle.getString("javaFXCoursepassLecturerSubjectText.planedHours") + " " + coursepassLecturerSubject.getPlanedHours() + "\r\n" + 
+                resourceBundle.getString("javaFXCoursepassLecturerSubjectText.notplanedHours") + " " + tmpSumHours;
 //        System.out.println(tmp);
         return tmp;
     }
