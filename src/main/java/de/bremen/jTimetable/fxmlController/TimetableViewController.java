@@ -171,10 +171,12 @@ public class TimetableViewController implements Initializable {
                                 GridPane.setRowIndex(target, SourceRow);
                                 GridPane.setColumnIndex(target, SourceCol);
 
-                                CoursepassLecturerSubject.changeCoursepassLecturerSubject(
-                                        source.getCoursepassLecturerSubject(),
-                                        source.getDay(), source.getTimeslot(), target.getCoursepassLecturerSubject(),
-                                        target.getDay(), target.getTimeslot(), getSqlConnectionManager());
+                                try{
+                                    this.timetable.swapHours(sourceTimetableEntry, targetTimetableEntry);
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                                
                             } else {
                                 // System.out.println("Error switching Hours");
                             }

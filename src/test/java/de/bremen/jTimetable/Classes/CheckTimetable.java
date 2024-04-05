@@ -181,8 +181,8 @@ public class CheckTimetable {
         try {
 
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager);
-            TimetableHour source = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
-            TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2);
+            TimetableHour source = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(2);
+            TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableDay().get(0);
 
             TimetableEntry sourceTimetableEntry = new TimetableEntry(
                     source.getCoursepassLecturerSubject(),
@@ -193,10 +193,8 @@ public class CheckTimetable {
 
             if (CoursepassLecturerSubject.cangetExchanged(sourceTimetableEntry, targetTimetableEntry,
                     sqlConnectionManager)) {
-                CoursepassLecturerSubject.changeCoursepassLecturerSubject(source.getCoursepassLecturerSubject(),
-                        timetable3.getArrayTimetableDays().get(0).getDate(), source.getTimeslot(),
-                        target.getCoursepassLecturerSubject(), timetable3.getArrayTimetableDays().get(0).getDate(),
-                        target.getTimeslot(), sqlConnectionManager);
+
+                        timetable3.swapHours(sourceTimetableEntry, targetTimetableEntry);
             } else {
                 fail("Problem with determining if the Freetime and the Free Lecturer and Room can be Swapped");
             }
@@ -369,8 +367,9 @@ public class CheckTimetable {
     }
 
     @Test
+    @Order(8)
     void checkIfSwappingTwoHoursFailedWhenRoomIsBlocked() {
-        // Day 5 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
+        // Day 5 08.04.2024 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
         // CP2 Lecturer 1 Romm 3 ID 4
         CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
         Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager);
@@ -391,12 +390,49 @@ public class CheckTimetable {
             timetable3.swapHours(sourceTimetableEntry, targetTimetableEntry);
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Hours cant be swapped");
+            return;
         }
-        // CP2 Lecturer 3 Romm 1 ID 6
+        fail("Test should have Thrown an error");
     }
 
     @Test
-    void checkIfAddingAnHourFailed() {
+    @Order(9)
+    void checkIfSwappingTwoHoursFailedWhenLecturerIsBlocked() {
+        // Day 5 08.04.2024 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
+        // CP2 Lecturer 3 Romm 1 ID 6
+        CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
+        Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager);
+        CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
+        Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager);
+        LocalDate targetDate = timetable3.getArrayTimetableDays().get(5).getDate();
+        try {
+            timetable2.addSingleHour(new CoursepassLecturerSubject(6L, sqlConnectionManager, coursePass2),
+                    new TimetableEntry(coursePass2, targetDate, 1, sqlConnectionManager));
+            CoursepassLecturerSubject cls8 = new CoursepassLecturerSubject(8L, sqlConnectionManager, coursePass3);
+            TimetableEntry sourceTimetableEntry = new TimetableEntry(
+                    timetable3.getArrayTimetableDays().get(5).getArrayTimetableDay().get(0)
+                            .getCoursepassLecturerSubject(),
+                    targetDate, 0, sqlConnectionManager);
+            TimetableEntry targetTimetableEntry = new TimetableEntry(
+                    cls8,
+                    targetDate, 1, sqlConnectionManager);
+            timetable3.swapHours(sourceTimetableEntry, targetTimetableEntry);
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Hours cant be swapped");
+            return;
+        }
+        fail("Test should have Thrown an error");
+    }
+
+    @Test
+    @Order(10)
+    void checkIfAddingAnHourFailedWhenRoomIsBlocked() {
+
+    }
+
+    @Test
+    @Order(11)
+    void checkIfAddingAnHourFailedWhenLecturerIsBlocked() {
 
     }
 

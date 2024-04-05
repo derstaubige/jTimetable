@@ -174,15 +174,18 @@ public class Timetable {
         CoursepassLecturerSubject sourceCLS = source.getCoursepassLecturerSubject();
         CoursepassLecturerSubject targetCLS = target.getCoursepassLecturerSubject();
 
-        if(CoursepassLecturerSubject.isFreeTarget(targetCLS, null, 0, sqlConnectionManager)){
+        if (CoursepassLecturerSubject.isFreeTarget(sourceCLS, target.getDate(), target.getTimeslot(),
+                sqlConnectionManager)
+                && CoursepassLecturerSubject.isFreeTarget(targetCLS, source.getDate(), source.getTimeslot(),
+                        sqlConnectionManager)) {
             source.update(targetCLS, source.getDate(), source.getTimeslot());
             target.update(sourceCLS, target.getDate(), target.getTimeslot());
             try {
                 updateCoursePassTimetable();
             } catch (Exception e) {
                 e.printStackTrace();
-            }            
-        }else{
+            }
+        } else {
             throw new Exception("Hours cant be swapped");
         }
     }
