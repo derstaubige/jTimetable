@@ -19,26 +19,15 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import de.bremen.jTimetable.Main;
 import de.bremen.jTimetable.Classes.*;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueDate;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueInt;
-import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
 import javafx.scene.text.Font;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URL;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TimetableViewController implements Initializable {
@@ -83,6 +72,7 @@ public class TimetableViewController implements Initializable {
     public void initDataTimetable(Timetable timetable) {
         this.timetable = timetable;
         this.isLecturer = true;
+        this.timetable.setIsLecturer(isLecturer);
         this.drawTimetable(timetable, false);
     }
 
@@ -95,7 +85,7 @@ public class TimetableViewController implements Initializable {
             LocalDate tmpDate = day.getDate();
             grdpn_TimetableView.add(new JavaFXTimetableDay(tmpDate, getSqlConnectionManager()), 0, inttmpRowIdx);
 
-            for (TimetableHour timeslot : day.getArrayTimetableDay()) {
+            for (TimetableHour timeslot : day.getArrayTimetableHours()) {
                 if (timeslot == null) {
                     continue;
                 }
@@ -365,47 +355,7 @@ public class TimetableViewController implements Initializable {
 
     @FXML
     private void savetoFileClicked() {
-        // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        LocalDate date = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        if (this.isLecturer) {
-            fileChooser.setInitialFileName(
-                    this.timetable.getLecturer().getLecturerFullName() + "_" + date.format(formatter));
-        } else {
-            fileChooser.setInitialFileName(coursepass.getCourseOfStudyCaption() + "_" + date.format(formatter));
-        }
-        fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Text Files", "*.csv"));
-        File file = fileChooser.showSaveDialog(new Stage());
-        if (file != null) {
-            try {
-                PrintWriter writer;
-                writer = new PrintWriter(file);
-                String content = "";
-                ObservableList<Node> grdpn = grdpn_TimetableView.getChildren();
-                String tmpDatePlaceholder = "";
-
-                if (coursepass != null) {
-                    writer.println(coursepass.getDescription());
-                }
-
-                for (Node node : grdpn) {
-                    if (node instanceof JavaFXTimetableHourText) {
-                        content += (((JavaFXTimetableHourText) node).getText().replace("\r\n", " ")) + ";";
-                    } else if (node instanceof JavaFXTimetableDay) {
-                        writer.println(content);
-                        tmpDatePlaceholder = (((JavaFXTimetableDay) node).getText().replace("\r\n", ";")) + ";";
-                        content = tmpDatePlaceholder;
-                    }
-                }
-
-                writer.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        this.timetable.exportTimetableToFile();
     }
 
     private <T> List<T> getNodesOfType(Pane parent, Class<T> type) {

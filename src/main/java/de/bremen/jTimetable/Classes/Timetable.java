@@ -1,15 +1,29 @@
 package de.bremen.jTimetable.Classes;
 
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
-
+import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.stream.IntStream;
+
+import org.dhatim.fastexcel.Workbook;
+import org.dhatim.fastexcel.Worksheet;
 
 /**
  * Class represents all timetable entries for a coursePass.
@@ -43,6 +57,8 @@ public class Timetable {
     private Integer maxTimeslots = 5;
 
     private SQLConnectionManager sqlConnectionManager;
+
+    private Boolean isLecturer = false;
 
     /**
      * Constructor.
@@ -97,7 +113,7 @@ public class Timetable {
         if (clsToAddArrayList.size() > 0) {
             // Loop through the Timetable and Check all Timeslots for Freetime
             for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
-                for (TimetableHour timetableHour : timetableDay.getArrayTimetableDay()) {
+                for (TimetableHour timetableHour : timetableDay.getArrayTimetableHours()) {
                     if (timetableHour != null
                             && timetableHour.getCoursepassLecturerSubject().getId() == 0L) {
                         // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
@@ -111,7 +127,7 @@ public class Timetable {
                                 // delete the entry in the timetable table
                                 // save the new timetablehour
                                 try {
-                                    this.addSingleHour(cls, targetTimetableEntry);                                    
+                                    this.addSingleHour(cls, targetTimetableEntry);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -144,7 +160,59 @@ public class Timetable {
         // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
-        // fileChooser.showOpenDialog();
+        LocalDate date = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        if (this.isLecturer) {
+            fileChooser.setInitialFileName(
+                    this.getLecturer().getLecturerFullName() + "_" + date.format(formatter));
+        } else {
+            fileChooser.setInitialFileName(coursepass.getCourseOfStudyCaption() + "_" + date.format(formatter));
+        }
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Excel Datei", "*.xlsx"));
+        File file = fileChooser.showSaveDialog(new Stage());
+        if (file != null) {
+            try {
+                String fileLocation = file.getAbsolutePath();
+
+                try (OutputStream os = Files.newOutputStream(Paths.get(fileLocation));
+                        Workbook wb = new Workbook(os, "MyApplication", "1.0")) {
+                    Worksheet ws = wb.newWorksheet("Blatt 1");
+
+                    Integer xlsRowCounter = 1;
+                    Integer tmpDOW = 1; // start with monday
+                    Integer tmpMaxSlots = 15;
+                    Integer tmpCol = 0;
+                    Integer rowOffset = 0;
+                    for (TimetableDay tmpDay : getArrayTimetableDays()) {
+                        if (tmpDay.getDate().getDayOfWeek().getValue() < tmpDOW) {
+                            // new week new Line
+                            ws.value(xlsRowCounter,1, YearWeek.from(tmpDay.getDate()).getWeek() );
+                            // write all the new line stuff like calenderweek, timeslots and so on
+                            xlsRowCounter += (tmpMaxSlots + 1);
+                            tmpMaxSlots = 15;
+                        }
+                        tmpDOW = tmpDay.getDate().getDayOfWeek().getValue();
+                        tmpCol = 1 + tmpDOW;
+                        ws.value(xlsRowCounter + 3, tmpCol, tmpDay.getDate().getDayOfWeek().toString());
+                        ws.value(xlsRowCounter + 4, tmpCol, tmpDay.getDate().toString());
+                        rowOffset = xlsRowCounter + 5;
+                        for (TimetableHour tmpHour : tmpDay.getArrayTimetableHours()) {
+                            ws.value(rowOffset, tmpCol, 
+                                    tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
+                            ws.value(rowOffset + 1, tmpCol, 
+                                    tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
+                            ws.value(rowOffset + 2, tmpCol, 
+                                    tmpHour.getCoursepassLecturerSubject().getRoom().getCaption());
+                            rowOffset += 3;
+                        }
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -157,7 +225,7 @@ public class Timetable {
      * @param day           date at which the lesson is added
      * @param timeslot      timeslot in which the lesson is added
      */
-    public void addSingleHour(CoursepassLecturerSubject cls, TimetableEntry targetTimetableEntry) throws Exception{
+    public void addSingleHour(CoursepassLecturerSubject cls, TimetableEntry targetTimetableEntry) throws Exception {
 
         // save the change in the timetable table
 
@@ -205,7 +273,7 @@ public class Timetable {
         // Loop through all Days and Hours and Delete ResourceBlocked and Timetable
         TimetableEntry timetableEntry;
         for (TimetableDay arrayTimetableDay : arrayTimetableDays) {
-            for (TimetableHour timetableHour : arrayTimetableDay.getArrayTimetableDay()) {
+            for (TimetableHour timetableHour : arrayTimetableDay.getArrayTimetableHours()) {
                 if (timetableHour == null) {
                     continue;
                 }
@@ -301,14 +369,14 @@ public class Timetable {
             Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
             while (timeslotIterator.hasNext()) {
                 Integer tmpTimeslot = timeslotIterator.next();
-                while (tmpTimetableday.getArrayTimetableDay().size() <= tmpTimeslot) {
-                    tmpTimetableday.getArrayTimetableDay().add(tmpTimetableday.getArrayTimetableDay().size(),
+                while (tmpTimetableday.getArrayTimetableHours().size() <= tmpTimeslot) {
+                    tmpTimetableday.getArrayTimetableHours().add(tmpTimetableday.getArrayTimetableHours().size(),
                             new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()),
                                     getSqlConnectionManager()));
                 }
                 // if this timeslot is null we add a freetime
-                if (tmpTimetableday.getArrayTimetableDay().get(tmpTimeslot) == null) {
-                    tmpTimetableday.getArrayTimetableDay().set(tmpTimeslot,
+                if (tmpTimetableday.getArrayTimetableHours().get(tmpTimeslot) == null) {
+                    tmpTimetableday.getArrayTimetableHours().set(tmpTimeslot,
                             new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()),
                                     getSqlConnectionManager()));
                 }
@@ -351,7 +419,7 @@ public class Timetable {
                             new CoursepassLecturerSubject(0L, getSqlConnectionManager(), this.coursepass),
                             getSqlConnectionManager()));
                 }
-                tmpTimetableDay.setArrayTimetableDay(tmpArrayList);
+                tmpTimetableDay.setArrayTimetableHours(tmpArrayList);
             }
         }
 
@@ -452,18 +520,26 @@ public class Timetable {
 
             // Check if we have to add to the max timeslots per day
             try {
-                tmpDayObject.getArrayTimetableDay().get((int) tmpTimeslot);
+                tmpDayObject.getArrayTimetableHours().get((int) tmpTimeslot);
             } catch (Exception e) {
                 tmpDayObject.setTimeslots((int) tmpTimeslot);
             }
 
             // add this timeslot/TimetableHour to our tmpDayObject
-            tmpDayObject.getArrayTimetableDay().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
+            tmpDayObject.getArrayTimetableHours().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
                     new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
                             getSqlConnectionManager(), this.coursepass),
                     getSqlConnectionManager()));
 
         }
+    }
+
+    public Boolean getIsLecturer() {
+        return isLecturer;
+    }
+
+    public void setIsLecturer(Boolean isLecturer) {
+        this.isLecturer = isLecturer;
     }
 
 }
