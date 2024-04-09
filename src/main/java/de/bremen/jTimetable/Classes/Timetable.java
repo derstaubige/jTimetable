@@ -193,7 +193,7 @@ public class Timetable {
                             // new week new Line
                             ws.value(xlsRowCounter, 1, "KW: " + calendar.getWeekYear());
                             // write all the new line stuff like calenderweek, timeslots and so on
-                            xlsRowCounter += (tmpMaxSlots + 1);
+                            xlsRowCounter += (rowOffset + 2);
                             tmpMaxSlots = 15;
                         }
                         tmpDOW = tmpDay.getDate().getDayOfWeek().getValue();
