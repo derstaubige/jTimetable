@@ -18,6 +18,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.stream.IntStream;
@@ -184,25 +185,28 @@ public class Timetable {
                     Integer tmpMaxSlots = 15;
                     Integer tmpCol = 0;
                     Integer rowOffset = 0;
+                    GregorianCalendar calendar = new GregorianCalendar();
                     for (TimetableDay tmpDay : getArrayTimetableDays()) {
+                        calendar.set(tmpDay.getDate().getYear(), tmpDay.getDate().getMonthValue(),
+                                tmpDay.getDate().getDayOfMonth());
                         if (tmpDay.getDate().getDayOfWeek().getValue() < tmpDOW) {
                             // new week new Line
-                            ws.value(xlsRowCounter,1, YearWeek.from(tmpDay.getDate()).getWeek() );
+                            ws.value(xlsRowCounter, 1, "KW: " + calendar.getWeekYear());
                             // write all the new line stuff like calenderweek, timeslots and so on
                             xlsRowCounter += (tmpMaxSlots + 1);
                             tmpMaxSlots = 15;
                         }
                         tmpDOW = tmpDay.getDate().getDayOfWeek().getValue();
                         tmpCol = 1 + tmpDOW;
-                        ws.value(xlsRowCounter + 3, tmpCol, tmpDay.getDate().getDayOfWeek().toString());
-                        ws.value(xlsRowCounter + 4, tmpCol, tmpDay.getDate().toString());
-                        rowOffset = xlsRowCounter + 5;
+                        ws.value(xlsRowCounter, tmpCol, tmpDay.getDate().getDayOfWeek().toString());
+                        ws.value(xlsRowCounter + 1, tmpCol, tmpDay.getDate().toString());
+                        rowOffset = xlsRowCounter + 2;
                         for (TimetableHour tmpHour : tmpDay.getArrayTimetableHours()) {
-                            ws.value(rowOffset, tmpCol, 
+                            ws.value(rowOffset, tmpCol,
                                     tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
-                            ws.value(rowOffset + 1, tmpCol, 
+                            ws.value(rowOffset + 1, tmpCol,
                                     tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
-                            ws.value(rowOffset + 2, tmpCol, 
+                            ws.value(rowOffset + 2, tmpCol,
                                     tmpHour.getCoursepassLecturerSubject().getRoom().getCaption());
                             rowOffset += 3;
                         }
