@@ -68,6 +68,8 @@ public class Timetable {
 
     private Boolean isLecturer = false;
 
+    private ResourceBundle resourceBundle;
+
     /**
      * Constructor.
      *
@@ -75,8 +77,9 @@ public class Timetable {
      *                   corresponding timetable is
      *                   loaded into the instance
      */
-    public Timetable(CoursePass coursePass, SQLConnectionManager sqlConnectionManager) {
+    public Timetable(CoursePass coursePass, SQLConnectionManager sqlConnectionManager, ResourceBundle resourceBundle) {
         this.coursepass = coursePass;
+        this.resourceBundle = resourceBundle;
         setSqlConnectionManager(sqlConnectionManager);
         try {
             getTimetable(coursePass);
@@ -93,8 +96,9 @@ public class Timetable {
      *                 corresponding timetable is
      *                 loaded into the instance
      */
-    public Timetable(Lecturer lecturer, SQLConnectionManager sqlConnectionManager) {
+    public Timetable(Lecturer lecturer, SQLConnectionManager sqlConnectionManager, ResourceBundle resourceBundle) {
         this.lecturer = lecturer;
+        this.resourceBundle = resourceBundle;
         setSqlConnectionManager(sqlConnectionManager);
         try {
             getTimetable(lecturer);
@@ -162,7 +166,7 @@ public class Timetable {
     }
 
     /**
-     * TODO file export
+     * Exports this Timetable to a XLSX File
      */
     public void exportTimetableToFile() {
         // https://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
@@ -187,10 +191,9 @@ public class Timetable {
                         Workbook wb = new Workbook(os, "MyApplication", "1.0")) {
                     Worksheet ws = wb.newWorksheet("Blatt 1");
 
-                    Integer xlsRowCounter = 1;
+                    Integer xlsRowCounter = 0;
                     Integer tmpDOW = 9; // what was the last day? used to determin if a new week has started
-                    Integer tmpMaxSlots = 5; //ToDo: look ahead for the next week the last Timeslot that isnt freetime for the week
-                    Integer tmpLastUsedTimeslot = 0; //Daywise Counter for the last Timeslot that isnt Freetime
+                    Integer tmpMaxSlots = 0; // the max/last Timeslot that isnt freetime for the week
                     Integer tmpCol = 0;
                     Integer rowOffset = 0;
                     GregorianCalendar calendar = new GregorianCalendar();
@@ -199,58 +202,122 @@ public class Timetable {
                         calendar.setTime(Date.from(tmpDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
                         if (tmpDay.getDate().getDayOfWeek().getValue() < tmpDOW) {
                             // new week new Line
-                            xlsRowCounter += (rowOffset - xlsRowCounter + 2);
+                            xlsRowCounter += (rowOffset - xlsRowCounter + 1);
+                            ws.value(xlsRowCounter, 1, coursepass.getCourseOfStudyCaption());
+                            ws.range(xlsRowCounter, 1, xlsRowCounter, 6).merge();
+                            ws.range(xlsRowCounter, 1, xlsRowCounter, 6).style().borderStyle("thin").set();
+                            xlsRowCounter++;
+                            tmpMaxSlots = tmpDay.getMaxUsedTimeslotForThisWeek(coursepass);
 
                             // write all the new line stuff like calenderweek, timeslots and so on
                             ws.value(xlsRowCounter, 1, "KW: " + calendar.get(Calendar.WEEK_OF_YEAR));
 
-                            //borderize
-                            //border calendar week and days
-                            ws.range(xlsRowCounter, 1, xlsRowCounter, 1).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.RIGHT, "thin").borderStyle(BorderSide.TOP, "thin").set();
-                            ws.range(xlsRowCounter+1, 1, xlsRowCounter+1, 1).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.RIGHT, "thin").borderStyle(BorderSide.BOTTOM, "thin").set();
-                            
-                            
-                            ws.range(xlsRowCounter, 2, xlsRowCounter, 2).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
-                            ws.range(xlsRowCounter + 1, 2, xlsRowCounter+1, 2).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
-                            
-                            ws.range(xlsRowCounter, 3, xlsRowCounter, 3).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
-                            ws.range(xlsRowCounter+1, 3, xlsRowCounter+1, 3).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            // borderize
+                            // border calendar week and days
+                            ws.range(xlsRowCounter, 1, xlsRowCounter, 1).style().merge()
+                                    .borderStyle(BorderSide.RIGHT, "thin")
+                                    .borderStyle(BorderSide.TOP, "thin").set();
+                            ws.range(xlsRowCounter + 1, 1, xlsRowCounter + 1, 1).style().merge()
+                                    .borderStyle(BorderSide.RIGHT, "thin")
+                                    .borderStyle(BorderSide.BOTTOM, "thin").set();
+                            for (int i = 0; i <= tmpMaxSlots; i++) {
+                                ws.value(xlsRowCounter + 2 + i * 3, 1,
+                                        resourceBundle.getString("timetableview.slot" + (i + 1)));
+                                ws.range(xlsRowCounter + 2 + i * 3 + 2, 1, xlsRowCounter + 2 + i * 3 + 2, 6).style()
+                                        .borderStyle(BorderSide.BOTTOM, "thin").set();
+                            }
 
-                            ws.range(xlsRowCounter, 4, xlsRowCounter, 4).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
-                            ws.range(xlsRowCounter+1, 4, xlsRowCounter+1, 4).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            // Monday
+                            ws.range(xlsRowCounter, 2, xlsRowCounter, 2).style().merge()
+                                    .borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin")
+                                    .borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            ws.range(xlsRowCounter + 1, 2, xlsRowCounter + 1, 2).style().merge()
+                                    .borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin")
+                                    .borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            for (int i = 0; i <= tmpMaxSlots; i++) {
+                                ws.range(xlsRowCounter + 2 + i * 3, 2, xlsRowCounter + 2 + i * 3 + 1, 2).style()
+                                        .borderStyle(BorderSide.LEFT, "thin").set();
+                                ws.range(xlsRowCounter + 2 + i * 3 + 2, 2, xlsRowCounter + 2 + i * 3 + 2, 2).style()
+                                        .borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.LEFT, "thin")
+                                        .set();
+                            }
 
-                            ws.range(xlsRowCounter, 5, xlsRowCounter, 5).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
-                            ws.range(xlsRowCounter+1, 5, xlsRowCounter+1, 5).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            ws.range(xlsRowCounter, 3, xlsRowCounter, 3).style().merge()
+                                    .borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin")
+                                    .borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            ws.range(xlsRowCounter + 1, 3, xlsRowCounter + 1, 3).style().merge()
+                                    .borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin")
+                                    .borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            for (int i = 0; i <= tmpMaxSlots; i++) {
+                                ws.range(xlsRowCounter + 2 + i * 3, 3, xlsRowCounter + 2 + i * 3 + 1, 3).style()
+                                        .borderStyle(BorderSide.LEFT, "thin").set();
+                                ws.range(xlsRowCounter + 2 + i * 3 + 2, 3, xlsRowCounter + 2 + i * 3 + 2, 3).style()
+                                        .borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.LEFT, "thin")
+                                        .set();
+                            }
 
-                            ws.range(xlsRowCounter, 6, xlsRowCounter, 6).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
-                            ws.range(xlsRowCounter+1, 6, xlsRowCounter+1, 6).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
-                            
-                            tmpMaxSlots = 0;
+                            ws.range(xlsRowCounter, 4, xlsRowCounter, 4).style().merge()
+                                    .borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin")
+                                    .borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            ws.range(xlsRowCounter + 1, 4, xlsRowCounter + 1, 4).style().merge()
+                                    .borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin")
+                                    .borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            for (int i = 0; i <= tmpMaxSlots; i++) {
+                                ws.range(xlsRowCounter + 2 + i * 3, 4, xlsRowCounter + 2 + i * 3 + 1, 4).style()
+                                        .borderStyle(BorderSide.LEFT, "thin").set();
+                                ws.range(xlsRowCounter + 2 + i * 3 + 2, 4, xlsRowCounter + 2 + i * 3 + 2, 4).style()
+                                        .borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.LEFT, "thin")
+                                        .set();
+                            }
+
+                            ws.range(xlsRowCounter, 5, xlsRowCounter, 5).style().merge()
+                                    .borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin")
+                                    .borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            ws.range(xlsRowCounter + 1, 5, xlsRowCounter + 1, 5).style().merge()
+                                    .borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin")
+                                    .borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            for (int i = 0; i <= tmpMaxSlots; i++) {
+                                ws.range(xlsRowCounter + 2 + i * 3, 5, xlsRowCounter + 2 + i * 3 + 1, 5).style()
+                                        .borderStyle(BorderSide.LEFT, "thin").set();
+                                ws.range(xlsRowCounter + 2 + i * 3 + 2, 5, xlsRowCounter + 2 + i * 3 + 2, 5).style()
+                                        .borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.LEFT, "thin")
+                                        .set();
+                            }
+
+                            ws.range(xlsRowCounter, 6, xlsRowCounter, 6).style().merge()
+                                    .borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin")
+                                    .bold().set();
+                            ws.range(xlsRowCounter + 1, 6, xlsRowCounter + 1, 6).style().merge()
+                                    .borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin")
+                                    .bold().set();
+                            for (int i = 0; i <= tmpMaxSlots; i++) {
+                                ws.range(xlsRowCounter + 2 + i * 3, 6, xlsRowCounter + 2 + i * 3 + 1, 6).style()
+                                        .borderStyle(BorderSide.LEFT, "thin").set();
+                                ws.range(xlsRowCounter + 2 + i * 3 + 2, 6, xlsRowCounter + 2 + i * 3 + 2, 6).style()
+                                        .borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.LEFT, "thin")
+                                        .set();
+                            }
+
                         }
                         tmpDOW = tmpDay.getDate().getDayOfWeek().getValue();
                         tmpCol = 1 + tmpDOW;
-                        ws.value(xlsRowCounter, tmpCol, tmpDay.getDate().format(DateTimeFormatter.ofPattern("EE")));
-                        ws.value(xlsRowCounter + 1, tmpCol, tmpDay.getDate().toString());
+                        ws.value(xlsRowCounter, tmpCol, tmpDay.getDate().format(DateTimeFormatter.ofPattern("EEEE")));
+                        ws.value(xlsRowCounter + 1, tmpCol,
+                                tmpDay.getDate().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
                         rowOffset = xlsRowCounter + 2;
-                        tmpLastUsedTimeslot = 0;
                         for (TimetableHour tmpHour : tmpDay.getArrayTimetableHours()) {
-                            if(tmpHour.getCoursepassLecturerSubject().getLecturerID() != 0){
+                            if (tmpHour.getCoursepassLecturerSubject().getLecturerID() != 0) {
                                 ws.value(rowOffset, tmpCol,
                                         tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
                                 ws.value(rowOffset + 1, tmpCol,
                                         tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
                                 ws.value(rowOffset + 2, tmpCol,
                                         tmpHour.getCoursepassLecturerSubject().getRoom().getCaption());
-                                tmpLastUsedTimeslot = (rowOffset) / 3;
                             }
                             rowOffset += 3;
                         }
-
-                        if(tmpLastUsedTimeslot > tmpMaxSlots){
-                            tmpMaxSlots = tmpLastUsedTimeslot;
-                        }
+                        ws.pageOrientation("landscape");
                     }
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -463,20 +530,6 @@ public class Timetable {
                             getSqlConnectionManager()));
                 }
                 tmpTimetableDay.setArrayTimetableHours(tmpArrayList);
-            }
-        }
-
-        // loop through all days and add freetimes in slots that dont have subjects jet
-        for (TimetableDay tmpTimetableday : this.arrayTimetableDays) {
-            // loop through all possible timeslots and check if there is already a subject
-            Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
-            while (timeslotIterator.hasNext()) {
-                try {
-                    tmpTimetableday.addToSlot(timeslotIterator.next(),
-                            new CoursepassLecturerSubject(0L, getSqlConnectionManager(), this.coursepass));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         }
 

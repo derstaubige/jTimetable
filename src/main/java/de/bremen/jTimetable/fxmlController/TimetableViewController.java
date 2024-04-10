@@ -65,7 +65,7 @@ public class TimetableViewController implements Initializable {
     public void initDataCoursepass(CoursePass coursepass) {
         // Get Timetable for Coursepass
         this.coursepass = coursepass;
-        this.timetable = new Timetable(coursepass, getSqlConnectionManager());
+        this.timetable = new Timetable(coursepass, getSqlConnectionManager(), resourceBundle);
         this.drawTimetable(this.timetable, true);
     }
 
