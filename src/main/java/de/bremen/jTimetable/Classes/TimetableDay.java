@@ -20,6 +20,7 @@ public class TimetableDay {
      */
     private ArrayList<TimetableHour> arrayTimetableHours;
     private SQLConnectionManager sqlConnectionManager;
+    private Integer lastUsedTimeslot = 0;
 
     /**
      * TODO problematic use of this constructor because we
@@ -40,14 +41,24 @@ public class TimetableDay {
         this.timeslots = timeslots;
         this.arrayTimetableHours = new ArrayList<>(this.timeslots);
         while (this.arrayTimetableHours.size() < this.timeslots){
-            this.arrayTimetableHours.add(null);
+            try {
+                this.arrayTimetableHours.add(new TimetableHour(0, new CoursepassLecturerSubject(0L, sqlConnectionManager), sqlConnectionManager));                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        //get last used timeslot from this day
+        for(TimetableHour tmpTimetableHour : getArrayTimetableHours()){
+            if(tmpTimetableHour.getCoursepassLecturerSubject().getLecturerID() != 0){
+                setLastUsedTimeslot(getArrayTimetableHours().indexOf(tmpTimetableHour));
+            }
         }
     }
 
-    public void addToSlot(int timeslot, CoursepassLecturerSubject coursepassLecturerSubject){
+    public void addToSlot(int timeslot, CoursepassLecturerSubject coursepassLecturerSubject) throws Exception{
         //TODO: Build Custom Exception if we cant place the TimetableHour in this Slot
         if(!this.checkIfSlotIsFree(timeslot)){
-            return;
+            throw new Exception("Cant place CoursepassLecturerSubject in this Timeslot");
         }
         // if timeslot > arrayTimetableDay.size add as many
         while(this.arrayTimetableHours.size() < timeslot){
@@ -143,6 +154,14 @@ public class TimetableDay {
 
     public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
+    }
+
+    public Integer getLastUsedTimeslot() {
+        return lastUsedTimeslot;
+    }
+
+    public void setLastUsedTimeslot(Integer lastUsedTimeslot) {
+        this.lastUsedTimeslot = lastUsedTimeslot;
     }
     
 }

@@ -13,16 +13,23 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.IntStream;
 
+import org.dhatim.fastexcel.BorderSide;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 
@@ -181,34 +188,66 @@ public class Timetable {
                     Worksheet ws = wb.newWorksheet("Blatt 1");
 
                     Integer xlsRowCounter = 1;
-                    Integer tmpDOW = 1; // start with monday
-                    Integer tmpMaxSlots = 15;
+                    Integer tmpDOW = 9; // what was the last day? used to determin if a new week has started
+                    Integer tmpMaxSlots = 5; //ToDo: look ahead for the next week the last Timeslot that isnt freetime for the week
+                    Integer tmpLastUsedTimeslot = 0; //Daywise Counter for the last Timeslot that isnt Freetime
                     Integer tmpCol = 0;
                     Integer rowOffset = 0;
                     GregorianCalendar calendar = new GregorianCalendar();
+
                     for (TimetableDay tmpDay : getArrayTimetableDays()) {
-                        calendar.set(tmpDay.getDate().getYear(), tmpDay.getDate().getMonthValue(),
-                                tmpDay.getDate().getDayOfMonth());
+                        calendar.setTime(Date.from(tmpDay.getDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
                         if (tmpDay.getDate().getDayOfWeek().getValue() < tmpDOW) {
                             // new week new Line
-                            ws.value(xlsRowCounter, 1, "KW: " + calendar.getWeekYear());
+                            xlsRowCounter += (rowOffset - xlsRowCounter + 2);
+
                             // write all the new line stuff like calenderweek, timeslots and so on
-                            xlsRowCounter += (rowOffset + 2);
-                            tmpMaxSlots = 15;
+                            ws.value(xlsRowCounter, 1, "KW: " + calendar.get(Calendar.WEEK_OF_YEAR));
+
+                            //borderize
+                            //border calendar week and days
+                            ws.range(xlsRowCounter, 1, xlsRowCounter, 1).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.RIGHT, "thin").borderStyle(BorderSide.TOP, "thin").set();
+                            ws.range(xlsRowCounter+1, 1, xlsRowCounter+1, 1).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.RIGHT, "thin").borderStyle(BorderSide.BOTTOM, "thin").set();
+                            
+                            
+                            ws.range(xlsRowCounter, 2, xlsRowCounter, 2).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            ws.range(xlsRowCounter + 1, 2, xlsRowCounter+1, 2).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            
+                            ws.range(xlsRowCounter, 3, xlsRowCounter, 3).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            ws.range(xlsRowCounter+1, 3, xlsRowCounter+1, 3).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+
+                            ws.range(xlsRowCounter, 4, xlsRowCounter, 4).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            ws.range(xlsRowCounter+1, 4, xlsRowCounter+1, 4).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+
+                            ws.range(xlsRowCounter, 5, xlsRowCounter, 5).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            ws.range(xlsRowCounter+1, 5, xlsRowCounter+1, 5).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+
+                            ws.range(xlsRowCounter, 6, xlsRowCounter, 6).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.TOP, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            ws.range(xlsRowCounter+1, 6, xlsRowCounter+1, 6).style().merge().borderStyle(BorderSide.LEFT, "thin").borderStyle(BorderSide.BOTTOM, "thin").borderStyle(BorderSide.RIGHT, "thin").bold().set();
+                            
+                            tmpMaxSlots = 0;
                         }
                         tmpDOW = tmpDay.getDate().getDayOfWeek().getValue();
                         tmpCol = 1 + tmpDOW;
-                        ws.value(xlsRowCounter, tmpCol, tmpDay.getDate().getDayOfWeek().toString());
+                        ws.value(xlsRowCounter, tmpCol, tmpDay.getDate().format(DateTimeFormatter.ofPattern("EE")));
                         ws.value(xlsRowCounter + 1, tmpCol, tmpDay.getDate().toString());
                         rowOffset = xlsRowCounter + 2;
+                        tmpLastUsedTimeslot = 0;
                         for (TimetableHour tmpHour : tmpDay.getArrayTimetableHours()) {
-                            ws.value(rowOffset, tmpCol,
-                                    tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
-                            ws.value(rowOffset + 1, tmpCol,
-                                    tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
-                            ws.value(rowOffset + 2, tmpCol,
-                                    tmpHour.getCoursepassLecturerSubject().getRoom().getCaption());
+                            if(tmpHour.getCoursepassLecturerSubject().getLecturerID() != 0){
+                                ws.value(rowOffset, tmpCol,
+                                        tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
+                                ws.value(rowOffset + 1, tmpCol,
+                                        tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
+                                ws.value(rowOffset + 2, tmpCol,
+                                        tmpHour.getCoursepassLecturerSubject().getRoom().getCaption());
+                                tmpLastUsedTimeslot = (rowOffset) / 3;
+                            }
                             rowOffset += 3;
+                        }
+
+                        if(tmpLastUsedTimeslot > tmpMaxSlots){
+                            tmpMaxSlots = tmpLastUsedTimeslot;
                         }
                     }
 
@@ -432,8 +471,12 @@ public class Timetable {
             // loop through all possible timeslots and check if there is already a subject
             Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
             while (timeslotIterator.hasNext()) {
-                tmpTimetableday.addToSlot(timeslotIterator.next(),
-                        new CoursepassLecturerSubject(0L, getSqlConnectionManager(), this.coursepass));
+                try {
+                    tmpTimetableday.addToSlot(timeslotIterator.next(),
+                            new CoursepassLecturerSubject(0L, getSqlConnectionManager(), this.coursepass));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 
