@@ -54,6 +54,10 @@ public class Room {
         if(this.roomBlocks == null){
             this.updateRoomBlocks();
         }
+
+        if(this.id == 0){ //"no room" is allways free
+            return true;
+        }
         for(ResourcesBlocked resourcesBlocked : this.roomBlocks){
             if(resourcesBlocked.getStartDate() == date && resourcesBlocked.getStartTimeslot() == timeslot){
                 return false;
