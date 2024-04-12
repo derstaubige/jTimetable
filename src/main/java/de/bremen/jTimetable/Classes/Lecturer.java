@@ -329,7 +329,7 @@ public class Lecturer {
      * @return arrayList of blocked resources by this lecturer
      */
     public ArrayList<ResourcesBlocked> getArrayListOfResourcesBlocked() {
-        return ResourcesBlocked.getArrayListofResourcesblocked(this.id, ResourceNames.LECTURER,
+        return ResourcesBlocked.getArrayListofResourcesblocked(this.id, ResourceNames.LECTURER, true, false,
                 getSqlConnectionManager());
     }
 

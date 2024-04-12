@@ -95,9 +95,10 @@ public class Resourcemanager {
                     if (EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot)) {
                         // we found a matching coursepasslecturersubject object
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
-                        
+
                         TimetableEntry timetableEntry = new TimetableEntry(this.arrayCoursepassLecturerSubject.get(
-                            this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot, sqlConnectionManager);
+                                this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot,
+                                sqlConnectionManager);
                         timetableEntry.save();
 
                         // add to the is hours count
@@ -123,8 +124,9 @@ public class Resourcemanager {
                     } else {
                         // we didnt find a matching coursepasslecturersubject, freetime?!
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
-                        TimetableEntry timetableEntry = new TimetableEntry(new CoursepassLecturerSubject(0L, sqlConnectionManager, coursepass),
-                        timetableday, (Integer) idxTimeslot, sqlConnectionManager);
+                        TimetableEntry timetableEntry = new TimetableEntry(
+                                new CoursepassLecturerSubject(0L, sqlConnectionManager, coursepass),
+                                timetableday, (Integer) idxTimeslot, sqlConnectionManager);
                         timetableEntry.save();
                     }
                 }
@@ -154,10 +156,9 @@ public class Resourcemanager {
 
                 &&
 
-                Room.checkRoomAvailability(
-                        this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getRoom()
-                                .getId(),
-                        arrayTimetabledays.get(idxDay).getDate(), idxTimeslot, getSqlConnectionManager())
+                this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getRoom()
+                        .isRoomAvailable(
+                                arrayTimetabledays.get(idxDay).getDate(), idxTimeslot)
                 &&
                 tmpshouldhours > (tmpishours + tmpplanedhours)) {
             // Lecturer and Room are Available and there are hours left to plan

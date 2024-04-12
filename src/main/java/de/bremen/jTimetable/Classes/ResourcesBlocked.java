@@ -44,11 +44,6 @@ public class ResourcesBlocked {
     }
 
     public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
-            ResourceNames resourcename, SQLConnectionManager sqlConnectionManager) {
-        return getArrayListofResourcesblocked(resourceID, resourcename, false, true, sqlConnectionManager);
-    }
-
-    public static ArrayList<ResourcesBlocked> getArrayListofResourcesblocked(Long resourceID,
             ResourceNames resourcename, Boolean showPassed, Boolean withoutLesson,
             SQLConnectionManager sqlConnectionManager) {
         ArrayList<ResourcesBlocked> returnListe = new ArrayList<ResourcesBlocked>();
