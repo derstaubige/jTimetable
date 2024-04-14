@@ -38,7 +38,7 @@ public class Room {
             ResultSet rs = sqlConnectionManager.select("Select * from T_Rooms where id = ?;", SQLValues);
             rs.first();
             this.id = rs.getLong("id");
-            this.caption = rs.getString("roomcaption");
+            this.caption = rs.getString("roomcaption").trim();
             this.location = new Location(rs.getLong("refLocationID"), getSqlConnectionManager());
             this.active = rs.getBoolean("active");
 
@@ -46,58 +46,42 @@ public class Room {
         // sqlConnectionManager.close();
     }
 
-    public void updateRoomBlocks(){
-        this.roomBlocks = ResourcesBlocked.getArrayListofResourcesblocked(getId(), ResourceNames.ROOM, sqlConnectionManager);
+    public void updateRoomBlocks() {
+        this.roomBlocks = ResourcesBlocked.getArrayListofResourcesblocked(getId(), ResourceNames.ROOM, true, false,
+                sqlConnectionManager);
     }
 
-    public boolean isRoomAvaidable(LocalDate date, Integer timeslot){
-        if(this.roomBlocks == null){
-            this.updateRoomBlocks();
-        }
-        for(ResourcesBlocked resourcesBlocked : this.roomBlocks){
-            if(resourcesBlocked.getStartDate() == date && resourcesBlocked.getStartTimeslot() == timeslot){
-                return false;
-            }
-        }
-        return true;
-    }
+    public boolean isRoomAvailable(LocalDate date, Integer timeslot) {
 
-    public static Boolean checkRoomAvailability(Long pRoomID, LocalDate pDate, int pTimeslot,
-            SQLConnectionManager sqlConnectionManager) throws SQLException {
+        this.updateRoomBlocks();
 
-        // if RoomID == 0 (= Now Room selected) we should return true
-        if (pRoomID == 0) {
+        if (this.id == 0) { // "no room" is allways free
             return true;
         }
-        LocalDate startDate;
-        LocalDate endDate;
-        int startTimeslot;
-        int endTimeslot;
 
-        // Database query
-        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
-        SQLValues.add(new SQLValueLong(pRoomID));
-        SQLValues.add(new SQLValueDate(pDate));
-        SQLValues.add(new SQLValueDate(pDate));
-        ResultSet rs = sqlConnectionManager.select(
-                "Select * from T_RESOURCESBLOCKED where Resourcename = '" + ResourceNames.ROOM +
-                        "' and refresourceid = ? and STARTDATE <= ? and ENDDATE >= ?;",
-                SQLValues);
+        LocalDate resourcesBlockedStartDate;
+        LocalDate resourcesBlockedEndDate;
+        int resourcesBlockedStartTimeslot;
+        int resourcesBlockedEndTimeslot;
 
-        while (rs.next()) {
-            // Current database entry
-            startDate = rs.getDate("startdate").toLocalDate();
-            endDate = rs.getDate("enddate").toLocalDate();
-            startTimeslot = rs.getInt("starttimeslot");
-            endTimeslot = rs.getInt("endtimeslot");
+        for (ResourcesBlocked resourcesBlocked : this.roomBlocks) {
+
+            resourcesBlockedStartDate = resourcesBlocked.getStartDate();
+            resourcesBlockedEndDate = resourcesBlocked.getEndDate();
+            resourcesBlockedStartTimeslot = resourcesBlocked.getStartTimeslot();
+            resourcesBlockedEndTimeslot = resourcesBlocked.getEndTimeslot();
+
+            if(date.isBefore(resourcesBlockedEndDate) && date.isAfter(resourcesBlockedStartDate)){
+                return false;
+            }
 
             // If the date we want to check is the same date as the start of the blocked
             // date range,
             // we can check if the blocking starts after the timeslot we want to reserve or
             // ends before it
-            if (startDate.compareTo(pDate) == 0) {
-                if (startTimeslot <= pTimeslot) {
-                    if (endDate.compareTo(pDate) == 0 && endTimeslot < pTimeslot) {
+            if (resourcesBlockedStartDate.compareTo(date) == 0) {
+                if (resourcesBlockedStartTimeslot <= timeslot) {
+                    if (resourcesBlockedEndDate.compareTo(date) == 0 && resourcesBlockedEndTimeslot < timeslot) {
                         // when a lecturer just can't make it to the 2nd timeslot he should be able
                         // to teach at 3rd timeslot
                         continue;
@@ -113,18 +97,15 @@ public class Room {
             // If the date we want to check is the same date as the end of the blocked date
             // range, we can check if the
             // blocking ends before the timestamp we want to reserve
-            if (endDate.compareTo(pDate) == 0) {
-                if (pTimeslot <= endTimeslot) {
+            if (resourcesBlockedEndDate.compareTo(date) == 0) {
+                if (timeslot <= resourcesBlockedEndTimeslot) {
                     // sqlConnectionManager.close();
                     return false;
                 } else {
                     continue;
                 }
             }
-            // sqlConnectionManager.close();
-            return false;
         }
-        // There is no blocking
         return true;
     }
 
@@ -213,5 +194,4 @@ public class Room {
         return roomBlocks;
     }
 
-    
 }

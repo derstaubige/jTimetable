@@ -382,7 +382,7 @@ public class LecturerController implements Initializable {
                 chkActive.setSelected(this.lecturer.getActive());
 
                 LecturerBlockedTableview.getItems().setAll(ResourcesBlocked
-                        .getArrayListofResourcesblocked(this.lecturer.getId(), ResourceNames.LECTURER,
+                        .getArrayListofResourcesblocked(this.lecturer.getId(), ResourceNames.LECTURER, false, true,
                                 getSqlConnectionManager()));
                 editbox.setVisible(true);
             }

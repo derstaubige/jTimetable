@@ -43,7 +43,7 @@ public class Config {
         return string;
     }
 
-    public String getLocaCountry() {
+    public String getLocalCountry() {
 
         String string = null;
         Properties mainProperties = this.readFile();

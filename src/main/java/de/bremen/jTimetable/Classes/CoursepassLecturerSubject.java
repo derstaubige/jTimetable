@@ -26,7 +26,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                     sqlConnectionManager)) {
                 return false;
             }
-            if (!Room.checkRoomAvailability(cls.getRoom().getId(), targetDay, targetTimeslot, sqlConnectionManager)) {
+            if ( !cls.getRoom().isRoomAvailable(targetDay, targetTimeslot)) {
                 return false;
             }
         } catch (SQLException e) {
@@ -50,13 +50,11 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         long targetLecturerId = target.lecturer.getId();
 
         try {
-            if (!Room.checkRoomAvailability(source.getRoom().getId(), targetDay, targetTimeslot,
-                    sqlConnectionManager)) {
+            if (!source.getRoom().isRoomAvailable(targetDay, targetTimeslot)) {
                 return false;
             }
 
-            if (!Room.checkRoomAvailability(target.getRoom().getId(), sourceDay, sourceTimeslot,
-                    sqlConnectionManager)) {
+            if (!target.getRoom().isRoomAvailable(sourceDay, sourceTimeslot)) {
                 return false;
             }
 

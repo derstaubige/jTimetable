@@ -424,42 +424,26 @@ public class TimetableViewController implements Initializable {
 
         for (JavaFXTimetableHourText checkingTimetableHourText : timetableHourTexts) {
             // check if lecturer is in freeLecturers, check if day and timeslot is in
-            // givingLecturer.lecturerresourcesblocked or givinglecturer.lecturerblocked
-            Boolean givingLecturerResourcesBlocked = false;
-            for (ResourcesBlocked resourcesBlocked : givingLecturer.getLecturerResourcesBlocked()) {
-                if (resourcesBlocked.getStartDate().isBefore(checkingTimetableHourText.getDay())
-                        && resourcesBlocked.getEndDate().isAfter(checkingTimetableHourText.getDay())) {
-                    givingLecturerResourcesBlocked = true;
-                    break;
-                }
-
-                if (resourcesBlocked.getStartDate().isEqual(checkingTimetableHourText.getDay())
-                        && resourcesBlocked.getEndDate().isEqual(checkingTimetableHourText.getDay())
-                        && resourcesBlocked.getStartTimeslot().equals(checkingTimetableHourText.getTimeslot())) {
-                    givingLecturerResourcesBlocked = true;
-                    break;
-                }
-            }
+            LocalDate dateToCheck = checkingTimetableHourText.getDay();
+            Integer timeslotToCheck = checkingTimetableHourText.getTimeslot();
 
             // Check for lectruer Blocked
             Boolean givingLecturerBlocked = false;
-            for (LecturerBlock lecturerBlock : givingLecturer.getLecturerBlocks()) {
-                if (checkingTimetableHourText.getDay().getDayOfWeek().equals(lecturerBlock.getDayNr())) {
+            try {
+                if(Lecturer.checkLecturerAvailability(givingLecturer.getId(), dateToCheck, timeslotToCheck, sqlConnectionManager) == false){
                     givingLecturerBlocked = true;
-                    break;
                 }
+            } catch (Exception e) {
+                // TODO: handle exception
             }
 
             // ToDo: Check for room blocked!
             Boolean givingRoomBlocked = false;
-            for (ResourcesBlocked roomBlock : givingRoom.getRoomBlocks()) {
-                if (checkingTimetableHourText.getDay().getDayOfWeek().equals(roomBlock.getStartDate().getDayOfWeek())) {
-                    givingRoomBlocked = true;
-                    break;
-                }
+            if(givingRoom.isRoomAvailable(dateToCheck, timeslotToCheck) == false){
+                givingRoomBlocked = true;
             }
 
-            if (givingLecturerResourcesBlocked || givingLecturerBlocked || givingRoomBlocked) {
+            if (givingLecturerBlocked || givingRoomBlocked) {
                 // if one or both are true, set red
                 checkingTimetableHourText.setFill(Color.RED);
             } else {
@@ -510,47 +494,26 @@ public class TimetableViewController implements Initializable {
             CoursepassLecturerSubject tmpCoursepassLecturerSubject = checkingTimetableHourText
                     .getCoursepassLecturerSubject();
 
-            // check if lecturer is in freeLecturers, check if day and timeslot is in
-            // givingLecturer.lecturerresourcesblocked or givinglecturer.lecturerblocked
-            Boolean givingLecturerResourcesBlocked = false;
-            for (ResourcesBlocked resourcesBlocked : givingLecturer.getLecturerResourcesBlocked()) {
-                if (resourcesBlocked.getStartDate().isBefore(checkingTimetableHourText.getDay())
-                        && resourcesBlocked.getEndDate().isAfter(checkingTimetableHourText.getDay())) {
-                    givingLecturerResourcesBlocked = true;
-                    break;
-                }
-
-                if (resourcesBlocked.getStartDate().isEqual(checkingTimetableHourText.getDay())
-                        && resourcesBlocked.getEndDate().isEqual(checkingTimetableHourText.getDay())
-                        && resourcesBlocked.getStartTimeslot().equals(checkingTimetableHourText.getTimeslot())) {
-                    givingLecturerResourcesBlocked = true;
-                    break;
-                }
-            }
-
-            // Check for lectruer Blocked
+            // Check if givingLectruer is Blocked
             Boolean givingLecturerBlocked = false;
-            for (LecturerBlock lecturerBlock : givingLecturer.getLecturerBlocks()) {
-                if (checkingTimetableHourText.getDay().getDayOfWeek().equals(lecturerBlock.getDayNr())) {
-                    givingLecturerBlocked = true;
-                    break;
-                }
+            if (givingLecturer.checkifLecturerisBlocked(checkingTimetableHourText.getDay(), checkingTimetableHourText.getTimeslot())) {
+                givingLecturerBlocked = true;
             }
 
             // check if rooms are free
             targetRoom = checkingTimetableHourText.getCoursepassLecturerSubject().getRoom();
             Boolean givingRoomBlocked = false;
             Boolean targetRoomBlocked = false;
-            if (givingRoom.isRoomAvaidable(checkingTimetableHourText.getDay(),
-                    checkingTimetableHourText.getTimeslot())) {
+            if (givingRoom.isRoomAvailable(checkingTimetableHourText.getDay(),
+                    checkingTimetableHourText.getTimeslot()) == false) {
                 givingRoomBlocked = true;
             }
 
-            if (targetRoom.isRoomAvaidable(tmpText.getDay(), tmpText.getTimeslot())) {
+            if (targetRoom.isRoomAvailable(tmpText.getDay(), tmpText.getTimeslot()) == false) {
                 targetRoomBlocked = true;
             }
 
-            if (freeLecturers.contains(tmpCoursepassLecturerSubject.getLecturer()) || givingLecturerResourcesBlocked
+            if (freeLecturers.contains(tmpCoursepassLecturerSubject.getLecturer()) == false 
                     || givingLecturerBlocked || givingRoomBlocked || targetRoomBlocked) {
                 // something isnt avaidable
                 checkingTimetableHourText.setFill(Color.RED);

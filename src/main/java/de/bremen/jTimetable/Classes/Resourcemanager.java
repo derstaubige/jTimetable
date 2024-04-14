@@ -12,6 +12,8 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
+import java.io.FileInputStream;
+
 public class Resourcemanager {
     public ArrayList<TimetableDay> arrayTimetabledays;
     ArrayList<CoursepassLecturerSubject> arrayCoursepassLecturerSubject;
@@ -19,9 +21,16 @@ public class Resourcemanager {
     int tmppositionInCoursepassLecturerSubjectStack;
     int maxCoursepassLecturerSubjectStack;
     private SQLConnectionManager sqlConnectionManager;
+    Properties properties = new Properties();
 
     public Resourcemanager(SQLConnectionManager sqlConnectionManager) {
         setSqlConnectionManager(sqlConnectionManager);
+        try {
+            properties.load(new FileInputStream(
+                    Thread.currentThread().getContextClassLoader().getResource("").getPath() + "Config.properties"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void generateInitialTimetable(CoursePass coursepass) throws SQLException {
@@ -30,7 +39,8 @@ public class Resourcemanager {
         int Coursepasshours = 0;
         int WorkingDays = 0;
         int WorkingHours = 0;
-        int MaxTimeslotsperDay = 3;
+        int MaxTimeslotsperDay = Integer
+                .parseInt(properties.getProperty("maxTimetableSlotsUsedForInitialTimetable", "5"));
 
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>(
                 Collections.singleton(new SQLValueLong(coursepass.getId())));
@@ -70,10 +80,12 @@ public class Resourcemanager {
             WorkingDays = arrayTimetabledays.size();
             WorkingHours = WorkingDays * MaxTimeslotsperDay;
 
-            while (WorkingHours < Coursepasshours) {
-                // We have to Add Timeslots per Day if we have more shouldhours than timeslots
-                MaxTimeslotsperDay++;
-                WorkingHours = WorkingDays * MaxTimeslotsperDay;
+            if (Boolean.parseBoolean(properties.getProperty("extendGivenSlotsforInitialTimetable", "true"))) {
+                while (WorkingHours < Coursepasshours) {
+                    // We have to Add Timeslots per Day if we have more shouldhours than timeslots
+                    MaxTimeslotsperDay++;
+                    WorkingHours = WorkingDays * MaxTimeslotsperDay;
+                }
             }
 
             this.positionInCoursepassLecturerSubjectStack = 0;
@@ -95,9 +107,10 @@ public class Resourcemanager {
                     if (EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot)) {
                         // we found a matching coursepasslecturersubject object
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
-                        
+
                         TimetableEntry timetableEntry = new TimetableEntry(this.arrayCoursepassLecturerSubject.get(
-                            this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot, sqlConnectionManager);
+                                this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot,
+                                sqlConnectionManager);
                         timetableEntry.save();
 
                         // add to the is hours count
@@ -123,8 +136,9 @@ public class Resourcemanager {
                     } else {
                         // we didnt find a matching coursepasslecturersubject, freetime?!
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
-                        TimetableEntry timetableEntry = new TimetableEntry(new CoursepassLecturerSubject(0L, sqlConnectionManager, coursepass),
-                        timetableday, (Integer) idxTimeslot, sqlConnectionManager);
+                        TimetableEntry timetableEntry = new TimetableEntry(
+                                new CoursepassLecturerSubject(0L, sqlConnectionManager, coursepass),
+                                timetableday, (Integer) idxTimeslot, sqlConnectionManager);
                         timetableEntry.save();
                     }
                 }
@@ -154,10 +168,9 @@ public class Resourcemanager {
 
                 &&
 
-                Room.checkRoomAvailability(
-                        this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getRoom()
-                                .getId(),
-                        arrayTimetabledays.get(idxDay).getDate(), idxTimeslot, getSqlConnectionManager())
+                this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getRoom()
+                        .isRoomAvailable(
+                                arrayTimetabledays.get(idxDay).getDate(), idxTimeslot)
                 &&
                 tmpshouldhours > (tmpishours + tmpplanedhours)) {
             // Lecturer and Room are Available and there are hours left to plan
