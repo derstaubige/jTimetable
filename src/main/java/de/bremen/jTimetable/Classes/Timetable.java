@@ -26,9 +26,10 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.stream.IntStream;
-
+import java.io.FileInputStream;
 import org.dhatim.fastexcel.BorderSide;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
@@ -62,13 +63,14 @@ public class Timetable {
     // List of Rooms that are currently planed for this timetable
     private ArrayList<Room> rooms;
     // Set the maximum Timeslotcount to fill the timetable with freetimes
-    private Integer maxTimeslots = 5;
+    private Integer maxTimeslots = 0;
 
     private SQLConnectionManager sqlConnectionManager;
 
     private Boolean isLecturer = false;
 
     private ResourceBundle resourceBundle;
+    private Properties properties = new Properties();
 
     /**
      * Constructor.
@@ -82,9 +84,14 @@ public class Timetable {
         this.resourceBundle = resourceBundle;
         setSqlConnectionManager(sqlConnectionManager);
         try {
+            properties.load(new FileInputStream(
+                    Thread.currentThread().getContextClassLoader().getResource("").getPath() + "Config.properties"));
+            setMaxTimeslots(Integer.parseInt(properties.getProperty("maxTimetableSlotsPerDay")));
             getTimetable(coursePass);
         } catch (SQLException e) {
             System.err.println("Timetable for coursePass couldn't load correctly.");
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -100,10 +107,15 @@ public class Timetable {
         this.lecturer = lecturer;
         this.resourceBundle = resourceBundle;
         setSqlConnectionManager(sqlConnectionManager);
+        setMaxTimeslots(Integer.parseInt(properties.getProperty("maxTimetableSlotsPerDay")));
         try {
+            properties.load(new FileInputStream(
+                    Thread.currentThread().getContextClassLoader().getResource("").getPath() + "Config.properties"));
             getTimetable(lecturer);
         } catch (SQLException e) {
             System.err.println("Timetable for lecturer couldn't load correctly.");
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -640,6 +652,10 @@ public class Timetable {
 
     public void setIsLecturer(Boolean isLecturer) {
         this.isLecturer = isLecturer;
+    }
+
+    public void setMaxTimeslots(Integer maxTimeslots) {
+        this.maxTimeslots = maxTimeslots;
     }
 
 }

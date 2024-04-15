@@ -21,7 +21,7 @@ public class Resourcemanager {
     int tmppositionInCoursepassLecturerSubjectStack;
     int maxCoursepassLecturerSubjectStack;
     private SQLConnectionManager sqlConnectionManager;
-    Properties properties = new Properties();
+    private Properties properties = new Properties();
 
     public Resourcemanager(SQLConnectionManager sqlConnectionManager) {
         setSqlConnectionManager(sqlConnectionManager);
@@ -40,7 +40,10 @@ public class Resourcemanager {
         int WorkingDays = 0;
         int WorkingHours = 0;
         int MaxTimeslotsperDay = Integer
-                .parseInt(properties.getProperty("maxTimetableSlotsUsedForInitialTimetable", "5"));
+                .parseInt(properties.getProperty("maxTimetableSlotsUsedForInitialTimetable", "5")); // How many Timeslot
+                                                                                                    // should be used
+                                                                                                    // max per Day
+        int timeslotsPerDay = Integer.parseInt(properties.getProperty("maxTimetableSlotsPerDay", "5"));
 
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>(
                 Collections.singleton(new SQLValueLong(coursepass.getId())));
@@ -101,10 +104,10 @@ public class Resourcemanager {
             // date / hour. if not try next subject
             for (int idxDay = 0; idxDay < arrayTimetabledays.size(); idxDay++) {
                 // loop through all timeslots of this day
-                for (int idxTimeslot = 0; idxTimeslot < MaxTimeslotsperDay; idxTimeslot++) {
+                for (int idxTimeslot = 0; idxTimeslot < Math.max(MaxTimeslotsperDay, timeslotsPerDay); idxTimeslot++) {
                     this.tmppositionInCoursepassLecturerSubjectStack = this.positionInCoursepassLecturerSubjectStack;
 
-                    if (EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot)) {
+                    if (EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot) && idxTimeslot < MaxTimeslotsperDay) {
                         // we found a matching coursepasslecturersubject object
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
 
