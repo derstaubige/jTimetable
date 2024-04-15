@@ -112,7 +112,7 @@ public class Resourcemanager {
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
 
                         TimetableEntry timetableEntry = new TimetableEntry(this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot,
+                                this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot, false,
                                 sqlConnectionManager);
                         timetableEntry.save();
 
@@ -141,7 +141,7 @@ public class Resourcemanager {
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
                         TimetableEntry timetableEntry = new TimetableEntry(
                                 new CoursepassLecturerSubject(0L, sqlConnectionManager, coursepass),
-                                timetableday, (Integer) idxTimeslot, sqlConnectionManager);
+                                timetableday, (Integer) idxTimeslot, false, sqlConnectionManager);
                         timetableEntry.save();
                     }
                 }

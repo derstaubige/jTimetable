@@ -147,7 +147,7 @@ public class Timetable {
                                     timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
                                 // LEcturer and Room are free, we can place it here
                                 TimetableEntry targetTimetableEntry = new TimetableEntry(cls, timetableDay.getDate(),
-                                        timetableHour.getTimeslot(), sqlConnectionManager);
+                                        timetableHour.getTimeslot(), false, sqlConnectionManager);
                                 // delete the entry in the timetable table
                                 // save the new timetablehour
                                 try {
@@ -353,7 +353,7 @@ public class Timetable {
 
         if (CoursepassLecturerSubject.isFreeTarget(cls, targetTimetableEntry.getDate(),
                 targetTimetableEntry.getTimeslot(), sqlConnectionManager)) {
-            targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot());
+            targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot(), targetTimetableEntry.isExam());
         } else {
             throw new Exception("Error Placing Hour");
         }
@@ -373,8 +373,8 @@ public class Timetable {
                 sqlConnectionManager)
                 && CoursepassLecturerSubject.isFreeTarget(targetCLS, source.getDate(), source.getTimeslot(),
                         sqlConnectionManager)) {
-            source.update(targetCLS, source.getDate(), source.getTimeslot());
-            target.update(sourceCLS, target.getDate(), target.getTimeslot());
+            source.update(targetCLS, source.getDate(), source.getTimeslot(), false);
+            target.update(sourceCLS, target.getDate(), target.getTimeslot(), false);
             try {
                 updateCoursePassTimetable();
             } catch (Exception e) {

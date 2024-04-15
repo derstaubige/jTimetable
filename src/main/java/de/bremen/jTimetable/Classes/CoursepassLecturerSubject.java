@@ -196,7 +196,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     // blocked entrys
     public void deleteCLS(LocalDate pDate, Integer pTimestamp) {
         try {
-            TimetableEntry timetableEntry = new TimetableEntry(this, pDate, pTimestamp, sqlConnectionManager);
+            TimetableEntry timetableEntry = new TimetableEntry(this, pDate, pTimestamp, false, sqlConnectionManager);
             timetableEntry.delete();
         } catch (Exception e) {
             e.printStackTrace();
@@ -342,4 +342,11 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     public boolean equals(Object o) {
         return (o instanceof CoursepassLecturerSubject) && (this.id == ((CoursepassLecturerSubject) o).id);
     }
+
+    @Override
+    public String toString() {
+        return getSubjectCaption() + ", " + getLecturerFullname() + ", " + getRoomCaptionLocatioString();
+    }
+
+    
 }

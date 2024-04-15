@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.h2.jdbc.JdbcSQLNonTransientException;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueBoolean;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueDate;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueInt;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
@@ -19,6 +20,7 @@ public class TimetableEntry {
     private Integer timeslot;
     private CoursepassLecturerSubject coursepassLecturerSubject;
     private CoursePass coursePass;
+    private boolean isExam;
     private SQLConnectionManager sqlConnectionManager;
 
     /**
@@ -30,11 +32,12 @@ public class TimetableEntry {
      *                                  table. it will create and delete
      *                                  the entrys
      */
-    public TimetableEntry(CoursepassLecturerSubject coursepassLecturerSubject, LocalDate date, Integer timeslot,
+    public TimetableEntry(CoursepassLecturerSubject coursepassLecturerSubject, LocalDate date, Integer timeslot, Boolean isExam,
             SQLConnectionManager sqlConnectionManager) {
         this.coursepassLecturerSubject = coursepassLecturerSubject;
         this.date = date;
         this.timeslot = timeslot;
+        this.isExam = isExam;
         this.sqlConnectionManager = sqlConnectionManager;
         this.coursePass = coursepassLecturerSubject.getCoursepass();
         loadFromDB();
@@ -72,6 +75,7 @@ public class TimetableEntry {
             this.coursepassLecturerSubject = new CoursepassLecturerSubject(rs.getLong("REFCOURSEPASSLECTURERSUBJECT"),
                     sqlConnectionManager, this.coursePass);
             this.id = rs.getInt("id");
+            this.isExam = rs.getBoolean("isExam");
         } catch (JdbcSQLNonTransientException e) {
             // we didnt find a entry at this day/timestamp.... sooo its freetime or a new
             // entry
@@ -91,9 +95,10 @@ public class TimetableEntry {
                 ResourceNames.ROOM, date, date, timeslot, timeslot, sqlConnectionManager);
         this.lecturerBlocked = new ResourcesBlocked(coursepassLecturerSubject.getLecturerID(),
                 ResourceNames.LECTURER, date, date, timeslot, timeslot, sqlConnectionManager);
+        
     }
 
-    public void update(CoursepassLecturerSubject coursepassLecturerSubject, LocalDate date, Integer timeslot) {
+    public void update(CoursepassLecturerSubject coursepassLecturerSubject, LocalDate date, Integer timeslot, Boolean isExam) {
 
         // delete old TimetableEntry and resources blocked
         delete();
@@ -111,6 +116,7 @@ public class TimetableEntry {
         this.date = date;
         this.timeslot = timeslot;
         this.coursePass = coursepassLecturerSubject.getCoursepass();
+        this.isExam = isExam;
 
         save();
     }
@@ -159,10 +165,11 @@ public class TimetableEntry {
                 SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getRoom().getId()));
                 SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getLecturerID()));
                 SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getSubject().getId()));
+                SQLValues.add(new SQLValueBoolean(this.isExam));
                 SQLValues.add(new SQLValueInt(this.timeslot));
 
                 ResultSet rs = sqlConnectionManager.execute(
-                        "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
+                        "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, isExam, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?, ?)",
                         SQLValues);
                 rs.first();
                 this.id = rs.getInt(1);
@@ -176,10 +183,11 @@ public class TimetableEntry {
                 SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getSubject().getId()));
                 SQLValues.add(new SQLValueLong(this.coursePass.getId()));
                 SQLValues.add(new SQLValueDate(this.date));
+                SQLValues.add(new SQLValueBoolean(this.isExam));
                 SQLValues.add(new SQLValueInt(this.timeslot));
                 SQLValues.add(new SQLValueInt(this.id));
                 sqlConnectionManager.execute(
-                        "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? , refcoursepass = ? , timetableday = ? , timeslot = ? where id = ?",
+                        "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? , refcoursepass = ? , timetableday = ? , isExam = ?, timeslot = ? where id = ?",
                         SQLValues);
             }
 
@@ -210,6 +218,54 @@ public class TimetableEntry {
 
     public SQLConnectionManager getSqlConnectionManager() {
         return sqlConnectionManager;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setRoomBlocked(ResourcesBlocked roomBlocked) {
+        this.roomBlocked = roomBlocked;
+    }
+
+    public void setLecturerBlocked(ResourcesBlocked lecturerBlocked) {
+        this.lecturerBlocked = lecturerBlocked;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setTimeslot(Integer timeslot) {
+        this.timeslot = timeslot;
+    }
+
+    public void setCoursepassLecturerSubject(CoursepassLecturerSubject coursepassLecturerSubject) {
+        this.coursepassLecturerSubject = coursepassLecturerSubject;
+    }
+
+    public CoursePass getCoursePass() {
+        return coursePass;
+    }
+
+    public void setCoursePass(CoursePass coursePass) {
+        this.coursePass = coursePass;
+    }
+
+    public boolean isExam() {
+        return isExam;
+    }
+
+    public void setExam(boolean isExam) {
+        this.isExam = isExam;
+    }
+
+    public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
+        this.sqlConnectionManager = sqlConnectionManager;
     }
 
 }

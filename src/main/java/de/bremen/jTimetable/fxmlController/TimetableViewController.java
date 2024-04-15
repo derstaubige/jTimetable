@@ -10,12 +10,15 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -91,11 +94,15 @@ public class TimetableViewController implements Initializable {
                 }
                 JavaFXTimetableHourText tmpText;
                 if (dragandDrop == true) {
-                    tmpText = new JavaFXTimetableHourText(timeslot.getCoursepassLecturerSubject(), day.getDate(),
-                            timeslot.getTimeslot(), getSqlConnectionManager());
+                    tmpText = new JavaFXTimetableHourText(timeslot.getCoursepassLecturerSubject(),
+                            new TimetableEntry(timeslot.getCoursepassLecturerSubject(), day.getDate(),
+                                    timeslot.getTimeslot(), false, sqlConnectionManager),
+                            getSqlConnectionManager());
                 } else {
-                    tmpText = new JavaFXTimetableHourText(timeslot.getCoursepassLecturerSubject(), day.getDate(),
-                            timeslot.getTimeslot(), true, getSqlConnectionManager());
+                    tmpText = new JavaFXTimetableHourText(timeslot.getCoursepassLecturerSubject(),
+                            new TimetableEntry(timeslot.getCoursepassLecturerSubject(), day.getDate(),
+                                    timeslot.getTimeslot(), false, sqlConnectionManager),
+                            true, getSqlConnectionManager());
                 }
                 if (dragandDrop == true) {
                     // enables the text to be dragged
@@ -142,10 +149,10 @@ public class TimetableViewController implements Initializable {
 
                             TimetableEntry sourceTimetableEntry = new TimetableEntry(
                                     source.getCoursepassLecturerSubject(),
-                                    source.getDay(), source.getTimeslot(), sqlConnectionManager);
+                                    source.getDay(), source.getTimeslot(), false, sqlConnectionManager);
                             TimetableEntry targetTimetableEntry = new TimetableEntry(
                                     target.getCoursepassLecturerSubject(),
-                                    target.getDay(), target.getTimeslot(), sqlConnectionManager);
+                                    target.getDay(), target.getTimeslot(), false, sqlConnectionManager);
 
                             if (CoursepassLecturerSubject.cangetExchanged(sourceTimetableEntry, targetTimetableEntry,
                                     getSqlConnectionManager()) == true) {
@@ -161,12 +168,12 @@ public class TimetableViewController implements Initializable {
                                 GridPane.setRowIndex(target, SourceRow);
                                 GridPane.setColumnIndex(target, SourceCol);
 
-                                try{
+                                try {
                                     this.timetable.swapHours(sourceTimetableEntry, targetTimetableEntry);
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                
+
                             } else {
                                 // System.out.println("Error switching Hours");
                             }
@@ -182,9 +189,11 @@ public class TimetableViewController implements Initializable {
                                     target.getTimeslot(), getSqlConnectionManager()) == true) {
                                 TimetableEntry targetTimetableEntry = new TimetableEntry(
                                         target.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot(),
+                                        false,
                                         sqlConnectionManager);
                                 try {
-                                    timetable.addSingleHour(source.getCoursepassLecturerSubject(), targetTimetableEntry);                                    
+                                    timetable.addSingleHour(source.getCoursepassLecturerSubject(),
+                                            targetTimetableEntry);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -199,6 +208,42 @@ public class TimetableViewController implements Initializable {
                                                 TargetCol, TargetRow);
                                 updateEditboxItems();
                             }
+
+                        }
+                        if (dragEvent.getDragboard().getString() == "EXAM") {
+                            VBox examBox = (VBox) dragEvent.getGestureSource();
+                            ComboBox examComboBox = (ComboBox) examBox.getChildren().get(1);
+                            CoursepassLecturerSubject cls = (CoursepassLecturerSubject) examComboBox.getValue(); // get
+                                                                                                                 // selected
+                                                                                                                 // cls
+                            if (cls == null) { // es erfolgte keine Auswahl
+                                return;
+                            }
+
+                            JavaFXTimetableHourText target = (JavaFXTimetableHourText) dragEvent.getGestureTarget();
+
+                            TimetableEntry targetTimetableEntry = new TimetableEntry(
+                                    target.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot(),
+                                    true,
+                                    sqlConnectionManager);
+                            targetTimetableEntry.setExam(true);
+                            targetTimetableEntry.save();
+                            try {
+                                timetable.addSingleHour(cls,
+                                        targetTimetableEntry);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            // update visuals
+                            Integer TargetRow = GridPane.getRowIndex(target);
+                            Integer TargetCol = GridPane.getColumnIndex(target);
+                            grdpn_TimetableView.getChildren().remove(target);
+                            grdpn_TimetableView
+                                    .add(new JavaFXTimetableHourText(cls,
+                                            targetTimetableEntry, getSqlConnectionManager()),
+                                            TargetCol, TargetRow);
+                            updateEditboxItems();
                         }
                         dragEvent.consume();
                     });
@@ -268,10 +313,59 @@ public class TimetableViewController implements Initializable {
                     tmpRowIdx++;
                 }
             }
+            // Add a ExamButton to Plan Exams
+            Label examLabel = new Label("\uD83D\uDCD3 " + resourceBundle.getString("timetableview.exam"));
+            Font defaultFont = new Font(38);
+            examLabel.setFont(defaultFont);
+            examLabel.setTextAlignment(TextAlignment.CENTER);
+            examLabel.setMinWidth(100);
+
+            ComboBox comboBox = new ComboBox<CoursepassLecturerSubject>();
+            comboBox.getItems().addAll(timetable.getCoursepass().getArrayCoursePassLecturerSubject());
+
+            VBox examVBox = new VBox(examLabel, comboBox);
+            grdpn_Editbox.add(examVBox, tmpColIdx, tmpRowIdx);
+
+            examVBox.setOnDragDetected(mouseEvent -> {
+                // allow any transfer mode
+                Dragboard db = examVBox.startDragAndDrop(TransferMode.ANY);
+
+                // Put a string on a dragboard
+                ClipboardContent content = new ClipboardContent();
+                content.putString("EXAM");
+
+                db.setContent(content);
+
+                // check for all JavaFXTimetableHourText if they could be exchanged and color
+                // them
+                List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
+                        JavaFXTimetableHourText.class);
+                if(comboBox.getValue() != null){
+                    this.markNewCLS(timetableHourTexts, (CoursepassLecturerSubject) comboBox.getValue());
+                }
+                mouseEvent.consume();
+            });
+
+            
+            examVBox.setOnDragDone(dragEvent -> {
+                // check for all JavaFXTimetableHourText if they could be exchanged and color
+                // them
+                List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
+                        JavaFXTimetableHourText.class);
+                for (int i = 0; i < timetableHourTexts.size(); i++) {
+                    timetableHourTexts.get(i).setFill(Color.BLACK);
+                }
+            });
+
+            tmpColIdx++;
+            if (tmpColIdx > timetable.getMaxTimeslots()) {
+                tmpColIdx = 0;
+                tmpRowIdx++;
+            }
 
             // Add a Trashcan to Delete Planed Hours
             Label trashcan = new Label("\uD83D\uDDD1");
-            Font defaultFont = new Font(38);
+            defaultFont = new Font(38);
             trashcan.setFont(defaultFont);
             trashcan.setTextAlignment(TextAlignment.CENTER);
             trashcan.setMinWidth(100);
@@ -309,7 +403,7 @@ public class TimetableViewController implements Initializable {
 
                         // save freetime
                         TimetableEntry timetableEntry = new TimetableEntry(tmpcoursepassLecturerSubject, tmpDate,
-                                tmpTimeslot, sqlConnectionManager);
+                                tmpTimeslot, false, sqlConnectionManager);
                         timetableEntry.save();
 
                     } catch (Exception e) {
@@ -320,7 +414,6 @@ public class TimetableViewController implements Initializable {
                 }
                 dragEvent.consume();
             });
-
         }
     }
 
@@ -430,7 +523,8 @@ public class TimetableViewController implements Initializable {
             // Check for lectruer Blocked
             Boolean givingLecturerBlocked = false;
             try {
-                if(Lecturer.checkLecturerAvailability(givingLecturer.getId(), dateToCheck, timeslotToCheck, sqlConnectionManager) == false){
+                if (Lecturer.checkLecturerAvailability(givingLecturer.getId(), dateToCheck, timeslotToCheck,
+                        sqlConnectionManager) == false) {
                     givingLecturerBlocked = true;
                 }
             } catch (Exception e) {
@@ -439,7 +533,7 @@ public class TimetableViewController implements Initializable {
 
             // ToDo: Check for room blocked!
             Boolean givingRoomBlocked = false;
-            if(givingRoom.isRoomAvailable(dateToCheck, timeslotToCheck) == false){
+            if (givingRoom.isRoomAvailable(dateToCheck, timeslotToCheck) == false) {
                 givingRoomBlocked = true;
             }
 
@@ -496,7 +590,8 @@ public class TimetableViewController implements Initializable {
 
             // Check if givingLectruer is Blocked
             Boolean givingLecturerBlocked = false;
-            if (givingLecturer.checkifLecturerisBlocked(checkingTimetableHourText.getDay(), checkingTimetableHourText.getTimeslot())) {
+            if (givingLecturer.checkifLecturerisBlocked(checkingTimetableHourText.getDay(),
+                    checkingTimetableHourText.getTimeslot())) {
                 givingLecturerBlocked = true;
             }
 
@@ -513,7 +608,7 @@ public class TimetableViewController implements Initializable {
                 targetRoomBlocked = true;
             }
 
-            if (freeLecturers.contains(tmpCoursepassLecturerSubject.getLecturer()) == false 
+            if (freeLecturers.contains(tmpCoursepassLecturerSubject.getLecturer()) == false
                     || givingLecturerBlocked || givingRoomBlocked || targetRoomBlocked) {
                 // something isnt avaidable
                 checkingTimetableHourText.setFill(Color.RED);
