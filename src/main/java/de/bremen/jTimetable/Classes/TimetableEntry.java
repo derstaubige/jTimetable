@@ -32,12 +32,11 @@ public class TimetableEntry {
      *                                  table. it will create and delete
      *                                  the entrys
      */
-    public TimetableEntry(CoursepassLecturerSubject coursepassLecturerSubject, LocalDate date, Integer timeslot, Boolean isExam,
+    public TimetableEntry(CoursepassLecturerSubject coursepassLecturerSubject, LocalDate date, Integer timeslot, 
             SQLConnectionManager sqlConnectionManager) {
         this.coursepassLecturerSubject = coursepassLecturerSubject;
         this.date = date;
         this.timeslot = timeslot;
-        this.isExam = isExam;
         this.sqlConnectionManager = sqlConnectionManager;
         this.coursePass = coursepassLecturerSubject.getCoursepass();
         loadFromDB();

@@ -96,12 +96,12 @@ public class TimetableViewController implements Initializable {
                 if (dragandDrop == true) {
                     tmpText = new JavaFXTimetableHourText(timeslot.getCoursepassLecturerSubject(),
                             new TimetableEntry(timeslot.getCoursepassLecturerSubject(), day.getDate(),
-                                    timeslot.getTimeslot(), false, sqlConnectionManager),
+                                    timeslot.getTimeslot(), sqlConnectionManager),
                             getSqlConnectionManager());
                 } else {
                     tmpText = new JavaFXTimetableHourText(timeslot.getCoursepassLecturerSubject(),
                             new TimetableEntry(timeslot.getCoursepassLecturerSubject(), day.getDate(),
-                                    timeslot.getTimeslot(), false, sqlConnectionManager),
+                                    timeslot.getTimeslot(), sqlConnectionManager),
                             true, getSqlConnectionManager());
                 }
                 if (dragandDrop == true) {
@@ -149,10 +149,10 @@ public class TimetableViewController implements Initializable {
 
                             TimetableEntry sourceTimetableEntry = new TimetableEntry(
                                     source.getCoursepassLecturerSubject(),
-                                    source.getDay(), source.getTimeslot(), false, sqlConnectionManager);
+                                    source.getDay(), source.getTimeslot(), sqlConnectionManager);
                             TimetableEntry targetTimetableEntry = new TimetableEntry(
                                     target.getCoursepassLecturerSubject(),
-                                    target.getDay(), target.getTimeslot(), false, sqlConnectionManager);
+                                    target.getDay(), target.getTimeslot(), sqlConnectionManager);
 
                             if (CoursepassLecturerSubject.cangetExchanged(sourceTimetableEntry, targetTimetableEntry,
                                     getSqlConnectionManager()) == true) {
@@ -189,7 +189,6 @@ public class TimetableViewController implements Initializable {
                                     target.getTimeslot(), getSqlConnectionManager()) == true) {
                                 TimetableEntry targetTimetableEntry = new TimetableEntry(
                                         target.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot(),
-                                        false,
                                         sqlConnectionManager);
                                 try {
                                     timetable.addSingleHour(source.getCoursepassLecturerSubject(),
@@ -224,7 +223,6 @@ public class TimetableViewController implements Initializable {
 
                             TimetableEntry targetTimetableEntry = new TimetableEntry(
                                     target.getCoursepassLecturerSubject(), target.getDay(), target.getTimeslot(),
-                                    true,
                                     sqlConnectionManager);
                             targetTimetableEntry.setExam(true);
                             targetTimetableEntry.save();
@@ -403,7 +401,7 @@ public class TimetableViewController implements Initializable {
 
                         // save freetime
                         TimetableEntry timetableEntry = new TimetableEntry(tmpcoursepassLecturerSubject, tmpDate,
-                                tmpTimeslot, false, sqlConnectionManager);
+                                tmpTimeslot, sqlConnectionManager);
                         timetableEntry.save();
 
                     } catch (Exception e) {

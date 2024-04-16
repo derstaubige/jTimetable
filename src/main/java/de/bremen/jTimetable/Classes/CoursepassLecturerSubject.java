@@ -196,7 +196,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     // blocked entrys
     public void deleteCLS(LocalDate pDate, Integer pTimestamp) {
         try {
-            TimetableEntry timetableEntry = new TimetableEntry(this, pDate, pTimestamp, false, sqlConnectionManager);
+            TimetableEntry timetableEntry = new TimetableEntry(this, pDate, pTimestamp, sqlConnectionManager);
             timetableEntry.delete();
         } catch (Exception e) {
             e.printStackTrace();

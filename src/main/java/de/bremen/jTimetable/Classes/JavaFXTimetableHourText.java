@@ -14,7 +14,7 @@ public class JavaFXTimetableHourText extends Text {
 
     public JavaFXTimetableHourText(CoursepassLecturerSubject cls, LocalDate day,
             Integer timeslot, SQLConnectionManager sqlConnectionManager) {
-        this(cls, new TimetableEntry(cls, day, timeslot, false, sqlConnectionManager), false, sqlConnectionManager);
+        this(cls, new TimetableEntry(cls, day, timeslot, sqlConnectionManager), false, sqlConnectionManager);
     }
 
     public JavaFXTimetableHourText(CoursepassLecturerSubject pCoursepassLecturerSubject, TimetableEntry timetableEntry,

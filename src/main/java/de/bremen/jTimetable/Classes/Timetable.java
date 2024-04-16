@@ -147,7 +147,7 @@ public class Timetable {
                                     timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
                                 // LEcturer and Room are free, we can place it here
                                 TimetableEntry targetTimetableEntry = new TimetableEntry(cls, timetableDay.getDate(),
-                                        timetableHour.getTimeslot(), false, sqlConnectionManager);
+                                        timetableHour.getTimeslot(), sqlConnectionManager);
                                 // delete the entry in the timetable table
                                 // save the new timetablehour
                                 try {
@@ -319,8 +319,14 @@ public class Timetable {
                         rowOffset = xlsRowCounter + 2;
                         for (TimetableHour tmpHour : tmpDay.getArrayTimetableHours()) {
                             if (tmpHour.getCoursepassLecturerSubject().getLecturerID() != 0) {
-                                ws.value(rowOffset, tmpCol,
-                                        tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
+                                TimetableEntry timetableEntry = new TimetableEntry(coursepass, tmpDay.getDate(), tmpHour.getTimeslot(), sqlConnectionManager);
+                                if(timetableEntry.isExam()){
+                                    ws.value(rowOffset, tmpCol,
+                                            resourceBundle.getString("timetableview.exam") + ": " + tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());                                    
+                                }else{
+                                    ws.value(rowOffset, tmpCol,
+                                            tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());                                    
+                                }
                                 ws.value(rowOffset + 1, tmpCol,
                                         tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
                                 ws.value(rowOffset + 2, tmpCol,

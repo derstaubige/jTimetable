@@ -188,10 +188,10 @@ public class CheckTimetable {
 
             TimetableEntry sourceTimetableEntry = new TimetableEntry(
                     source.getCoursepassLecturerSubject(),
-                    timetable3.getArrayTimetableDays().get(0).getDate(), source.getTimeslot(), false, sqlConnectionManager);
+                    timetable3.getArrayTimetableDays().get(0).getDate(), source.getTimeslot(), sqlConnectionManager);
             TimetableEntry targetTimetableEntry = new TimetableEntry(
                     target.getCoursepassLecturerSubject(),
-                    timetable3.getArrayTimetableDays().get(0).getDate(), target.getTimeslot(), false, sqlConnectionManager);
+                    timetable3.getArrayTimetableDays().get(0).getDate(), target.getTimeslot(), sqlConnectionManager);
 
             if (CoursepassLecturerSubject.cangetExchanged(sourceTimetableEntry, targetTimetableEntry,
                     sqlConnectionManager)) {
@@ -289,7 +289,7 @@ public class CheckTimetable {
                     targetDate,
                     target.getTimeslot(), sqlConnectionManager) == true) {
                 TimetableEntry targetTimetableEntry = new TimetableEntry(target.getCoursepassLecturerSubject(),
-                        targetDate, target.getTimeslot(), false, sqlConnectionManager);
+                        targetDate, target.getTimeslot(), sqlConnectionManager);
                 timetable3.addSingleHour(source, targetTimetableEntry);
             } else {
                 fail("Source isnt free");
@@ -385,10 +385,10 @@ public class CheckTimetable {
             TimetableEntry sourceTimetableEntry = new TimetableEntry(
                     timetable3.getArrayTimetableDays().get(5).getArrayTimetableHours().get(0)
                             .getCoursepassLecturerSubject(),
-                    targetDate, 0, false, sqlConnectionManager);
+                    targetDate, 0, sqlConnectionManager);
             TimetableEntry targetTimetableEntry = new TimetableEntry(
                     cls8,
-                    targetDate, 1, false, sqlConnectionManager);
+                    targetDate, 1, sqlConnectionManager);
             timetable3.swapHours(sourceTimetableEntry, targetTimetableEntry);
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Hours cant be swapped");
@@ -414,10 +414,10 @@ public class CheckTimetable {
             TimetableEntry sourceTimetableEntry = new TimetableEntry(
                     timetable3.getArrayTimetableDays().get(5).getArrayTimetableHours().get(0)
                             .getCoursepassLecturerSubject(),
-                    targetDate, 0, false, sqlConnectionManager);
+                    targetDate, 0, sqlConnectionManager);
             TimetableEntry targetTimetableEntry = new TimetableEntry(
                     cls8,
-                    targetDate, 1, false, sqlConnectionManager);
+                    targetDate, 1, sqlConnectionManager);
             timetable3.swapHours(sourceTimetableEntry, targetTimetableEntry);
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Hours cant be swapped");
@@ -444,7 +444,7 @@ public class CheckTimetable {
 
             TimetableEntry targetTimetableEntry = new TimetableEntry(
                     cls7,
-                    targetDate, 1, false, sqlConnectionManager);
+                    targetDate, 1, sqlConnectionManager);
             timetable3.addSingleHour(cls7, targetTimetableEntry);
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Error Placing Hour");
@@ -470,7 +470,7 @@ public class CheckTimetable {
 
             TimetableEntry targetTimetableEntry = new TimetableEntry(
                     cls7,
-                    targetDate, 1, false, sqlConnectionManager);
+                    targetDate, 1, sqlConnectionManager);
             timetable3.addSingleHour(cls7, targetTimetableEntry);
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Error Placing Hour");

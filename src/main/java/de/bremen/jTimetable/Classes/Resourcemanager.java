@@ -112,8 +112,7 @@ public class Resourcemanager {
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
 
                         TimetableEntry timetableEntry = new TimetableEntry(this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot, false,
-                                sqlConnectionManager);
+                                this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot, sqlConnectionManager);
                         timetableEntry.save();
 
                         // add to the is hours count
@@ -141,7 +140,7 @@ public class Resourcemanager {
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
                         TimetableEntry timetableEntry = new TimetableEntry(
                                 new CoursepassLecturerSubject(0L, sqlConnectionManager, coursepass),
-                                timetableday, (Integer) idxTimeslot, false, sqlConnectionManager);
+                                timetableday, (Integer) idxTimeslot, sqlConnectionManager);
                         timetableEntry.save();
                     }
                 }
