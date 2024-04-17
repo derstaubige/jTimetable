@@ -106,6 +106,7 @@ public class Timetable {
     public Timetable(Lecturer lecturer, SQLConnectionManager sqlConnectionManager, ResourceBundle resourceBundle) {
         this.lecturer = lecturer;
         this.resourceBundle = resourceBundle;
+        this.coursepass = new CoursePass(0L, sqlConnectionManager);
         setIsLecturer(true);
         setSqlConnectionManager(sqlConnectionManager);
         try {
@@ -216,11 +217,20 @@ public class Timetable {
                         if (tmpDay.getDate().getDayOfWeek().getValue() < tmpDOW) {
                             // new week new Line
                             xlsRowCounter += (rowOffset - xlsRowCounter + 1);
-                            ws.value(xlsRowCounter, 1, coursepass.getCourseOfStudyCaption());
+                            if(isLecturer){
+                                ws.value(xlsRowCounter, 1, lecturer.getLecturerFullName());
+                            }else{
+                                ws.value(xlsRowCounter, 1, coursepass.getCourseOfStudyCaption());
+                            }
                             ws.range(xlsRowCounter, 1, xlsRowCounter, 6).merge();
                             ws.range(xlsRowCounter, 1, xlsRowCounter, 6).style().borderStyle("thin").set();
                             xlsRowCounter++;
-                            tmpMaxSlots = tmpDay.getMaxUsedTimeslotForThisWeek(coursepass);
+
+                            if(isLecturer){
+                                tmpMaxSlots = getMaxTimeslots() - 1;
+                            }else{
+                                tmpMaxSlots = tmpDay.getMaxUsedTimeslotForThisWeek(coursepass);
+                            }
 
                             // write all the new line stuff like calenderweek, timeslots and so on
                             ws.value(xlsRowCounter, 1, "KW: " + calendar.get(Calendar.WEEK_OF_YEAR));
@@ -328,8 +338,13 @@ public class Timetable {
                                     ws.value(rowOffset, tmpCol,
                                             tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());                                    
                                 }
-                                ws.value(rowOffset + 1, tmpCol,
-                                        tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
+                                if(isLecturer){
+                                    ws.value(rowOffset + 1, tmpCol,
+                                    tmpHour.getCoursepassLecturerSubject().getCoursepass().getCourseOfStudyCaption());
+                                }else{
+                                    ws.value(rowOffset + 1, tmpCol,
+                                            tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
+                                }
                                 ws.value(rowOffset + 2, tmpCol,
                                         tmpHour.getCoursepassLecturerSubject().getRoom().getCaption());
                             }
