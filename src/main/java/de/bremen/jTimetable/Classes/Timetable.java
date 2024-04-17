@@ -34,6 +34,8 @@ import org.dhatim.fastexcel.BorderSide;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
 
+import javafx.scene.text.Text;
+
 /**
  * Class represents all timetable entries for a coursePass.
  */
@@ -119,6 +121,47 @@ public class Timetable {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void saveCLStoFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("CLS File");
+        LocalDate date = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        fileChooser.setInitialFileName(coursepass.getCourseOfStudyCaption() + "_CLS_" + date.format(formatter));
+
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Excel Datei", "*.xlsx"));
+        File file = fileChooser.showSaveDialog(new Stage());
+        if (file != null) {
+
+            String fileLocation = file.getAbsolutePath();
+            try (OutputStream os = Files.newOutputStream(Paths.get(fileLocation));
+                    Workbook wb = new Workbook(os, "MyApplication", "1.0")) {
+                Worksheet ws = wb.newWorksheet("Blatt 1");
+                Integer xlsRowCounter = 2;
+                ws.value(xlsRowCounter, 1, coursepass.getCourseOfStudyCaption());
+                xlsRowCounter++;
+                ws.value(xlsRowCounter, 1, resourceBundle.getString("timetableview.subject"));
+                ws.value(xlsRowCounter, 2, resourceBundle.getString("timetableview.lecturer"));
+                ws.value(xlsRowCounter, 3, resourceBundle.getString("timetableview.shouldHours"));
+                ws.value(xlsRowCounter, 4, resourceBundle.getString("timetableview.planedHours"));
+                ws.value(xlsRowCounter, 5, resourceBundle.getString("javaFXCoursepassLecturerSubjectText.examHours"));
+                xlsRowCounter++;
+                for (CoursepassLecturerSubject cls : coursepass.getArrayCoursePassLecturerSubject()) {
+                    ws.value(xlsRowCounter, 1, cls.getSubjectCaption());
+                    ws.value(xlsRowCounter, 2, cls.getLecturerFullname());
+                    ws.value(xlsRowCounter, 3, cls.getShouldHours());
+                    ws.value(xlsRowCounter, 4, cls.getPlanedHours() + cls.getIsHours());
+                    ws.value(xlsRowCounter, 5, cls.getExamHours());
+                    xlsRowCounter++;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -217,18 +260,18 @@ public class Timetable {
                         if (tmpDay.getDate().getDayOfWeek().getValue() < tmpDOW) {
                             // new week new Line
                             xlsRowCounter += (rowOffset - xlsRowCounter + 1);
-                            if(isLecturer){
+                            if (isLecturer) {
                                 ws.value(xlsRowCounter, 1, lecturer.getLecturerFullName());
-                            }else{
+                            } else {
                                 ws.value(xlsRowCounter, 1, coursepass.getCourseOfStudyCaption());
                             }
                             ws.range(xlsRowCounter, 1, xlsRowCounter, 6).merge();
                             ws.range(xlsRowCounter, 1, xlsRowCounter, 6).style().borderStyle("thin").set();
                             xlsRowCounter++;
 
-                            if(isLecturer){
+                            if (isLecturer) {
                                 tmpMaxSlots = getMaxTimeslots() - 1;
-                            }else{
+                            } else {
                                 tmpMaxSlots = tmpDay.getMaxUsedTimeslotForThisWeek(coursepass);
                             }
 
@@ -330,18 +373,21 @@ public class Timetable {
                         rowOffset = xlsRowCounter + 2;
                         for (TimetableHour tmpHour : tmpDay.getArrayTimetableHours()) {
                             if (tmpHour.getCoursepassLecturerSubject().getLecturerID() != 0) {
-                                TimetableEntry timetableEntry = new TimetableEntry(coursepass, tmpDay.getDate(), tmpHour.getTimeslot(), sqlConnectionManager);
-                                if(timetableEntry.isExam()){
+                                TimetableEntry timetableEntry = new TimetableEntry(coursepass, tmpDay.getDate(),
+                                        tmpHour.getTimeslot(), sqlConnectionManager);
+                                if (timetableEntry.isExam()) {
                                     ws.value(rowOffset, tmpCol,
-                                            resourceBundle.getString("timetableview.exam") + ": " + tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());                                    
-                                }else{
+                                            resourceBundle.getString("timetableview.exam") + ": "
+                                                    + tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
+                                } else {
                                     ws.value(rowOffset, tmpCol,
-                                            tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());                                    
+                                            tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
                                 }
-                                if(isLecturer){
+                                if (isLecturer) {
                                     ws.value(rowOffset + 1, tmpCol,
-                                    tmpHour.getCoursepassLecturerSubject().getCoursepass().getCourseOfStudyCaption());
-                                }else{
+                                            tmpHour.getCoursepassLecturerSubject().getCoursepass()
+                                                    .getCourseOfStudyCaption());
+                                } else {
                                     ws.value(rowOffset + 1, tmpCol,
                                             tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
                                 }
@@ -353,7 +399,7 @@ public class Timetable {
                         ws.pageOrientation("landscape");
                     }
                 }
-                
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -376,7 +422,8 @@ public class Timetable {
 
         if (CoursepassLecturerSubject.isFreeTarget(cls, targetTimetableEntry.getDate(),
                 targetTimetableEntry.getTimeslot(), sqlConnectionManager)) {
-            targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot(), targetTimetableEntry.isExam());
+            targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot(),
+                    targetTimetableEntry.isExam());
         } else {
             throw new Exception("Error Placing Hour");
         }
@@ -662,19 +709,19 @@ public class Timetable {
                 tmpDayObject.setTimeslots((int) tmpTimeslot);
             }
 
-            if(isLecturer){
+            if (isLecturer) {
                 // add this timeslot/TimetableHour to our tmpDayObject
                 tmpDayObject.getArrayTimetableHours().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
-                new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
-                        getSqlConnectionManager(), new CoursePass(0L, sqlConnectionManager)),
-                getSqlConnectionManager()));
-            }else{
+                        new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
+                                getSqlConnectionManager(), new CoursePass(0L, sqlConnectionManager)),
+                        getSqlConnectionManager()));
+            } else {
                 // add this timeslot/TimetableHour to our tmpDayObject
                 tmpDayObject.getArrayTimetableHours().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
                         new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
                                 getSqlConnectionManager(), this.coursepass),
                         getSqlConnectionManager()));
-                
+
             }
 
         }

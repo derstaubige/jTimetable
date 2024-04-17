@@ -51,6 +51,8 @@ public class TimetableViewController implements Initializable {
     private Label lbl_Slot1;
     @FXML
     private Button btnDistributeUnplanedHours;
+    @FXML
+    private Button btnSaveCLStofile;
 
     private Timetable timetable;
     private CoursePass coursepass;
@@ -454,6 +456,13 @@ public class TimetableViewController implements Initializable {
         okAlert.show();
     }
 
+    private void saveCLStoFile(){
+        this.timetable.saveCLStoFile();
+        Alert okAlert = new Alert(AlertType.NONE,resourceBundle.getString("coursepass.inittimetable.successmessage"), ButtonType.OK);
+        okAlert.setTitle(resourceBundle.getString("coursepass.inittimetable.successtitle"));
+        okAlert.show();
+    }
+
     private <T> List<T> getNodesOfType(Pane parent, Class<T> type) {
         List<T> elements = new ArrayList<>();
         for (Node node : parent.getChildren()) {
@@ -472,6 +481,9 @@ public class TimetableViewController implements Initializable {
         this.resourceBundle = resourceBundle;
         btnDistributeUnplanedHours.setOnAction(event -> {
             this.distributeUnplanedHoursClicked(event);
+        });
+        btnSaveCLStofile.setOnAction(event -> {
+            this.saveCLStoFile();
         });
         Platform.runLater(() -> {
             if (this.isLecturer) {

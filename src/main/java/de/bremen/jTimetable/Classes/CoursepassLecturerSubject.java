@@ -16,6 +16,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     public Long shouldHours;
     public Long isHours; // hours that have actually been given
     public Long planedHours; // hours that are planed but not been given
+    public Long examHours = 0L;
     Boolean active;
     private SQLConnectionManager sqlConnectionManager;
 
@@ -123,6 +124,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
             this.updateIsHours();
             this.updatePlanedHours();
+            this.updateExamHours();
         }
 
         // sqlConnectionManager.close();
@@ -138,14 +140,30 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             SQLValues.add(new SQLValueLong(this.getId()));
             SQLValues.add(new SQLValueDate(today));
             ResultSet rs = sqlConnectionManager.select(
-                    "Select count(id) from T_Timetables where refcoursepass = ? and REFCOURSEPASSLECTURERSUBJECT = ? and timetableday > ?;",
+                    "Select count(id) from T_Timetables where refcoursepass = ? and REFCOURSEPASSLECTURERSUBJECT = ? and timetableday > ? and isExam = 0;",
                     SQLValues);
             rs.first();
             this.planedHours = rs.getLong(1);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
+    private void updateExamHours() {
+        try {
+            ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
+            // query the Exam hours
+            SQLValues.clear();
+            SQLValues.add(new SQLValueLong(this.coursepass.getId()));
+            SQLValues.add(new SQLValueLong(this.getId()));
+            ResultSet rs = sqlConnectionManager.select(
+                    "Select count(id) from T_Timetables where refcoursepass = ? and REFCOURSEPASSLECTURERSUBJECT = ? and isExam = 1;",
+                    SQLValues);
+            rs.first();
+            this.examHours = rs.getLong(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateShouldHours() {
@@ -157,7 +175,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             SQLValues.add(new SQLValueLong(this.getId()));
             SQLValues.add(new SQLValueDate(today));
             ResultSet rs = sqlConnectionManager.select(
-                    "Select count(id) from T_Timetables where REFCOURSEPASSLECTURERSUBJECT  = ? and timetableday < ?;",
+                    "Select count(id) from T_Timetables where REFCOURSEPASSLECTURERSUBJECT  = ? and timetableday < ? and isExam = 0;",
                     SQLValues);
             rs.first();
             this.isHours = rs.getLong(1);
@@ -180,7 +198,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             SQLValues.add(new SQLValueLong(this.getId()));
             SQLValues.add(new SQLValueDate(today));
             ResultSet rs = sqlConnectionManager.select(
-                    "Select count(id) from T_Timetables where REFCOURSEPASSLECTURERSUBJECT  = ? and timetableday < ?;",
+                    "Select count(id) from T_Timetables where REFCOURSEPASSLECTURERSUBJECT  = ? and timetableday < ? and isExam = 0;",
                     SQLValues);
             rs.first();
             this.isHours = rs.getLong(1);
@@ -194,6 +212,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         this.updateShouldHours();
         this.updateIsHours();
         this.updatePlanedHours();
+        this.updateExamHours();
     }
 
     // overrides an existing timetable entry with freetime and removes the resources
@@ -350,6 +369,10 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     @Override
     public String toString() {
         return getSubjectCaption() + ", " + getLecturerFullname() + ", " + getRoomCaptionLocatioString();
+    }
+
+    public Long getExamHours() {
+        return examHours;
     }
 
     
