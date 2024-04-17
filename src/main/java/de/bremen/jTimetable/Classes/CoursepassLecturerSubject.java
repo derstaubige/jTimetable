@@ -342,4 +342,11 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     public boolean equals(Object o) {
         return (o instanceof CoursepassLecturerSubject) && (this.id == ((CoursepassLecturerSubject) o).id);
     }
+
+    @Override
+    public String toString() {
+        return getSubjectCaption() + ", " + getLecturerFullname() + ", " + getRoomCaptionLocatioString();
+    }
+
+    
 }
