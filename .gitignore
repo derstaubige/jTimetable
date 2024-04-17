@@ -27,6 +27,8 @@ hs_err_pid*
 jTimetable.sqlite
 h2.mv.db
 h2.trace.db
+h2Test.mv.db
+h2Test.trace.db
 h2.trace.db.old
 H2 starten.lnk
 

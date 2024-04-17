@@ -329,7 +329,7 @@ public class LecturerController implements Initializable {
         LecturerBlockedAdd.setOnAction(event -> {
             try {
                 ResourcesBlocked resourcesblocked = new ResourcesBlocked(0L, getSqlConnectionManager());
-                resourcesblocked.setReResourceID(lecturer.getId());
+                resourcesblocked.setRefResourceID(lecturer.getId());
                 resourcesblocked.setResourceName(ResourceNames.LECTURER);
                 resourcesblocked.setStartDate(LocalDate.now());
                 resourcesblocked.setEndDate(LocalDate.now());
@@ -382,7 +382,7 @@ public class LecturerController implements Initializable {
                 chkActive.setSelected(this.lecturer.getActive());
 
                 LecturerBlockedTableview.getItems().setAll(ResourcesBlocked
-                        .getArrayListofResourcesblocked(this.lecturer.getId(), ResourceNames.LECTURER,
+                        .getArrayListofResourcesblocked(this.lecturer.getId(), ResourceNames.LECTURER, false, true,
                                 getSqlConnectionManager()));
                 editbox.setVisible(true);
             }
@@ -427,7 +427,8 @@ public class LecturerController implements Initializable {
             try {
                 stage.setScene(new Scene(loader.load()));
                 TimetableViewController controller = loader.getController();
-                controller.initDataTimetable(new Timetable(lecturer, getSqlConnectionManager()));
+                controller.setSqlConnectionManager(sqlConnectionManager);
+                controller.initDataTimetable(new Timetable(lecturer, getSqlConnectionManager(), resources));
                 stage.show();
             } catch (Exception e) {
                 e.printStackTrace();

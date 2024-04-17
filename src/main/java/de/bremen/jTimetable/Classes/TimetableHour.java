@@ -14,6 +14,7 @@ public class TimetableHour {
         this.lecturerName = this.coursepassLecturerSubject.lecturer.getLecturerFullName();
         this.subjectCaption = this.coursepassLecturerSubject.subject.getCaption();
         this.roomCaption = this.coursepassLecturerSubject.getRoom().getCaption();
+        this.setSqlConnectionManager(sqlConnectionManager);
     }
     public TimetableHour(int timeslot, CoursepassLecturerSubject coursepassLecturerSubject, SQLConnectionManager sqlConnectionManager) {
         this(timeslot, coursepassLecturerSubject, 0L , sqlConnectionManager);

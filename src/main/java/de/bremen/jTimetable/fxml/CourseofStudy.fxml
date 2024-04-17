@@ -11,13 +11,13 @@
             <Label text="%cos.title"></Label>
             <HBox fx:id="hBox" spacing="20.0">
                 <children>
-                    <TableView fx:id="ActiveCoursesofStudyTableview" minWidth="800.0" maxWidth="Infinity">
+                    <TableView fx:id="ActiveCoursesofStudyTableview" minWidth="800.0" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                         <columns>
                             <TableColumn text="%cos.ActiveCoursesofStudyTableview.id" fx:id="COSID" visible="false"></TableColumn>
-                            <TableColumn text="%cos.ActiveCoursesofStudyTableview.description" fx:id="COSDescription"></TableColumn>
+                            <TableColumn text="%cos.ActiveCoursesofStudyTableview.description" fx:id="COSDescription" minWidth="200.0"></TableColumn>
                             <TableColumn text="%cos.ActiveCoursesofStudyTableview.begin" fx:id="COSBegin"></TableColumn>
                             <TableColumn text="%cos.ActiveCoursesofStudyTableview.end" fx:id="COSEnd"></TableColumn>
-                            <TableColumn text="%cos.ActiveCoursesofStudyTableview.active" fx:id="COSActive"></TableColumn>
+                            <TableColumn text="%cos.ActiveCoursesofStudyTableview.active" fx:id="COSActive" visible="false"></TableColumn>
                         </columns>
                     </TableView>
                     <VBox minWidth="200.0" maxWidth="Infinity" spacing="10" >

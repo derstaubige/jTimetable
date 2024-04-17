@@ -14,15 +14,15 @@
                 <Label text="%coursepass.title"></Label>
                 <HBox spacing="20.0">
                     <children>
-                        <TableView fx:id="CoursepassTableview" minWidth="800.0">
+                        <TableView fx:id="CoursepassTableview" minWidth="800.0" maxWidth="Infinity" HBox.hgrow="ALWAYS">
                             <columns>
                                 <TableColumn text="%coursepass.CoursepassTableview.id" fx:id="CPID" visible="false"></TableColumn>
-                                <TableColumn text="%coursepass.CoursepassTableview.courseofstudy" fx:id="CPCOSCaption"></TableColumn>
-                                <TableColumn text="%coursepass.CoursepassTableview.studySection" fx:id="CPstudysection"></TableColumn>
-                                <TableColumn text="%coursepass.CoursepassTableview.description" fx:id="CPDescription"></TableColumn>
+                                <TableColumn text="%coursepass.CoursepassTableview.courseofstudy" fx:id="CPCOSCaption" minWidth="200.0"></TableColumn>
+                                <TableColumn text="%coursepass.CoursepassTableview.studySection" fx:id="CPstudysection" minWidth="100.0"></TableColumn>
+                                <TableColumn text="%coursepass.CoursepassTableview.description" fx:id="CPDescription" minWidth="200.0"></TableColumn>
                                 <TableColumn text="%coursepass.CoursepassTableview.start" fx:id="CPStart"></TableColumn>
                                 <TableColumn text="%coursepass.CoursepassTableview.end" fx:id="CPEnd"></TableColumn>
-                                <TableColumn text="%coursepass.CoursepassTableview.active" fx:id="CPActive"></TableColumn>
+                                <TableColumn text="%coursepass.CoursepassTableview.active" fx:id="CPActive" visible="false"></TableColumn>
                             </columns>
                         </TableView>
                         <VBox minWidth="200.0" spacing="10" >

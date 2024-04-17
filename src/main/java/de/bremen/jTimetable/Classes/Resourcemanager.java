@@ -12,6 +12,10 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 public class Resourcemanager {
     public ArrayList<TimetableDay> arrayTimetabledays;
     ArrayList<CoursepassLecturerSubject> arrayCoursepassLecturerSubject;
@@ -19,9 +23,16 @@ public class Resourcemanager {
     int tmppositionInCoursepassLecturerSubjectStack;
     int maxCoursepassLecturerSubjectStack;
     private SQLConnectionManager sqlConnectionManager;
+    private Properties properties = new Properties();
 
     public Resourcemanager(SQLConnectionManager sqlConnectionManager) {
         setSqlConnectionManager(sqlConnectionManager);
+        try {            
+            FileResourcesUtils fileResourcesUtils = new FileResourcesUtils();
+            properties.load(new BufferedReader(new InputStreamReader(fileResourcesUtils.getFileFromResourceAsStream("/Config.properties"))));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void generateInitialTimetable(CoursePass coursepass) throws SQLException {
@@ -30,7 +41,11 @@ public class Resourcemanager {
         int Coursepasshours = 0;
         int WorkingDays = 0;
         int WorkingHours = 0;
-        int MaxTimeslotsperDay = 3;
+        int MaxTimeslotsperDay = Integer
+                .parseInt(properties.getProperty("maxTimetableSlotsUsedForInitialTimetable", "5")); // How many Timeslot
+                                                                                                    // should be used
+                                                                                                    // max per Day
+        int timeslotsPerDay = Integer.parseInt(properties.getProperty("maxTimetableSlotsPerDay", "5"));
 
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>(
                 Collections.singleton(new SQLValueLong(coursepass.getId())));
@@ -70,10 +85,12 @@ public class Resourcemanager {
             WorkingDays = arrayTimetabledays.size();
             WorkingHours = WorkingDays * MaxTimeslotsperDay;
 
-            while (WorkingHours < Coursepasshours) {
-                // We have to Add Timeslots per Day if we have more shouldhours than timeslots
-                MaxTimeslotsperDay++;
-                WorkingHours = WorkingDays * MaxTimeslotsperDay;
+            if (Boolean.parseBoolean(properties.getProperty("extendGivenSlotsforInitialTimetable", "true"))) {
+                while (WorkingHours < Coursepasshours) {
+                    // We have to Add Timeslots per Day if we have more shouldhours than timeslots
+                    MaxTimeslotsperDay++;
+                    WorkingHours = WorkingDays * MaxTimeslotsperDay;
+                }
             }
 
             this.positionInCoursepassLecturerSubjectStack = 0;
@@ -89,38 +106,23 @@ public class Resourcemanager {
             // date / hour. if not try next subject
             for (int idxDay = 0; idxDay < arrayTimetabledays.size(); idxDay++) {
                 // loop through all timeslots of this day
-                for (int idxTimeslot = 0; idxTimeslot < MaxTimeslotsperDay; idxTimeslot++) {
+                for (int idxTimeslot = 0; idxTimeslot < Math.max(MaxTimeslotsperDay, timeslotsPerDay); idxTimeslot++) {
                     this.tmppositionInCoursepassLecturerSubjectStack = this.positionInCoursepassLecturerSubjectStack;
 
-                    if (EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot)) {
+                    if (EvaluateCoursepassLecturerSubject(idxDay, idxTimeslot) && idxTimeslot < MaxTimeslotsperDay) {
                         // we found a matching coursepasslecturersubject object
-                        LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).getDate();
-                        Long refcoursepassID = this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).coursepass.getId();
-                        Long refCoursepassLecturerSubjectId = this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).id;
-                        // ToDO: if we want to also manage the rooms we could do it here
-                        Long refRoomId = 0L;
-                        Long refLecturerId = this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).lecturer.getId();
-                        Long refSubjectId = this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).subject.id;
+                        LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
 
-                        // write to timetable
-                        setEntryInTimetable(Timetableday, refcoursepassID,
-                                refCoursepassLecturerSubjectId, refRoomId, refLecturerId,
-                                refSubjectId, idxTimeslot);
-                        // block lecturer and room
-                        ResourcesBlocked.setResourcesBlocked(refLecturerId, ResourceNames.LECTURER, "LESSON",
-                                Timetableday, Timetableday, idxTimeslot, idxTimeslot, getSqlConnectionManager());
-                        ResourcesBlocked.setResourcesBlocked(refRoomId, ResourceNames.ROOM, "LESSON", Timetableday,
-                                Timetableday, idxTimeslot, idxTimeslot, getSqlConnectionManager());
+                        TimetableEntry timetableEntry = new TimetableEntry(this.arrayCoursepassLecturerSubject.get(
+                                this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot, sqlConnectionManager);
+                        timetableEntry.save();
 
                         // add to the is hours count
                         this.arrayCoursepassLecturerSubject.get(
                                 this.positionInCoursepassLecturerSubjectStack).planedHours++;
 
-                        Long tmpLastCLSID = this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getId();
+                        Long tmpLastCLSID = this.arrayCoursepassLecturerSubject
+                                .get(positionInCoursepassLecturerSubjectStack).getId();
                         // resort the arraycoursepasslecturersubject
                         Collections.sort(this.arrayCoursepassLecturerSubject,
                                 (o1, o2) -> o2.getUnplanedHours().compareTo(o1.getUnplanedHours()));
@@ -137,43 +139,16 @@ public class Resourcemanager {
                         }
                     } else {
                         // we didnt find a matching coursepasslecturersubject, freetime?!
-                        LocalDate Timetableday = this.arrayTimetabledays.get(idxDay).getDate();
-                        Long refcoursepassID = this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack).coursepass.getId();
-                        Long refCoursepassLecturerSubjectId = 0L;
-                        // ToDO: if we want to also manage the rooms we could do it here
-                        Long refRoomId = 0L;
-                        Long refLecturerId = 0L;
-                        Long refSubjectId = 0L;
-                        // write to timetable
-                        setEntryInTimetable(Timetableday, refcoursepassID,
-                                refCoursepassLecturerSubjectId, refRoomId, refLecturerId,
-                                refSubjectId, idxTimeslot);
+                        LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
+                        TimetableEntry timetableEntry = new TimetableEntry(
+                                new CoursepassLecturerSubject(0L, sqlConnectionManager, coursepass),
+                                timetableday, (Integer) idxTimeslot, sqlConnectionManager);
+                        timetableEntry.save();
                     }
                 }
 
             }
         }
-        // sqlConnectionManager.close();
-    }
-
-    private void setEntryInTimetable(LocalDate TimetableDay, Long refcoursepassID,
-            Long refCoursepassLecturerSubjectId, Long refRoomId,
-            Long refLecturerId, Long refSubjectId, int timeslot)
-            throws SQLException {
-        ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
-
-        SQLValues.add(new SQLValueDate(TimetableDay));
-        SQLValues.add(new SQLValueLong(refcoursepassID));
-        SQLValues.add(new SQLValueLong(refCoursepassLecturerSubjectId));
-        SQLValues.add(new SQLValueLong(refRoomId));
-        SQLValues.add(new SQLValueLong(refLecturerId));
-        SQLValues.add(new SQLValueLong(refSubjectId));
-        SQLValues.add(new SQLValueInt(timeslot));
-
-        sqlConnectionManager.execute(
-                "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?)",
-                SQLValues);
         // sqlConnectionManager.close();
     }
 
@@ -193,9 +168,16 @@ public class Resourcemanager {
 
         if (Lecturer.checkLecturerAvailability(this.arrayCoursepassLecturerSubject.get(
                 positionInCoursepassLecturerSubjectStack).lecturer.getId(),
-                arrayTimetabledays.get(idxDay).getDate(), idxTimeslot, getSqlConnectionManager()) &&
+                arrayTimetabledays.get(idxDay).getDate(), idxTimeslot, getSqlConnectionManager())
+
+                &&
+
+                this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getRoom()
+                        .isRoomAvailable(
+                                arrayTimetabledays.get(idxDay).getDate(), idxTimeslot)
+                &&
                 tmpshouldhours > (tmpishours + tmpplanedhours)) {
-            // Lecturer is Available and there are hours left to plan
+            // Lecturer and Room are Available and there are hours left to plan
             return true;
         }
 

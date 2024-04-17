@@ -149,8 +149,7 @@ public class CourseofStudyController implements Initializable {
         try {
             activeCoursesofStudy = new CourseofStudy(0L).getCoursesofStudy(activeState);
         } catch (SQLException e) {
-            // TODo: better error handling
-            System.out.println(e);
+            e.printStackTrace();
         }
         return activeCoursesofStudy;
     }

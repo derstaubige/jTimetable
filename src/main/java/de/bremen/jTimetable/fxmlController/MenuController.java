@@ -56,7 +56,7 @@ public class MenuController implements Initializable {
      * Perform functionality associated with "About" menu selection or CTRL-A.
      */
     private void provideAboutFunctionality() {
-        System.out.println("You clicked on About!");
+        // System.out.println("You clicked on About!");
     }
 
     @Override

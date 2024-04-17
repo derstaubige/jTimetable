@@ -388,7 +388,7 @@ public class CoursepassController implements Initializable {
                                 + " " + coursepass.getStudySection().getDescription() + "?");
                 alert.showAndWait().ifPresent(rs -> {
                     if (rs == ButtonType.OK) {
-                        Timetable timetable = new Timetable(coursepass, getSqlConnectionManager());
+                        Timetable timetable = new Timetable(coursepass, getSqlConnectionManager(), resources);
                         timetable.deleteTimetable();
 
                         alert.setAlertType(Alert.AlertType.INFORMATION);
