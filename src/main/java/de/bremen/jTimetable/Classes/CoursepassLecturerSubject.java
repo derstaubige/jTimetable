@@ -110,7 +110,11 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                     SQLValues);
             rs.first();
             this.id = rs.getLong("id");
-            this.coursepass = coursePass;
+            if(coursePass.getId() != 0){
+                this.coursepass = coursePass;
+            }else{
+                this.coursepass = new CoursePass(rs.getLong("refCoursepassID"), sqlConnectionManager);
+            }
             this.lecturer = new Lecturer(rs.getLong("refLecturerID"), getSqlConnectionManager());
             this.subject = new Subject(rs.getLong("refSubjectID"), getSqlConnectionManager());
             this.room = new Room(rs.getLong("refRoomID"), getSqlConnectionManager());
