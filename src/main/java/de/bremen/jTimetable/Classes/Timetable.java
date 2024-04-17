@@ -337,6 +337,7 @@ public class Timetable {
                         ws.pageOrientation("landscape");
                     }
                 }
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -374,13 +375,15 @@ public class Timetable {
     public void swapHours(TimetableEntry source, TimetableEntry target) throws Exception {
         CoursepassLecturerSubject sourceCLS = source.getCoursepassLecturerSubject();
         CoursepassLecturerSubject targetCLS = target.getCoursepassLecturerSubject();
+        Boolean sourceIsExam = source.isExam();
+        Boolean targetIsExam = target.isExam();
 
         if (CoursepassLecturerSubject.isFreeTarget(sourceCLS, target.getDate(), target.getTimeslot(),
                 sqlConnectionManager)
                 && CoursepassLecturerSubject.isFreeTarget(targetCLS, source.getDate(), source.getTimeslot(),
                         sqlConnectionManager)) {
-            source.update(targetCLS, source.getDate(), source.getTimeslot(), false);
-            target.update(sourceCLS, target.getDate(), target.getTimeslot(), false);
+            source.update(targetCLS, source.getDate(), source.getTimeslot(), targetIsExam);
+            target.update(sourceCLS, target.getDate(), target.getTimeslot(), sourceIsExam);
             try {
                 updateCoursePassTimetable();
             } catch (Exception e) {
