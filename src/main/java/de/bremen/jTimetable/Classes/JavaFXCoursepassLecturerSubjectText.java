@@ -29,7 +29,8 @@ public class JavaFXCoursepassLecturerSubjectText extends Text {
                 resourceBundle.getString("javaFXCoursepassLecturerSubjectText.shouldHours") + " " + coursepassLecturerSubject.getShouldHours() + "\r\n" + 
                 resourceBundle.getString("javaFXCoursepassLecturerSubjectText.isHours") + " " + coursepassLecturerSubject.getIsHours() + "\r\n" + 
                 resourceBundle.getString("javaFXCoursepassLecturerSubjectText.planedHours") + " " + coursepassLecturerSubject.getPlanedHours() + "\r\n" + 
-                resourceBundle.getString("javaFXCoursepassLecturerSubjectText.notplanedHours") + " " + tmpSumHours;
+                resourceBundle.getString("javaFXCoursepassLecturerSubjectText.notplanedHours") + " " + tmpSumHours + "\r\n" +
+                resourceBundle.getString("javaFXCoursepassLecturerSubjectText.examHours") + " " + coursepassLecturerSubject.getExamHours();
 //        System.out.println(tmp);
         return tmp;
     }
