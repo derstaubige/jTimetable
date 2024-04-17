@@ -12,7 +12,9 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
 public class Resourcemanager {
     public ArrayList<TimetableDay> arrayTimetabledays;
@@ -25,9 +27,9 @@ public class Resourcemanager {
 
     public Resourcemanager(SQLConnectionManager sqlConnectionManager) {
         setSqlConnectionManager(sqlConnectionManager);
-        try {
-            properties.load(new FileInputStream(
-                    Thread.currentThread().getContextClassLoader().getResource("").getPath() + "Config.properties"));
+        try {            
+            FileResourcesUtils fileResourcesUtils = new FileResourcesUtils();
+            properties.load(new BufferedReader(new InputStreamReader(fileResourcesUtils.getFileFromResourceAsStream("/Config.properties"))));
         } catch (Exception e) {
             e.printStackTrace();
         }

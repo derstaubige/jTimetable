@@ -6,10 +6,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,11 +28,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.stream.IntStream;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 import org.dhatim.fastexcel.BorderSide;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
@@ -86,8 +92,9 @@ public class Timetable {
         this.resourceBundle = resourceBundle;
         setSqlConnectionManager(sqlConnectionManager);
         try {
-            properties.load(new FileInputStream(
-                    Thread.currentThread().getContextClassLoader().getResource("").getPath() + "Config.properties"));
+            FileResourcesUtils fileResourcesUtils = new FileResourcesUtils();
+            properties.load(new BufferedReader(
+                    new InputStreamReader(fileResourcesUtils.getFileFromResourceAsStream("/Config.properties"))));
             setMaxTimeslots(Integer.parseInt(properties.getProperty("maxTimetableSlotsPerDay")));
             getTimetable(coursePass);
         } catch (SQLException e) {
@@ -112,8 +119,9 @@ public class Timetable {
         setIsLecturer(true);
         setSqlConnectionManager(sqlConnectionManager);
         try {
-            properties.load(new FileInputStream(
-                    Thread.currentThread().getContextClassLoader().getResource("").getPath() + "Config.properties"));
+            FileResourcesUtils fileResourcesUtils = new FileResourcesUtils();
+            properties.load(new BufferedReader(
+                    new InputStreamReader(fileResourcesUtils.getFileFromResourceAsStream("/Config.properties"))));
             setMaxTimeslots(Integer.parseInt(properties.getProperty("maxTimetableSlotsPerDay")));
             getTimetable(lecturer);
         } catch (SQLException e) {

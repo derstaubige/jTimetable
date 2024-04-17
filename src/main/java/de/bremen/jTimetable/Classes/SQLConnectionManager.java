@@ -96,7 +96,7 @@ public class SQLConnectionManager implements AutoCloseable{
 
         
         try {
-            List<Path> listOfFiles = FileResourcesUtils.start();
+            List<Path> listOfFiles = FileResourcesUtils.start("SQLMigration",".sql");
             FileResourcesUtils fileResourcesUtils = new FileResourcesUtils();
             String tmpFilepath = "";
             for(Path file : listOfFiles){
@@ -134,7 +134,6 @@ public class SQLConnectionManager implements AutoCloseable{
             }
             
         } catch (Exception e) {
-            //TODO handle exception
             e.printStackTrace();
         } 
     }
