@@ -124,7 +124,8 @@ public class Resourcemanager {
                         // resort the arraycoursepasslecturersubject
                         Collections.sort(this.arrayCoursepassLecturerSubject,
                                 (o1, o2) -> o2.getUnplanedHours().compareTo(o1.getUnplanedHours()));
-                        if (tmpLastCLSID == this.arrayCoursepassLecturerSubject.get(positionInCoursepassLecturerSubjectStack).getId()) {
+                        if (tmpLastCLSID == this.arrayCoursepassLecturerSubject
+                                .get(0).getId()) {
                             // its still the same cls ontop of the stack. we dont want 2 cls in a arrow
                             // reset the position in stack
                             this.tmppositionInCoursepassLecturerSubjectStack = 1;
