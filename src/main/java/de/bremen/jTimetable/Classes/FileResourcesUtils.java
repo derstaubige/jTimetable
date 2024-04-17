@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class FileResourcesUtils {
 
-    public static List<Path> start() throws IOException {
+    public static List<Path> start(String folderName, String fileExtensionString) throws IOException {
 
         FileResourcesUtils app = new FileResourcesUtils();
         String jarorFile = FileResourcesUtils.class.getResource("FileResourcesUtils.class").getProtocol();
@@ -27,11 +27,11 @@ public class FileResourcesUtils {
         try {
             
             if(jarorFile == "file"){
-                Path currentWorkingDir = Paths.get("","Target","classes","SQLMigration").toAbsolutePath();
+                Path currentWorkingDir = Paths.get("","Target","classes",folderName).toAbsolutePath();
        
-                result = app.getPathsFromFile(currentWorkingDir.normalize().toString());
+                result = app.getPathsFromFile(currentWorkingDir.normalize().toString(), fileExtensionString);
             }else{
-                result = app.getPathsFromResourceJAR("SQLMigration");
+                result = app.getPathsFromResourceJAR(folderName);
             }
             
             
@@ -59,13 +59,13 @@ public class FileResourcesUtils {
 
     }
 
-    private List<Path> getPathsFromFile(String folderpath){
+    private List<Path> getPathsFromFile(String folderpath, String fileExtensionString){
         File folder = new File(folderpath);
         File[] listOfFiles = folder.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
                 String name = pathname.getAbsolutePath();
-                return name.toLowerCase().endsWith(".sql");
+                return name.toLowerCase().endsWith(fileExtensionString);
             }
         });
         List<Path> returnPathlist = new ArrayList<Path>();
