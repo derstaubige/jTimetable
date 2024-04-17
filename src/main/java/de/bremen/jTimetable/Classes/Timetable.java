@@ -319,8 +319,14 @@ public class Timetable {
                         rowOffset = xlsRowCounter + 2;
                         for (TimetableHour tmpHour : tmpDay.getArrayTimetableHours()) {
                             if (tmpHour.getCoursepassLecturerSubject().getLecturerID() != 0) {
-                                ws.value(rowOffset, tmpCol,
-                                        tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
+                                TimetableEntry timetableEntry = new TimetableEntry(coursepass, tmpDay.getDate(), tmpHour.getTimeslot(), sqlConnectionManager);
+                                if(timetableEntry.isExam()){
+                                    ws.value(rowOffset, tmpCol,
+                                            resourceBundle.getString("timetableview.exam") + ": " + tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());                                    
+                                }else{
+                                    ws.value(rowOffset, tmpCol,
+                                            tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());                                    
+                                }
                                 ws.value(rowOffset + 1, tmpCol,
                                         tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
                                 ws.value(rowOffset + 2, tmpCol,
@@ -331,6 +337,7 @@ public class Timetable {
                         ws.pageOrientation("landscape");
                     }
                 }
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -353,7 +360,7 @@ public class Timetable {
 
         if (CoursepassLecturerSubject.isFreeTarget(cls, targetTimetableEntry.getDate(),
                 targetTimetableEntry.getTimeslot(), sqlConnectionManager)) {
-            targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot());
+            targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot(), targetTimetableEntry.isExam());
         } else {
             throw new Exception("Error Placing Hour");
         }
@@ -368,13 +375,15 @@ public class Timetable {
     public void swapHours(TimetableEntry source, TimetableEntry target) throws Exception {
         CoursepassLecturerSubject sourceCLS = source.getCoursepassLecturerSubject();
         CoursepassLecturerSubject targetCLS = target.getCoursepassLecturerSubject();
+        Boolean sourceIsExam = source.isExam();
+        Boolean targetIsExam = target.isExam();
 
         if (CoursepassLecturerSubject.isFreeTarget(sourceCLS, target.getDate(), target.getTimeslot(),
                 sqlConnectionManager)
                 && CoursepassLecturerSubject.isFreeTarget(targetCLS, source.getDate(), source.getTimeslot(),
                         sqlConnectionManager)) {
-            source.update(targetCLS, source.getDate(), source.getTimeslot());
-            target.update(sourceCLS, target.getDate(), target.getTimeslot());
+            source.update(targetCLS, source.getDate(), source.getTimeslot(), targetIsExam);
+            target.update(sourceCLS, target.getDate(), target.getTimeslot(), sourceIsExam);
             try {
                 updateCoursePassTimetable();
             } catch (Exception e) {
