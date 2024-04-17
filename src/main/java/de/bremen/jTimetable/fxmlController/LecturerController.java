@@ -427,6 +427,7 @@ public class LecturerController implements Initializable {
             try {
                 stage.setScene(new Scene(loader.load()));
                 TimetableViewController controller = loader.getController();
+                controller.setSqlConnectionManager(sqlConnectionManager);
                 controller.initDataTimetable(new Timetable(lecturer, getSqlConnectionManager(), resources));
                 stage.show();
             } catch (Exception e) {

@@ -106,11 +106,12 @@ public class Timetable {
     public Timetable(Lecturer lecturer, SQLConnectionManager sqlConnectionManager, ResourceBundle resourceBundle) {
         this.lecturer = lecturer;
         this.resourceBundle = resourceBundle;
+        setIsLecturer(true);
         setSqlConnectionManager(sqlConnectionManager);
-        setMaxTimeslots(Integer.parseInt(properties.getProperty("maxTimetableSlotsPerDay")));
         try {
             properties.load(new FileInputStream(
                     Thread.currentThread().getContextClassLoader().getResource("").getPath() + "Config.properties"));
+            setMaxTimeslots(Integer.parseInt(properties.getProperty("maxTimetableSlotsPerDay")));
             getTimetable(lecturer);
         } catch (SQLException e) {
             System.err.println("Timetable for lecturer couldn't load correctly.");
@@ -637,11 +638,20 @@ public class Timetable {
                 tmpDayObject.setTimeslots((int) tmpTimeslot);
             }
 
-            // add this timeslot/TimetableHour to our tmpDayObject
-            tmpDayObject.getArrayTimetableHours().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
-                    new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
-                            getSqlConnectionManager(), this.coursepass),
-                    getSqlConnectionManager()));
+            if(isLecturer){
+                // add this timeslot/TimetableHour to our tmpDayObject
+                tmpDayObject.getArrayTimetableHours().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
+                new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
+                        getSqlConnectionManager(), new CoursePass(0L, sqlConnectionManager)),
+                getSqlConnectionManager()));
+            }else{
+                // add this timeslot/TimetableHour to our tmpDayObject
+                tmpDayObject.getArrayTimetableHours().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
+                        new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
+                                getSqlConnectionManager(), this.coursepass),
+                        getSqlConnectionManager()));
+                
+            }
 
         }
     }
