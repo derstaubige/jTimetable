@@ -409,14 +409,18 @@ public class Timetable {
                                 tmpDay.getDate().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
                         rowOffset = xlsRowCounter + 2;
                         for (TimetableHour tmpHour : tmpDay.getArrayTimetableHours()) {
-                            if (tmpHour.getCoursepassLecturerSubject().getLecturerID() != 0) {
-                                TimetableEntry timetableEntry = new TimetableEntry(coursepass, tmpDay.getDate(),
-                                        tmpHour.getTimeslot(), sqlConnectionManager);
+                            TimetableEntry timetableEntry = new TimetableEntry(coursepass, tmpDay.getDate(),
+                                    tmpHour.getTimeslot(), sqlConnectionManager);
+                            if (tmpHour.getCoursepassLecturerSubject().getLecturerID() != 0 || timetableEntry.getBlockingFreetext() != null) {
                                 if (timetableEntry.isExam()) {
                                     ws.value(rowOffset, tmpCol,
                                             resourceBundle.getString("timetableview.exam") + ": "
                                                     + tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
-                                } else {
+                                } else if (timetableEntry.getBlockingFreetext() != null){
+                                    ws.value(rowOffset, tmpCol,
+                                            resourceBundle.getString("timetableview.blockFreetext") + ": "
+                                                    + timetableEntry.getBlockingFreetext());
+                                }else {
                                     ws.value(rowOffset, tmpCol,
                                             tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
                                 }
@@ -424,12 +428,17 @@ public class Timetable {
                                     ws.value(rowOffset + 1, tmpCol,
                                             tmpHour.getCoursepassLecturerSubject().getCoursepass()
                                                     .getCourseOfStudyCaption());
-                                } else {
+                                } else if (timetableEntry.getBlockingFreetext() != null){
+                                
+                                }else {
                                     ws.value(rowOffset + 1, tmpCol,
                                             tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
                                 }
-                                ws.value(rowOffset + 2, tmpCol,
-                                        tmpHour.getCoursepassLecturerSubject().getRoom().getCaption());
+                                if (timetableEntry.getBlockingFreetext() != null){
+                                }else{
+                                    ws.value(rowOffset + 2, tmpCol,
+                                            tmpHour.getCoursepassLecturerSubject().getRoom().getCaption());
+                                }
                             }
                             rowOffset += 3;
                         }
