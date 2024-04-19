@@ -11,6 +11,7 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueBoolean;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueDate;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueInt;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueNull;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 
 public class TimetableEntry {
@@ -36,12 +37,7 @@ public class TimetableEntry {
      */
     public TimetableEntry(CoursepassLecturerSubject coursepassLecturerSubject, LocalDate date, Integer timeslot, 
             SQLConnectionManager sqlConnectionManager) {
-        this.coursepassLecturerSubject = coursepassLecturerSubject;
-        this.date = date;
-        this.timeslot = timeslot;
-        this.sqlConnectionManager = sqlConnectionManager;
-        this.coursePass = coursepassLecturerSubject.getCoursepass();
-        loadFromDB();
+        this(coursepassLecturerSubject.getCoursepass(),date,timeslot,sqlConnectionManager);
     }
 
     /**
@@ -137,13 +133,18 @@ public class TimetableEntry {
             SQLValues.add(new SQLValueLong(0L));
             SQLValues.add(new SQLValueLong(0L));
             SQLValues.add(new SQLValueLong(0L));
+            SQLValues.add(new SQLValueLong(0L));
+            SQLValues.add(new SQLValueNull(null));
             SQLValues.add(new SQLValueLong(this.coursePass.getId()));
             SQLValues.add(new SQLValueDate(this.date));
             SQLValues.add(new SQLValueInt(this.timeslot));
             sqlConnectionManager.execute(
-                    "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",
+                    "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ?, isExam = ?, blockingFreetext = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",
                     SQLValues);
-
+            this.setCoursepassLecturerSubject(new CoursepassLecturerSubject(0L, sqlConnectionManager));
+            this.getCoursepassLecturerSubject().setCoursepass(coursePass);
+            this.setExam(false);
+            this.setBlockingFreetext(null);
         } catch (Exception e) {
             e.printStackTrace();
         }

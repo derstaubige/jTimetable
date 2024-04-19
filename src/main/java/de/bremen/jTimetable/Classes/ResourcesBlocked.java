@@ -245,6 +245,9 @@ public class ResourcesBlocked {
                     "delete from T_RESOURCESBLOCKED where id = ?;",
                     SQLValues);
             // sqlConnectionManager.close();
+            setID(0L);
+            setDescription(null);
+            setRefResourceID(0L);
         }
     }
 
