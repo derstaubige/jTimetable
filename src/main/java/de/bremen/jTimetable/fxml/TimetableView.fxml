@@ -9,53 +9,38 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.layout.VBox?>
+<AnchorPane prefHeight="768.0" prefWidth="1024.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.TimetableViewController">
 
-<AnchorPane prefHeight="768.0" prefWidth="1024.0" AnchorPane.bottomAnchor="0.0"
-    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
-    xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="de.bremen.jTimetable.fxmlController.TimetableViewController">
-
-    <SplitPane dividerPositions="0.8040201005025126" orientation="VERTICAL"
-        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-        AnchorPane.topAnchor="0.0" BorderPane.alignment="CENTER">
+    <SplitPane dividerPositions="0.8040201005025126" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" BorderPane.alignment="CENTER">
         <items>
-            <ScrollPane fitToWidth="true" hbarPolicy="ALWAYS">
-                <AnchorPane maxWidth="Infinity" minHeight="100.0" minWidth="160.0"
-                    AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                    AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <GridPane fx:id="grdpn_TimetableView" gridLinesVisible="true"
-                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
+                <AnchorPane maxWidth="Infinity" minHeight="100.0" minWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <GridPane fx:id="grdpn_TimetableView" gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                         <children>
-                            <Label fx:id="lbl_Slot1" text="%timetableview.slot1"
-                                textAlignment="CENTER" GridPane.columnIndex="1">
+                            <Label fx:id="lbl_Slot1" text="%timetableview.slot1" textAlignment="CENTER" GridPane.columnIndex="1">
                                 <font>
                                     <Font size="14.0" />
                                 </font>
                             </Label>
-                            <Label fx:id="lbl_Slot2" text="%timetableview.slot2"
-                                textAlignment="CENTER" GridPane.columnIndex="2">
+                            <Label fx:id="lbl_Slot2" text="%timetableview.slot2" textAlignment="CENTER" GridPane.columnIndex="2">
                                 <font>
                                     <Font size="14.0" />
                                 </font>
                             </Label>
-                            <Label fx:id="lbl_Slot3" text="%timetableview.slot3"
-                                textAlignment="CENTER" GridPane.columnIndex="3">
+                            <Label fx:id="lbl_Slot3" text="%timetableview.slot3" textAlignment="CENTER" GridPane.columnIndex="3">
                                 <font>
                                     <Font size="14.0" />
                                 </font>
                             </Label>
-                            <Label fx:id="lbl_Slot4" text="%timetableview.slot4"
-                                textAlignment="CENTER" GridPane.columnIndex="4">
+                            <Label fx:id="lbl_Slot4" text="%timetableview.slot4" textAlignment="CENTER" GridPane.columnIndex="4">
                                 <font>
                                     <Font size="14.0" />
                                 </font>
                             </Label>
-                            <Label fx:id="lbl_Slot5" text="%timetableview.slot5"
-                                textAlignment="CENTER" GridPane.columnIndex="5">
+                            <Label fx:id="lbl_Slot5" text="%timetableview.slot5" textAlignment="CENTER" GridPane.columnIndex="5">
                                 <font>
                                     <Font size="14.0" />
                                 </font>
@@ -75,54 +60,46 @@
                     </GridPane>
                 </AnchorPane>
             </ScrollPane>
-            <AnchorPane fx:id="anchorpane_Editbox" maxWidth="Infinity" minHeight="100.0"
-                minWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <children>
-                    <GridPane fx:id="grdpn_Editbox" gridLinesVisible="true"
-                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                        <children>
-                            <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <Button fx:id="btnDistributeUnplanedHours" maxWidth="Infinity"
-                                    text="%timetableview.btndistributeUnplanedHours"
-                                    textAlignment="CENTER" GridPane.columnIndex="0"
-                                    GridPane.hgrow="ALWAYS">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                </Button>
-                                <Button fx:id="savetofile" maxWidth="Infinity"
-                                    onMouseClicked="#savetoFileClicked"
-                                    text="%timetableview.btnsavetofile" textAlignment="CENTER"
-                                    GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                </Button>
-                                <Button fx:id="btnSaveCLStofile" maxWidth="Infinity"
-                                    text="%timetableview.btnsaveCLStofile" textAlignment="CENTER"
-                                    GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
-                                    <font>
-                                        <Font size="14.0" />
-                                    </font>
-                                </Button>
-                            </VBox>
-                        </children>
-                        <columnConstraints>
-                            <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
-                            <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
-                            <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
-                            <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
-                            <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
-                            <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
-                        </columnConstraints>
-                        <rowConstraints>
-                            <RowConstraints />
-                        </rowConstraints>
-                    </GridPane>
-                </children>
-            </AnchorPane>
+         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
+            <content>
+                  <AnchorPane fx:id="anchorpane_Editbox" maxWidth="Infinity" minHeight="100.0" minWidth="160.0">
+                  <children>
+                          <GridPane fx:id="grdpn_Editbox" gridLinesVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <children>
+                                  <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                      <Button fx:id="btnDistributeUnplanedHours" maxWidth="Infinity" text="%timetableview.btndistributeUnplanedHours" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+                                          <font>
+                                              <Font size="14.0" />
+                                          </font>
+                                      </Button>
+                                      <Button fx:id="savetofile" maxWidth="Infinity" onMouseClicked="#savetoFileClicked" text="%timetableview.btnsavetofile" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+                                          <font>
+                                              <Font size="14.0" />
+                                          </font>
+                                      </Button>
+                                      <Button fx:id="btnSaveCLStofile" maxWidth="Infinity" text="%timetableview.btnsaveCLStofile" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS">
+                                          <font>
+                                              <Font size="14.0" />
+                                          </font>
+                                      </Button>
+                                  </VBox>
+                              </children>
+                              <columnConstraints>
+                                  <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
+                                  <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
+                                  <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
+                                  <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
+                                  <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
+                                  <ColumnConstraints hgrow="ALWAYS" maxWidth="Infinity" />
+                              </columnConstraints>
+                              <rowConstraints>
+                                  <RowConstraints />
+                              </rowConstraints>
+                          </GridPane>
+                  </children>
+                  </AnchorPane>
+            </content>
+         </ScrollPane>
         </items>
     </SplitPane>
 </AnchorPane>
