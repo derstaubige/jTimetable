@@ -271,7 +271,8 @@ public class Resourcemanager {
         holidays.put(getEasterDate(year).plus(0, DAYS), "Ostersonntag");
         holidays.put(getEasterDate(year).plus(1, DAYS), "Ostermonntag");
         holidays.put(getEasterDate(year).plus(39, DAYS), "Himmelfahrt");
-        holidays.put(getEasterDate(year).plus(49, DAYS), "Pfingsten");
+        holidays.put(getEasterDate(year).plus(49, DAYS), "Pfingstsonntag");
+        holidays.put(getEasterDate(year).plus(50, DAYS), "Pfingstmontag");
         holidays.put(MonthDay.parse("--05-01").atYear(year), "Tag der Arbeit");
         holidays.put(MonthDay.parse("--10-03").atYear(year), "Tag der Einheit");
         holidays.put(MonthDay.parse("--10-31").atYear(year), "Reformationstag");
