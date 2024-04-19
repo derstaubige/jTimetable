@@ -12,8 +12,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
@@ -315,9 +317,65 @@ public class TimetableViewController implements Initializable {
                     tmpRowIdx++;
                 }
             }
+
+            // Add a Button to Block with Freetext
+            Label blockFreetextLabel = new Label(
+                    "\uD83C\uDFDD " + resourceBundle.getString("timetableview.blockFreetext"));
+            Font defaultFont = new Font(38);
+            blockFreetextLabel.setFont(defaultFont);
+            blockFreetextLabel.setTextAlignment(TextAlignment.CENTER);
+            blockFreetextLabel.setMinWidth(100);
+
+            TextField blockFreetextText = new TextField();
+
+            DatePicker blockFreetextFrom = new DatePicker();
+            DatePicker blockFreetextTill = new DatePicker();
+            Button blockFreetextSave = new Button(resourceBundle.getString("timetableview.blockFreetext.btnSave"));
+
+            blockFreetextSave.setOnAction(action -> {
+                if (!blockFreetextText.getText().isEmpty() && !(blockFreetextFrom.getValue() == null)
+                        && !(blockFreetextTill.getValue() == null)) {
+
+                    String freeText = blockFreetextText.getText().trim();
+                    LocalDate from = blockFreetextFrom.getValue();
+                    LocalDate till = blockFreetextTill.getValue();
+                    
+                    if (from.compareTo(till) <= 0) {
+                        try {
+                            this.timetable.setBlockingFreetext(from, till, freeText);
+                            Alert alert = new Alert(AlertType.CONFIRMATION);
+                            alert.setContentText("ok");
+                            alert.show();
+                        } catch (Exception e) {
+                            Alert alert = new Alert(AlertType.ERROR);
+                            alert.setContentText(e.getLocalizedMessage());
+                            alert.show();
+                        }
+                    } else {
+                        System.out.println("Till Date cant be before From Date");
+                    }
+                } else {
+                    System.out.println("Text and/or Date cant be Empty");
+                }
+
+            });
+
+            HBox blockFreetextDatePickerHBox = new HBox(blockFreetextFrom, blockFreetextTill, blockFreetextSave);
+            blockFreetextDatePickerHBox.setSpacing(5.0);
+
+            VBox blockFreetextVBox = new VBox(blockFreetextLabel, blockFreetextText, blockFreetextDatePickerHBox);
+            blockFreetextVBox.setSpacing(5.0);
+            grdpn_Editbox.add(blockFreetextVBox, tmpColIdx, tmpRowIdx);
+
+            tmpColIdx++;
+            if (tmpColIdx > timetable.getMaxTimeslots()) {
+                tmpColIdx = 0;
+                tmpRowIdx++;
+            }
+
             // Add a ExamButton to Plan Exams
             Label examLabel = new Label("\uD83D\uDCD3 " + resourceBundle.getString("timetableview.exam"));
-            Font defaultFont = new Font(38);
+            defaultFont = new Font(38);
             examLabel.setFont(defaultFont);
             examLabel.setTextAlignment(TextAlignment.CENTER);
             examLabel.setMinWidth(100);
@@ -326,6 +384,7 @@ public class TimetableViewController implements Initializable {
             comboBox.getItems().addAll(timetable.getCoursepass().getArrayCoursePassLecturerSubject());
 
             VBox examVBox = new VBox(examLabel, comboBox);
+            examVBox.setSpacing(5.0);
             grdpn_Editbox.add(examVBox, tmpColIdx, tmpRowIdx);
 
             examVBox.setOnDragDetected(mouseEvent -> {
@@ -342,13 +401,12 @@ public class TimetableViewController implements Initializable {
                 // them
                 List<JavaFXTimetableHourText> timetableHourTexts = getNodesOfType(grdpn_TimetableView,
                         JavaFXTimetableHourText.class);
-                if(comboBox.getValue() != null){
+                if (comboBox.getValue() != null) {
                     this.markNewCLS(timetableHourTexts, (CoursepassLecturerSubject) comboBox.getValue());
                 }
                 mouseEvent.consume();
             });
 
-            
             examVBox.setOnDragDone(dragEvent -> {
                 // check for all JavaFXTimetableHourText if they could be exchanged and color
                 // them
@@ -451,14 +509,16 @@ public class TimetableViewController implements Initializable {
     @FXML
     private void savetoFileClicked() {
         this.timetable.exportTimetableToFile();
-        Alert okAlert = new Alert(AlertType.NONE,resourceBundle.getString("coursepass.inittimetable.successmessage"), ButtonType.OK);
+        Alert okAlert = new Alert(AlertType.NONE, resourceBundle.getString("coursepass.inittimetable.successmessage"),
+                ButtonType.OK);
         okAlert.setTitle(resourceBundle.getString("coursepass.inittimetable.successtitle"));
         okAlert.show();
     }
 
-    private void saveCLStoFile(){
+    private void saveCLStoFile() {
         this.timetable.saveCLStoFile();
-        Alert okAlert = new Alert(AlertType.NONE,resourceBundle.getString("coursepass.inittimetable.successmessage"), ButtonType.OK);
+        Alert okAlert = new Alert(AlertType.NONE, resourceBundle.getString("coursepass.inittimetable.successmessage"),
+                ButtonType.OK);
         okAlert.setTitle(resourceBundle.getString("coursepass.inittimetable.successtitle"));
         okAlert.show();
     }

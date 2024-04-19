@@ -40,18 +40,25 @@ public class JavaFXTimetableHourText extends Text {
                 string = "\uD83D\uDCD3 " + pCoursepassLecturerSubject.getCoursepass().getDescription() + "\r\n"
                         + pCoursepassLecturerSubject.getSubjectCaption()
                         + "\r\n" + pCoursepassLecturerSubject.getRoomCaptionLocatioString();
-            } else {
+            } else if(timetableEntry.getBlockingFreetext() != null){
+                string = "\uD83C\uDFDD " + "\r\n"
+                        + timetableEntry.getBlockingFreetext();
+            }else {
                 string = pCoursepassLecturerSubject.getCoursepass().getDescription() + "\r\n"
                         + pCoursepassLecturerSubject.getSubjectCaption()
                         + "\r\n" + pCoursepassLecturerSubject.getRoomCaptionLocatioString();
             }
             super.setText(string);
-        } else {
+        } 
+        else {
             if (timetableEntry.isExam()) {
                 string = "\uD83D\uDCD3 " + pCoursepassLecturerSubject.getSubjectCaption() + "\r\n"
                         + pCoursepassLecturerSubject.getLecturerFullname()
                         + "\r\n" + pCoursepassLecturerSubject.getRoomCaptionLocatioString();
-            } else {
+            } else if (timetableEntry.getBlockingFreetext() != null){
+                string = "\uD83C\uDFDD " + "\r\n"
+                        + timetableEntry.getBlockingFreetext();
+            }else {
                 string = pCoursepassLecturerSubject.getSubjectCaption() + "\r\n"
                         + pCoursepassLecturerSubject.getLecturerFullname()
                         + "\r\n" + pCoursepassLecturerSubject.getRoomCaptionLocatioString();

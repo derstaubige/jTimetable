@@ -173,6 +173,35 @@ public class Timetable {
         }
     }
 
+    public void setBlockingFreetext(LocalDate from, LocalDate till, String text) throws Exception {
+        Integer startIndex = -1;
+        Integer endIndex = -1;
+        for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
+            if (timetableDay.getDate().isEqual(from)) {
+                startIndex = this.arrayTimetableDays.indexOf(timetableDay);
+            }
+            if (timetableDay.getDate().isEqual(till)) {
+                endIndex = this.arrayTimetableDays.indexOf(timetableDay);
+            }
+        }
+        if (startIndex == -1 || endIndex == -1) {
+            throw new Exception(resourceBundle.getString("timetableview.blockFreetext.ErrorDatesnotFound"));
+        }
+        CoursepassLecturerSubject cls = new CoursepassLecturerSubject(0L, sqlConnectionManager);
+        cls.setCoursepass(coursepass);
+        for (Integer i = startIndex; i <= endIndex; i++) {
+            for (TimetableHour timetableHour : arrayTimetableDays.get(i).getArrayTimetableHours()) {
+                TimetableEntry timetableEntry = new TimetableEntry(
+                        cls,
+                        arrayTimetableDays.get(i).getDate(),
+                        timetableHour.getTimeslot(), sqlConnectionManager);
+                timetableEntry.setBlockingFreetext(text);
+                timetableEntry.setCoursepassLecturerSubject(cls);
+                timetableEntry.save();
+            }
+        }
+    }
+
     public void updateCoursePassTimetable() throws Exception {
         this.getTimetable(this.getCoursepass());
     }
