@@ -205,7 +205,14 @@ public class ResourcesBlocked {
     public void save() {
         try {
             // if this is an dummy lecturer or room we dont want to save them
-            if (this.refResourceID == 0) {
+            if (this.refResourceID == 0 && this.ID == 0) {
+                return;
+            }
+
+            // this ressource is now nothing we want so save, but is has an id
+            // so we have to delete it now
+            if(this.refResourceID == 0 && this.ID != 0){
+                delete();
                 return;
             }
             ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();

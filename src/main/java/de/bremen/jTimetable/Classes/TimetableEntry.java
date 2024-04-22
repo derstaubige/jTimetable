@@ -37,7 +37,12 @@ public class TimetableEntry {
      */
     public TimetableEntry(CoursepassLecturerSubject coursepassLecturerSubject, LocalDate date, Integer timeslot, 
             SQLConnectionManager sqlConnectionManager) {
-        this(coursepassLecturerSubject.getCoursepass(),date,timeslot,sqlConnectionManager);
+        this.coursepassLecturerSubject = coursepassLecturerSubject;
+        this.sqlConnectionManager = sqlConnectionManager;
+        this.coursePass = coursepassLecturerSubject.getCoursepass();
+        this.date = date;
+        this.timeslot = timeslot;
+        loadFromDB();
     }
 
     /**
@@ -250,6 +255,10 @@ public class TimetableEntry {
 
     public void setCoursepassLecturerSubject(CoursepassLecturerSubject coursepassLecturerSubject) {
         this.coursepassLecturerSubject = coursepassLecturerSubject;
+        this.lecturerBlocked.setRefResourceID(coursepassLecturerSubject.getLecturerID());
+        this.lecturerBlocked.save();
+        this.roomBlocked.setRefResourceID(coursepassLecturerSubject.getRoom().getId());
+        this.roomBlocked.save();
     }
 
     public CoursePass getCoursePass() {
