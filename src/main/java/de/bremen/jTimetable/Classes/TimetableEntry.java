@@ -11,6 +11,8 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueBoolean;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueDate;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueInt;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueLong;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueNull;
+import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueString;
 
 public class TimetableEntry {
     private Integer id = 0;
@@ -21,6 +23,7 @@ public class TimetableEntry {
     private CoursepassLecturerSubject coursepassLecturerSubject;
     private CoursePass coursePass;
     private boolean isExam;
+    private String blockingFreetext;
     private SQLConnectionManager sqlConnectionManager;
 
     /**
@@ -35,10 +38,10 @@ public class TimetableEntry {
     public TimetableEntry(CoursepassLecturerSubject coursepassLecturerSubject, LocalDate date, Integer timeslot, 
             SQLConnectionManager sqlConnectionManager) {
         this.coursepassLecturerSubject = coursepassLecturerSubject;
-        this.date = date;
-        this.timeslot = timeslot;
         this.sqlConnectionManager = sqlConnectionManager;
         this.coursePass = coursepassLecturerSubject.getCoursepass();
+        this.date = date;
+        this.timeslot = timeslot;
         loadFromDB();
     }
 
@@ -75,6 +78,7 @@ public class TimetableEntry {
                     sqlConnectionManager, this.coursePass);
             this.id = rs.getInt("id");
             this.isExam = rs.getBoolean("isExam");
+            this.blockingFreetext = rs.getString("blockingFreetext");
         } catch (JdbcSQLNonTransientException e) {
             // we didnt find a entry at this day/timestamp.... sooo its freetime or a new
             // entry
@@ -134,13 +138,18 @@ public class TimetableEntry {
             SQLValues.add(new SQLValueLong(0L));
             SQLValues.add(new SQLValueLong(0L));
             SQLValues.add(new SQLValueLong(0L));
+            SQLValues.add(new SQLValueLong(0L));
+            SQLValues.add(new SQLValueNull(null));
             SQLValues.add(new SQLValueLong(this.coursePass.getId()));
             SQLValues.add(new SQLValueDate(this.date));
             SQLValues.add(new SQLValueInt(this.timeslot));
             sqlConnectionManager.execute(
-                    "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",
+                    "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ?, isExam = ?, blockingFreetext = ? where refcoursepass = ? and timetableday = ? and timeslot = ?",
                     SQLValues);
-
+            this.setCoursepassLecturerSubject(new CoursepassLecturerSubject(0L, sqlConnectionManager));
+            this.getCoursepassLecturerSubject().setCoursepass(coursePass);
+            this.setExam(false);
+            this.setBlockingFreetext(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -184,9 +193,10 @@ public class TimetableEntry {
                 SQLValues.add(new SQLValueDate(this.date));
                 SQLValues.add(new SQLValueBoolean(this.isExam));
                 SQLValues.add(new SQLValueInt(this.timeslot));
+                SQLValues.add(new SQLValueString(this.blockingFreetext));
                 SQLValues.add(new SQLValueInt(this.id));
                 sqlConnectionManager.execute(
-                        "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? , refcoursepass = ? , timetableday = ? , isExam = ?, timeslot = ? where id = ?",
+                        "update `T_TIMETABLES` set REFCOURSEPASSLECTURERSUBJECT = ?, REFROOMID = ?, REFLECTURER = ?, REFSUBJECT = ? , refcoursepass = ? , timetableday = ? , isExam = ?, timeslot = ?, blockingFreetext = ? where id = ?",
                         SQLValues);
             }
 
@@ -245,6 +255,10 @@ public class TimetableEntry {
 
     public void setCoursepassLecturerSubject(CoursepassLecturerSubject coursepassLecturerSubject) {
         this.coursepassLecturerSubject = coursepassLecturerSubject;
+        this.lecturerBlocked.setRefResourceID(coursepassLecturerSubject.getLecturerID());
+        this.lecturerBlocked.save();
+        this.roomBlocked.setRefResourceID(coursepassLecturerSubject.getRoom().getId());
+        this.roomBlocked.save();
     }
 
     public CoursePass getCoursePass() {
@@ -265,6 +279,14 @@ public class TimetableEntry {
 
     public void setSqlConnectionManager(SQLConnectionManager sqlConnectionManager) {
         this.sqlConnectionManager = sqlConnectionManager;
+    }
+
+    public String getBlockingFreetext() {
+        return blockingFreetext;
+    }
+
+    public void setBlockingFreetext(String blockingFreetext) {
+        this.blockingFreetext = blockingFreetext;
     }
 
 }
