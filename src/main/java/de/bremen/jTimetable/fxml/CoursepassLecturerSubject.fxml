@@ -8,24 +8,33 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.text.Text?>
 <AnchorPane xmlns="http://javafx.com/javafx/8"
-    xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.CoursepassLecturerSubjectController">
-    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="de.bremen.jTimetable.fxmlController.CoursepassLecturerSubjectController"
+    stylesheets="@../styles/style.css">
+    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0"
+        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
-    <VBox spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+    <VBox spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0"
+        AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
         <children>
             <Label text="%cls.title" fx:id="lblCoursepassName"></Label>
             <HBox spacing="20.0">
                 <children>
-                    <TableView fx:id="CLSTableview" minWidth="800.0" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                    <TableView fx:id="CLSTableview" minWidth="800.0" maxWidth="Infinity"
+                        HBox.hgrow="ALWAYS">
                         <columns>
                             <TableColumn text="%cls.CLSTableview.id" fx:id="TCID" visible="false"></TableColumn>
-                            <TableColumn text="%cls.CLSTableview.lecturer" fx:id="TCLecturer" minWidth="150.0"></TableColumn>
+                            <TableColumn text="%cls.CLSTableview.lecturer" fx:id="TCLecturer"
+                                minWidth="150.0"></TableColumn>
                             <TableColumn text="%cls.CLSTableview.subject" fx:id="TCSubject"></TableColumn>
                             <TableColumn text="%cls.CLSTableview.room" fx:id="TCRoom"></TableColumn>
                             <TableColumn text="%cls.CLSTableview.shouldHours" fx:id="TCShouldHours"></TableColumn>
-                            <TableColumn text="%cls.CLSTableview.isHours" fx:id="TCisHours" minWidth="150.0"></TableColumn>
-                            <TableColumn text="%cls.CLSTableview.planedHours" fx:id="TCPlanedHours" minWidth="150.0"></TableColumn>
-                            <TableColumn text="%cls.CLSTableview.active" fx:id="CPActive" visible="false"></TableColumn>
+                            <TableColumn text="%cls.CLSTableview.isHours" fx:id="TCisHours"
+                                minWidth="150.0"></TableColumn>
+                            <TableColumn text="%cls.CLSTableview.planedHours" fx:id="TCPlanedHours"
+                                minWidth="150.0"></TableColumn>
+                            <TableColumn text="%cls.CLSTableview.active" fx:id="CPActive"
+                                visible="false"></TableColumn>
                         </columns>
                     </TableView>
                     <VBox minWidth="200.0" spacing="10.0">

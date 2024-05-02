@@ -6,74 +6,96 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="de.bremen.jTimetable.fxmlController.LecturerController">
+<AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+    AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml"
+    fx:controller="de.bremen.jTimetable.fxmlController.LecturerController"
+    stylesheets="@../styles/style.css">
 
-    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0"
+        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
-        <VBox spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
-            <children>
+    <VBox spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0"
+        AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+        <children>
 
-                <Label text="%lecturer.title"></Label>
-                <HBox spacing="20.0">
-                    <children>
-                        <TableView fx:id="LecturerTableview" minWidth="800.0" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                            <columns>
-                                <TableColumn text="%lecturer.LecturerTableview.id" fx:id="ID" visible="false"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerTableview.firstname" fx:id="Firstname"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerTableview.lastname" fx:id="Lastname"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerTableview.location" fx:id="Location"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerTableview.active" fx:id="Active" visible="false"></TableColumn>
-                            </columns>
-                        </TableView>
-                        <VBox minWidth="200.0" spacing="10.0" >
-                            <Button fx:id="btnLecturerEdit" text="%button.edit"></Button>
-                            <Button fx:id="btnLecturerNew" text="%button.new"></Button>
-                            <CheckBox fx:id="chkToogleLecturer" text="%chkbox.ToogleInactive"></CheckBox>
-                            <Button fx:id="btnShowTimetable" text="%lecturer.btnShowTimetable"></Button>
-                        </VBox>
-                    </children>
+            <Label text="%lecturer.title"></Label>
+            <HBox spacing="20.0">
+                <children>
+                    <TableView fx:id="LecturerTableview" minWidth="800.0" maxWidth="Infinity"
+                        HBox.hgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="%lecturer.LecturerTableview.id" fx:id="ID"
+                                visible="false"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerTableview.firstname"
+                                fx:id="Firstname"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerTableview.lastname"
+                                fx:id="Lastname"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerTableview.location"
+                                fx:id="Location"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerTableview.active" fx:id="Active"
+                                visible="false"></TableColumn>
+                        </columns>
+                    </TableView>
+                    <VBox minWidth="200.0" spacing="10.0">
+                        <Button fx:id="btnLecturerEdit" text="%button.edit"></Button>
+                        <Button fx:id="btnLecturerNew" text="%button.new"></Button>
+                        <CheckBox fx:id="chkToogleLecturer" text="%chkbox.ToogleInactive"></CheckBox>
+                        <Button fx:id="btnShowTimetable" text="%lecturer.btnShowTimetable"></Button>
+                    </VBox>
+                </children>
+            </HBox>
+            <VBox fx:id="editbox" spacing="10.0">
+                <HBox spacing="10.0">
+                    <Label text="%lecturer.editbox.id"></Label>
+                    <TextField fx:id="txtID"></TextField>
+
+                    <Label text="%lecturer.editbox.firstname"></Label>
+                    <TextField fx:id="txtFirstname"></TextField>
+
+                    <Label text="%lecturer.editbox.lastname"></Label>
+                    <TextField fx:id="txtLastname"></TextField>
                 </HBox>
-                <VBox fx:id="editbox" spacing="10.0">
-                    <HBox spacing="10.0">
-                        <Label text="%lecturer.editbox.id"></Label>
-                        <TextField fx:id="txtID"></TextField>
-
-                        <Label text="%lecturer.editbox.firstname"></Label>
-                        <TextField fx:id="txtFirstname"></TextField>
-
-                        <Label text="%lecturer.editbox.lastname"></Label>
-                        <TextField fx:id="txtLastname"></TextField>
-                    </HBox>
-                    <HBox spacing="10.0">
-                        <Label text="%lecturer.editbox.location"></Label>
-                        <ComboBox fx:id="cmbLocation" minWidth="400"></ComboBox>
-                        <Label text="%lecturer.editbox.active"></Label>
-                        <CheckBox fx:id="chkActive"></CheckBox>
-                        <Button fx:id="btnSave" text="%button.save"></Button>
-                    </HBox>
-                    <HBox spacing="10.0">
-                        <Label text="%lecturer.LecturerBlockedTableview.label" />
-                    </HBox>
-                    <HBox spacing="20.">
-                        <TableView fx:id="LecturerBlockedTableview" minWidth="800.0" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                            <columns>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.ID" fx:id="LecturerBlockedTableviewID" visible="false"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.REFRESOURCEID" fx:id="LecturerBlockedTableviewREFRESOURCEID" visible="false"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.RESOURCENAME" fx:id="LecturerBlockedTableviewRESOURCENAME" visible="false"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.STARTDATE" fx:id="LecturerBlockedTableviewSTARTDATE"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.ENDDATE" fx:id="LecturerBlockedTableviewENDDATE"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.STARTTIMESLOT" fx:id="LecturerBlockedTableviewSTARTTIMESLOT"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.ENDTIMESLOT" fx:id="LecturerBlockedTableviewENDTIMESLOT"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.DESCRIPTION" fx:id="LecturerBlockedTableviewDESCRIPTION"></TableColumn>
-                                <TableColumn text="%lecturer.LecturerBlockedTableview.Delete" fx:id="LecturerBlockedTableviewDelete"></TableColumn>
-                            </columns>
-                        </TableView>
-                        <VBox spacing="10" >
-                            <Button fx:id="LecturerBlockedPermaAdd" text="%lecturer.LecturerBlockedPermaAddBtn" />
-                            <Button fx:id="LecturerBlockedAdd" text="%lecturer.LecturerBlockedAddBtn" />
-                        </VBox>
-                    </HBox>
-                </VBox>
-            </children>
-        </VBox>
+                <HBox spacing="10.0">
+                    <Label text="%lecturer.editbox.location"></Label>
+                    <ComboBox fx:id="cmbLocation" minWidth="400"></ComboBox>
+                    <Label text="%lecturer.editbox.active"></Label>
+                    <CheckBox fx:id="chkActive"></CheckBox>
+                    <Button fx:id="btnSave" text="%button.save"></Button>
+                </HBox>
+                <HBox spacing="10.0">
+                    <Label text="%lecturer.LecturerBlockedTableview.label" />
+                </HBox>
+                <HBox spacing="20.">
+                    <TableView fx:id="LecturerBlockedTableview" minWidth="800.0" maxWidth="Infinity"
+                        HBox.hgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.ID"
+                                fx:id="LecturerBlockedTableviewID" visible="false"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.REFRESOURCEID"
+                                fx:id="LecturerBlockedTableviewREFRESOURCEID" visible="false"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.RESOURCENAME"
+                                fx:id="LecturerBlockedTableviewRESOURCENAME" visible="false"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.STARTDATE"
+                                fx:id="LecturerBlockedTableviewSTARTDATE"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.ENDDATE"
+                                fx:id="LecturerBlockedTableviewENDDATE"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.STARTTIMESLOT"
+                                fx:id="LecturerBlockedTableviewSTARTTIMESLOT"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.ENDTIMESLOT"
+                                fx:id="LecturerBlockedTableviewENDTIMESLOT"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.DESCRIPTION"
+                                fx:id="LecturerBlockedTableviewDESCRIPTION"></TableColumn>
+                            <TableColumn text="%lecturer.LecturerBlockedTableview.Delete"
+                                fx:id="LecturerBlockedTableviewDelete"></TableColumn>
+                        </columns>
+                    </TableView>
+                    <VBox spacing="10">
+                        <Button fx:id="LecturerBlockedPermaAdd"
+                            text="%lecturer.LecturerBlockedPermaAddBtn" />
+                        <Button fx:id="LecturerBlockedAdd" text="%lecturer.LecturerBlockedAddBtn" />
+                    </VBox>
+                </HBox>
+            </VBox>
+        </children>
+    </VBox>
 </AnchorPane>

@@ -12,36 +12,50 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.bremen.jTimetable.fxmlController.HomeController">
+<AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+    AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/" xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="de.bremen.jTimetable.fxmlController.HomeController"
+    stylesheets="@../styles/style.css">
 
-    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0"
+        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
-    <VBox AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+    <VBox AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"
+        AnchorPane.topAnchor="40.0">
         <children>
             <Label fx:id="lblActiveCoursepasses" text="%home.lblActiveCoursepasses" />
-            <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                 <children>
-                    <TableView fx:id="CoursepassTableview" maxHeight="Infinity" maxWidth="Infinity" minHeight="724.0" minWidth="800" HBox.hgrow="ALWAYS">
+                    <TableView fx:id="CoursepassTableview" maxHeight="Infinity" maxWidth="Infinity"
+                        minHeight="724.0" minWidth="800" HBox.hgrow="ALWAYS">
                         <columns>
-                            <TableColumn fx:id="CPID" text="%home.CoursepassTableview.CPID" visible="false" />
-                            <TableColumn fx:id="CPCOSCaption" text="%home.CoursepassTableview.CPCOSCaption" minWidth="200.0"  />
-                            <TableColumn fx:id="CPstudysection" text="%home.CoursepassTableview.CPstudysection" minWidth="100.0"  />
-                            <TableColumn fx:id="CPDescription" text="%home.CoursepassTableview.CPDescription" minWidth="200.0"  />
+                            <TableColumn fx:id="CPID" text="%home.CoursepassTableview.CPID"
+                                visible="false" />
+                            <TableColumn fx:id="CPCOSCaption"
+                                text="%home.CoursepassTableview.CPCOSCaption" minWidth="200.0" />
+                            <TableColumn fx:id="CPstudysection"
+                                text="%home.CoursepassTableview.CPstudysection" minWidth="100.0" />
+                            <TableColumn fx:id="CPDescription"
+                                text="%home.CoursepassTableview.CPDescription" minWidth="200.0" />
                             <TableColumn fx:id="CPStart" text="%home.CoursepassTableview.CPStart" />
                             <TableColumn fx:id="CPEnd" text="%home.CoursepassTableview.CPEnd" />
-                            <TableColumn fx:id="CPActive" text="%home.CoursepassTableview.CPActive"  visible="false"/>
+                            <TableColumn fx:id="CPActive" text="%home.CoursepassTableview.CPActive"
+                                visible="false" />
                         </columns>
                     </TableView>
-                    <VBox maxHeight="Infinity" maxWidth="Infinity" minWidth="200" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <VBox maxHeight="Infinity" maxWidth="Infinity" minWidth="200" spacing="10.0"
+                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                        AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                         <Button fx:id="btnCoursepassEdit" text="%button.edit" />
                         <Button fx:id="btnTimetableShow" text="%home.btnShowTimetable" />
                         <CheckBox fx:id="chkToogleCoursepass" text="%chkbox.ToogleInactive" />
                         <ImageView id="boxImage" layoutX="800" layoutY="10">
                             <Image url="@/de/bremen/jTimetable/img/icon.png" />
                         </ImageView>
-                  <padding>
-                     <Insets left="20.0" />
-                  </padding>
+                        <padding>
+                            <Insets left="20.0" />
+                        </padding>
                     </VBox>
                 </children>
             </HBox>
