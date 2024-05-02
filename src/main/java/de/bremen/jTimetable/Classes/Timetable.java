@@ -208,6 +208,9 @@ public class Timetable {
 
     public void distributeUnplanedHours() {
 
+        Integer maxTimetableSlotsUsedForInitialTimetable = Integer
+                .parseInt(properties.getProperty("maxTimetableSlotsUsedForInitialTimetable")) - 1;
+
         this.coursepass.updateCoursePassLecturerSubjects();
         ArrayList<CoursepassLecturerSubject> clsToAddArrayList = new ArrayList<CoursepassLecturerSubject>();
         for (CoursepassLecturerSubject cls : this.coursepass.getArrayCoursePassLecturerSubject()) {
@@ -217,43 +220,49 @@ public class Timetable {
         }
 
         if (clsToAddArrayList.size() > 0) {
-            // Loop through the Timetable and Check all Timeslots for Freetime
-            for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
-                for (TimetableHour timetableHour : timetableDay.getArrayTimetableHours()) {
-                    if (timetableHour != null
-                            && timetableHour.getCoursepassLecturerSubject().getId() == 0L) {
-                        // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
-                        // here
-                        for (CoursepassLecturerSubject cls : clsToAddArrayList) {
-                            if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
-                                    timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
-                                // LEcturer and Room are free, we can place it here
-                                TimetableEntry targetTimetableEntry = new TimetableEntry(cls, timetableDay.getDate(),
-                                        timetableHour.getTimeslot(), sqlConnectionManager);
-                                // delete the entry in the timetable table
-                                // save the new timetablehour
-                                try {
-                                    this.addSingleHour(cls, targetTimetableEntry);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+            while (maxTimetableSlotsUsedForInitialTimetable < getMaxTimeslots()) {
 
-                                // check if we now have distributed all unplaned hours
-                                cls.updateallHours();
-                                if (cls.getUnplanedHours() <= 0) {
-                                    // no unplaned hours left, remove this cls from clsToAddArrayList
-                                    clsToAddArrayList.remove(cls);
+                // Loop through the Timetable and Check all Timeslots for Freetime
+                for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
+                    for (TimetableHour timetableHour : timetableDay.getArrayTimetableHours()) {
+                        if (timetableHour != null
+                                && timetableHour.getCoursepassLecturerSubject().getId() == 0L
+                                && timetableHour.getTimeslot() <= maxTimetableSlotsUsedForInitialTimetable) {
+                            // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
+                            // here
+                            for (CoursepassLecturerSubject cls : clsToAddArrayList) {
+                                if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
+                                        timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
+                                    // LEcturer and Room are free, we can place it here
+                                    TimetableEntry targetTimetableEntry = new TimetableEntry(cls,
+                                            timetableDay.getDate(),
+                                            timetableHour.getTimeslot(), sqlConnectionManager);
+                                    // delete the entry in the timetable table
+                                    // save the new timetablehour
+                                    try {
+                                        this.addSingleHour(cls, targetTimetableEntry);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    // check if we now have distributed all unplaned hours
+                                    cls.updateallHours();
+                                    if (cls.getUnplanedHours() <= 0) {
+                                        // no unplaned hours left, remove this cls from clsToAddArrayList
+                                        clsToAddArrayList.remove(cls);
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }
                 }
-            }
-            try {
-                updateCoursePassTimetable();
-            } catch (Exception e) {
-                e.printStackTrace();
+                try {
+                    updateCoursePassTimetable();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                maxTimetableSlotsUsedForInitialTimetable++;
             }
             // redraw timetable
         }
@@ -411,16 +420,17 @@ public class Timetable {
                         for (TimetableHour tmpHour : tmpDay.getArrayTimetableHours()) {
                             TimetableEntry timetableEntry = new TimetableEntry(coursepass, tmpDay.getDate(),
                                     tmpHour.getTimeslot(), sqlConnectionManager);
-                            if (tmpHour.getCoursepassLecturerSubject().getLecturerID() != 0 || timetableEntry.getBlockingFreetext() != null) {
+                            if (tmpHour.getCoursepassLecturerSubject().getLecturerID() != 0
+                                    || timetableEntry.getBlockingFreetext() != null) {
                                 if (timetableEntry.isExam()) {
                                     ws.value(rowOffset, tmpCol,
                                             resourceBundle.getString("timetableview.exam") + ": "
                                                     + tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
-                                } else if (timetableEntry.getBlockingFreetext() != null){
+                                } else if (timetableEntry.getBlockingFreetext() != null) {
                                     ws.value(rowOffset, tmpCol,
                                             resourceBundle.getString("timetableview.blockFreetext") + ": "
                                                     + timetableEntry.getBlockingFreetext());
-                                }else {
+                                } else {
                                     ws.value(rowOffset, tmpCol,
                                             tmpHour.getCoursepassLecturerSubject().getSubject().getCaption());
                                 }
@@ -428,14 +438,14 @@ public class Timetable {
                                     ws.value(rowOffset + 1, tmpCol,
                                             tmpHour.getCoursepassLecturerSubject().getCoursepass()
                                                     .getCourseOfStudyCaption());
-                                } else if (timetableEntry.getBlockingFreetext() != null){
-                                
-                                }else {
+                                } else if (timetableEntry.getBlockingFreetext() != null) {
+
+                                } else {
                                     ws.value(rowOffset + 1, tmpCol,
                                             tmpHour.getCoursepassLecturerSubject().getLecturerFullname());
                                 }
-                                if (timetableEntry.getBlockingFreetext() != null){
-                                }else{
+                                if (timetableEntry.getBlockingFreetext() != null) {
+                                } else {
                                     ws.value(rowOffset + 2, tmpCol,
                                             tmpHour.getCoursepassLecturerSubject().getRoom().getCaption());
                                 }

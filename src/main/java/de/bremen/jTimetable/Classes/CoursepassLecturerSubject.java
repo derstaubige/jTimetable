@@ -22,12 +22,20 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     public static boolean isFreeTarget(CoursepassLecturerSubject cls, LocalDate targetDay, int targetTimeslot,
             SQLConnectionManager sqlConnectionManager) {
+        TimetableEntry timetableEntry = new TimetableEntry(cls.getCoursepass(), targetDay, targetTimeslot,
+                sqlConnectionManager);
         try {
             if (!Lecturer.checkLecturerAvailability(cls.getLecturerID(), targetDay, targetTimeslot,
                     sqlConnectionManager)) {
                 return false;
             }
-            if ( !cls.getRoom().isRoomAvailable(targetDay, targetTimeslot)) {
+            if (!cls.getRoom().isRoomAvailable(targetDay, targetTimeslot)) {
+                return false;
+            }
+            if(timetableEntry.isExam()){
+                return false;
+            }
+            if(timetableEntry.getBlockingFreetext() != null){
                 return false;
             }
         } catch (SQLException e) {
@@ -111,9 +119,9 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                     SQLValues);
             rs.first();
             this.id = rs.getLong("id");
-            if(coursePass.getId() != 0){
+            if (coursePass.getId() != 0) {
                 this.coursepass = coursePass;
-            }else{
+            } else {
                 this.coursepass = new CoursePass(rs.getLong("refCoursepassID"), sqlConnectionManager);
             }
             this.lecturer = new Lecturer(rs.getLong("refLecturerID"), getSqlConnectionManager());
@@ -375,5 +383,4 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         return examHours;
     }
 
-    
 }
