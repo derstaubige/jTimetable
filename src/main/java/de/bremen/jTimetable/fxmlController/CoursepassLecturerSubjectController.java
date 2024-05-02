@@ -22,6 +22,7 @@ import de.bremen.jTimetable.Classes.*;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -47,6 +48,8 @@ public class CoursepassLecturerSubjectController implements Initializable {
     @FXML
     public TableColumn<CoursepassLecturerSubject, Integer> TCPlanedHours;
     @FXML
+    public TableColumn<CoursepassLecturerSubject, LocalDate> TCPlaceAfterDate;
+    @FXML
     public TableColumn<CoursepassLecturerSubject, Boolean> CPActive;
     @FXML
     public Button btnCLSEdit;
@@ -71,6 +74,8 @@ public class CoursepassLecturerSubjectController implements Initializable {
     @FXML
     public TextField txtShouldHours;
     @FXML
+    public DatePicker placeAfterDay;
+    @FXML
     public CheckBox chkActive;
     @FXML
     public Button btnSave;
@@ -92,6 +97,8 @@ public class CoursepassLecturerSubjectController implements Initializable {
             TCisHours.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("isHours"));
             TCPlanedHours
                     .setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("planedHours"));
+            TCPlaceAfterDate.setCellValueFactory(
+                    new PropertyValueFactory<CoursepassLecturerSubject, LocalDate>("placeAfterDay"));
             CPActive.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Boolean>("active"));
         });
 
@@ -300,7 +307,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 }
                 txtShouldHours.setText(this.coursepassLecturerSubject.getShouldHours().toString());
                 chkActive.setSelected(this.coursepass.getActive());
-
+                placeAfterDay.setValue(LocalDate.of(1970,1,1));
                 editbox.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -338,7 +345,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 }
                 txtShouldHours.setText(this.coursepassLecturerSubject.getShouldHours().toString());
                 chkActive.setSelected(this.coursepass.getActive());
-
+                placeAfterDay.setValue(this.coursepassLecturerSubject.getPlaceAfterDay());
                 editbox.setVisible(true);
             }
         });
@@ -367,6 +374,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
             this.coursepassLecturerSubject.setRoom(cmbRoom.getValue());
             this.coursepassLecturerSubject.setShouldHours(Long.parseLong(txtShouldHours.getText()));
             this.coursepassLecturerSubject.setActive(chkActive.isSelected());
+            this.coursepassLecturerSubject.setPlaceAfterDay(placeAfterDay.getValue());
             try {
                 this.coursepassLecturerSubject.save();
             } catch (Exception e) {
