@@ -6,51 +6,62 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="de.bremen.jTimetable.fxmlController.SubjectController"
-            prefHeight="400.0" prefWidth="800.0" minWidth="800">
+<AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+    AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="de.bremen.jTimetable.fxmlController.SubjectController"
+    prefHeight="400.0" prefWidth="800.0" minWidth="800" stylesheets="@../styles/style.css">
 
-                <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-        <VBox spacing="10.0"  AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
-            <children>
+    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0"
+        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"
+        stylesheets="@../styles/menuStyle.css" />
+    <VBox spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0"
+        AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+        <children>
 
-                <Label text="%subject.title"></Label>
+            <Label text="%subject.title"></Label>
+            <HBox spacing="10">
+                <children>
+                    <TableView fx:id="SubjectTableview" minWidth="800" maxWidth="Infinity"
+                        HBox.hgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="%subject.SubjectTableview.id" fx:id="ID"
+                                visible="false"></TableColumn>
+                            <TableColumn text="%subject.SubjectTableview.caption" fx:id="Caption"
+                                minWidth="600.0"></TableColumn>
+                            <TableColumn text="%subject.SubjectTableview.active" fx:id="Active"
+                                visible="false"></TableColumn>
+                        </columns>
+                    </TableView>
+                    <VBox minWidth="200" spacing="10">
+
+                        <Button fx:id="btnSubjectEdit" text="%button.edit">Edit</Button>
+                        <Button fx:id="btnSubjectNew" text="%button.new">New</Button>
+                        <CheckBox fx:id="chkToogleSubject" text="%chkbox.ToogleInactive"></CheckBox>
+
+                    </VBox>
+                </children>
+            </HBox>
+            <VBox fx:id="editbox" spacing="10">
+
                 <HBox spacing="10">
-                    <children>
-                        <TableView fx:id="SubjectTableview" minWidth="800" maxWidth="Infinity" HBox.hgrow="ALWAYS">
-                            <columns>
-                                <TableColumn text="%subject.SubjectTableview.id" fx:id="ID" visible="false"></TableColumn>
-                                <TableColumn text="%subject.SubjectTableview.caption" fx:id="Caption" minWidth="600.0"></TableColumn>
-                                <TableColumn text="%subject.SubjectTableview.active" fx:id="Active" visible="false"></TableColumn>
-                            </columns>
-                        </TableView>
-                        <VBox minWidth="200" spacing="10">
-
-                            <Button fx:id="btnSubjectEdit" text="%button.edit">Edit</Button>
-                            <Button fx:id="btnSubjectNew" text="%button.new">New</Button>
-                            <CheckBox fx:id="chkToogleSubject" text="%chkbox.ToogleInactive"></CheckBox>
-
-                        </VBox>
-                    </children>
+                    <Label text="%subject.editbox.id"></Label>
+                    <TextField fx:id="txtID"></TextField>
                 </HBox>
-                <VBox fx:id="editbox" spacing="10">
+                <HBox spacing="10">
+                    <Label text="%subject.editbox.caption"></Label>
+                    <TextField fx:id="txtCaption"></TextField>
+                </HBox>
+                <HBox spacing="10">
+                    <Label text="%subject.editbox.active"></Label>
+                    <CheckBox fx:id="chkActive"></CheckBox>
+                </HBox>
+                <HBox spacing="10">
+                    <Button fx:id="btnSave" text="%button.save"></Button>
+                </HBox>
 
-                    <HBox spacing="10">
-                        <Label text="%subject.editbox.id"></Label><TextField fx:id="txtID"></TextField>
-                    </HBox>
-                    <HBox spacing="10">
-                        <Label text="%subject.editbox.caption"></Label><TextField fx:id="txtCaption"></TextField>
-                    </HBox>
-                    <HBox spacing="10">
-                        <Label text="%subject.editbox.active"></Label><CheckBox fx:id="chkActive"></CheckBox>
-                    </HBox>
-                    <HBox spacing="10">
-                        <Button fx:id="btnSave" text="%button.save"></Button>
-                    </HBox>
-
-                </VBox>
-            </children>
-        </VBox>
+            </VBox>
+        </children>
+    </VBox>
 
 </AnchorPane>

@@ -7,18 +7,26 @@
 <?import javafx.scene.layout.*?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
-    xmlns:fx="http://javafx.com/fxml" fx:controller="de.bremen.jTimetable.fxmlController.LocationController" prefHeight="400.0" prefWidth="800.0" minWidth="800">
-    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-    <VBox spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="de.bremen.jTimetable.fxmlController.LocationController" prefHeight="400.0"
+    prefWidth="800.0" minWidth="800" stylesheets="@../styles/style.css">
+    <fx:include fx:id="mainMenu" fillWidth="true" source="Menu.fxml" AnchorPane.bottomAnchor="0.0"
+        AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    <VBox spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0"
+        AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
         <children>
             <Label text="%location.title"></Label>
             <HBox spacing="20.0">
                 <children>
-                    <TableView fx:id="LocationTableview" minWidth="800.0" maxWidth="Infinity" HBox.hgrow="ALWAYS">
+                    <TableView fx:id="LocationTableview" minWidth="800.0" maxWidth="Infinity"
+                        HBox.hgrow="ALWAYS">
                         <columns>
-                            <TableColumn text="%location.LocationTableview.id" fx:id="ID" visible="false"></TableColumn>
-                            <TableColumn text="%location.LocationTableview.caption" fx:id="Caption" minWidth="600.0"></TableColumn>
-                            <TableColumn text="%location.LocationTableview.active" fx:id="Active" visible="false"></TableColumn>
+                            <TableColumn text="%location.LocationTableview.id" fx:id="ID"
+                                visible="false"></TableColumn>
+                            <TableColumn text="%location.LocationTableview.caption" fx:id="Caption"
+                                minWidth="600.0"></TableColumn>
+                            <TableColumn text="%location.LocationTableview.active" fx:id="Active"
+                                visible="false"></TableColumn>
                         </columns>
                     </TableView>
                     <VBox minWidth="200.0" spacing="10">
