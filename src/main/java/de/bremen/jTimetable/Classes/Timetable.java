@@ -232,7 +232,8 @@ public class Timetable {
                             // here
                             for (CoursepassLecturerSubject cls : clsToAddArrayList) {
                                 if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
-                                        timetableHour.getTimeslot(), this.getSqlConnectionManager())) {
+                                        timetableHour.getTimeslot(), this.getSqlConnectionManager())
+                                        && timetableDay.getDate().isAfter(cls.getPlaceAfterDay())) {
                                     // LEcturer and Room are free, we can place it here
                                     TimetableEntry targetTimetableEntry = new TimetableEntry(cls,
                                             timetableDay.getDate(),
