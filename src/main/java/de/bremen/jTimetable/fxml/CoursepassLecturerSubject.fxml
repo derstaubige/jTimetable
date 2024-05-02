@@ -33,6 +33,8 @@
                                 minWidth="150.0"></TableColumn>
                             <TableColumn text="%cls.CLSTableview.planedHours" fx:id="TCPlanedHours"
                                 minWidth="150.0"></TableColumn>
+                            <TableColumn text="%cls.editbox.placeAfterDay" fx:id="TCPlaceAfterDate"
+                                minWidth="150.0"></TableColumn>
                             <TableColumn text="%cls.CLSTableview.active" fx:id="CPActive"
                                 visible="false"></TableColumn>
                         </columns>
@@ -66,6 +68,10 @@
             <HBox spacing="10.0">
                 <Label text="%cls.editbox.shouldHours"></Label>
                 <TextField fx:id="txtShouldHours"></TextField>
+            </HBox>
+            <HBox spacing="10.0">
+                <Label text="%cls.editbox.placeAfterDay"></Label>
+                <DatePicker fx:id="placeAfterDay"></DatePicker>
             </HBox>
             <HBox spacing="10.0">
                 <Label text="%cls.editbox.active"></Label>

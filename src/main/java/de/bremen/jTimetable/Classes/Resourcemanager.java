@@ -27,9 +27,10 @@ public class Resourcemanager {
 
     public Resourcemanager(SQLConnectionManager sqlConnectionManager) {
         setSqlConnectionManager(sqlConnectionManager);
-        try {            
+        try {
             FileResourcesUtils fileResourcesUtils = new FileResourcesUtils();
-            properties.load(new BufferedReader(new InputStreamReader(fileResourcesUtils.getFileFromResourceAsStream("/Config.properties"))));
+            properties.load(new BufferedReader(
+                    new InputStreamReader(fileResourcesUtils.getFileFromResourceAsStream("/Config.properties"))));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -114,7 +115,8 @@ public class Resourcemanager {
                         LocalDate timetableday = this.arrayTimetabledays.get(idxDay).getDate();
 
                         TimetableEntry timetableEntry = new TimetableEntry(this.arrayCoursepassLecturerSubject.get(
-                                this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot, sqlConnectionManager);
+                                this.positionInCoursepassLecturerSubjectStack), timetableday, (Integer) idxTimeslot,
+                                sqlConnectionManager);
                         timetableEntry.save();
 
                         // add to the is hours count
@@ -176,7 +178,9 @@ public class Resourcemanager {
                         .isRoomAvailable(
                                 arrayTimetabledays.get(idxDay).getDate(), idxTimeslot)
                 &&
-                tmpshouldhours > (tmpishours + tmpplanedhours)) {
+                tmpshouldhours > (tmpishours + tmpplanedhours) &&
+                arrayTimetabledays.get(idxDay).getDate().isAfter(this.arrayCoursepassLecturerSubject
+                        .get(positionInCoursepassLecturerSubjectStack).getPlaceAfterDay())) {
             // Lecturer and Room are Available and there are hours left to plan
             return true;
         }
