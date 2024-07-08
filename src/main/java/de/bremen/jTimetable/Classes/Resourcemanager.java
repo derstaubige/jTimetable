@@ -13,7 +13,6 @@ import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
 public class Resourcemanager {

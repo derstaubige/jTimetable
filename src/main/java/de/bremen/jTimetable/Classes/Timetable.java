@@ -211,6 +211,9 @@ public class Timetable {
         Integer maxTimetableSlotsUsedForInitialTimetable = Integer
                 .parseInt(properties.getProperty("maxTimetableSlotsUsedForInitialTimetable")) - 1;
 
+
+        TimetableDistributeStack timetableDistributeStack = new TimetableDistributeStack(coursepass, sqlConnectionManager);
+
         this.coursepass.updateCoursePassLecturerSubjects();
         ArrayList<CoursepassLecturerSubject> clsToAddArrayList = new ArrayList<CoursepassLecturerSubject>();
         for (CoursepassLecturerSubject cls : this.coursepass.getArrayCoursePassLecturerSubject()) {
