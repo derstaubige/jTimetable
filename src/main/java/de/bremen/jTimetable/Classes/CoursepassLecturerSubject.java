@@ -127,7 +127,9 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             this.room = new Room(rs.getLong("refRoomID"), getSqlConnectionManager());
             this.shouldHours = rs.getLong("shouldhours");
             this.active = rs.getBoolean("active");
-            this.placeAfterDay = rs.getDate("placeAfterDay").toLocalDate();
+            if(rs.getDate("placeAfterDay") != null){
+                this.placeAfterDay = rs.getDate("placeAfterDay").toLocalDate();
+            }
 
             this.updateIsHours();
             this.updatePlanedHours();
@@ -250,7 +252,12 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         SQLValues.add(new SQLValueLong(this.room.getId()));
         SQLValues.add(new SQLValueLong(this.shouldHours));
         SQLValues.add(new SQLValueBoolean(this.active));
-        SQLValues.add(new SQLValueDate(placeAfterDay));
+        if (placeAfterDay == null){
+            SQLValues.add(new SQLValueNull(null));
+        }else{
+            SQLValues.add(new SQLValueDate(placeAfterDay));
+
+        }
 
         if (this.id == 0) {
             // its a new object, we have to insert it
