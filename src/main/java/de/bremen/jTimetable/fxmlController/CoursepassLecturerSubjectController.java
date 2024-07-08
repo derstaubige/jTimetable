@@ -76,6 +76,8 @@ public class CoursepassLecturerSubjectController implements Initializable {
     @FXML
     public DatePicker placeAfterDay;
     @FXML
+    public ComboBox<CoursepassLecturerSubject> cmbCLS;
+    @FXML
     public CheckBox chkActive;
     @FXML
     public Button btnSave;
@@ -148,7 +150,6 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 if (!empty && subject != null) {
 
                     // Update our Labels
-                    // lblID.setText(studySection.getId().toString());
                     lblDescription.setText(subject.getCaption());
 
                     // Set this ListCell's graphicProperty to display our GridPane
@@ -203,7 +204,6 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 if (!empty && room != null) {
 
                     // Update our Labels
-                    // lblID.setText(studySection.getId().toString());
                     lblDescription.setText(room.getCaption() + ", " + room.getLocationCaption());
 
                     // Set this ListCell's graphicProperty to display our GridPane
@@ -259,8 +259,71 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 if (!empty && lecturer != null) {
 
                     // Update our Labels
-                    // lblID.setText(studySection.getId().toString());
                     lblDescription.setText(lecturer.getLecturerFullName());
+
+                    // Set this ListCell's graphicProperty to display our GridPane
+                    setGraphic(gridPane);
+                } else {
+                    // Nothing to display here
+                    setGraphic(null);
+                }
+            }
+        });
+
+        
+        cmbCLS.setConverter(new StringConverter<CoursepassLecturerSubject>() {
+            @Override
+            public String toString(CoursepassLecturerSubject cls) {
+                if (cls == null) {
+                    return "";
+                } else {
+                    if (cls.getSubject().getId() == 0){
+                        return "";
+                    }else{
+                        return cls.getLecturerFullname() + " : " + cls.getSubjectCaption();
+                    }
+                }
+            }
+
+            @Override
+            public CoursepassLecturerSubject fromString(String string) {
+                return null;
+            }
+        });
+
+        cmbCLS.setCellFactory(cell -> new ListCell<CoursepassLecturerSubject>() {
+
+            // Create our layout here to be reused for each ListCell
+            GridPane gridPane = new GridPane();
+            // Label lblID = new Label();
+            Label lblDescription = new Label();
+
+            // Static block to configure our layout
+            {
+                // Ensure all our column widths are constant
+                gridPane.getColumnConstraints().addAll(
+                        // new ColumnConstraints(100, 100, 100),
+                        new ColumnConstraints(200, 200, 200));
+
+                // gridPane.add(lblID, 0, 1, 1 ,1);
+                gridPane.add(lblDescription, 0, 1, 1, 1);
+
+            }
+
+            // We override the updateItem() method in order to provide our own layout for
+            // this Cell's graphicProperty
+            @Override
+            protected void updateItem(CoursepassLecturerSubject cls, boolean empty) {
+                super.updateItem(cls, empty);
+
+                if (!empty && cls != null) {
+
+                    // Update our Labels
+                    if (cls.getSubject().getId() == 0){
+                        lblDescription.setText("");
+                    }else{
+                        lblDescription.setText(cls.getLecturerFullname() + " : " + cls.getSubjectCaption());
+                    }
 
                     // Set this ListCell's graphicProperty to display our GridPane
                     setGraphic(gridPane);
@@ -343,6 +406,15 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                try {
+                    ArrayList<CoursepassLecturerSubject> tmpcmbCLSItems = this.coursepass.getAllCLS(true);
+                    tmpcmbCLSItems.add(0, new CoursepassLecturerSubject(0L, this.sqlConnectionManager));
+                    tmpcmbCLSItems.get(0).getSubject().setCaption("");
+                    cmbCLS.getItems().setAll(tmpcmbCLSItems);
+                    cmbCLS.setValue(this.getCLSFromArrayList(tmpcmbCLSItems, this.coursepassLecturerSubject.getPlaceAfterCLS()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 txtShouldHours.setText(this.coursepassLecturerSubject.getShouldHours().toString());
                 chkActive.setSelected(this.coursepass.getActive());
                 placeAfterDay.setValue(this.coursepassLecturerSubject.getPlaceAfterDay());
@@ -375,6 +447,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
             this.coursepassLecturerSubject.setShouldHours(Long.parseLong(txtShouldHours.getText()));
             this.coursepassLecturerSubject.setActive(chkActive.isSelected());
             this.coursepassLecturerSubject.setPlaceAfterDay(placeAfterDay.getValue());
+            this.coursepassLecturerSubject.setPlaceAfterCLS(cmbCLS.getValue().getId());
             try {
                 this.coursepassLecturerSubject.save();
             } catch (Exception e) {
@@ -397,6 +470,16 @@ public class CoursepassLecturerSubjectController implements Initializable {
             CLSTableview.getItems().setAll(getCLS(!chkToogleCLS.isSelected()));
         });
 
+    }
+
+    private CoursepassLecturerSubject getCLSFromArrayList(ArrayList<CoursepassLecturerSubject> arrCLS, Long clsID) throws SQLException{
+        for (CoursepassLecturerSubject cls : arrCLS) {
+            if(cls.getId() == clsID){
+                return cls;
+            }
+            
+        }
+        return new CoursepassLecturerSubject(0L, sqlConnectionManager);
     }
 
     public ArrayList<CoursepassLecturerSubject> getCLS(Boolean activeState) {

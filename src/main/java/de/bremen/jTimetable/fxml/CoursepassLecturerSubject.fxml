@@ -74,6 +74,10 @@
                 <DatePicker fx:id="placeAfterDay"></DatePicker>
             </HBox>
             <HBox spacing="10.0">
+                <Label text="%cls.editbox.placeAfterCLS"></Label>
+                <ComboBox fx:id="cmbCLS" minWidth="400"></ComboBox>
+            </HBox>
+            <HBox spacing="10.0">
                 <Label text="%cls.editbox.active"></Label>
                 <CheckBox fx:id="chkActive"></CheckBox>
             </HBox>
