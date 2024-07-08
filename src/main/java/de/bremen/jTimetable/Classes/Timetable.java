@@ -482,7 +482,7 @@ public class Timetable {
             targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot(),
                     targetTimetableEntry.isExam());
         } else {
-            throw new Exception("Error Placing Hour");
+            throw new Exception("Error Placing Hour. Target isnt Free " + targetTimetableEntry.getDate() + " " + targetTimetableEntry.getTimeslot() + " " + cls.getSubjectCaption());
         }
         updateCoursePassTimetable();
     }

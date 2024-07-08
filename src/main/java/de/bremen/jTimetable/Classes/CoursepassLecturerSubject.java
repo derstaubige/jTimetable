@@ -33,9 +33,6 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             if (!cls.getRoom().isRoomAvailable(targetDay, targetTimeslot)) {
                 return false;
             }
-            if(timetableEntry.isExam()){
-                return false;
-            }
             if(timetableEntry.getBlockingFreetext() != null){
                 return false;
             }

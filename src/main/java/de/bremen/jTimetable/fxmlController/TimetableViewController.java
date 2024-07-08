@@ -235,18 +235,18 @@ public class TimetableViewController implements Initializable {
                             try {
                                 timetable.addSingleHour(cls,
                                         targetTimetableEntry);
+                                // update visuals
+                                Integer TargetRow = GridPane.getRowIndex(target);
+                                Integer TargetCol = GridPane.getColumnIndex(target);
+                                grdpn_TimetableView.getChildren().remove(target);
+                                grdpn_TimetableView
+                                        .add(new JavaFXTimetableHourText(cls,
+                                                targetTimetableEntry, getSqlConnectionManager()),
+                                                TargetCol, TargetRow);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
-                            // update visuals
-                            Integer TargetRow = GridPane.getRowIndex(target);
-                            Integer TargetCol = GridPane.getColumnIndex(target);
-                            grdpn_TimetableView.getChildren().remove(target);
-                            grdpn_TimetableView
-                                    .add(new JavaFXTimetableHourText(cls,
-                                            targetTimetableEntry, getSqlConnectionManager()),
-                                            TargetCol, TargetRow);
                             updateEditboxItems();
                         }
                         dragEvent.consume();
@@ -328,7 +328,8 @@ public class TimetableViewController implements Initializable {
 
             TextField blockFreetextText = new TextField();
 
-            Label blockFreetextFromLabel = new Label(resourceBundle.getString("timetableview.blockFreetext.from")+ ": ");
+            Label blockFreetextFromLabel = new Label(
+                    resourceBundle.getString("timetableview.blockFreetext.from") + ": ");
             DatePicker blockFreetextFrom = new DatePicker();
             Label blockFreetextTillLabel = new Label(resourceBundle.getString("timetableview.blockFreetext.till"));
             DatePicker blockFreetextTill = new DatePicker();
@@ -341,12 +342,13 @@ public class TimetableViewController implements Initializable {
                     String freeText = blockFreetextText.getText().trim();
                     LocalDate from = blockFreetextFrom.getValue();
                     LocalDate till = blockFreetextTill.getValue();
-                    
+
                     if (from.compareTo(till) <= 0) {
                         try {
                             this.timetable.setBlockingFreetext(from, till, freeText);
                             Alert alert = new Alert(AlertType.CONFIRMATION);
-                            alert.setContentText(resourceBundle.getString("coursepass.inittimetable.successmessage")+ ": ");
+                            alert.setContentText(
+                                    resourceBundle.getString("coursepass.inittimetable.successmessage") + ": ");
                             alert.show();
                             this.reloadWindow(action);
                         } catch (Exception e) {
@@ -363,7 +365,8 @@ public class TimetableViewController implements Initializable {
 
             });
 
-            HBox blockFreetextDatePickerHBox = new HBox(blockFreetextFromLabel, blockFreetextFrom, blockFreetextTillLabel, blockFreetextTill, blockFreetextSave);
+            HBox blockFreetextDatePickerHBox = new HBox(blockFreetextFromLabel, blockFreetextFrom,
+                    blockFreetextTillLabel, blockFreetextTill, blockFreetextSave);
             blockFreetextDatePickerHBox.setSpacing(5.0);
 
             VBox blockFreetextVBox = new VBox(blockFreetextLabel, blockFreetextText, blockFreetextDatePickerHBox);
@@ -599,7 +602,7 @@ public class TimetableViewController implements Initializable {
 
             // Check for lectruer Blocked
             Boolean givingLecturerBlocked = false;
-            if(givingLecturer.getId() != checkingTimetableHourText.getCoursepassLecturerSubject().getLecturerID()){
+            if (givingLecturer.getId() != checkingTimetableHourText.getCoursepassLecturerSubject().getLecturerID()) {
                 try {
                     if (Lecturer.checkLecturerAvailability(givingLecturer.getId(), dateToCheck, timeslotToCheck,
                             sqlConnectionManager) == false) {
@@ -610,9 +613,8 @@ public class TimetableViewController implements Initializable {
                 }
             }
 
-            
             Boolean givingRoomBlocked = false;
-            if(givingRoom.getId() != checkingTimetableHourText.getCoursepassLecturerSubject().getRoom().getId()){
+            if (givingRoom.getId() != checkingTimetableHourText.getCoursepassLecturerSubject().getRoom().getId()) {
                 if (givingRoom.isRoomAvailable(dateToCheck, timeslotToCheck) == false) {
                     givingRoomBlocked = true;
                 }
@@ -669,9 +671,10 @@ public class TimetableViewController implements Initializable {
             CoursepassLecturerSubject tmpCoursepassLecturerSubject = checkingTimetableHourText
                     .getCoursepassLecturerSubject();
 
-            // Check if givingLectruer is Blocked, if both lectruer are the same we can safely assume they are exchangable
+            // Check if givingLectruer is Blocked, if both lectruer are the same we can
+            // safely assume they are exchangable
             Boolean givingLecturerBlocked = false;
-            if(givingLecturer.getId() != checkingTimetableHourText.getCoursepassLecturerSubject().getLecturerID()){
+            if (givingLecturer.getId() != checkingTimetableHourText.getCoursepassLecturerSubject().getLecturerID()) {
                 if (givingLecturer.checkifLecturerisBlocked(checkingTimetableHourText.getDay(),
                         checkingTimetableHourText.getTimeslot())) {
                     givingLecturerBlocked = true;
@@ -683,7 +686,7 @@ public class TimetableViewController implements Initializable {
             Boolean givingRoomBlocked = false;
             Boolean targetRoomBlocked = false;
             // if both rooms are the same we can asume they are exchangable
-            if(targetRoom.getId() != givingRoom.getId()){
+            if (targetRoom.getId() != givingRoom.getId()) {
                 if (givingRoom.isRoomAvailable(checkingTimetableHourText.getDay(),
                         checkingTimetableHourText.getTimeslot()) == false) {
                     givingRoomBlocked = true;
