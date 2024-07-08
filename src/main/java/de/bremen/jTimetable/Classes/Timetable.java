@@ -671,6 +671,7 @@ public class Timetable {
                             getSqlConnectionManager()));
                 }
                 tmpTimetableDay.setArrayTimetableHours(tmpArrayList);
+                this.arrayTimetableDays.add(tmpTimetableDay);
             }
         }
 
