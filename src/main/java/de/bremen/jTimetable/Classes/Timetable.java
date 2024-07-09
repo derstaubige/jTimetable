@@ -215,14 +215,8 @@ public class Timetable {
         TimetableDistributeStack timetableDistributeStack = new TimetableDistributeStack(coursepass, sqlConnectionManager);
 
         this.coursepass.updateCoursePassLecturerSubjects();
-        ArrayList<CoursepassLecturerSubject> clsToAddArrayList = new ArrayList<CoursepassLecturerSubject>();
-        for (CoursepassLecturerSubject cls : this.coursepass.getArrayCoursePassLecturerSubject()) {
-            if (cls.getUnplanedHours() > 0) {
-                clsToAddArrayList.add(cls);
-            }
-        }
 
-        if (clsToAddArrayList.size() > 0) {
+        if (timetableDistributeStack.size() > 0) {
             while (maxTimetableSlotsUsedForInitialTimetable < getMaxTimeslots()) {
 
                 // Loop through the Timetable and Check all Timeslots for Freetime
@@ -233,7 +227,8 @@ public class Timetable {
                                 && timetableHour.getTimeslot() <= maxTimetableSlotsUsedForInitialTimetable) {
                             // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
                             // here
-                            for (CoursepassLecturerSubject cls : clsToAddArrayList) {
+                            for (TimetableDistributeStackItem stackItem : timetableDistributeStack.getArraylist()) {
+                                CoursepassLecturerSubject cls = stackItem.getArrayListItems().get(0);
                                 if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
                                         timetableHour.getTimeslot(), this.getSqlConnectionManager())
                                         && timetableDay.getDate().isAfter(cls.getPlaceAfterDay())) {
@@ -253,8 +248,12 @@ public class Timetable {
                                     cls.updateallHours();
                                     if (cls.getUnplanedHours() <= 0) {
                                         // no unplaned hours left, remove this cls from clsToAddArrayList
-                                        clsToAddArrayList.remove(cls);
+                                        stackItem.getArrayListItems().remove(cls);
+                                        if(stackItem.getArrayListItems().size() <= 0){
+                                            timetableDistributeStack.getArraylist().remove(stackItem);
+                                        }
                                     }
+                                    timetableDistributeStack.sortStackUnplanedHours();
                                     break;
                                 }
                             }

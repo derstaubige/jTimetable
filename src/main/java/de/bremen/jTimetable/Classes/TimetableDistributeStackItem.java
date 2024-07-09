@@ -17,11 +17,12 @@ public class TimetableDistributeStackItem {
     public void updateUnplanedHours(){
         unplanedHours = 0L;
         for (CoursepassLecturerSubject cls : arrayListItems) {
+            cls.updateallHours();
             unplanedHours += cls.getUnplanedHours();
         }
     }
 
-    public long getUnplanedHours(){
+    public Long getUnplanedHours(){
         return this.unplanedHours;
     }
 
