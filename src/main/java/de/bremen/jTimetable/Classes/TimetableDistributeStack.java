@@ -16,6 +16,10 @@ public class TimetableDistributeStack {
         this.load();
     }
 
+    public void sortStackUnplanedHours(){
+        
+    }
+
     private void load(){
         for (CoursepassLecturerSubject cls : this.coursePass.getArrayCoursePassLecturerSubject()) {
             if (cls.getUnplanedHours() > 0) {
@@ -25,9 +29,10 @@ public class TimetableDistributeStack {
         
         // check if some cls should start after another cls, load cls that should be put after another cls
         HashMap<Long, CoursepassLecturerSubject> hashMap = new HashMap<Long, CoursepassLecturerSubject>();
-        for (TimetableDistributeStackItem timetableDistributeStackItem : arraylist) {
+        for (Integer i = arraylist.size() - 1; i>= 0; i--) {
+            TimetableDistributeStackItem timetableDistributeStackItem = arraylist.get(i);
             if(timetableDistributeStackItem.getArrayListItems().get(0).getPlaceAfterCLS() != 0L){
-                hashMap.put(timetableDistributeStackItem.getArrayListItems().get(0).getId(), timetableDistributeStackItem.getArrayListItems().get(0));
+                hashMap.put(timetableDistributeStackItem.getArrayListItems().get(0).getPlaceAfterCLS(), timetableDistributeStackItem.getArrayListItems().get(0));
                 arraylist.remove(timetableDistributeStackItem);
             }
         }
@@ -38,9 +43,10 @@ public class TimetableDistributeStack {
                 for (CoursepassLecturerSubject cls : timetableDistributeStackItem.getArrayListItems()) {
                     if(hashMap.containsKey(cls.getId())){
                         Integer tmpIdx = timetableDistributeStackItem.getArrayListItems().indexOf(cls);
-                        timetableDistributeStackItem.addCLS(cls, tmpIdx + 1);
+                        timetableDistributeStackItem.addCLS(hashMap.get(cls.getId()), tmpIdx + 1);
                         hashMap.remove(cls.getId());
                         timetableDistributeStackItem.updateUnplanedHours();
+                        break;
                     }
                 }
             }
