@@ -136,17 +136,15 @@ public class CheckTimetable {
                 cls.setShouldHours(5L);
                 cls.save();
             }
-
-            Resourcemanager resourcemanager = new Resourcemanager(sqlConnectionManager);
-            resourcemanager.generateInitialTimetable(new CoursePass(1L, sqlConnectionManager));
-            resourcemanager.generateInitialTimetable(new CoursePass(2L, sqlConnectionManager));
-            resourcemanager.generateInitialTimetable(new CoursePass(3L, sqlConnectionManager));
-
+            
             Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+            timetable1.distributeUnplanedHours();
             ArrayList<TimetableDay> listTimetableHours1 = timetable1.getArrayTimetableDays();
             Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+            timetable2.distributeUnplanedHours();
             ArrayList<TimetableDay> listTimetableHours2 = timetable2.getArrayTimetableDays();
             Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+            timetable3.distributeUnplanedHours();
             ArrayList<TimetableDay> listTimetableHours3 = timetable3.getArrayTimetableDays();
 
             assertNotEquals(0, timetable1.getArrayTimetableDays().size());

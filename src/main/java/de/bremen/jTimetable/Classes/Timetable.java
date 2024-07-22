@@ -1,7 +1,6 @@
 package de.bremen.jTimetable.Classes;
 
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
+
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -11,41 +10,30 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.MonthDay;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
-import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.stream.IntStream;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
 import org.dhatim.fastexcel.BorderSide;
 import org.dhatim.fastexcel.Workbook;
 import org.dhatim.fastexcel.Worksheet;
-
-import javafx.scene.text.Text;
 
 /**
  * Class represents all timetable entries for a coursePass.
@@ -634,8 +622,7 @@ public class Timetable {
         // if we haven't added CoursePassLecturerSubjects for this CoursePass yet,
         // we should return an empty array to display
         if (this.arrayTimetableDays.size() == 0) {
-            Resourcemanager resourcemanager = new Resourcemanager(getSqlConnectionManager());
-            result = resourcemanager.getWorkingDaysBetweenTwoDates(coursePass.getStart(), coursePass.getEnd());
+            result = getWorkingDaysBetweenTwoDates(coursePass.getStart(), coursePass.getEnd());
             for (TimetableDay tmpTimetableDay : result) {
 
                 ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();

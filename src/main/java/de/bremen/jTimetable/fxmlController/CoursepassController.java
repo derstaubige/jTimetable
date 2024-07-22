@@ -358,10 +358,10 @@ public class CoursepassController implements Initializable {
             if (selectedItems.size() > 0) {
                 this.coursepass = selectedItems.get(0);
 
-                Resourcemanager resourcemanager = new Resourcemanager(getSqlConnectionManager());
+                Timetable timetable = new Timetable(this.coursepass, this.sqlConnectionManager, resources);
                 try {
                     this.coursepass.updateCoursePassLecturerSubjects();
-                    resourcemanager.generateInitialTimetable(this.coursepass);
+                    timetable.distributeUnplanedHours();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
