@@ -39,6 +39,10 @@ public class CheckTimetable {
         }
     }
 
+    /**
+     * Creates Testdatabase with 3 Random Timetables, 3 Lecturers, 3 Rooms, 3 Subjects, 3 Courses of Study
+     * , 3 Coursepasses and 9 CoursepassLecturerSubjects, 3 per Timetable/Coursepass
+     */
     @Test
     @Order(1)
     void setupDatabase() {
@@ -177,6 +181,74 @@ public class CheckTimetable {
 
     @Test
     @Order(3)
+    void checkIfDeletingTimetableWorks() {
+        Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+        Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+
+        timetable1.deleteTimetable();
+        timetable2.deleteTimetable();
+
+        assertEquals(0, timetable1.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0).getCoursepassLecturerSubject().getId());
+        assertEquals(0, timetable2.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0).getCoursepassLecturerSubject().getId());
+
+        // check if ressourcesblocked are also deleted
+        assertThrows(RuntimeException.class, () -> {
+            new ResourcesBlocked(1L, sqlConnectionManager);
+        }); // This is the first Lecturer for CP1
+        assertThrows(RuntimeException.class, () -> {
+            new ResourcesBlocked(2L, sqlConnectionManager);
+        }); // This is the first Room for CP1
+
+        assertThrows(RuntimeException.class, () -> {
+            new ResourcesBlocked(31L, sqlConnectionManager);
+        }); // This is the first Lecturer for CP2
+        assertThrows(RuntimeException.class, () -> {
+            new ResourcesBlocked(32L, sqlConnectionManager);
+        }); // This is the first Room for CP2
+
+    }
+
+    @Test
+    @Order(4)
+    void createKnownState(){
+        // 1 Week 01.04.2024 - 05.04.2024
+        // 2 Week 08.04.2024 - 12.04.2024
+        // CoursePass 1 L3R1, L2R2, L1R3
+        // CoursePass 2 L1R3, L2R2, L3R1
+        // CoursePass 3 L3R3, L2R2, L1R1
+        try {
+
+            CoursePass coursePass1 = new CoursePass(1, sqlConnectionManager);
+            CoursePass coursePass2 = new CoursePass(1, sqlConnectionManager);
+            CoursePass coursePass3 = new CoursePass(1, sqlConnectionManager);
+
+            Timetable timetable1 = new Timetable(coursePass1, sqlConnectionManager, resourceBundle);
+            Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager, resourceBundle);
+            Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager, resourceBundle);
+
+            CoursepassLecturerSubject cls1L3R1 = new CoursepassLecturerSubject(1L, sqlConnectionManager, coursePass1);
+            CoursepassLecturerSubject cls1L2R2 = new CoursepassLecturerSubject(2L, sqlConnectionManager, coursePass1);
+            CoursepassLecturerSubject cls1L1R3 = new CoursepassLecturerSubject(3L, sqlConnectionManager, coursePass1);
+        
+            CoursepassLecturerSubject cls2L1R3 = new CoursepassLecturerSubject(4L, sqlConnectionManager, coursePass2);
+            CoursepassLecturerSubject cls2L2R2 = new CoursepassLecturerSubject(5L, sqlConnectionManager, coursePass2);
+            CoursepassLecturerSubject cls2L3R1 = new CoursepassLecturerSubject(6L, sqlConnectionManager, coursePass2);
+        
+            CoursepassLecturerSubject cls3L3R3 = new CoursepassLecturerSubject(7L, sqlConnectionManager, coursePass3);
+            CoursepassLecturerSubject cls3L2R2 = new CoursepassLecturerSubject(8L, sqlConnectionManager, coursePass3);
+            CoursepassLecturerSubject cls3L1R1 = new CoursepassLecturerSubject(9L, sqlConnectionManager, coursePass3);
+
+            // timetable1.addSingleHour(cls3L1R1, new TimetableEntry(coursePass1, , null, sqlConnectionManager));
+            
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    @Order(4)
     void moveHourFromTimetableCP3Day1Timeslot2L2R2toDay1Timeslot0() {
         try {
 
@@ -312,37 +384,7 @@ public class CheckTimetable {
         }
 
     }
-
-    @Test
-    @Order(6)
-    void checkIfDeletingTimetableWorks() {
-        Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
-        Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
-
-        timetable1.deleteTimetable();
-        timetable2.deleteTimetable();
-
-        assertEquals(0, timetable1.getArrayTimetableDays().size());
-        assertEquals(0, timetable2.getArrayTimetableDays().size());
-
-        // check if ressourcesblocked are also deleted
-        assertThrows(RuntimeException.class, () -> {
-            new ResourcesBlocked(1L, sqlConnectionManager);
-        }); // This is the first Lecturer for CP1
-        assertThrows(RuntimeException.class, () -> {
-            new ResourcesBlocked(2L, sqlConnectionManager);
-        }); // This is the first Room for CP1
-
-        assertThrows(RuntimeException.class, () -> {
-            new ResourcesBlocked(31L, sqlConnectionManager);
-        }); // This is the first Lecturer for CP2
-        assertThrows(RuntimeException.class, () -> {
-            new ResourcesBlocked(32L, sqlConnectionManager);
-        }); // This is the first Room for CP2
-
-    }
-
-    @Test
+        @Test
     @Order(7)
     void checkIfDistributingRemainingHoursWorks() {
         Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager, resourceBundle);

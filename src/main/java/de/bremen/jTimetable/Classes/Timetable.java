@@ -538,6 +538,14 @@ public class Timetable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        //reload Timetable Object
+        try {
+            getTimetable(coursepass);            
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
     }
 
     /**
