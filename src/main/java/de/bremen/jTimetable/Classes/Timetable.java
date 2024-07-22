@@ -577,6 +577,22 @@ public class Timetable {
         return coursepass;
     }
 
+    public boolean isHoliday(LocalDate date) {
+        return getHolydaysMap(date.getYear()).containsKey(date);
+    }
+
+    public Boolean getIsLecturer() {
+        return isLecturer;
+    }
+
+    public void setIsLecturer(Boolean isLecturer) {
+        this.isLecturer = isLecturer;
+    }
+
+    public void setMaxTimeslots(Integer maxTimeslots) {
+        this.maxTimeslots = maxTimeslots;
+    }
+
     /**
      * Runs database query to get resultSet with all timetable entries for given
      * lecturer. The resultSet will
@@ -612,30 +628,10 @@ public class Timetable {
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<>();
         SQLValues.add(new SQLValueLong(coursePass.getId()));
         // Create new Connection to database
-
         ResultSet rs = sqlConnectionManager.select(
                 "Select * From T_TIMETABLES where REFCOURSEPASS=? ORDER BY TIMETABLEDAY, TIMESLOT ASC;", SQLValues);
-        ArrayList<TimetableDay> result = new ArrayList<>();
-
+        
         loadTimetableFromResultSet(rs);
-
-        // if we haven't added CoursePassLecturerSubjects for this CoursePass yet,
-        // we should return an empty array to display
-        if (this.arrayTimetableDays.size() == 0) {
-            result = getWorkingDaysBetweenTwoDates(coursePass.getStart(), coursePass.getEnd());
-            for (TimetableDay tmpTimetableDay : result) {
-
-                ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
-                Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
-                while (timeslotIterator.hasNext()) {
-                    tmpArrayList.add(new TimetableHour(timeslotIterator.next(),
-                            new CoursepassLecturerSubject(0L, getSqlConnectionManager(), this.coursepass),
-                            getSqlConnectionManager()));
-                }
-                tmpTimetableDay.setArrayTimetableHours(tmpArrayList);
-                this.arrayTimetableDays.add(tmpTimetableDay);
-            }
-        }
 
         // grap all lecturers that are currently in this timetable
         this.lecturers = getAllLecturers();
@@ -700,7 +696,7 @@ public class Timetable {
     private void loadTimetableFromResultSet(ResultSet resultSet) throws SQLException {
         this.arrayTimetableDays = getWorkingDaysBetweenTwoDates(this.coursepass.getStart(), this.coursepass.getEnd());
 
-        // loop through all days and add freetimes in slots that dont have subjects jet
+        // loop through all days and add freetimes in slots to create a blank timetable
         for (TimetableDay tmpTimetableday : this.arrayTimetableDays) {
             // loop through all possible timeslots and check if there is already a subject
             Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
@@ -718,6 +714,8 @@ public class Timetable {
 
             }
         }
+
+        // add cls from database to blank timetable
         while (resultSet.next()) {
 
             TimetableDay tmpDayObject = null;
@@ -848,22 +846,6 @@ public class Timetable {
         holidays.put(MonthDay.parse("--12-26").atYear(year), "2. Weihnachtstag");
         holidays.put(MonthDay.parse("--12-31").atYear(year), "Sylvester");
         return holidays;
-    }
-
-    public boolean isHoliday(LocalDate date) {
-        return getHolydaysMap(date.getYear()).containsKey(date);
-    }
-
-    public Boolean getIsLecturer() {
-        return isLecturer;
-    }
-
-    public void setIsLecturer(Boolean isLecturer) {
-        this.isLecturer = isLecturer;
-    }
-
-    public void setMaxTimeslots(Integer maxTimeslots) {
-        this.maxTimeslots = maxTimeslots;
     }
 
 }
