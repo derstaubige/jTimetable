@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
+import java.util.stream.IntStream;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLConnectionManagerValues;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.SQLValueDate;
@@ -54,7 +56,7 @@ public class TimetableDay {
         this.arrayTimetableHours = new ArrayList<>(this.timeslots);
         while (this.arrayTimetableHours.size() < this.timeslots) {
             try {
-                this.arrayTimetableHours.add(new TimetableHour(0,
+                this.arrayTimetableHours.add(new TimetableHour(this.arrayTimetableHours.size(),
                         new CoursepassLecturerSubject(0L, sqlConnectionManager), sqlConnectionManager));
             } catch (Exception e) {
                 e.printStackTrace();

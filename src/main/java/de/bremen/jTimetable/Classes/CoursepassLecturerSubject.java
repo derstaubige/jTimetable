@@ -19,6 +19,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     public Long examHours = 0L;
     Boolean active;
     private LocalDate placeAfterDay = LocalDate.of(1970,1,1);
+    private Long placeAfterCLS = 0L;
     private SQLConnectionManager sqlConnectionManager;
 
     public static boolean isFreeTarget(CoursepassLecturerSubject cls, LocalDate targetDay, int targetTimeslot,
@@ -130,6 +131,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             if(rs.getDate("placeAfterDay") != null){
                 this.placeAfterDay = rs.getDate("placeAfterDay").toLocalDate();
             }
+            this.placeAfterCLS = rs.getLong("placeAfterCLS");
 
             this.updateIsHours();
             this.updatePlanedHours();
@@ -258,11 +260,12 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             SQLValues.add(new SQLValueDate(placeAfterDay));
 
         }
+        SQLValues.add(new SQLValueLong(this.placeAfterCLS));
 
         if (this.id == 0) {
             // its a new object, we have to insert it
             ResultSet rs = sqlConnectionManager.execute(
-                    "Insert Into `T_CoursepassesLecturerSubject` (`refCoursePassID`, `refLecturerID`, `refSubjectID`,`REFROOMID`, `shouldhours`, `ACTIVE`, `placeAfterDay`) values (?, ?, ?, ?, ?, ?, ?)",
+                    "Insert Into `T_CoursepassesLecturerSubject` (`refCoursePassID`, `refLecturerID`, `refSubjectID`,`REFROOMID`, `shouldhours`, `ACTIVE`, `placeAfterDay`, `placeAfterCLS`) values (?, ?, ?, ?, ?, ?, ?, ?)",
                     SQLValues);
             rs.first();
             this.id = rs.getLong(1);
@@ -270,7 +273,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
             sqlConnectionManager.execute(
-                    "update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, `REFROOMID` = ?, `shouldhours` = ?, `ACTIVE` = ?, `placeAfterDay` = ? where `id` = ?;",
+                    "update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, `REFROOMID` = ?, `shouldhours` = ?, `ACTIVE` = ?, `placeAfterDay` = ?,  `placeAfterCLS` = ? where `id` = ?;",
                     SQLValues);
         }
         // sqlConnectionManager.close();
@@ -396,6 +399,14 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     public void setPlaceAfterDay(LocalDate placeAfterDay) {
         this.placeAfterDay = placeAfterDay;
+    }
+
+    public Long getPlaceAfterCLS() {
+        return placeAfterCLS;
+    }
+
+    public void setPlaceAfterCLS(Long placeAfterCLS) {
+        this.placeAfterCLS = placeAfterCLS;
     }
 
 }
