@@ -6,6 +6,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,6 +20,8 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -27,9 +30,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.stream.IntStream;
@@ -211,8 +216,8 @@ public class Timetable {
         Integer maxTimetableSlotsUsedForInitialTimetable = Integer
                 .parseInt(properties.getProperty("maxTimetableSlotsUsedForInitialTimetable")) - 1;
 
-
-        TimetableDistributeStack timetableDistributeStack = new TimetableDistributeStack(coursepass, sqlConnectionManager);
+        TimetableDistributeStack timetableDistributeStack = new TimetableDistributeStack(coursepass,
+                sqlConnectionManager);
 
         this.coursepass.updateCoursePassLecturerSubjects();
 
@@ -249,7 +254,7 @@ public class Timetable {
                                     if (cls.getUnplanedHours() <= 0) {
                                         // no unplaned hours left, remove this cls from clsToAddArrayList
                                         stackItem.getArrayListItems().remove(cls);
-                                        if(stackItem.getArrayListItems().size() <= 0){
+                                        if (stackItem.getArrayListItems().size() <= 0) {
                                             timetableDistributeStack.getArraylist().remove(stackItem);
                                         }
                                     }
@@ -484,7 +489,8 @@ public class Timetable {
             targetTimetableEntry.update(cls, targetTimetableEntry.getDate(), targetTimetableEntry.getTimeslot(),
                     targetTimetableEntry.isExam());
         } else {
-            throw new Exception("Error Placing Hour. Target isnt Free " + targetTimetableEntry.getDate() + " " + targetTimetableEntry.getTimeslot() + " " + cls.getSubjectCaption());
+            throw new Exception("Error Placing Hour. Target isnt Free " + targetTimetableEntry.getDate() + " "
+                    + targetTimetableEntry.getTimeslot() + " " + cls.getSubjectCaption());
         }
         updateCoursePassTimetable();
     }
@@ -603,39 +609,6 @@ public class Timetable {
 
         loadTimetableFromResultSet(rs);
 
-        // if we haven't added CoursePassLecturerSubjects for this CoursePass yet,
-        // we should return an empty array to display
-        if (this.arrayTimetableDays.size() == 0) {
-            TimetableDay tmpTimetableDay = new TimetableDay(LocalDate.now(), getSqlConnectionManager());
-            ArrayList<TimetableHour> tmpArrayList = new ArrayList<>();
-            Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
-            while (timeslotIterator.hasNext()) {
-                tmpArrayList.add(new TimetableHour(timeslotIterator.next(),
-                        new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
-            }
-            this.arrayTimetableDays.add(tmpTimetableDay);
-        }
-
-        // loop through all days and add freetimes in slots that dont have subjects jet
-        for (TimetableDay tmpTimetableday : this.arrayTimetableDays) {
-            // loop through all possible timeslots and check if there is already a subject
-            Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
-            while (timeslotIterator.hasNext()) {
-                Integer tmpTimeslot = timeslotIterator.next();
-                while (tmpTimetableday.getArrayTimetableHours().size() <= tmpTimeslot) {
-                    tmpTimetableday.getArrayTimetableHours().add(tmpTimetableday.getArrayTimetableHours().size(),
-                            new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()),
-                                    getSqlConnectionManager()));
-                }
-                // if this timeslot is null we add a freetime
-                if (tmpTimetableday.getArrayTimetableHours().get(tmpTimeslot) == null) {
-                    tmpTimetableday.getArrayTimetableHours().set(tmpTimeslot,
-                            new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()),
-                                    getSqlConnectionManager()));
-                }
-            }
-        }
-
         // sqlConnectionManager.close();
     }
 
@@ -738,8 +711,26 @@ public class Timetable {
      * @param resultSet contains timetable entries from a database
      */
     private void loadTimetableFromResultSet(ResultSet resultSet) throws SQLException {
-        this.arrayTimetableDays = new ArrayList<>();
+        this.arrayTimetableDays = getWorkingDaysBetweenTwoDates(this.coursepass.getStart(), this.coursepass.getEnd());
 
+        // loop through all days and add freetimes in slots that dont have subjects jet
+        for (TimetableDay tmpTimetableday : this.arrayTimetableDays) {
+            // loop through all possible timeslots and check if there is already a subject
+            Iterator<Integer> timeslotIterator = IntStream.range(0, maxTimeslots).boxed().iterator();
+            while (timeslotIterator.hasNext()) {
+                Integer tmpTimeslot = timeslotIterator.next();
+                while (tmpTimetableday.getArrayTimetableHours().size() <= tmpTimeslot) {
+                    tmpTimetableday.getArrayTimetableHours().add(tmpTimetableday.getArrayTimetableHours().size(),
+                            new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()),
+                                    getSqlConnectionManager()));
+                }
+
+                tmpTimetableday.getArrayTimetableHours().set(tmpTimeslot,
+                        new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()),
+                                getSqlConnectionManager()));
+
+            }
+        }
         while (resultSet.next()) {
 
             TimetableDay tmpDayObject = null;
@@ -785,6 +776,95 @@ public class Timetable {
             }
 
         }
+    }
+
+    private ArrayList<TimetableDay> getWorkingDaysBetweenTwoDates(LocalDate localstartDate,
+            LocalDate localendDate) {
+        // https://stackoverflow.com/questions/4600034/calculate-number-of-weekdays-between-two-dates-in-java
+
+        // https://schegge.de/2020/01/kalenderspielereien-mit-java/#:~:text=Feiertage%20mit%20einem%20festen%20Datum,%2D%2D01%2D01%22).
+
+        ArrayList<TimetableDay> arrayTimetabledays = new ArrayList<>();
+        // default time zone
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+
+        // local date + atStartOfDay() + default time zone + toInstant() = Date
+        Date startDate = Date.from(localstartDate.atStartOfDay(defaultZoneId).toInstant());
+        Date endDate = Date.from(localendDate.atStartOfDay(defaultZoneId).toInstant());
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(startDate);
+
+        Calendar endCal = Calendar.getInstance();
+        endCal.setTime(endDate);
+
+        // int workDays = 0;
+
+        // Return 0 if start and end are the same
+        if (startCal.getTimeInMillis() == endCal.getTimeInMillis()) {
+            return arrayTimetabledays;
+        }
+
+        if (startCal.getTimeInMillis() > endCal.getTimeInMillis()) {
+            startCal.setTime(endDate);
+            endCal.setTime(startDate);
+        }
+
+        do {
+            // excluding start date
+
+            if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY &&
+                    startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY &&
+                    !this.isHoliday(LocalDateTime.ofInstant(startCal.toInstant(), defaultZoneId)
+                            .toLocalDate())) {
+
+                arrayTimetabledays.add(new TimetableDay(
+                        LocalDateTime.ofInstant(startCal.toInstant(), defaultZoneId)
+                                .toLocalDate(),
+                        4, getSqlConnectionManager()));
+                // ++workDays;
+            }
+            startCal.add(Calendar.DAY_OF_MONTH, 1);
+        } while (startCal.getTimeInMillis() <= endCal.getTimeInMillis()); // excluding end date
+
+        return arrayTimetabledays;
+    }
+
+    private LocalDate getEasterDate(int year) {
+        int a = year % 19;
+        int b = year % 4;
+        int c = year % 7;
+        int H1 = year / 100;
+        int H2 = year / 400;
+        int N = 4 + H1 - H2;
+        int M = 15 + H1 - H2 - (8 * H1 + 13) / 25;
+        int d = (19 * a + M) % 30;
+        int e = (2 * b + 4 * c + 6 * d + N) % 7;
+        int f = (c + 11 * d + 22 * e) / 451;
+        int tage = 22 + d + e - 7 * f;
+        return LocalDate.of(year, 3, 1).plus(tage - 1, DAYS);
+    }
+
+    private Map<LocalDate, String> getHolydaysMap(int year) {
+        Map<LocalDate, String> holidays = new HashMap<>();
+        holidays.put(MonthDay.parse("--01-01").atYear(year), "Neujahr");
+        holidays.put(getEasterDate(year).plus(-2, DAYS), "Karfreitag");
+        holidays.put(getEasterDate(year).plus(0, DAYS), "Ostersonntag");
+        holidays.put(getEasterDate(year).plus(1, DAYS), "Ostermonntag");
+        holidays.put(getEasterDate(year).plus(39, DAYS), "Himmelfahrt");
+        holidays.put(getEasterDate(year).plus(49, DAYS), "Pfingstsonntag");
+        holidays.put(getEasterDate(year).plus(50, DAYS), "Pfingstmontag");
+        holidays.put(MonthDay.parse("--05-01").atYear(year), "Tag der Arbeit");
+        holidays.put(MonthDay.parse("--10-03").atYear(year), "Tag der Einheit");
+        holidays.put(MonthDay.parse("--10-31").atYear(year), "Reformationstag");
+        holidays.put(MonthDay.parse("--12-24").atYear(year), "Heiligabend");
+        holidays.put(MonthDay.parse("--12-25").atYear(year), "1. Weihnachtstag");
+        holidays.put(MonthDay.parse("--12-26").atYear(year), "2. Weihnachtstag");
+        holidays.put(MonthDay.parse("--12-31").atYear(year), "Sylvester");
+        return holidays;
+    }
+
+    public boolean isHoliday(LocalDate date) {
+        return getHolydaysMap(date.getYear()).containsKey(date);
     }
 
     public Boolean getIsLecturer() {
