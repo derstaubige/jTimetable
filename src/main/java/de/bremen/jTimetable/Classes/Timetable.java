@@ -185,7 +185,7 @@ public class Timetable {
         for (Integer i = startIndex; i <= endIndex; i++) {
             for (TimetableHour timetableHour : arrayTimetableDays.get(i).getArrayTimetableHours()) {
                 TimetableEntry timetableEntry = new TimetableEntry(
-                        timetableHour.getCoursepassLecturerSubject(),
+                        coursepass,
                         arrayTimetableDays.get(i).getDate(),
                         timetableHour.getTimeslot(), sqlConnectionManager);
                 timetableEntry.setBlockingFreetext(text);
@@ -536,6 +536,14 @@ public class Timetable {
             sqlConnectionManager.execute("DELETE FROM T_Timetables where REFcoursepass = ?", SQLValues);
             updateCoursePassTimetable();
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //reload Timetable Object
+        try {
+            getTimetable(coursepass);            
+        } catch (Exception e) {
+            // TODO: handle exception
             e.printStackTrace();
         }
     }
