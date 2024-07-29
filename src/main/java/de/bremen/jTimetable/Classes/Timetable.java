@@ -222,6 +222,13 @@ public class Timetable {
                             // here
                             for (TimetableDistributeStackItem stackItem : timetableDistributeStack.getArraylist()) {
                                 CoursepassLecturerSubject cls = stackItem.getArrayListItems().get(0);
+
+                                // check cls distribution methode
+                                
+                                // double hours - two hours should be placed after another
+                                // full day - place only a full day of hours
+
+                                // normal - place a single hour
                                 if (CoursepassLecturerSubject.isFreeTarget(cls, timetableDay.getDate(),
                                         timetableHour.getTimeslot(), this.getSqlConnectionManager())
                                         && timetableDay.getDate().isAfter(cls.getPlaceAfterDay())) {

@@ -1,19 +1,15 @@
 package de.bremen.jTimetable.Classes;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import org.h2.jdbc.JdbcSQLNonTransientException;
 import org.h2.tools.DeleteDbFiles;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,7 +19,7 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 
 @TestMethodOrder(OrderAnnotation.class)
-public class TestCheckTimetable {
+public class TestCaseCheckTimetable {
     private static SQLConnectionManager sqlConnectionManager;
     private static ResourceBundle resourceBundle = ResourceBundle.getBundle("Resources");
 

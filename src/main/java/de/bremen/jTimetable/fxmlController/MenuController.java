@@ -25,40 +25,6 @@ public class MenuController implements Initializable {
 
     ResourceBundle resourceBundle;
 
-    /**
-     * Handle action related to "About" menu item.
-     * TODO item doesn't exist
-     * 
-     * @param event Event on "About" menu item.
-     */
-    @FXML
-    private void handleAboutAction(final ActionEvent event) {
-        provideAboutFunctionality();
-    }
-
-    /**
-     * Handle action related to input (in this case specifically only responds to
-     * keyboard event CTRL-A).
-     *
-     * @param event Input event.
-     */
-    @FXML
-    private void handleKeyInput(final InputEvent event) {
-        if (event instanceof KeyEvent) {
-            final KeyEvent keyEvent = (KeyEvent) event;
-            if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.A) {
-                provideAboutFunctionality();
-            }
-        }
-    }
-
-    /**
-     * Perform functionality associated with "About" menu selection or CTRL-A.
-     */
-    private void provideAboutFunctionality() {
-        // System.out.println("You clicked on About!");
-    }
-
     @Override
     public void initialize(java.net.URL arg0, ResourceBundle arg1) {
         Platform.runLater(() ->{
