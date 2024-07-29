@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
@@ -40,7 +41,8 @@ public class CheckTimetable {
     }
 
     /**
-     * Creates Testdatabase with 3 Random Timetables, 3 Lecturers, 3 Rooms, 3 Subjects, 3 Courses of Study
+     * Creates Testdatabase with 3 Random Timetables, 3 Lecturers, 3 Rooms, 3
+     * Subjects, 3 Courses of Study
      * , 3 Coursepasses and 9 CoursepassLecturerSubjects, 3 per Timetable/Coursepass
      */
     @Test
@@ -140,14 +142,17 @@ public class CheckTimetable {
                 cls.setShouldHours(5L);
                 cls.save();
             }
-            
-            Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+
+            Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager,
+                    resourceBundle);
             timetable1.distributeUnplanedHours();
             ArrayList<TimetableDay> listTimetableHours1 = timetable1.getArrayTimetableDays();
-            Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+            Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager,
+                    resourceBundle);
             timetable2.distributeUnplanedHours();
             ArrayList<TimetableDay> listTimetableHours2 = timetable2.getArrayTimetableDays();
-            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager,
+                    resourceBundle);
             timetable3.distributeUnplanedHours();
             ArrayList<TimetableDay> listTimetableHours3 = timetable3.getArrayTimetableDays();
 
@@ -161,18 +166,20 @@ public class CheckTimetable {
 
     @Test
     @Order(2)
-    void deleteHourFromTimetableCP3Day1Timeslot0() {
+    void deleteHourFromTimetableCP2Day1Timeslot0() {
         try {
 
-            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+            Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager,
+                    resourceBundle);
 
-            timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0).coursepassLecturerSubject.deleteCLS(
-                    timetable3.getArrayTimetableDays().get(0).getDate(),
-                    timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0).getTimeslot());
+            timetable2.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0).coursepassLecturerSubject
+                    .deleteCLS(
+                            timetable2.getArrayTimetableDays().get(0).getDate(),
+                            timetable2.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0).getTimeslot());
 
-            timetable3.updateCoursePassTimetable();
+            timetable2.updateCoursePassTimetable();
 
-            assertEquals(0L, timetable3.getArrayTimetableDays()
+            assertEquals(0L, timetable2.getArrayTimetableDays()
                     .get(0).getArrayTimetableHours().get(0).getCoursepassLecturerSubject().getLecturerID());
         } catch (Exception e) {
             fail(e.getStackTrace().toString());
@@ -182,14 +189,23 @@ public class CheckTimetable {
     @Test
     @Order(3)
     void checkIfDeletingTimetableWorks() {
-        Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
-        Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+        Timetable timetable1 = new Timetable(new CoursePass(1L, sqlConnectionManager), sqlConnectionManager,
+                resourceBundle);
+        Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager,
+                resourceBundle);
+        Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager,
+                resourceBundle);
 
         timetable1.deleteTimetable();
         timetable2.deleteTimetable();
+        timetable3.deleteTimetable();
 
-        assertEquals(0, timetable1.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0).getCoursepassLecturerSubject().getId());
-        assertEquals(0, timetable2.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0).getCoursepassLecturerSubject().getId());
+        assertEquals(0, timetable1.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0)
+                .getCoursepassLecturerSubject().getId());
+        assertEquals(0, timetable2.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0)
+                .getCoursepassLecturerSubject().getId());
+        assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0)
+                .getCoursepassLecturerSubject().getId());
 
         // check if ressourcesblocked are also deleted
         assertThrows(RuntimeException.class, () -> {
@@ -210,8 +226,8 @@ public class CheckTimetable {
 
     @Test
     @Order(4)
-    void createKnownState(){
-        // 1 Week 01.04.2024 - 05.04.2024
+    void createKnownState() {
+        // 1 Week 01.04.2024 - 05.04.2024 , 01.04. is an Holiday
         // 2 Week 08.04.2024 - 12.04.2024
         // CoursePass 1 L3R1, L2R2, L1R3
         // CoursePass 2 L1R3, L2R2, L3R1
@@ -219,8 +235,8 @@ public class CheckTimetable {
         try {
 
             CoursePass coursePass1 = new CoursePass(1, sqlConnectionManager);
-            CoursePass coursePass2 = new CoursePass(1, sqlConnectionManager);
-            CoursePass coursePass3 = new CoursePass(1, sqlConnectionManager);
+            CoursePass coursePass2 = new CoursePass(2, sqlConnectionManager);
+            CoursePass coursePass3 = new CoursePass(3, sqlConnectionManager);
 
             Timetable timetable1 = new Timetable(coursePass1, sqlConnectionManager, resourceBundle);
             Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager, resourceBundle);
@@ -229,39 +245,66 @@ public class CheckTimetable {
             CoursepassLecturerSubject cls1L3R1 = new CoursepassLecturerSubject(1L, sqlConnectionManager, coursePass1);
             CoursepassLecturerSubject cls1L2R2 = new CoursepassLecturerSubject(2L, sqlConnectionManager, coursePass1);
             CoursepassLecturerSubject cls1L1R3 = new CoursepassLecturerSubject(3L, sqlConnectionManager, coursePass1);
-        
+
             CoursepassLecturerSubject cls2L1R3 = new CoursepassLecturerSubject(4L, sqlConnectionManager, coursePass2);
             CoursepassLecturerSubject cls2L2R2 = new CoursepassLecturerSubject(5L, sqlConnectionManager, coursePass2);
             CoursepassLecturerSubject cls2L3R1 = new CoursepassLecturerSubject(6L, sqlConnectionManager, coursePass2);
-        
+
             CoursepassLecturerSubject cls3L3R3 = new CoursepassLecturerSubject(7L, sqlConnectionManager, coursePass3);
             CoursepassLecturerSubject cls3L2R2 = new CoursepassLecturerSubject(8L, sqlConnectionManager, coursePass3);
             CoursepassLecturerSubject cls3L1R1 = new CoursepassLecturerSubject(9L, sqlConnectionManager, coursePass3);
 
-            // timetable1.addSingleHour(cls3L1R1, new TimetableEntry(coursePass1, , null, sqlConnectionManager));
-            
+            timetable1.addSingleHour(cls1L3R1,
+                    new TimetableEntry(coursePass1, LocalDate.of(2024, 04, 04), 0, sqlConnectionManager));
+            timetable1.addSingleHour(cls1L2R2,
+                    new TimetableEntry(coursePass1, LocalDate.of(2024, 04, 04), 1, sqlConnectionManager));
+            timetable1.addSingleHour(cls1L1R3,
+                    new TimetableEntry(coursePass1, LocalDate.of(2024, 04, 04), 2, sqlConnectionManager));
+
+            timetable1.addSingleHour(cls1L1R3,
+                    new TimetableEntry(coursePass1, LocalDate.of(2024, 04, 02), 0, sqlConnectionManager));
+
+            timetable2.addSingleHour(cls2L3R1,
+                    new TimetableEntry(coursePass2, LocalDate.of(2024, 04, 02), 0, sqlConnectionManager));
+            timetable2.addSingleHour(cls2L2R2,
+                    new TimetableEntry(coursePass2, LocalDate.of(2024, 04, 02), 1, sqlConnectionManager));
+            timetable2.addSingleHour(cls2L1R3,
+                    new TimetableEntry(coursePass2, LocalDate.of(2024, 04, 02), 2, sqlConnectionManager));
+
+            timetable3.addSingleHour(cls3L2R2,
+                    new TimetableEntry(coursePass3, LocalDate.of(2024, 04, 02), 0, sqlConnectionManager));
+
+            timetable3.addSingleHour(cls3L3R3,
+                    new TimetableEntry(coursePass3, LocalDate.of(2024, 04, 03), 0, sqlConnectionManager));
+            timetable3.addSingleHour(cls3L2R2,
+                    new TimetableEntry(coursePass3, LocalDate.of(2024, 04, 03), 1, sqlConnectionManager));
+            timetable3.addSingleHour(cls3L1R1,
+                    new TimetableEntry(coursePass3, LocalDate.of(2024, 04, 03), 2, sqlConnectionManager));
+            assertTrue(true);
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();
+            fail("There was an error that shouldnt have happend");
         }
 
     }
 
     @Test
-    @Order(4)
-    void moveHourFromTimetableCP3Day1Timeslot2L2R2toDay1Timeslot0() {
+    @Order(5)
+    void moveHourFromTimetable3D2T0toD1T3() {
         try {
 
-            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
-            TimetableHour source = timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(2);
-            TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0);
+            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager,
+                    resourceBundle);
+            TimetableHour source = timetable3.getArrayTimetableDays().get(2).getArrayTimetableHours().get(0);
+            TimetableHour target = timetable3.getArrayTimetableDays().get(1).getArrayTimetableHours().get(3);
 
             TimetableEntry sourceTimetableEntry = new TimetableEntry(
                     source.getCoursepassLecturerSubject(),
-                    timetable3.getArrayTimetableDays().get(0).getDate(), source.getTimeslot(), sqlConnectionManager);
+                    timetable3.getArrayTimetableDays().get(2).getDate(), source.getTimeslot(), sqlConnectionManager);
             TimetableEntry targetTimetableEntry = new TimetableEntry(
                     target.getCoursepassLecturerSubject(),
-                    timetable3.getArrayTimetableDays().get(0).getDate(), target.getTimeslot(), sqlConnectionManager);
+                    timetable3.getArrayTimetableDays().get(1).getDate(), target.getTimeslot(), sqlConnectionManager);
 
             if (CoursepassLecturerSubject.cangetExchanged(sourceTimetableEntry, targetTimetableEntry,
                     sqlConnectionManager)) {
@@ -311,30 +354,31 @@ public class CheckTimetable {
     }
 
     @Test
-    @Order(4)
+    @Order(6)
     void checkIfCP3Day1Timeslot0CouldBeDeleted() {
         try {
 
             ResourcesBlocked resourcesBlocked;
-            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
-            TimetableHour deleteMe = timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0);
-            deleteMe.getCoursepassLecturerSubject().deleteCLS(timetable3.getArrayTimetableDays().get(0).getDate(),
+            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager,
+                    resourceBundle);
+            TimetableHour deleteMe = timetable3.getArrayTimetableDays().get(1).getArrayTimetableHours().get(0);
+            deleteMe.getCoursepassLecturerSubject().deleteCLS(timetable3.getArrayTimetableDays().get(1).getDate(),
                     0); // delete Day 1 Timeslot 0
             timetable3.updateCoursePassTimetable();
 
-            assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0)
+            assertEquals(0, timetable3.getArrayTimetableDays().get(1).getArrayTimetableHours().get(0)
                     .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 0 has LecturerID 0
-            assertEquals(0, timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0)
+            assertEquals(0, timetable3.getArrayTimetableDays().get(1).getArrayTimetableHours().get(0)
                     .getCoursepassLecturerSubject().getRoom().getId()); // check if Day 1 Slot 0 has RoomID 0
 
             resourcesBlocked = new ResourcesBlocked(0L, ResourceNames.LECTURER,
-                    timetable3.getArrayTimetableDays().get(0).getDate(),
-                    timetable3.getArrayTimetableDays().get(0).getDate(), 0, 0, sqlConnectionManager);
+                    timetable3.getArrayTimetableDays().get(1).getDate(),
+                    timetable3.getArrayTimetableDays().get(1).getDate(), 0, 0, sqlConnectionManager);
             assertEquals(0, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Lecturer 0
 
             resourcesBlocked = new ResourcesBlocked(0L, ResourceNames.ROOM,
-                    timetable3.getArrayTimetableDays().get(0).getDate(),
-                    timetable3.getArrayTimetableDays().get(0).getDate(), 0, 0, sqlConnectionManager);
+                    timetable3.getArrayTimetableDays().get(1).getDate(),
+                    timetable3.getArrayTimetableDays().get(1).getDate(), 0, 0, sqlConnectionManager);
             assertEquals(0, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Room 0
         } catch (Exception e) {
             fail(e.getStackTrace().toString());
@@ -342,18 +386,18 @@ public class CheckTimetable {
     }
 
     @Test
-    @Order(5)
-    void checkIfWeCouldAddAnHourCP3Day1Timeslot0() {
+    @Order(7)
+    void checkIfWeCouldAddAnHourCP3Day0Timeslot2() {
         try {
 
-            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
+            Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager,
+                    resourceBundle);
             ResourcesBlocked resourcesBlocked;
-            TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(0);
-            LocalDate targetDate = timetable3.getArrayTimetableDays().get(0).getDate();
+            TimetableHour target = timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(2);
+            LocalDate targetDate = timetable3.getArrayTimetableDays().get(0).getDate(); // should bei 02.04.2024
 
             CoursepassLecturerSubject source = new CoursepassLecturerSubject(8L, sqlConnectionManager,
-                    target.getCoursepassLecturerSubject().getCoursepass());
-            LocalDate sourceDate = timetable3.getArrayTimetableDays().get(0).getDate();
+                    target.getCoursepassLecturerSubject().getCoursepass()); // L2R2
 
             if (CoursepassLecturerSubject.isFreeTarget(source,
                     targetDate,
@@ -384,81 +428,42 @@ public class CheckTimetable {
         }
 
     }
-        @Test
-    @Order(7)
-    void checkIfDistributingRemainingHoursWorks() {
-        Timetable timetable3 = new Timetable(new CoursePass(3L, sqlConnectionManager), sqlConnectionManager, resourceBundle);
-        ResourcesBlocked resourcesBlocked;
-
-        timetable3.distributeUnplanedHours();
-
-        assertEquals(2, timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(1)
-                .getCoursepassLecturerSubject().getLecturer().getId()); // check if Day 1 Slot 0 has LecturerID 2
-        assertEquals(2, timetable3.getArrayTimetableDays().get(0).getArrayTimetableHours().get(1)
-                .getCoursepassLecturerSubject().getRoom().getId()); // check if Day 1 Slot 0 has RoomID 2
-
-        resourcesBlocked = new ResourcesBlocked(2L, ResourceNames.LECTURER,
-                timetable3.getArrayTimetableDays().get(0).getDate(),
-                timetable3.getArrayTimetableDays().get(0).getDate(), 1, 1, sqlConnectionManager);
-        assertEquals(2, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Lecturer 2
-
-        resourcesBlocked = new ResourcesBlocked(2L, ResourceNames.ROOM,
-                timetable3.getArrayTimetableDays().get(0).getDate(),
-                timetable3.getArrayTimetableDays().get(0).getDate(), 1, 1, sqlConnectionManager);
-        assertEquals(2, resourcesBlocked.getRefResourceID()); // check if resources Blocked has Room 2
-    }
 
     @Test
     @Order(8)
-    void checkIfSwappingTwoHoursFailedWhenRoomIsBlocked() {
-        // Day 4 08.04.2024 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
-        // CP2 Lecturer 1 Romm 3 ID 4
-        CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
-        Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager, resourceBundle);
-        CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
-        Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager, resourceBundle);
-        LocalDate targetDate = timetable3.getArrayTimetableDays().get(4).getDate();
-        try {
-            timetable2.addSingleHour(new CoursepassLecturerSubject(4L, sqlConnectionManager, coursePass2),
-                    new TimetableEntry(coursePass2, targetDate, 1, sqlConnectionManager));
-            CoursepassLecturerSubject cls8 = new CoursepassLecturerSubject(8L, sqlConnectionManager, coursePass3);
-            TimetableEntry sourceTimetableEntry = new TimetableEntry(
-                    timetable3.getArrayTimetableDays().get(5).getArrayTimetableHours().get(0)
-                            .getCoursepassLecturerSubject(),
-                    targetDate, 0, sqlConnectionManager);
-            TimetableEntry targetTimetableEntry = new TimetableEntry(
-                    cls8,
-                    targetDate, 1, sqlConnectionManager);
-            timetable3.swapHours(sourceTimetableEntry, targetTimetableEntry);
-        } catch (Exception e) {
-            assertEquals(e.getMessage(), "Hours cant be swapped");
-            return;
+    void checkIfDistributingRemainingHoursWorks() {
+        Timetable timetable2 = new Timetable(new CoursePass(2L, sqlConnectionManager), sqlConnectionManager,
+                resourceBundle);
+        ResourcesBlocked resourcesBlocked;
+
+        timetable2.distributeUnplanedHours();
+
+        // run through all cls and check if there are no more unplaned hours
+        for (CoursepassLecturerSubject cls : timetable2.getCoursepass().getArrayCoursePassLecturerSubject()) {
+            cls.updateallHours();
+            assertEquals(0, cls.getUnplanedHours());
         }
-        fail("Test should have Thrown an error");
     }
 
     @Test
     @Order(9)
-    void checkIfSwappingTwoHoursFailedWhenLecturerIsBlocked() {
-        // Day 4 08.04.2024 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
-        // CP2 Lecturer 3 Romm 1 ID 6
-        CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
-        Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager, resourceBundle);
+    void checkIfSwappingHourFailedWhenRoomIsBlocked() {
+        // Timetable 1 02.04.2024 Timeslot 0 L1R3 CLS1
+        // Timetable 2 02.04.2024 Timeslot 0 L2R2 CLS8
+        // Timetable 3 03.04.2024 Timeslot 0 L3R3 CLS7
+
         CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
         Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager, resourceBundle);
-        LocalDate targetDate = timetable3.getArrayTimetableDays().get(4).getDate();
+        LocalDate targetDate = timetable3.getArrayTimetableDays().get(0).getDate();
+        LocalDate sourceDate = timetable3.getArrayTimetableDays().get(1).getDate();
+
+        checkIfDeletingTimetableWorks();
+        createKnownState();
+
         try {
-            timetable2.addSingleHour(new CoursepassLecturerSubject(6L, sqlConnectionManager, coursePass2),
-                    new TimetableEntry(coursePass2, targetDate, 1, sqlConnectionManager));
-            CoursepassLecturerSubject cls8 = new CoursepassLecturerSubject(8L, sqlConnectionManager, coursePass3);
-            TimetableEntry sourceTimetableEntry = new TimetableEntry(
-                    timetable3.getArrayTimetableDays().get(5).getArrayTimetableHours().get(0)
-                            .getCoursepassLecturerSubject(),
-                    targetDate, 0, sqlConnectionManager);
-            TimetableEntry targetTimetableEntry = new TimetableEntry(
-                    cls8,
-                    targetDate, 1, sqlConnectionManager);
-            timetable3.swapHours(sourceTimetableEntry, targetTimetableEntry);
+            TimetableEntry L3R3 = new TimetableEntry(coursePass3, sourceDate, 0, sqlConnectionManager);
+            TimetableEntry L2R2 = new TimetableEntry(coursePass3, targetDate, 0, sqlConnectionManager);
+            timetable3.swapHours(L3R3, L2R2);
         } catch (Exception e) {
             assertEquals(e.getMessage(), "Hours cant be swapped");
             return;
@@ -468,26 +473,24 @@ public class CheckTimetable {
 
     @Test
     @Order(10)
-    void checkIfAddingAnHourFailedWhenRoomIsBlocked() {
-        // Day 4 08.04.2024 Timeslot 0 Lecturer 3 Room 3 ID 7, Timeslots 1 and 2 are
-        // empty
-        // CP2 Lecturer 1 Romm 3 ID 4
-        CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
-        Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager, resourceBundle);
+    void checkIfSwappingTwoHoursFailedWhenLecturerIsBlocked() {
+        // Timetable 1 02.04.2024 Timeslot 0 L1R3 CLS1
+        // Timetable 2 02.04.2024 Timeslot 0 L2R2 CLS8
+        // Timetable 3 03.04.2024 Timeslot 2 L1R3 CLS9
+
+        checkIfDeletingTimetableWorks();
+        createKnownState();
+
         CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
         Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager, resourceBundle);
-        LocalDate targetDate = timetable3.getArrayTimetableDays().get(4).getDate();
+        LocalDate sourceDate = timetable3.getArrayTimetableDays().get(1).getDate();
+        LocalDate targetDate = timetable3.getArrayTimetableDays().get(0).getDate();
         try {
-            timetable2.addSingleHour(new CoursepassLecturerSubject(4L, sqlConnectionManager, coursePass2),
-                    new TimetableEntry(coursePass2, targetDate, 1, sqlConnectionManager));
-            CoursepassLecturerSubject cls7 = new CoursepassLecturerSubject(7L, sqlConnectionManager, coursePass3);
-
-            TimetableEntry targetTimetableEntry = new TimetableEntry(
-                    cls7,
-                    targetDate, 1, sqlConnectionManager);
-            timetable3.addSingleHour(cls7, targetTimetableEntry);
+            TimetableEntry L1R3 = new TimetableEntry(coursePass3, sourceDate, 2, sqlConnectionManager);
+            TimetableEntry L2R2 = new TimetableEntry(coursePass3, targetDate, 0, sqlConnectionManager);
+            timetable3.swapHours(L1R3, L2R2);
         } catch (Exception e) {
-            assertEquals(e.getMessage(), "Error Placing Hour");
+            assertEquals(e.getMessage(), "Hours cant be swapped");
             return;
         }
         fail("Test should have Thrown an error");
@@ -495,28 +498,101 @@ public class CheckTimetable {
 
     @Test
     @Order(11)
-    void checkIfAddingAnHourFailedWhenLecturerIsBlocked() {
-        // Day 4 08.04.2024 Timeslot 0 Lecturer 3 Room 3, Timeslots 1 and 2 are empty
-        // CP2 Lecturer 3 Romm 1 ID 6
-        CoursePass coursePass2 = new CoursePass(2L, sqlConnectionManager);
-        Timetable timetable2 = new Timetable(coursePass2, sqlConnectionManager, resourceBundle);
+    void checkIfAddingAnHourFailedWhenRoomIsBlocked() {
+        // Timetable 1 02.04.2024 Timeslot 0 L1R3 CLS1
+        // Timetable 2 02.04.2024 Timeslot 0 L2R2 CLS8
+        // Timetable 3 03.04.2024 Timeslot 0 L3R3 CLS7
+
+        checkIfDeletingTimetableWorks();
+        createKnownState();
+
         CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
         Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager, resourceBundle);
-        LocalDate targetDate = timetable3.getArrayTimetableDays().get(4).getDate();
+        LocalDate targetDate = timetable3.getArrayTimetableDays().get(0).getDate();
         try {
-            timetable2.addSingleHour(new CoursepassLecturerSubject(6L, sqlConnectionManager, coursePass2),
-                    new TimetableEntry(coursePass2, targetDate, 1, sqlConnectionManager));
-            CoursepassLecturerSubject cls7 = new CoursepassLecturerSubject(7L, sqlConnectionManager, coursePass3);
-
-            TimetableEntry targetTimetableEntry = new TimetableEntry(
-                    cls7,
-                    targetDate, 1, sqlConnectionManager);
-            timetable3.addSingleHour(cls7, targetTimetableEntry);
+            timetable3.addSingleHour(new CoursepassLecturerSubject(7L, sqlConnectionManager, coursePass3),
+                    new TimetableEntry(coursePass3, targetDate, 0, sqlConnectionManager));
         } catch (Exception e) {
-            assertEquals(e.getMessage(), "Error Placing Hour");
+            assertEquals(e.getMessage(), "Error Placing Hour. Target isnt Free 2024-04-02 0 Subject 1");
             return;
         }
         fail("Test should have Thrown an error");
+    }
+
+    @Test
+    @Order(12)
+    void checkIfAddingAnHourFailedWhenLecturerIsBlocked() {
+        // Timetable 1 02.04.2024 Timeslot 0 L1R3 CLS1
+        // Timetable 2 02.04.2024 Timeslot 0 L2R2 CLS8
+        // Timetable 3 03.04.2024 Timeslot 3 L1R1 CLS9
+
+        checkIfDeletingTimetableWorks();
+        createKnownState();
+
+        CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
+        Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager, resourceBundle);
+        LocalDate targetDate = timetable3.getArrayTimetableDays().get(0).getDate(); // 02.04.2024
+        try {
+            CoursepassLecturerSubject cls9 = new CoursepassLecturerSubject(9L, sqlConnectionManager, coursePass3);
+
+            TimetableEntry targetTimetableEntry = new TimetableEntry(
+                    cls9,
+                    targetDate, 0, sqlConnectionManager);
+            timetable3.addSingleHour(cls9, targetTimetableEntry);
+        } catch (Exception e) {
+            assertEquals(e.getMessage(), "Error Placing Hour. Target isnt Free 2024-04-02 0 Subject 3");
+            return;
+        }
+        fail("Test should have Thrown an error");
+    }
+
+    // setBlockingFreetext
+    @Test
+    @Order(13)
+    void checkIfAddingBlockingHoursWorks() {
+        
+        checkIfDeletingTimetableWorks();
+        createKnownState();
+
+        CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
+        Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager, resourceBundle);
+        LocalDate from = timetable3.getArrayTimetableDays().get(0).getDate();
+        LocalDate till = timetable3.getArrayTimetableDays().get(8).getDate();
+        String freeText = "Random Blocking";
+
+        try {
+            timetable3.setBlockingFreetext(from, till, freeText);
+        } catch (Exception e) {
+            fail("Error that should not have happend. " + e.getLocalizedMessage());
+        }
+
+        // check if Blocking is set
+        TimetableEntry timetableEntry = new TimetableEntry(coursePass3, from, 0, sqlConnectionManager);
+        assertEquals(freeText, timetableEntry.getBlockingFreetext());
+        timetableEntry = new TimetableEntry(coursePass3, till, 3, sqlConnectionManager);
+        assertEquals(freeText, timetableEntry.getBlockingFreetext());
+    }
+
+    // check if exam is working
+    @Test
+    @Order(14)
+    void checkIfAddingExamWorks() {
+        // Timetable 3 L1R1 CLS9
+        
+        checkIfDeletingTimetableWorks();
+        createKnownState();
+
+        CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
+        Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager, resourceBundle);
+        LocalDate date = timetable3.getArrayTimetableDays().get(0).getDate();
+        TimetableEntry targetTimetableEntry = new TimetableEntry(
+                coursePass3, date, 0,
+                sqlConnectionManager);
+        targetTimetableEntry.setExam(true);
+        targetTimetableEntry.save();
+
+        TimetableEntry checkTimetableEntry = new TimetableEntry(coursePass3, date, 0, sqlConnectionManager);
+        assertTrue(checkTimetableEntry.isExam());
     }
 
     @AfterAll

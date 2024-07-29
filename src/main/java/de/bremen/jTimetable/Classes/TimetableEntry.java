@@ -174,10 +174,11 @@ public class TimetableEntry {
                 SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getLecturerID()));
                 SQLValues.add(new SQLValueLong(this.coursepassLecturerSubject.getSubject().getId()));
                 SQLValues.add(new SQLValueBoolean(this.isExam));
-                SQLValues.add(new SQLValueInt(this.timeslot));
+                SQLValues.add(new SQLValueInt(this.timeslot));                
+                SQLValues.add(new SQLValueString(this.blockingFreetext));
 
                 ResultSet rs = sqlConnectionManager.execute(
-                        "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, isExam, TIMESLOT) values (?, ?, ?, ?, ?, ?, ?, ?)",
+                        "Insert Into T_TIMETABLES (TIMETABLEDAY, REFCOURSEPASS, REFCOURSEPASSLECTURERSUBJECT, REFROOMID, REFLECTURER, REFSUBJECT, isExam, TIMESLOT, blockingFreetext) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         SQLValues);
                 rs.first();
                 this.id = rs.getInt(1);
