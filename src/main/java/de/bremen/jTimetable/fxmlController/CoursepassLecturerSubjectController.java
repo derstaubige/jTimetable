@@ -447,7 +447,7 @@ public class CoursepassLecturerSubjectController implements Initializable {
             this.coursepassLecturerSubject.setShouldHours(Long.parseLong(txtShouldHours.getText()));
             this.coursepassLecturerSubject.setActive(chkActive.isSelected());
             this.coursepassLecturerSubject.setPlaceAfterDay(placeAfterDay.getValue());
-            this.coursepassLecturerSubject.setPlaceAfterCLS(cmbCLS.getValue().getId());
+            this.coursepassLecturerSubject.setPlaceAfterCLS( (cmbCLS.getValue() == null) ? 0L : cmbCLS.getValue().getId());
             try {
                 this.coursepassLecturerSubject.save();
             } catch (Exception e) {
