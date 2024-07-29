@@ -23,7 +23,7 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 
 @TestMethodOrder(OrderAnnotation.class)
-public class CheckTimetable {
+public class TestCheckTimetable {
     private static SQLConnectionManager sqlConnectionManager;
     private static ResourceBundle resourceBundle = ResourceBundle.getBundle("Resources");
 
