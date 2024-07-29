@@ -185,7 +185,7 @@ public class Timetable {
         for (Integer i = startIndex; i <= endIndex; i++) {
             for (TimetableHour timetableHour : arrayTimetableDays.get(i).getArrayTimetableHours()) {
                 TimetableEntry timetableEntry = new TimetableEntry(
-                        this.coursepass,
+                        coursepass,
                         arrayTimetableDays.get(i).getDate(),
                         timetableHour.getTimeslot(), sqlConnectionManager);
                 timetableEntry.setBlockingFreetext(text);
