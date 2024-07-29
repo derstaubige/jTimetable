@@ -115,7 +115,7 @@ public class CoursePass {
             SQLValues.add(new SQLValueLong(this.id));
 
             ResultSet rsCoursePassLecturerSubjects = sqlConnectionManager.select
-                    ("Select id from T_COURSEPASSESLECTURERSUBJECT where REFCOURSEPASSID = ?", SQLValues);
+                    ("Select id from T_COURSEPASSESLECTURERSUBJECT where REFCOURSEPASSID = ? and active = TRUE", SQLValues);
 
             while (rsCoursePassLecturerSubjects.next()) {
                 arrayCoursePassLecturerSubject.add
