@@ -591,6 +591,34 @@ public class TestCaseCheckTimetable {
         assertTrue(checkTimetableEntry.isExam());
     }
 
+    @Test
+    @Order(15)
+    void checkIfDistributionMethodeWorks(){
+                
+        checkIfDeletingTimetableWorks();
+        createKnownState();
+
+        CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
+        Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager, resourceBundle);
+        try {
+            CoursepassLecturerSubject cls3L3R3 = new CoursepassLecturerSubject(7L, sqlConnectionManager, coursePass3);
+            cls3L3R3.setDistributionMethode(CoursepassLecturerSubjectDistributionmethode.DOUBLEHOURS);
+            cls3L3R3.save();
+            CoursepassLecturerSubject cls3L2R2 = new CoursepassLecturerSubject(8L, sqlConnectionManager, coursePass3);
+            cls3L2R2.setDistributionMethode(CoursepassLecturerSubjectDistributionmethode.FULLDAY);
+            cls3L2R2.save();
+            CoursepassLecturerSubject cls3L1R1 = new CoursepassLecturerSubject(9L, sqlConnectionManager, coursePass3);
+            cls3L1R1.setDistributionMethode(CoursepassLecturerSubjectDistributionmethode.NORMAL);
+            cls3L1R1.save();            
+            
+            timetable3.updateCoursePassTimetable();
+        } catch (Exception e) {
+            fail("There shouldnt be an error. " + e.getLocalizedMessage());
+        }
+        timetable3.distributeUnplanedHours();
+        System.out.println("jo");
+    }
+
     @AfterAll
     static void removeDB() {
         DeleteDbFiles.execute("./", "h2Test", false);
