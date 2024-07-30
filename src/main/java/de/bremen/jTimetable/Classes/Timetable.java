@@ -199,6 +199,8 @@ public class Timetable {
     }
 
     public void distributeUnplanedHours() {
+        
+        this.coursepass.updateCoursePassLecturerSubjects();
 
         Integer maxTimetableSlotsUsedForInitialTimetable = Integer
                 .parseInt(properties.getProperty("maxTimetableSlotsUsedForInitialTimetable")) - 1;
@@ -206,7 +208,6 @@ public class Timetable {
         TimetableDistributeStack timetableDistributeStack = new TimetableDistributeStack(coursepass,
                 sqlConnectionManager);
 
-        this.coursepass.updateCoursePassLecturerSubjects();
 
         if (timetableDistributeStack.size() > 0) {
             while (maxTimetableSlotsUsedForInitialTimetable < getMaxTimeslots()) {

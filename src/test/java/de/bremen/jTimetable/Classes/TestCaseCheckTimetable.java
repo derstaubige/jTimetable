@@ -603,19 +603,23 @@ public class TestCaseCheckTimetable {
         try {
             CoursepassLecturerSubject cls3L3R3 = new CoursepassLecturerSubject(7L, sqlConnectionManager, coursePass3);
             cls3L3R3.setDistributionMethode(CoursepassLecturerSubjectDistributionmethode.DOUBLEHOURS);
+            cls3L3R3.setShouldHours(10L);
             cls3L3R3.save();
             CoursepassLecturerSubject cls3L2R2 = new CoursepassLecturerSubject(8L, sqlConnectionManager, coursePass3);
             cls3L2R2.setDistributionMethode(CoursepassLecturerSubjectDistributionmethode.FULLDAY);
+            cls3L2R2.setShouldHours(10L);
             cls3L2R2.save();
             CoursepassLecturerSubject cls3L1R1 = new CoursepassLecturerSubject(9L, sqlConnectionManager, coursePass3);
             cls3L1R1.setDistributionMethode(CoursepassLecturerSubjectDistributionmethode.NORMAL);
+            cls3L1R1.setShouldHours(10L);
             cls3L1R1.save();            
             
-            timetable3.updateCoursePassTimetable();
+            timetable3.deleteTimetable();
+            timetable3.getCoursepass().updateCoursePassLecturerSubjects();
+            timetable3.distributeUnplanedHours();
         } catch (Exception e) {
             fail("There shouldnt be an error. " + e.getLocalizedMessage());
         }
-        timetable3.distributeUnplanedHours();
         System.out.println("jo");
     }
 
