@@ -199,7 +199,7 @@ public class Timetable {
     }
 
     public void distributeUnplanedHours() {
-        
+
         this.coursepass.updateCoursePassLecturerSubjects();
 
         Integer maxTimetableSlotsUsedForInitialTimetable = Integer
@@ -208,21 +208,20 @@ public class Timetable {
         TimetableDistributeStack timetableDistributeStack = new TimetableDistributeStack(coursepass,
                 sqlConnectionManager);
 
-
         if (timetableDistributeStack.size() > 0) {
             while (maxTimetableSlotsUsedForInitialTimetable < getMaxTimeslots()) {
+                try {
+                    CoursepassLecturerSubject lastCLS = new CoursepassLecturerSubject(0L,
+                            sqlConnectionManager, coursepass);
 
-                // Loop through the Timetable and Check all Timeslots for Freetime
-                for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
-                    for (TimetableHour timetableHour : timetableDay.getArrayTimetableHours()) {
-                        if (timetableHour != null
-                                && timetableHour.getCoursepassLecturerSubject().getId() == 0L
-                                && timetableHour.getTimeslot() <= maxTimetableSlotsUsedForInitialTimetable) {
-                            // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
-                            // here
-                            try {
-                                CoursepassLecturerSubject lastCLS = new CoursepassLecturerSubject(0L,
-                                        sqlConnectionManager, coursepass);
+                    // Loop through the Timetable and Check all Timeslots for Freetime
+                    for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
+                        for (TimetableHour timetableHour : timetableDay.getArrayTimetableHours()) {
+                            if (timetableHour != null
+                                    && timetableHour.getCoursepassLecturerSubject().getId() == 0L
+                                    && timetableHour.getTimeslot() <= maxTimetableSlotsUsedForInitialTimetable) {
+                                // Freetime! Loop through clsToAddArrayList and check if one of the cls fits
+                                // here
 
                                 for (TimetableDistributeStackItem stackItem : timetableDistributeStack.getArraylist()) {
                                     CoursepassLecturerSubject cls = stackItem.getArrayListItems().get(0);
@@ -351,7 +350,7 @@ public class Timetable {
                                     }
 
                                     if (tmpPlaced) {
-                                        //updated last placed cls
+                                        // updated last placed cls
                                         lastCLS = cls;
                                         // check if we now have distributed all unplaned hours
                                         cls.updateallHours();
@@ -366,11 +365,11 @@ public class Timetable {
                                         break;
                                     }
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
                         }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 try {
                     updateCoursePassTimetable();
@@ -832,12 +831,12 @@ public class Timetable {
                 while (tmpTimetableday.getArrayTimetableHours().size() <= tmpTimeslot) {
                     tmpTimetableday.getArrayTimetableHours().add(tmpTimetableday.getArrayTimetableHours().size(),
                             new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()),
-                                    getSqlConnectionManager()));
+                                    getSqlConnectionManager(), tmpTimetableday.getDate()));
                 }
 
                 tmpTimetableday.getArrayTimetableHours().set(tmpTimeslot,
                         new TimetableHour(tmpTimeslot, new CoursepassLecturerSubject(0L, getSqlConnectionManager()),
-                                getSqlConnectionManager()));
+                                getSqlConnectionManager(), tmpTimetableday.getDate()));
 
             }
         }
@@ -877,13 +876,13 @@ public class Timetable {
                 tmpDayObject.getArrayTimetableHours().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
                         new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
                                 getSqlConnectionManager(), new CoursePass(0L, sqlConnectionManager)),
-                        getSqlConnectionManager()));
+                        getSqlConnectionManager(), tmpDayObject.getDate()));
             } else {
                 // add this timeslot/TimetableHour to our tmpDayObject
                 tmpDayObject.getArrayTimetableHours().set((int) tmpTimeslot, new TimetableHour((int) tmpTimeslot,
                         new CoursepassLecturerSubject(resultSet.getLong("REFCOURSEPASSLECTURERSUBJECT"),
                                 getSqlConnectionManager(), this.coursepass),
-                        getSqlConnectionManager()));
+                        getSqlConnectionManager(), tmpDayObject.getDate()));
 
             }
 
