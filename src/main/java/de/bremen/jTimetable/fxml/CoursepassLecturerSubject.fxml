@@ -35,6 +35,8 @@
                                 minWidth="150.0"></TableColumn>
                             <TableColumn text="%cls.editbox.placeAfterDay" fx:id="TCPlaceAfterDate"
                                 minWidth="150.0"></TableColumn>
+                            <TableColumn text="%cls.editbox.distributionMethode" fx:id="TCdistributionMethode"
+                                minWidth="150.0"></TableColumn>
                             <TableColumn text="%cls.CLSTableview.active" fx:id="CPActive"
                                 visible="false"></TableColumn>
                         </columns>
@@ -76,6 +78,10 @@
             <HBox spacing="10.0">
                 <Label text="%cls.editbox.placeAfterCLS"></Label>
                 <ComboBox fx:id="cmbCLS" minWidth="400"></ComboBox>
+            </HBox>
+            <HBox spacing="10.0">
+                <Label text="%cls.editbox.distributionMethode"></Label>
+                <ComboBox fx:id="cmbdistributionMethode" minWidth="400"></ComboBox>
             </HBox>
             <HBox spacing="10.0">
                 <Label text="%cls.editbox.active"></Label>

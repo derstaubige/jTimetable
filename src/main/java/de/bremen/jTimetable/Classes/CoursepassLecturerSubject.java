@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 import de.bremen.jTimetable.Classes.SQLConnectionManagerValues.*;
 
@@ -21,6 +22,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
     private LocalDate placeAfterDay = LocalDate.of(1970,1,1);
     private Long placeAfterCLS = 0L;
     private SQLConnectionManager sqlConnectionManager;
+    private CoursepassLecturerSubjectDistributionmethode distributionMethode = CoursepassLecturerSubjectDistributionmethode.NORMAL;
 
     public static boolean isFreeTarget(CoursepassLecturerSubject cls, LocalDate targetDay, int targetTimeslot,
             SQLConnectionManager sqlConnectionManager) {
@@ -132,6 +134,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
                 this.placeAfterDay = rs.getDate("placeAfterDay").toLocalDate();
             }
             this.placeAfterCLS = rs.getLong("placeAfterCLS");
+            this.distributionMethode = CoursepassLecturerSubjectDistributionmethode.valueOf(rs.getString("distributionmethode").trim());
 
             this.updateIsHours();
             this.updatePlanedHours();
@@ -253,6 +256,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         SQLValues.add(new SQLValueLong(this.subject.getId()));
         SQLValues.add(new SQLValueLong(this.room.getId()));
         SQLValues.add(new SQLValueLong(this.shouldHours));
+        SQLValues.add(new SQLValueString(this.distributionMethode.toString()));
         SQLValues.add(new SQLValueBoolean(this.active));
         if (placeAfterDay == null){
             SQLValues.add(new SQLValueNull(null));
@@ -265,7 +269,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
         if (this.id == 0) {
             // its a new object, we have to insert it
             ResultSet rs = sqlConnectionManager.execute(
-                    "Insert Into `T_CoursepassesLecturerSubject` (`refCoursePassID`, `refLecturerID`, `refSubjectID`,`REFROOMID`, `shouldhours`, `ACTIVE`, `placeAfterDay`, `placeAfterCLS`) values (?, ?, ?, ?, ?, ?, ?, ?)",
+                    "Insert Into `T_CoursepassesLecturerSubject` (`refCoursePassID`, `refLecturerID`, `refSubjectID`,`REFROOMID`, `shouldhours`, `distributionMethode`, `ACTIVE`, `placeAfterDay`, `placeAfterCLS`) values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     SQLValues);
             rs.first();
             this.id = rs.getLong(1);
@@ -273,7 +277,7 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
             // we only have to update an existing entry
             SQLValues.add(new SQLValueLong(this.id));
             sqlConnectionManager.execute(
-                    "update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, `REFROOMID` = ?, `shouldhours` = ?, `ACTIVE` = ?, `placeAfterDay` = ?,  `placeAfterCLS` = ? where `id` = ?;",
+                    "update `T_CoursepassesLecturerSubject` set `refCoursePassID` = ?, `refLecturerID` = ?, `refSubjectID` = ?, `REFROOMID` = ?, `shouldhours` = ?,`distributionMethode` = ?, `ACTIVE` = ?, `placeAfterDay` = ?,  `placeAfterCLS` = ? where `id` = ?;",
                     SQLValues);
         }
         // sqlConnectionManager.close();
@@ -407,6 +411,18 @@ public class CoursepassLecturerSubject implements Comparable<CoursepassLecturerS
 
     public void setPlaceAfterCLS(Long placeAfterCLS) {
         this.placeAfterCLS = placeAfterCLS;
+    }
+
+    public CoursepassLecturerSubjectDistributionmethode getDistributionMethode() {
+        return distributionMethode;
+    }
+
+    public String getDistributionMethodeString(ResourceBundle resourceBundle){
+        return distributionMethode.toStringLocal(resourceBundle);
+    }
+
+    public void setDistributionMethode(CoursepassLecturerSubjectDistributionmethode distributionMethode) {
+        this.distributionMethode = distributionMethode;
     }
 
 }

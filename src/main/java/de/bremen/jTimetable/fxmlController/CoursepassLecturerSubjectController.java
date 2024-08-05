@@ -50,6 +50,8 @@ public class CoursepassLecturerSubjectController implements Initializable {
     @FXML
     public TableColumn<CoursepassLecturerSubject, LocalDate> TCPlaceAfterDate;
     @FXML
+    public TableColumn<CoursepassLecturerSubject, String> TCdistributionMethode;
+    @FXML
     public TableColumn<CoursepassLecturerSubject, Boolean> CPActive;
     @FXML
     public Button btnCLSEdit;
@@ -71,6 +73,8 @@ public class CoursepassLecturerSubjectController implements Initializable {
     public ComboBox<Subject> cmbSubject;
     @FXML
     public ComboBox<Room> cmbRoom;
+    @FXML
+    public ComboBox<CoursepassLecturerSubjectDistributionmethode> cmbdistributionMethode;
     @FXML
     public TextField txtShouldHours;
     @FXML
@@ -101,6 +105,10 @@ public class CoursepassLecturerSubjectController implements Initializable {
                     .setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Integer>("planedHours"));
             TCPlaceAfterDate.setCellValueFactory(
                     new PropertyValueFactory<CoursepassLecturerSubject, LocalDate>("placeAfterDay"));
+                    // ToDo: Localize this String somehow
+            TCdistributionMethode.setCellValueFactory(
+                    new PropertyValueFactory<CoursepassLecturerSubject, String>(
+                            "DistributionMethode"));
             CPActive.setCellValueFactory(new PropertyValueFactory<CoursepassLecturerSubject, Boolean>("active"));
         });
 
@@ -270,16 +278,70 @@ public class CoursepassLecturerSubjectController implements Initializable {
             }
         });
 
-        
+        cmbdistributionMethode.setConverter(new StringConverter<CoursepassLecturerSubjectDistributionmethode>() {
+            @Override
+            public String toString(CoursepassLecturerSubjectDistributionmethode distributionmethode) {
+                if (distributionmethode == null) {
+                    return "";
+                } else {
+                    return distributionmethode.toStringLocal(resources);
+                }
+            }
+
+            @Override
+            public CoursepassLecturerSubjectDistributionmethode fromString(String string) {
+                return null;
+            }
+        });
+
+        cmbdistributionMethode.setCellFactory(cell -> new ListCell<CoursepassLecturerSubjectDistributionmethode>() {
+
+            // Create our layout here to be reused for each ListCell
+            GridPane gridPane = new GridPane();
+            // Label lblID = new Label();
+            Label lblDescription = new Label();
+
+            // Static block to configure our layout
+            {
+                // Ensure all our column widths are constant
+                gridPane.getColumnConstraints().addAll(
+                        // new ColumnConstraints(100, 100, 100),
+                        new ColumnConstraints(200, 200, 200));
+
+                // gridPane.add(lblID, 0, 1, 1 ,1);
+                gridPane.add(lblDescription, 0, 1, 1, 1);
+
+            }
+
+            // We override the updateItem() method in order to provide our own layout for
+            // this Cell's graphicProperty
+            @Override
+            protected void updateItem(CoursepassLecturerSubjectDistributionmethode distributionmethode, boolean empty) {
+                super.updateItem(distributionmethode, empty);
+
+                if (!empty && distributionmethode != null) {
+
+                    // Update our Labels
+                    lblDescription.setText(distributionmethode.toStringLocal(resources));
+
+                    // Set this ListCell's graphicProperty to display our GridPane
+                    setGraphic(gridPane);
+                } else {
+                    // Nothing to display here
+                    setGraphic(null);
+                }
+            }
+        });
+
         cmbCLS.setConverter(new StringConverter<CoursepassLecturerSubject>() {
             @Override
             public String toString(CoursepassLecturerSubject cls) {
                 if (cls == null) {
                     return "";
                 } else {
-                    if (cls.getSubject().getId() == 0){
+                    if (cls.getSubject().getId() == 0) {
                         return "";
-                    }else{
+                    } else {
                         return cls.getLecturerFullname() + " : " + cls.getSubjectCaption();
                     }
                 }
@@ -319,9 +381,9 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 if (!empty && cls != null) {
 
                     // Update our Labels
-                    if (cls.getSubject().getId() == 0){
+                    if (cls.getSubject().getId() == 0) {
                         lblDescription.setText("");
-                    }else{
+                    } else {
                         lblDescription.setText(cls.getLecturerFullname() + " : " + cls.getSubjectCaption());
                     }
 
@@ -368,9 +430,16 @@ public class CoursepassLecturerSubjectController implements Initializable {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                // fill distribution Methode Combobox
+                try {
+                    cmbdistributionMethode.getItems().setAll(CoursepassLecturerSubjectDistributionmethode.class.getEnumConstants());
+                    cmbdistributionMethode.setValue(this.coursepassLecturerSubject.getDistributionMethode());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 txtShouldHours.setText(this.coursepassLecturerSubject.getShouldHours().toString());
                 chkActive.setSelected(this.coursepass.getActive());
-                placeAfterDay.setValue(LocalDate.of(1970,1,1));
+                placeAfterDay.setValue(LocalDate.of(1970, 1, 1));
                 editbox.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -411,7 +480,15 @@ public class CoursepassLecturerSubjectController implements Initializable {
                     tmpcmbCLSItems.add(0, new CoursepassLecturerSubject(0L, this.sqlConnectionManager));
                     tmpcmbCLSItems.get(0).getSubject().setCaption("");
                     cmbCLS.getItems().setAll(tmpcmbCLSItems);
-                    cmbCLS.setValue(this.getCLSFromArrayList(tmpcmbCLSItems, this.coursepassLecturerSubject.getPlaceAfterCLS()));
+                    cmbCLS.setValue(this.getCLSFromArrayList(tmpcmbCLSItems,
+                            this.coursepassLecturerSubject.getPlaceAfterCLS()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                // fill distribution Methode Combobox
+                try {
+                    cmbdistributionMethode.getItems().setAll(CoursepassLecturerSubjectDistributionmethode.class.getEnumConstants());
+                    cmbdistributionMethode.setValue(this.coursepassLecturerSubject.getDistributionMethode());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -447,7 +524,9 @@ public class CoursepassLecturerSubjectController implements Initializable {
             this.coursepassLecturerSubject.setShouldHours(Long.parseLong(txtShouldHours.getText()));
             this.coursepassLecturerSubject.setActive(chkActive.isSelected());
             this.coursepassLecturerSubject.setPlaceAfterDay(placeAfterDay.getValue());
-            this.coursepassLecturerSubject.setPlaceAfterCLS( (cmbCLS.getValue() == null) ? 0L : cmbCLS.getValue().getId());
+            this.coursepassLecturerSubject.setDistributionMethode(cmbdistributionMethode.getValue());
+            this.coursepassLecturerSubject
+                    .setPlaceAfterCLS((cmbCLS.getValue() == null) ? 0L : cmbCLS.getValue().getId());
             try {
                 this.coursepassLecturerSubject.save();
             } catch (Exception e) {
@@ -472,12 +551,13 @@ public class CoursepassLecturerSubjectController implements Initializable {
 
     }
 
-    private CoursepassLecturerSubject getCLSFromArrayList(ArrayList<CoursepassLecturerSubject> arrCLS, Long clsID) throws SQLException{
+    private CoursepassLecturerSubject getCLSFromArrayList(ArrayList<CoursepassLecturerSubject> arrCLS, Long clsID)
+            throws SQLException {
         for (CoursepassLecturerSubject cls : arrCLS) {
-            if(cls.getId() == clsID){
+            if (cls.getId() == clsID) {
                 return cls;
             }
-            
+
         }
         return new CoursepassLecturerSubject(0L, sqlConnectionManager);
     }

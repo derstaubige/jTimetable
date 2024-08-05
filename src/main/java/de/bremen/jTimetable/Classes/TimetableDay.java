@@ -57,7 +57,7 @@ public class TimetableDay {
         while (this.arrayTimetableHours.size() < this.timeslots) {
             try {
                 this.arrayTimetableHours.add(new TimetableHour(this.arrayTimetableHours.size(),
-                        new CoursepassLecturerSubject(0L, sqlConnectionManager), sqlConnectionManager));
+                        new CoursepassLecturerSubject(0L, sqlConnectionManager), sqlConnectionManager, this.getDate()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -82,7 +82,7 @@ public class TimetableDay {
                 this.arrayTimetableHours.add(new TimetableHour(
                         this.arrayTimetableHours.size() + 1, new CoursepassLecturerSubject(0L,
                                 getSqlConnectionManager(), coursepassLecturerSubject.getCoursepass()),
-                        getSqlConnectionManager()));
+                        getSqlConnectionManager(), this.getDate()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -92,10 +92,10 @@ public class TimetableDay {
         try {
             this.getArrayTimetableHours().get(timeslot);
             this.arrayTimetableHours.set(timeslot,
-                    new TimetableHour(timeslot, coursepassLecturerSubject, getSqlConnectionManager()));
+                    new TimetableHour(timeslot, coursepassLecturerSubject, getSqlConnectionManager(), this.getDate()));
         } catch (Exception e) {
             this.arrayTimetableHours.add(timeslot,
-                    new TimetableHour(timeslot, coursepassLecturerSubject, getSqlConnectionManager()));
+                    new TimetableHour(timeslot, coursepassLecturerSubject, getSqlConnectionManager(), this.getDate()));
         }
     }
 
@@ -164,7 +164,7 @@ public class TimetableDay {
         while (this.arrayTimetableHours.size() <= timeslots) {
             try {
                 this.arrayTimetableHours.add(new TimetableHour(this.arrayTimetableHours.size(),
-                        new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
+                        new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager(), this.getDate()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -187,7 +187,7 @@ public class TimetableDay {
     public void removeTimetableHourFromArrayTimetableDay(int timeslot) {
         try {
             arrayTimetableHours.set(timeslot, new TimetableHour(timeslot,
-                    new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager()));
+                    new CoursepassLecturerSubject(0L, getSqlConnectionManager()), getSqlConnectionManager(), this.getDate()));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,19 +1,15 @@
 package de.bremen.jTimetable.Classes;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import org.h2.jdbc.JdbcSQLNonTransientException;
 import org.h2.tools.DeleteDbFiles;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -23,7 +19,7 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 
 @TestMethodOrder(OrderAnnotation.class)
-public class TestCheckTimetable {
+public class TestCaseCheckTimetable {
     private static SQLConnectionManager sqlConnectionManager;
     private static ResourceBundle resourceBundle = ResourceBundle.getBundle("Resources");
 
@@ -284,7 +280,7 @@ public class TestCheckTimetable {
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();
-            fail("There was an error that shouldnt have happend");
+            fail("There was an error that shouldnt have happend" + e.getMessage());
         }
 
     }
@@ -593,6 +589,38 @@ public class TestCheckTimetable {
 
         TimetableEntry checkTimetableEntry = new TimetableEntry(coursePass3, date, 0, sqlConnectionManager);
         assertTrue(checkTimetableEntry.isExam());
+    }
+
+    @Test
+    @Order(15)
+    void checkIfDistributionMethodeWorks(){
+                
+        checkIfDeletingTimetableWorks();
+        createKnownState();
+
+        CoursePass coursePass3 = new CoursePass(3L, sqlConnectionManager);
+        Timetable timetable3 = new Timetable(coursePass3, sqlConnectionManager, resourceBundle);
+        try {
+            CoursepassLecturerSubject cls3L3R3 = new CoursepassLecturerSubject(7L, sqlConnectionManager, coursePass3);
+            cls3L3R3.setDistributionMethode(CoursepassLecturerSubjectDistributionmethode.DOUBLEHOURS);
+            cls3L3R3.setShouldHours(10L);
+            cls3L3R3.save();
+            CoursepassLecturerSubject cls3L2R2 = new CoursepassLecturerSubject(8L, sqlConnectionManager, coursePass3);
+            cls3L2R2.setDistributionMethode(CoursepassLecturerSubjectDistributionmethode.FULLDAY);
+            cls3L2R2.setShouldHours(10L);
+            cls3L2R2.save();
+            CoursepassLecturerSubject cls3L1R1 = new CoursepassLecturerSubject(9L, sqlConnectionManager, coursePass3);
+            cls3L1R1.setDistributionMethode(CoursepassLecturerSubjectDistributionmethode.NORMAL);
+            cls3L1R1.setShouldHours(10L);
+            cls3L1R1.save();            
+            
+            timetable3.deleteTimetable();
+            timetable3.getCoursepass().updateCoursePassLecturerSubjects();
+            timetable3.distributeUnplanedHours();
+        } catch (Exception e) {
+            fail("There shouldnt be an error. " + e.getLocalizedMessage());
+        }
+        System.out.println("jo");
     }
 
     @AfterAll
