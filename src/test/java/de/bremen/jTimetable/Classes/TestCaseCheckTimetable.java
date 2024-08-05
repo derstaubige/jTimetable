@@ -280,7 +280,7 @@ public class TestCaseCheckTimetable {
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();
-            fail("There was an error that shouldnt have happend");
+            fail("There was an error that shouldnt have happend" + e.getMessage());
         }
 
     }

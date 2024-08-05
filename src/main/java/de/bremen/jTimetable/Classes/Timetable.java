@@ -215,8 +215,11 @@ public class Timetable {
                             sqlConnectionManager, coursepass);
 
                     // Loop through the Timetable and Check all Timeslots for Freetime
-                    for (TimetableDay timetableDay : this.getArrayTimetableDays()) {
-                        for (TimetableHour timetableHour : timetableDay.getArrayTimetableHours()) {
+                    for (int timetableDayIDX = 0; timetableDayIDX < this.getArrayTimetableDays().size(); timetableDayIDX++) {
+                        TimetableDay timetableDay = this.getArrayTimetableDays().get(timetableDayIDX);
+                        for (int timetableHourIDX = 0; timetableHourIDX < timetableDay.getArrayTimetableHours().size(); timetableHourIDX++) {
+                            TimetableHour timetableHour = timetableDay.getArrayTimetableHours().get(timetableHourIDX);
+                            // timetableHour.updateTimetableHourFromDB();
                             if (timetableHour != null
                                     && timetableHour.getCoursepassLecturerSubject().getId() == 0L
                                     && timetableHour.getTimeslot() <= maxTimetableSlotsUsedForInitialTimetable) {
@@ -598,7 +601,17 @@ public class Timetable {
             throw new Exception("Error Placing Hour. Target isnt Free " + targetTimetableEntry.getDate() + " "
                     + targetTimetableEntry.getTimeslot() + " " + cls.getSubjectCaption());
         }
-        updateCoursePassTimetable();
+
+        this.getTimetableDayFromArrayTimetableDays(targetTimetableEntry.getDate()).getTimetableHourFromArrayTimetableDay(targetTimetableEntry.getTimeslot()).updateTimetabhleHoursCLS(cls);
+    }
+
+    public TimetableDay getTimetableDayFromArrayTimetableDays(LocalDate date){
+        for(TimetableDay timetableDay : this.getArrayTimetableDays()){
+            if (timetableDay.getDate().isEqual(date)){
+                return timetableDay;
+            }
+        }
+        return null;
     }
 
     /**

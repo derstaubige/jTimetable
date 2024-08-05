@@ -36,6 +36,13 @@ public class TimetableHour {
         this(timeslot, coursepassLecturerSubject, 0L, sqlConnectionManager, date);
     }
 
+    public void updateTimetabhleHoursCLS(CoursepassLecturerSubject cls){
+        this.coursepassLecturerSubject = cls;
+        this.lecturerName = this.coursepassLecturerSubject.lecturer.getLecturerFullName();
+        this.subjectCaption = this.coursepassLecturerSubject.subject.getCaption();
+        this.roomCaption = this.coursepassLecturerSubject.getRoom().getCaption();       
+    }
+
     public void updateTimetableHourFromDB(){
         ArrayList<SQLConnectionManagerValues> SQLValues = new ArrayList<SQLConnectionManagerValues>();
 
